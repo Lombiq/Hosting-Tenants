@@ -37,5 +37,10 @@ public void ConfigureServices(IServiceCollection services) =>
 
 **_NOTE:_**  This way the feature will also be enabled in the Default tenant. Therefore, for greater security, the controller does not perform authentication on the Default tenant.
 
+## Dependencies 
+
+This module has the following dependencies:
+- [Lombiq-Helpful-Libraries](https://github.com/Lombiq/Helpful-Libraries)
+
 
  
