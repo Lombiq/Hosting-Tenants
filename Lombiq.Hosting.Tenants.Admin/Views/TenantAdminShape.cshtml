@@ -1,0 +1,29 @@
+@using Microsoft.AspNetCore.Http;
+@inject Lombiq.Hosting.Tenants.Admin.Services.ITenantLoginPasswordValidator tenantLoginPasswordProvider;
+
+@{
+    var host = ((string)Model.RequestUrlHost)
+            ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(host => host.Trim())
+            .FirstOrDefault();
+
+    var hostString = host != null ? new HostString(host) : Context.Request.Host;
+
+    var actionPath = $"/Lombiq.Hosting.Tenants.Admin/TenantLogin/Index";
+    var actionPathWithPrefix = string.IsNullOrEmpty(Model.RequestUrlPrefix)
+        ? actionPath
+        : '/' + Model.RequestUrlPrefix + actionPath;
+
+    var tenantLoginPath = new UriBuilder
+    {
+        Scheme = Context.Request.Scheme,
+        Host = hostString.Host,
+        Port = hostString.Port == null ? 80 : hostString.Port.Value,
+        Path = actionPathWithPrefix
+    };
+}
+
+<form action="@tenantLoginPath" method="post" target="_blank">
+    <input type="hidden" name="password" value="@tenantLoginPasswordProvider.Password">
+    <input type="submit" class="btn btn-success" value=" @T["Login as admin user"]" />
+</form>
