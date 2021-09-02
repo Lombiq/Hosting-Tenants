@@ -6,10 +6,10 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);.git*;node_modules\**;Tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
-	<ItemGroup>
-		<None Remove="node_modules\**" />
-		<None Remove="Tests\**" />
-	</ItemGroup>
+  <ItemGroup>
+    <None Remove="node_modules\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
 	
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -25,5 +25,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.csproj" />
   </ItemGroup>
-
+	
 </Project>

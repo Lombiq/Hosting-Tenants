@@ -1,46 +1,50 @@
-# Lombiq Hosting Tenants - Admin
+# Lombiq Hosting - Tenants Admin
+
+
 
 ## About
 
-With the help of this module, you can log in from the Default tenant admin dashboard to any other tenants as an administrator user.
+With the help of this module, you can log in from the Default tenant's admin dashboard to any other tenants as an administrator user. This is useful if you manage a lot of customer tenants and don't want to create individual logins of yours for each of them.
+
 
 ## Documentation
 
 This module contains two features:
-- Lombiq.Hosting.Tenants.Admin
-- Lombiq.Hosting.Tenants.Admin.SubTenant
+- `Lombiq.Hosting.Tenants.Admin`
+- `Lombiq.Hosting.Tenants.Admin.SubTenant`
 
-### Lombiq.Hosting.Tenants.Admin
 
-This feature is only available on the Default tenant. It provides a button on the tenant edit page. After clicking this button the site login to the selected tenant as an administrator and redirect to the tenant's admin dashboard. 
+### `Lombiq.Hosting.Tenants.Admin`
 
-**_NOTE:_**  Login will not be successful if the tenant has no user with administrator role
+This feature is only available on the Default tenant. It provides a button on the tenant editor page. After clicking this button, you'll be logged to the selected tenant as an administrator and be redirected to its admin dashboard.
 
-The feature also provides a LoginAsAdmin permission. Only the user who has this permission can see the login button.
+![Tenant's editor page with Login as admin user button.](Docs/Attachments/Tenant'sEditorPageWithLoginAsAdminUserButton.png)
 
-### Lombiq.Hosting.Tenants.Admin.SubTenant
+**NOTE:**  Login will not be successful if the tenant has no user with the administrator role.
 
-This feature provides a controller which can authenticate the request from the Default tenant as an administrator user. From the Default tenant, you can log in to only those tenants in which this feature is enabled.
+The feature also provides a `LoginAsAdmin` permission. Only users who have this permission can see the login button (by default users possessing the Administrator role).
 
-## How to enable SubTenant feature on every tenants
 
-In the web project's Startup class in the following way, you can enable Lombiq.Hosting.Tenants.Admin.SubTenant feature on all tenants.
+### `Lombiq.Hosting.Tenants.Admin.SubTenant`
+
+This feature provides a controller which can authenticate the request from the Default tenant as an administrator user. From the Default tenant, you can log in to only those tenants that have this feature enabled.
+
+
+## How to enable the Sub-tenant feature on every tenant
+
+In the web project's Startup class in the following way, you can enable `Lombiq.Hosting.Tenants.Admin.SubTenant` feature on all tenants.
 
 ```csharp
 public void ConfigureServices(IServiceCollection services) =>
-            services.AddOrchardCms(
-                builder =>
-                {
-                    builder.AddTenantFeatures("Lombiq.Hosting.Tenants.Admin.SubTenant");
-                });
+    services.AddOrchardCms(
+        builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Admin.Constants.FeatureNames.SubTenant));
 ```
 
-**_NOTE:_**  This way the feature will also be enabled in the Default tenant. Therefore, for greater security, the controller does not perform authentication on the Default tenant.
+**NOTE:**  This way the feature will also be enabled on the Default tenant. Therefore, for greater security, the controller does not perform anything on the Default tenant.
+
 
 ## Dependencies 
 
 This module has the following dependencies:
-- [Lombiq-Helpful-Libraries](https://github.com/Lombiq/Helpful-Libraries)
 
-
- 
+- [Lombiq Helpful Libraries for Orchard Core](https://github.com/Lombiq/Helpful-Libraries)

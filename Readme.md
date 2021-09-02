@@ -1,16 +1,18 @@
-# Lombiq Hosting Tenants
+# Lombiq Hosting - Tenants
 
 
 
 ## About
 
-Various libraries that help to build a multi-tenant web application in Orchard Core. 
+Various modules that help you build a multi-tenant web application in Orchard Core.
 
 
 ## Documentation
 
-The module consists of the following independent libraries (all in their own features):
-- [Lombiq Hosting Tenants - Admin](Lombiq.Hosting.Tenants.Admin/Readme.md)
+The project consists of the following independent modules:
+
+- [Lombiq Hosting - Tenants Admin](Lombiq.Hosting.Tenants.Admin/Readme.md)
+
 
 ## Contributing and support
 

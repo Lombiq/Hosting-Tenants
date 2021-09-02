@@ -51,11 +51,15 @@ namespace Lombiq.Hosting.Tenants.Admin.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Index(string password)
         {
+            if (_shellSettings.Name.EqualsOrdinalIgnoreCase(ShellHelper.DefaultShellName))
+            {
+                return NotFound();
+            }
+
             var defaultShell = await _shellHost.GetScopeAsync(ShellHelper.DefaultShellName);
             var tenantLoginPasswordValidator = defaultShell?.ServiceProvider.GetService<ITenantLoginPasswordValidator>();
 
             if (defaultShell == null ||
-                _shellSettings.Name.EqualsOrdinalIgnoreCase(ShellHelper.DefaultShellName) ||
                 tenantLoginPasswordValidator == null ||
                 !tenantLoginPasswordValidator.ValidatePassword(password))
             {

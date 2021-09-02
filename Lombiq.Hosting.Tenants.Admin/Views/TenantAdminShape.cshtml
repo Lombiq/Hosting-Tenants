@@ -3,9 +3,9 @@
 
 @{
     var host = ((string)Model.RequestUrlHost)
-            ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(host => host.Trim())
-            .FirstOrDefault();
+        ?.Split(',', StringSplitOptions.RemoveEmptyEntries)
+        .Select(host => host.Trim())
+        .FirstOrDefault();
 
     var hostString = host != null ? new HostString(host) : Context.Request.Host;
 
