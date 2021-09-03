@@ -18,7 +18,7 @@ This module contains two features:
 
 This feature is only available on the Default tenant. It provides a button on the tenant editor page. After clicking this button, you'll be logged to the selected tenant as an administrator and be redirected to its admin dashboard.
 
-![Tenant's editor page with Login as admin user button.](Docs/Attachments/Tenant'sEditorPageWithLoginAsAdminUserButton.png)
+![Tenant's editor page with Login as admin user button.](Docs/Attachments/TenantsEditorPageWithLoginAsAdminUserButton.png)
 
 **NOTE:**  Login will not be successful if the tenant has no user with the administrator role.
 
