@@ -14,16 +14,17 @@
         ? actionPath
         : '/' + Model.RequestUrlPrefix + actionPath;
 
-    var tenantLoginPath = new UriBuilder
+    var tenantLoginUri = new UriBuilder
     {
         Scheme = Context.Request.Scheme,
         Host = hostString.Host,
-        Port = hostString.Port == null ? 80 : hostString.Port.Value,
         Path = actionPathWithPrefix
     };
+
+    if (hostString.Port != null) tenantLoginUri.Port = hostString.Port.Value;
 }
 
-<form action="@tenantLoginPath" method="post" target="_blank">
+<form action="@tenantLoginUri" method="post" target="_blank">
     <input type="hidden" name="password" value="@tenantLoginPasswordProvider.Password">
     <input type="submit" class="btn btn-success" value=" @T["Login as admin user"]" />
 </form>
