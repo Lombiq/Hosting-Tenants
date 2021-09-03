@@ -1,15 +1,17 @@
-# Lombiq <add project name here>
+# Lombiq Hosting - Tenants
 
 
 
 ## About
 
-Add a general overview of the project here. Don't forget to update the year in the Licence!
+Various modules that help you build a multi-tenant web application in Orchard Core.
 
 
 ## Documentation
 
-Add detailed documentation here. If it's a lot of content then create documentation pages under the *Docs* folder and link pages here.
+The project consists of the following independent modules:
+
+- [Lombiq Hosting - Tenants Admin](Lombiq.Hosting.Tenants.Admin/Readme.md)
 
 
 ## Contributing and support
