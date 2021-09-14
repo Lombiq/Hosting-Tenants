@@ -1,4 +1,4 @@
-# Lombiq Hosting - Tenants Admin
+# Lombiq Hosting - Tenants Management
 
 
 
@@ -9,7 +9,7 @@ With the help of this module, you can set restrictions on tenant creation.
 
 ## Documentation
 
-With this module, you can specify a list of hostnames that cannot be used to create a tenant.  You can write the list of forbidden hostnames as a JSON array in the `appsettings.json` as follows:
+With this module, you can specify a list of host names that cannot be used to create a tenant.  You can write the list of forbidden host names as a JSON array in the `appsettings.json` as follows:
 
 ```json
 "OrchardCore": {

@@ -12,15 +12,13 @@ namespace Lombiq.Hosting.Tenants.Management
     {
         private readonly IShellConfiguration _shellConfiguration;
 
-        public Startup(IShellConfiguration shellConfiguration) =>
-            _shellConfiguration = shellConfiguration;
+        public Startup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
 
         public override void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ForbiddenTenantsOptions>(options =>
                 _shellConfiguration
-                    .GetSection("Lombiq_Hosting_Tenants_Management")
-                    .GetSection("Forbidden_Tenants_Options")
+                    .GetSection("Lombiq_Hosting_Tenants_Management:Forbidden_Tenants_Options")
                     .Bind(options));
 
             services.Configure<MvcOptions>(options =>
