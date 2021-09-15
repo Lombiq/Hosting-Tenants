@@ -2,7 +2,7 @@ using Lombiq.HelpfulLibraries.Libraries.Users;
 using OrchardCore.Security.Permissions;
 using System.Collections.Generic;
 
-namespace Lombiq.Hosting.Tenants.Admin.Permissions
+namespace Lombiq.Hosting.Tenants.Admin.Login.Permissions
 {
     public class TenantAdminPermissions : AdminPermissionBase
     {
