@@ -1,4 +1,4 @@
-namespace Lombiq.Hosting.Tenants.Admin.Services
+namespace Lombiq.Hosting.Tenants.Admin.Login.Services
 {
     /// <summary>
     /// Service for storing a randomly generated password that allows you to log in to tenants.

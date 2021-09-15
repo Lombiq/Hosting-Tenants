@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Http;
-@inject Lombiq.Hosting.Tenants.Admin.Services.ITenantLoginPasswordValidator tenantLoginPasswordProvider;
+@inject Lombiq.Hosting.Tenants.Admin.Login.Services.ITenantLoginPasswordValidator tenantLoginPasswordProvider;
 
 @{
     var host = ((string)Model.RequestUrlHost)
@@ -9,7 +9,7 @@
 
     var hostString = host != null ? new HostString(host) : Context.Request.Host;
 
-    var actionPath = $"/Lombiq.Hosting.Tenants.Admin/TenantLogin/Index";
+    var actionPath = $"/Lombiq.Hosting.Tenants.Admin.Login/TenantLogin/Index";
     var actionPathWithPrefix = string.IsNullOrEmpty(Model.RequestUrlPrefix)
         ? actionPath
         : '/' + Model.RequestUrlPrefix + actionPath;

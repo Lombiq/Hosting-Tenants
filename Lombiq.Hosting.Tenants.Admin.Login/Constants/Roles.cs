@@ -1,4 +1,4 @@
-namespace Lombiq.Hosting.Tenants.Admin.Constants
+namespace Lombiq.Hosting.Tenants.Admin.Login.Constants
 {
     public static class Roles
     {

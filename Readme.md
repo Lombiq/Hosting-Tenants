@@ -11,7 +11,7 @@ Various modules that help you build a multi-tenant web application in Orchard Co
 
 The project consists of the following independent modules:
 
-- [Lombiq Hosting - Tenants Admin](Lombiq.Hosting.Tenants.Admin/Readme.md)
+- [Lombiq Hosting - Tenants Admin Login](Lombiq.Hosting.Tenants.Admin.Login/Readme.md)
 - [Lombiq Hosting - Tenants Management](Lombiq.Hosting.Tenants.Management/Readme.md)
 
 

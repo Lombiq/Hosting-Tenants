@@ -1,4 +1,4 @@
-using Lombiq.Hosting.Tenants.Admin.Services;
+using Lombiq.Hosting.Tenants.Admin.Login.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -12,10 +12,10 @@ using OrchardCore.Users;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static Lombiq.Hosting.Tenants.Admin.Constants.FeatureNames;
-using static Lombiq.Hosting.Tenants.Admin.Constants.Roles;
+using static Lombiq.Hosting.Tenants.Admin.Login.Constants.FeatureNames;
+using static Lombiq.Hosting.Tenants.Admin.Login.Constants.Roles;
 
-namespace Lombiq.Hosting.Tenants.Admin.Controllers
+namespace Lombiq.Hosting.Tenants.Admin.Login.Controllers
 {
     [Feature(SubTenant)]
     public class TenantLoginController : Controller

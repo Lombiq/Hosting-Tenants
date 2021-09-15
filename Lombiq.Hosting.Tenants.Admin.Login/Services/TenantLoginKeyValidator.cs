@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Lombiq.Hosting.Tenants.Admin.Services
+namespace Lombiq.Hosting.Tenants.Admin.Login.Services
 {
     public class TenantLoginKeyValidator : ITenantLoginPasswordValidator
     {

@@ -1,4 +1,4 @@
-using Lombiq.Hosting.Tenants.Admin.Permissions;
+using Lombiq.Hosting.Tenants.Admin.Login.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +12,7 @@ using OrchardCore.Tenants.Controllers;
 using System;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Admin.Filters
+namespace Lombiq.Hosting.Tenants.Admin.Login.Filters
 {
     public class TenantsIndexFilter : IAsyncResultFilter
     {
