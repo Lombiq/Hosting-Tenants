@@ -13,14 +13,14 @@ With this module, you can specify a list of host names that cannot be used to cr
 
 ```json
 "OrchardCore": {
-    "Lombiq_Hosting_Tenants_Management": {
-      "Forbidden_Tenants_Options": {
-        "RequestUrlHosts": [
-          "forbidden.hostname1.net",
-          "forbidden.hostname2.net"
-        ]
-      }
-    }  
+  "Lombiq_Hosting_Tenants_Management": {
+    "Forbidden_Tenants_Options": {
+      "RequestUrlHosts": [
+        "forbidden.hostname1.net",
+        "forbidden.hostname2.net"
+      ]
+    }
+  }  
 }
 ```
 
