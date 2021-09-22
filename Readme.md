@@ -4,7 +4,9 @@
 
 ## About
 
-Various modules that help you build a multi-tenant web application in Orchard Core.
+Various modules that help you build a multi-tenant web application in Orchard Core. You can watch a demo video of the modules [here](https://www.youtube.com/watch?v=c9hemoYcjIM&lc=Ugy5jqNChriMx9mLBFN4AaABAg).
+
+Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
 
 
 ## Documentation
