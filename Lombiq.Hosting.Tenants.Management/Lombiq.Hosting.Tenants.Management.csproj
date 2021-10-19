@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="OrchardCore.AutoSetup" Version="1.0.0" />
     <PackageReference Include="OrchardCore.Module.Targets" Version="1.0.0" />
     <PackageReference Include="OrchardCore.Tenants" Version="1.0.0" />
   </ItemGroup>
