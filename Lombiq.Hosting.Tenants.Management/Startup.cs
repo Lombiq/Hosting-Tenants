@@ -12,7 +12,7 @@ using OrchardCore.Setup.Services;
 
 namespace Lombiq.Hosting.Tenants.Management
 {
-    [Feature(FeatureNames.ForbindenTenantName)]
+    [Feature(FeatureNames.ForbindenTenantNames)]
     public class AsdasdStartup : StartupBase
     {
         private readonly IShellConfiguration _shellConfiguration;

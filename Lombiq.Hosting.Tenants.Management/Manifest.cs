@@ -10,7 +10,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = ForbindenTenantName,
+    Id = ForbindenTenantNames,
     Name = "Lombiq Hosting - Tenants Management - Forbinden Tenant Names",
     Description = "Ability to configure hostnames that don't allow during tenant creation.",
     Category = "Hosting",

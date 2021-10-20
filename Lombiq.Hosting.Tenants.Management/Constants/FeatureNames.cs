@@ -4,7 +4,7 @@ namespace Lombiq.Hosting.Tenants.Management.Constants
     {
         public const string Module = "Lombiq.Hosting.Tenants.Management";
 
-        public const string ForbindenTenantName = Module + "." + nameof(ForbindenTenantName);
+        public const string ForbindenTenantNames = Module + "." + nameof(ForbindenTenantNames);
         public const string HideRecipesFromSetup = Module + "." + nameof(HideRecipesFromSetup);
     }
 }
