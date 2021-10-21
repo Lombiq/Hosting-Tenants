@@ -10,8 +10,8 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = ForbindenTenantNames,
-    Name = "Lombiq Hosting - Tenants Management - Forbinden Tenant Names",
+    Id = ForbiddenTenantNames,
+    Name = "Lombiq Hosting - Tenants Management - Forbidden Tenant Names",
     Description = "Ability to configure hostnames that don't allow during tenant creation.",
     Category = "Hosting",
     DefaultTenantOnly = true,
@@ -21,7 +21,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 [assembly: Feature(
     Id = HideRecipesFromSetup,
     Name = "Lombiq Hosting - Tenants Management - Hide Recipes From Setup",
-    Description = "Ability to configure recipe categories witch won't be available during tenant setup.",
+    Description = "Ability to configure recipe tags that won't be available during tenant setup.",
     Category = "Hosting",
     DefaultTenantOnly = true,
     Dependencies = new[] { "OrchardCore.Setup" }

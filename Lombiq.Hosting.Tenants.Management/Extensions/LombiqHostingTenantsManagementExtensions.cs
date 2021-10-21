@@ -1,6 +1,5 @@
 using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 namespace Lombiq.Hosting.Tenants.Management.Extensions
 {
@@ -11,6 +10,6 @@ namespace Lombiq.Hosting.Tenants.Management.Extensions
                 .AddSetupFeatures(HideRecipesFromSetup)
                 .ConfigureServices(services =>
                     services.Configure<HideRecipesFromSetupOptions>(settings =>
-                        settings.HiddenCategories = new List<string>(categories)));
+                        settings.HiddenCategories = categories));
     }
 }

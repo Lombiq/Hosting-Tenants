@@ -5,19 +5,18 @@ using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Setup.Services;
 
 namespace Lombiq.Hosting.Tenants.Management
 {
-    [Feature(FeatureNames.ForbindenTenantNames)]
-    public class AsdasdStartup : StartupBase
+    [Feature(FeatureNames.ForbiddenTenantNames)]
+    public class ForbiddenTenantNamesStartup : StartupBase
     {
         private readonly IShellConfiguration _shellConfiguration;
 
-        public AsdasdStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
+        public ForbiddenTenantNamesStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
 
         public override void ConfigureServices(IServiceCollection services)
         {
@@ -32,9 +31,9 @@ namespace Lombiq.Hosting.Tenants.Management
     }
 
     [Feature(FeatureNames.HideRecipesFromSetup)]
-    public class SetupStartup : StartupBase
+    public class HideRecipesFromSetupStartup : StartupBase
     {
         public override void ConfigureServices(IServiceCollection services) =>
-            services.Replace(ServiceDescriptor.Scoped<ISetupService, SetupWithRecipesFilterService>());
+            services.Decorate<ISetupService, SetupWithRecipesFilterService>();
     }
 }
