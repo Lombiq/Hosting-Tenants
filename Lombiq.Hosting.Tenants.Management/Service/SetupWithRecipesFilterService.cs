@@ -12,16 +12,16 @@ namespace Lombiq.Hosting.Tenants.Management.Service
 {
     public class SetupWithRecipesFilterService : ISetupService
     {
-        private readonly IOptions<HideRecipesFromSetupOptions> _hideRecipesFromSetupOptionsOptions;
+        private readonly IOptions<HideRecipesFromSetupOptions> _hideRecipesFromSetupOptions;
         private readonly ShellSettings _shellSettings;
         private readonly ISetupService _setupService;
 
         public SetupWithRecipesFilterService(
-            IOptions<HideRecipesFromSetupOptions> hideRecipesFromSetupOptionsOptions,
+            IOptions<HideRecipesFromSetupOptions> hideRecipesFromSetupOptions,
             ShellSettings shellSettings,
             ISetupService setupService)
         {
-            _hideRecipesFromSetupOptionsOptions = hideRecipesFromSetupOptionsOptions;
+            _hideRecipesFromSetupOptions = hideRecipesFromSetupOptions;
             _shellSettings = shellSettings;
             _setupService = setupService;
         }
@@ -31,17 +31,17 @@ namespace Lombiq.Hosting.Tenants.Management.Service
             var recipesDescriptors = await _setupService.GetSetupRecipesAsync();
 
             // The first case is when specify the tenant recipe name via the Default tenant admin UI or AutoSetup
-            // feature, the second case is necessary because the default tenant doesn't fill in RecepeName even if we use
-            // auto setup.
+            // feature, the second case is necessary because the default tenant doesn't fill in RecepeName even if we
+            // use auto setup.
             if (_shellSettings["RecipeName"] != null || _shellSettings.Name.EqualsOrdinalIgnoreCase("Default"))
             {
                 return recipesDescriptors;
             }
             else
             {
-                var hiddenCategories = _hideRecipesFromSetupOptionsOptions.Value.HiddenCategories;
+                var hiddenTags = _hideRecipesFromSetupOptions.Value.HiddenTags;
                 return recipesDescriptors
-                    .Where(recipe => !recipe.Categories.Any(category => hiddenCategories.Contains(category)));
+                    .Where(recipe => !recipe.Tags.Any(tag => hiddenTags.Contains(tag)));
             }
         }
 

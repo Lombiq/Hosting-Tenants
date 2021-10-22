@@ -35,12 +35,15 @@ With this module, you can specify a list of host names that cannot be used to cr
 
 With this module, you can specify tags for recipes that won't be listed on the setup screen of tenants. Recipes with those tags will still be available from the Default tenant admin UI and they'll also be available to be used via the `AutoSetup` feature.
 
-You can specify the recipe categories you want to hide using the `HideRecipesByCategoryFromSetup()` method in the web project's `ConfigureServices()`.
+By default you can use `"HiddenOnSetupScreen"` tag on the recipe to hide it or you can specify the recipe tags you want to hide using the `HideRecipesByTagsFromSetup()` method in the web project's `ConfigureServices()`.
 
 ```csharp
 public void ConfigureServices(IServiceCollection services) =>
-    services.AddOrchardCms(builder => builder.HideRecipesByCategoryFromSetup("hiddenCategory1", "hiddenCategory2"))
+    services.AddOrchardCms(builder => builder.HideRecipesByTagsFromSetup("hiddenTag1", "hiddenTag2"))
 ```
+
+**NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feautre. If you just want to use the default hide tag you can call the extension function without any parameter.
+
 
 ## Dependencies 
 

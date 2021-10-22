@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Setup.Services;
+using System.Linq;
+using static Lombiq.Hosting.Tenants.Management.Constants.DefaultValues;
 
 namespace Lombiq.Hosting.Tenants.Management
 {
@@ -33,7 +35,12 @@ namespace Lombiq.Hosting.Tenants.Management
     [Feature(FeatureNames.HideRecipesFromSetup)]
     public class HideRecipesFromSetupStartup : StartupBase
     {
-        public override void ConfigureServices(IServiceCollection services) =>
+        public override void ConfigureServices(IServiceCollection services)
+        {
+            services.Configure<HideRecipesFromSetupOptions>(
+                settings => settings.HiddenTags = settings.HiddenTags.Concat(new[] { HiddenOnSetupScreen }));
+
             services.Decorate<ISetupService, SetupWithRecipesFilterService>();
+        }
     }
 }
