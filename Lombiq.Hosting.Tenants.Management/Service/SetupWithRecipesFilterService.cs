@@ -30,8 +30,8 @@ namespace Lombiq.Hosting.Tenants.Management.Service
         {
             var recipesDescriptors = await _setupService.GetSetupRecipesAsync();
 
-            // The first case is when specify the tenant recipe name via the Default tenant admin UI or AutoSetup
-            // feature, the second case is necessary because the default tenant doesn't fill in RecepeName even if we
+            // The first case is when we specify the tenant recipe name via the Default tenant admin UI or AutoSetup
+            // feature, the second case is necessary because the Default tenant doesn't fill in RecipeName even if we
             // use auto setup.
             if (_shellSettings["RecipeName"] != null || _shellSettings.Name.EqualsOrdinalIgnoreCase("Default"))
             {
@@ -40,8 +40,7 @@ namespace Lombiq.Hosting.Tenants.Management.Service
             else
             {
                 var hiddenTags = _hideRecipesFromSetupOptions.Value.HiddenTags;
-                return recipesDescriptors
-                    .Where(recipe => !recipe.Tags.Any(tag => hiddenTags.Contains(tag)));
+                return recipesDescriptors.Where(recipe => !recipe.Tags.Any(tag => hiddenTags.Contains(tag)));
             }
         }
 
