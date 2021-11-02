@@ -33,9 +33,7 @@ namespace Lombiq.Hosting.Tenants.Management
     [Feature(FeatureNames.HideRecipesFromSetup)]
     public class HideRecipesFromSetupStartup : StartupBase
     {
-        public override void ConfigureServices(IServiceCollection services)
-        {
+        public override void ConfigureServices(IServiceCollection services) =>
             services.Decorate<ISetupService, SetupWithRecipesFilterService>();
-        }
     }
 }
