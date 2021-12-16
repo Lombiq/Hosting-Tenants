@@ -72,7 +72,7 @@ namespace Lombiq.Hosting.Tenants.Admin.Login.Controllers
 
             if (adminUser == null)
             {
-                _notifier.Error(H["No user with administrator role in this tenant."]);
+                await _notifier.ErrorAsync(H["No user with administrator role in this tenant."]);
                 return Redirect("~/");
             }
 
