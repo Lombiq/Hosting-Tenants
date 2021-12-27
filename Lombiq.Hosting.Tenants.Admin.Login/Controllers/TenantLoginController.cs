@@ -76,7 +76,7 @@ namespace Lombiq.Hosting.Tenants.Admin.Login.Controllers
                 return Redirect("~/");
             }
 
-            await _userSignInManager.SignInAsync(adminUser, false);
+            await _userSignInManager.SignInAsync(adminUser, isPersistent: false);
             _logger.LogInformation(1, "An admin user logged in from the Default tenant.");
 
             return RedirectToAction("Index", "Admin", new { area = "OrchardCore.Admin" });

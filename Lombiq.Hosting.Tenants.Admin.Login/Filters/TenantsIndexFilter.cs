@@ -42,8 +42,8 @@ namespace Lombiq.Hosting.Tenants.Admin.Login.Filters
             var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
             var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
 
-            if (actionRouteController == typeof(AdminController).ControllerName() &&
-                actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
+            if (actionRouteController.EqualsOrdinal(typeof(AdminController).ControllerName()) &&
+                actionRouteArea.EqualsOrdinal($"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}") &&
                 actionRouteValue is nameof(AdminController.Edit) &&
                 context.Result is ViewResult viewResult &&
                 await _authorizationService.AuthorizeAsync(

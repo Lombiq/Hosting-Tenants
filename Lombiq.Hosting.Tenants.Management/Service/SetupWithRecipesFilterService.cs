@@ -37,11 +37,9 @@ namespace Lombiq.Hosting.Tenants.Management.Service
             {
                 return recipesDescriptors;
             }
-            else
-            {
-                var hiddenTags = _hideRecipesFromSetupOptions.Value.HiddenTags;
-                return recipesDescriptors.Where(recipe => !recipe.Tags.Any(tag => hiddenTags.Contains(tag)));
-            }
+
+            var hiddenTags = _hideRecipesFromSetupOptions.Value.HiddenTags;
+            return recipesDescriptors.Where(recipe => !recipe.Tags.Any(tag => hiddenTags.Contains(tag)));
         }
 
         public Task<string> SetupAsync(SetupContext context) => _setupService.SetupAsync(context);
