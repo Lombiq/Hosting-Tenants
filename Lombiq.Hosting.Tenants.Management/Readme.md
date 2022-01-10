@@ -1,4 +1,4 @@
-# Lombiq Hosting - Tenants Management
+# Lombiq Hosting - Tenants Management for Orchard Core
 
 
 

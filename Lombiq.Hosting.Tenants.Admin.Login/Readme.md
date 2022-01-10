@@ -1,4 +1,4 @@
-# Lombiq Hosting - Tenants Admin Login
+# Lombiq Hosting - Tenants Admin Login for Orchard Core
 
 
 
