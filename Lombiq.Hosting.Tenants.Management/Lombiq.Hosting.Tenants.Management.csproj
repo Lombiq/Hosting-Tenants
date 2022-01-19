@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.2.1" />
-    <PackageReference Include="OrchardCore.Tenants" Version="1.2.1" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.2.2" />
+    <PackageReference Include="OrchardCore.Tenants" Version="1.2.2" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 
