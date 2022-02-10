@@ -2,6 +2,9 @@
 
 
 
+[![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
+
+
 ## About
 
 With the help of this module, you can set restrictions on tenant creation.
