@@ -2,6 +2,11 @@
 
 
 
+[![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/)
+
+[![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
+
+
 ## About
 
 Various modules that help you build a multi-tenant web application in [Orchard Core](https://orchardcore.net/). You can watch a demo video of the modules [here](https://www.youtube.com/watch?v=c9hemoYcjIM&lc=Ugy5jqNChriMx9mLBFN4AaABAg).

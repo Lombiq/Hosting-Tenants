@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Admin.Login", "Lombiq.Hosting.Tenants.Admin.Login\Lombiq.Hosting.Tenants.Admin.Login.csproj", "{B08BD764-C63F-4A56-9B61-3EB690BC1730}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Management", "Lombiq.Hosting.Tenants.Management\Lombiq.Hosting.Tenants.Management.csproj", "{0EEA3C03-E945-423B-A099-844942D90BAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B08BD764-C63F-4A56-9B61-3EB690BC1730}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B08BD764-C63F-4A56-9B61-3EB690BC1730}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B08BD764-C63F-4A56-9B61-3EB690BC1730}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B08BD764-C63F-4A56-9B61-3EB690BC1730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EEA3C03-E945-423B-A099-844942D90BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EEA3C03-E945-423B-A099-844942D90BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90B82673-1604-4EEE-B74E-11AE2B4AD8D3}
+	EndGlobalSection
+EndGlobal

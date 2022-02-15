@@ -2,6 +2,9 @@
 
 
 
+[![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/)
+
+
 ## About
 
 With the help of this module, you can log in from the Default tenant's admin dashboard to any other tenants as an administrator user. This is useful if you manage a lot of customer tenants and don't want to create individual logins of yours for each of them.
