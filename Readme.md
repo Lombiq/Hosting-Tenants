@@ -3,7 +3,6 @@
 
 
 [![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/)
-
 [![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
 
 
