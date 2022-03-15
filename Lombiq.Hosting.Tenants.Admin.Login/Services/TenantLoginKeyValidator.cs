@@ -19,8 +19,9 @@ namespace Lombiq.Hosting.Tenants.Admin.Login.Services
             using var random = RandomNumberGenerator.Create();
             byte[] uintBuffer = new byte[sizeof(uint)];
 
-            while (length-- > 0)
+            while (length > 0)
             {
+                length--;
                 random.GetBytes(uintBuffer);
                 uint randomNumber = BitConverter.ToUInt32(uintBuffer, 0);
                 stringBuilder.Append(validCharacters[(int)(randomNumber % (uint)validCharacters.Length)]);
