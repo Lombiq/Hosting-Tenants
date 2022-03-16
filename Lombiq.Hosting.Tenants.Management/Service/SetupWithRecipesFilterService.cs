@@ -31,8 +31,8 @@ public class SetupWithRecipesFilterService : ISetupService
         var recipesDescriptors = await _setupService.GetSetupRecipesAsync();
 
         // The first case is when we specify the tenant recipe name via the Default tenant admin UI or AutoSetup
-        // feature, the second case is necessary because the Default tenant doesn't fill in RecipeName even if we
-        // use auto setup.
+        // feature, the second case is necessary because the Default tenant doesn't fill in RecipeName even if we use
+        // auto setup.
         if (_shellSettings["RecipeName"] != null || _shellSettings.Name.EqualsOrdinalIgnoreCase("Default"))
         {
             return recipesDescriptors;
