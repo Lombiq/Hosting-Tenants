@@ -9,31 +9,30 @@ using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Setup.Services;
 
-namespace Lombiq.Hosting.Tenants.Management
+namespace Lombiq.Hosting.Tenants.Management;
+
+[Feature(FeatureNames.ForbiddenTenantNames)]
+public class ForbiddenTenantNamesStartup : StartupBase
 {
-    [Feature(FeatureNames.ForbiddenTenantNames)]
-    public class ForbiddenTenantNamesStartup : StartupBase
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public ForbiddenTenantNamesStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
+
+    public override void ConfigureServices(IServiceCollection services)
     {
-        private readonly IShellConfiguration _shellConfiguration;
+        services.Configure<ForbiddenTenantsOptions>(options =>
+            _shellConfiguration
+                .GetSection("Lombiq_Hosting_Tenants_Management:Forbidden_Tenants_Options")
+                .Bind(options));
 
-        public ForbiddenTenantNamesStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
-
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            services.Configure<ForbiddenTenantsOptions>(options =>
-                _shellConfiguration
-                    .GetSection("Lombiq_Hosting_Tenants_Management:Forbidden_Tenants_Options")
-                    .Bind(options));
-
-            services.Configure<MvcOptions>(options =>
-                options.Filters.Add(typeof(ForbiddenTenantsFilter)));
-        }
+        services.Configure<MvcOptions>(options =>
+            options.Filters.Add(typeof(ForbiddenTenantsFilter)));
     }
+}
 
-    [Feature(FeatureNames.HideRecipesFromSetup)]
-    public class HideRecipesFromSetupStartup : StartupBase
-    {
-        public override void ConfigureServices(IServiceCollection services) =>
-            services.Decorate<ISetupService, SetupWithRecipesFilterService>();
-    }
+[Feature(FeatureNames.HideRecipesFromSetup)]
+public class HideRecipesFromSetupStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services) =>
+        services.Decorate<ISetupService, SetupWithRecipesFilterService>();
 }
