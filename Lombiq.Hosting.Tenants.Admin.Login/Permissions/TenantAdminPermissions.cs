@@ -1,4 +1,4 @@
-using Lombiq.HelpfulLibraries.Libraries.Users;
+using Lombiq.HelpfulLibraries.OrchardCore.Users;
 using OrchardCore.Security.Permissions;
 using System.Collections.Generic;
 
