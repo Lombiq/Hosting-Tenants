@@ -5,7 +5,7 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Admin Login ",
     Author = "Lombiq Technologies",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
-    Version = "2.0.0"
+    Version = "2.0.1"
 )]
 
 [assembly: Feature(
