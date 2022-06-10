@@ -24,7 +24,3 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.FeatureNames;
     Category = "Hosting",
     IsAlwaysEnabled = true
 )]
-
-
-
-

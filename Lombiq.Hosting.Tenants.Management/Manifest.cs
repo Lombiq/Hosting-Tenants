@@ -26,7 +26,3 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { "OrchardCore.Setup" }
 )]
-
-
-
-
