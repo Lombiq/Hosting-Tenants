@@ -5,7 +5,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Management",
     Author = "Lombiq Technologies",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
-    Version = "2.0.1",
+    Version = "0.0.1",
     Description = "Manage restrictions on tenant creation."
 )]
 
