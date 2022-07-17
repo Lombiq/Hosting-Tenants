@@ -1,21 +1,17 @@
 # Lombiq Hosting - Tenants Management for Orchard Core
 
-
-
 [![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
-
 
 ## About
 
 With the help of this module, you can set restrictions on tenant creation.
 
-
 ## Documentation
 
 This module contains two features:
+
 - `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
 - `Lombiq.Hosting.Tenants.Management.HideRecipesFromSetup`
-
 
 ### `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
 
@@ -47,8 +43,7 @@ public void ConfigureServices(IServiceCollection services) =>
 
 **NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default hide tag you can call the extension function without any parameter.
 
-
-## Dependencies 
+## Dependencies
 
 This module has the following dependencies:
 

@@ -1,10 +1,7 @@
 # Lombiq Hosting - Tenants for Orchard Core
 
-
-
 [![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/)
 [![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
-
 
 ## About
 
@@ -12,14 +9,12 @@ Various modules that help you build a multi-tenant web application in [Orchard C
 
 Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
 
-
 ## Documentation
 
 The project consists of the following independent modules:
 
 - [Lombiq Hosting - Tenants Admin Login](Lombiq.Hosting.Tenants.Admin.Login/Readme.md)
 - [Lombiq Hosting - Tenants Management](Lombiq.Hosting.Tenants.Management/Readme.md)
-
 
 ## Contributing and support
 
