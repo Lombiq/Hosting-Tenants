@@ -40,11 +40,7 @@
     <PackageReference Include="OrchardCore.Users" Version="1.4.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+  <ItemGroup>
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="4.5.0" />
   </ItemGroup>
 
