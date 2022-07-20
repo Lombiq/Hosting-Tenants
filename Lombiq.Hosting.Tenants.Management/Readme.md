@@ -15,7 +15,7 @@ This module contains two features:
 
 ### `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
 
-With this module, you can specify a list of host names that cannot be used to create a tenant.  You can write the list of forbidden host names as a JSON array in the `appsettings.json` as follows:
+With this module, you can specify a list of host names that cannot be used to create a tenant. You can write the list of forbidden host names as a JSON array in the `appsettings.json` as follows:
 
 ```json
 "OrchardCore": {
