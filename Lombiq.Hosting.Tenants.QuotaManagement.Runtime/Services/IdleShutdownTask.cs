@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿using Microsoft.Extensions.Logging;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
@@ -6,6 +6,7 @@ using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
 
+[BackgroundTask(Schedule = "* * * * *", Description = "Disable Idle Tenants.")]
 public class IdleShutdownTask : IBackgroundTask
 {
     private readonly IClock _clock;
@@ -13,23 +14,22 @@ public class IdleShutdownTask : IBackgroundTask
     private readonly ILastActiveTimeAccessor _lastActiveTimeAccessor;
     private readonly IShellSettingsManager _shellSettingsManager;
     private readonly IShellHost _shellHost;
-    
-    public ILogger Logger { get; set; }
+    private readonly ILogger<IdleShutdownTask> _logger;
 
     public IdleShutdownTask(
         IClock clock,
         ShellSettings shellSettings,
         ILastActiveTimeAccessor lastActiveTimeAccessor,
         IShellSettingsManager shellSettingsManager,
-        IShellHost shellHost)
+        IShellHost shellHost,
+        ILogger<IdleShutdownTask> logger)
     {
         _clock = clock;
         _shellSettings = shellSettings;
         _lastActiveTimeAccessor = lastActiveTimeAccessor;
         _shellSettingsManager = shellSettingsManager;
         _shellHost = shellHost;
-
-        Logger = Logger.Factory.CreateNullLogger();
+        _logger = logger;
     }
 
     public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
@@ -40,7 +40,7 @@ public class IdleShutdownTask : IBackgroundTask
 
         if (_lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= _clock.UtcNow)
         {
-            Logger.Info($"Shutting down tenant \"{_shellSettings.Name}\" because of idle timeout.");
+            _logger.LogInformation("Shutting down tenant \"{0}\" because of idle timeout.", _shellSettings.Name);
 
             try
             {
@@ -48,9 +48,9 @@ public class IdleShutdownTask : IBackgroundTask
             }
             catch (Exception e)
             {
-                Logger.Error(
+                _logger.LogError(
                     e,
-                    $"Shutting down \"{_shellSettings.Name}\" because of idle timeout failed with the following exception. Another shutdown will be attempted.");
+                    "Shutting down \"{0}\" because of idle timeout failed with the following exception. Another shutdown will be attempted.", _shellSettings.Name);
 
                 // If the ShellContext.Dispose() fails (which can happen with a DB error: then the transaction 
                 // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is 
@@ -69,7 +69,7 @@ public class IdleShutdownTask : IBackgroundTask
     private void InvokeShutdown()
     {
         _shellSettings.State = TenantState.Disabled;
-        InvokeRestart();
+        _shellHost.ReleaseShellContextAsync(_shellSettings);
     }
     
     private void InvokeRestart()
