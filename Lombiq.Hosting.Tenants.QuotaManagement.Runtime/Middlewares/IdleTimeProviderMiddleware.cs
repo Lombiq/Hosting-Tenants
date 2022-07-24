@@ -9,10 +9,10 @@ public class IdleTimeProviderMiddleware
 
     public IdleTimeProviderMiddleware(RequestDelegate next) => _next = next;
 
-    public async Task InvokeAsync(HttpContext context, ILastActiveTimeAccessor lastActiveTimeAccessor )
+    public Task InvokeAsync(HttpContext context, ILastActiveTimeAccessor lastActiveTimeAccessor )
     {
         lastActiveTimeAccessor.Update();
-        
-        await _next(context);
+
+        return _next(context);
     }
 }
