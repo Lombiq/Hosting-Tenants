@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Extensions;
+using Microsoft.Extensions.Logging;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
@@ -34,7 +35,7 @@ public class IdleShutdownTask : IBackgroundTask
 
     public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var maxIdleMinutes = 9999999;
+        var maxIdleMinutes = _shellSettings.RuntimeQuotaSettings().MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return Task.CompletedTask;
 
@@ -50,10 +51,11 @@ public class IdleShutdownTask : IBackgroundTask
             {
                 _logger.LogError(
                     e,
-                    "Shutting down \"{0}\" because of idle timeout failed with the following exception. Another shutdown will be attempted.", _shellSettings.Name);
+                    "Shutting down \"{0}\" because of idle timeout failed with the following exception. Another shutdown will be attempted.",
+                    _shellSettings.Name);
 
-                // If the ShellContext.Dispose() fails (which can happen with a DB error: then the transaction 
-                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is 
+                // If the ShellContext.Dispose() fails (which can happen with a DB error: then the transaction
+                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is
                 // still active in a failed state. So first we need to correctly start the tenant, then shut it
                 // down for good.
 
@@ -62,16 +64,16 @@ public class IdleShutdownTask : IBackgroundTask
                 InvokeShutdown();
             }
         }
-        
+
         return Task.CompletedTask;
     }
-    
+
     private void InvokeShutdown()
     {
         _shellSettings.State = TenantState.Disabled;
         _shellHost.ReleaseShellContextAsync(_shellSettings);
     }
-    
+
     private void InvokeRestart()
     {
         _shellSettingsManager.SaveSettingsAsync(_shellSettings);
