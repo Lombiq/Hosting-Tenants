@@ -1,0 +1,25 @@
+{
+  "name": "AlwaysOnFeatures",
+  "displayName": "DotNest Tenants Core - Always On Features",
+  "description": "Setup recipe for the Always On Featuress of DotNest Tenants Core.",
+  "author": "Lombiq Technologies",
+  "website": "https://dotnest.com/",
+  "version": "2.0",
+  "issetuprecipe": true,
+  "categories": [ "developer" ],
+  "tags": [ "dotnest", "AlwaysOnFeatures" ],
+
+  "steps": [
+    {
+      "name": "Feature",
+      "enable": [
+        "Lombiq.Hosting.Tenants.Admin.Login",
+        "DotNest.TenantsAdmin.Subtenant",
+        "DotNest.Hosting.Tenants",
+        "OrchardCore.Roles",
+        "OrchardCore.Users"
+      ]
+    }
+  ]
+}
+
