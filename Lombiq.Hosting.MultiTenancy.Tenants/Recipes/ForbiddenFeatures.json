@@ -1,0 +1,25 @@
+{
+  "name": "ForbiddenFeatures",
+  "displayName": "DotNest Tenants Core - Forbidden Features",
+  "description": "Setup recipe for the forbidden features of DotNest Tenants Core.",
+  "author": "Lombiq Technologies",
+  "website": "https://dotnest.com/",
+  "version": "2.0",
+  "issetuprecipe": true,
+  "categories": [ "developer" ],
+  "tags": [ "dotnest", "ForbiddenFeatures" ],
+
+  "steps": [
+    {
+      "name": "Feature",
+      "enable": [
+        "OrchardCore.Workflows.Session",
+        "OrchardCore.Contents.FileContentDefinition",
+        "OrchardCore.Lucene",
+        "OrchardCore.MiniProfiler",
+        "Lombiq.Tests.UI.Shortcuts"
+      ]
+    }
+  ]
+}
+
