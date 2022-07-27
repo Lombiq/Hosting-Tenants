@@ -11,15 +11,14 @@ using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime;
 
-public class QuotaManagementBaseStartup : StartupBase
-{
-    public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider) =>
-        app.UseMiddleware<IdleTimeProviderMiddleware>();
-}
-
 [Feature(FeatureNames.DisableIdleTenants)]
 public class DisableIdleTenantsStartup : StartupBase
 {
+    public override void Configure(
+        IApplicationBuilder app,
+        IEndpointRouteBuilder routes,
+        IServiceProvider serviceProvider) =>
+            app.UseMiddleware<IdleTimeProviderMiddleware>();
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Configure<MvcOptions>(options =>
