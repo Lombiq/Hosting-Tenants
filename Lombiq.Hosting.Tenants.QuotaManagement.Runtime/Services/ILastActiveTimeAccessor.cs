@@ -15,7 +15,7 @@ public class LastActiveTimeAccessor : ILastActiveTimeAccessor
 
     public DateTime LastActiveDateTimeUtc
     {
-        get => new DateTime(Interlocked.CompareExchange(ref _lastActiveDateTimeUtcTicks, 0, 0));
+        get => new(Interlocked.CompareExchange(ref _lastActiveDateTimeUtcTicks, 0, 0));
         private set => Interlocked.Exchange(ref _lastActiveDateTimeUtcTicks, value.Ticks);
     }
 
