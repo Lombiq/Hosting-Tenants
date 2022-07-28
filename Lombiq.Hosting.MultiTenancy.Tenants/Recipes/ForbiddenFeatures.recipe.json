@@ -12,9 +12,8 @@
   "steps": [
     {
       "name": "Feature",
-      "enable": [
+      "disable": [
         "OrchardCore.Workflows.Session",
-        "OrchardCore.Contents.FileContentDefinition",
         "OrchardCore.Lucene",
         "OrchardCore.MiniProfiler",
         "Lombiq.Tests.UI.Shortcuts"
