@@ -1,9 +1,7 @@
 ﻿using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Constants;
-using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Filters;
 using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Middlewares;
 using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.BackgroundTasks;
@@ -19,11 +17,7 @@ public class DisableIdleTenantsStartup : StartupBase
         IEndpointRouteBuilder routes,
         IServiceProvider serviceProvider) =>
             app.UseMiddleware<IdleTimeProviderMiddleware>();
-    public override void ConfigureServices(IServiceCollection services)
-    {
-        services.Configure<MvcOptions>(options =>
-            options.Filters.Add(typeof(LastActiveTimeUpdaterActionFilter)));
-
+    
+    public override void ConfigureServices(IServiceCollection services) =>
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
-    }
 }
