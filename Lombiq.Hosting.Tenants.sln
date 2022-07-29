@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Admi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Management", "Lombiq.Hosting.Tenants.Management\Lombiq.Hosting.Tenants.Management.csproj", "{0EEA3C03-E945-423B-A099-844942D90BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.QuotaManagement.Runtime", "Lombiq.Hosting.Tenants.QuotaManagement.Runtime\Lombiq.Hosting.Tenants.QuotaManagement.Runtime.csproj", "{542098D7-528D-44C6-8941-E9C2CFFD4513}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.IdleTenantManagement", "Lombiq.Hosting.Tenants.IdleTenantManagement\Lombiq.Hosting.Tenants.IdleTenantManagement.csproj", "{6EF2D7B3-AF9E-4A83-B846-AC2126C7FB3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{542098D7-528D-44C6-8941-E9C2CFFD4513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{542098D7-528D-44C6-8941-E9C2CFFD4513}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{542098D7-528D-44C6-8941-E9C2CFFD4513}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{542098D7-528D-44C6-8941-E9C2CFFD4513}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EF2D7B3-AF9E-4A83-B846-AC2126C7FB3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EF2D7B3-AF9E-4A83-B846-AC2126C7FB3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EF2D7B3-AF9E-4A83-B846-AC2126C7FB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EF2D7B3-AF9E-4A83-B846-AC2126C7FB3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

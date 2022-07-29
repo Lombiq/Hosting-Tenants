@@ -2,7 +2,6 @@ using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Filters;
 using Lombiq.Hosting.Tenants.Management.Service;
 using Lombiq.Hosting.Tenants.Management.Settings;
-using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
