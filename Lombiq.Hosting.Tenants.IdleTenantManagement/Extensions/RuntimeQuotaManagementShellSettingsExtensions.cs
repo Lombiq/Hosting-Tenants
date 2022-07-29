@@ -18,10 +18,7 @@ public class RuntimeQuotaShellSettings
     /// </summary>
     public long MaxIdleMinutes
     {
-        get =>
-            long.Parse(
-                _shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] ?? "-1",
-                CultureInfo.CurrentCulture.NumberFormat);
+        get => 1;
         set => _shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] =
             value.ToString(CultureInfo.CurrentCulture.NumberFormat);
     }
