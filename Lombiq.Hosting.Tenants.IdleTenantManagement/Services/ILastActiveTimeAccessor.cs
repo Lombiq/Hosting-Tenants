@@ -2,9 +2,20 @@
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
+/// <summary>
+/// Service to determine when the last request was initiated. If a request is sent the service will automatically update
+/// the last active date time.
+/// </summary>
 public interface ILastActiveTimeAccessor
 {
+    /// <summary>
+    /// Gets the last DateTime when a request was sent to the application.
+    /// </summary>
     DateTime LastActiveDateTimeUtc { get; }
+
+    /// <summary>
+    /// Updates the LastActiveDateTimeUtc to the latest request's time.
+    /// </summary>
     void Update();
 }
 
