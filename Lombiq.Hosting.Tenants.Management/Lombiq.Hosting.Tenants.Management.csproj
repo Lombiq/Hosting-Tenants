@@ -44,8 +44,4 @@
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Lombiq.Hosting.Tenants.QuotaManagement.Runtime\Lombiq.Hosting.Tenants.QuotaManagement.Runtime.csproj" />
-  </ItemGroup>
-
 </Project>

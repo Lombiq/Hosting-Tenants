@@ -5,7 +5,6 @@ using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Setup.Services;
