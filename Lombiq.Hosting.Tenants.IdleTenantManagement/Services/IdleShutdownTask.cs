@@ -33,11 +33,11 @@ public class IdleShutdownTask : IBackgroundTask
         _logger = logger;
     }
 
-    public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var maxIdleMinutes = _shellSettings.RuntimeQuotaSettings().MaxIdleMinutes;
 
-        if (maxIdleMinutes <= 0) return Task.CompletedTask;
+        if (maxIdleMinutes <= 0) return;
 
         if (_lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= _clock.UtcNow)
         {
@@ -45,7 +45,7 @@ public class IdleShutdownTask : IBackgroundTask
 
             try
             {
-                InvokeShutdown();
+                await InvokeShutdownAsync();
             }
             catch (Exception e)
             {
@@ -60,23 +60,21 @@ public class IdleShutdownTask : IBackgroundTask
                 // down for good.
 
                 _shellSettings.State = TenantState.Running;
-                InvokeRestart();
-                InvokeShutdown();
+                await InvokeRestartAsync();
+                await InvokeShutdownAsync();
             }
         }
-
-        return Task.CompletedTask;
     }
 
-    private void InvokeShutdown()
+    private Task InvokeShutdownAsync()
     {
         _shellSettings.State = TenantState.Disabled;
-        _shellHost.ReleaseShellContextAsync(_shellSettings);
+        return _shellHost.ReleaseShellContextAsync(_shellSettings);
     }
 
-    private void InvokeRestart()
+    private async Task InvokeRestartAsync()
     {
-        _shellSettingsManager.SaveSettingsAsync(_shellSettings);
-        _shellHost.UpdateShellSettingsAsync(_shellSettings);
+        await _shellSettingsManager.SaveSettingsAsync(_shellSettings);
+        await _shellHost.UpdateShellSettingsAsync(_shellSettings);
     }
 }
