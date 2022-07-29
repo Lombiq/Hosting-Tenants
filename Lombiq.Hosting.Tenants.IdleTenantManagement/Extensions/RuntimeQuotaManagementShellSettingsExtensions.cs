@@ -1,4 +1,5 @@
 ﻿using OrchardCore.Environment.Shell;
+using System.Globalization;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Extensions;
 
@@ -17,8 +18,12 @@ public class RuntimeQuotaShellSettings
     /// </summary>
     public long MaxIdleMinutes
     {
-        get => long.Parse(_shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] ?? "-1");
-        set => _shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] = value.ToString();
+        get =>
+            long.Parse(
+                _shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] ?? "-1",
+                CultureInfo.CurrentCulture.NumberFormat);
+        set => _shellSettings["Lombiq.Hosting.Tenants.IdleTenantManagement.MaxIdleMinutes"] =
+            value.ToString(CultureInfo.CurrentCulture.NumberFormat);
     }
 
     public RuntimeQuotaShellSettings(ShellSettings shellSettings) =>
