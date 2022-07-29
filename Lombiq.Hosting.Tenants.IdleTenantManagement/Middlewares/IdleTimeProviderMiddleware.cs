@@ -1,7 +1,7 @@
-﻿using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
+﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Middlewares;
+namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
 
 public class IdleTimeProviderMiddleware
 {

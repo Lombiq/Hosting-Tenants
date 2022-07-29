@@ -1,5 +1,5 @@
 ﻿using OrchardCore.Modules.Manifest;
-using static Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Constants.FeatureNames;
+using static Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames;
 
 [assembly: Module(
     Name = "Lombiq Hosting - Idle Tenant Management",
@@ -13,7 +13,6 @@ using static Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Constants.FeatureNam
     Id = DisableIdleTenants,
     Name = "Lombiq Hosting - Idle Tenant Management - Disable Idle Tenants",
     Category = "Hosting",
-    DefaultTenantOnly = true,
     Priority = "9999",
     Dependencies = new[] { "OrchardCore.Tenants" }
 )]

@@ -1,6 +1,6 @@
 ﻿using OrchardCore.Modules;
 
-namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
+namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
 public interface ILastActiveTimeAccessor
 {

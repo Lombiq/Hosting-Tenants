@@ -1,8 +1,8 @@
-﻿namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Constants;
+﻿namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
 
-public class FeatureNames
+public static class FeatureNames
 {
-    public const string Module = "Lombiq.Hosting.Tenants.IdleTenantManagement";
+    private const string Module = "Lombiq.Hosting.Tenants.IdleTenantManagement";
     
     public const string DisableIdleTenants = Module + "." + nameof(DisableIdleTenants);
 }

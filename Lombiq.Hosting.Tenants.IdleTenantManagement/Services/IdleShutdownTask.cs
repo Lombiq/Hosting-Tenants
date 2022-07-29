@@ -1,11 +1,11 @@
-﻿using Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Extensions;
+﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Extensions;
 using Microsoft.Extensions.Logging;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
 
-namespace Lombiq.Hosting.Tenants.QuotaManagement.Runtime.Services;
+namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
 [BackgroundTask(Schedule = "* * * * *", Description = "Disable Idle Tenants.")]
 public class IdleShutdownTask : IBackgroundTask
