@@ -13,5 +13,7 @@ using static Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames;
     Id = DisableIdleTenants,
     Name = "Lombiq Hosting - Idle Tenant Management - Disable Idle Tenants",
     Category = "Hosting",
-    Priority = "9999"
+    Priority = "9999",
+    IsAlwaysEnabled = true,
+    Dependencies = new[] { "OrchardCore.BackgroundTasks" }
 )]
