@@ -14,7 +14,7 @@ public class IdleMinutesSettingsConfiguration : IConfigureOptions<IdleMinutesSet
 
     public void Configure(IdleMinutesSettings options)
     {
-        if (options.MaxIdleMinutes <= 0) return;
+        if (options.MaxIdleMinutes == null) return;
 
         var settings = _siteService.GetSiteSettingsAsync()
             .GetAwaiter()

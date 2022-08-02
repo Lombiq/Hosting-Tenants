@@ -7,7 +7,6 @@ using OrchardCore.DisplayManagement.Entities;
 using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.DisplayManagement.Views;
 using OrchardCore.Settings;
-using System.Globalization;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Drivers;
 
@@ -34,7 +33,7 @@ public class IdleMinutesSettingsDisplayDriver : SectionDisplayDriver<ISite, Idle
         return Initialize<IdleMinutesSettingsViewModel>(
                 $"{nameof(IdleMinutesSettings)}_Edit",
                 viewModel =>
-                    viewModel.MaxIdleMinutes = section.MaxIdleMinutes.ToString(CultureInfo.InvariantCulture.NumberFormat))
+                    viewModel.MaxIdleMinutes = section.MaxIdleMinutes)
             .PlaceInContent(1)
             .OnGroup(nameof(IdleMinutesSettings));
     }
@@ -52,7 +51,7 @@ public class IdleMinutesSettingsDisplayDriver : SectionDisplayDriver<ISite, Idle
 
             await context.Updater.TryUpdateModelAsync(viewModel, Prefix);
 
-            section.MaxIdleMinutes = long.Parse(viewModel.MaxIdleMinutes, CultureInfo.InvariantCulture.NumberFormat);
+            section.MaxIdleMinutes = viewModel.MaxIdleMinutes;
         }
 
         return await EditAsync(section, context);

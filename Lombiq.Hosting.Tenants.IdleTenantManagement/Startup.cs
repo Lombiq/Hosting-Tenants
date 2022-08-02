@@ -41,9 +41,9 @@ public class DisableIdleTenantsStartup : StartupBase
         // Idle Minutes Settings
         services.Configure<IdleMinutesSettings>(
             _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement"));
-        services.AddScoped<IPermissionProvider, IdleMinutesPermissions>();
-        services.AddScoped<INavigationProvider, IdleMinutesSettingsAdminMenu>();
         services.AddTransient<IConfigureOptions<IdleMinutesSettings>, IdleMinutesSettingsConfiguration>();
         services.AddScoped<IDisplayDriver<ISite>, IdleMinutesSettingsDisplayDriver>();
+        services.AddScoped<IPermissionProvider, IdleMinutesPermissions>();
+        services.AddScoped<INavigationProvider, IdleMinutesSettingsAdminMenu>();
     }
 }
