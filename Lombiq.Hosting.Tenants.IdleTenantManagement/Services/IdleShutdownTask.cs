@@ -7,7 +7,6 @@ using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
 using OrchardCore.Settings;
-using System.Globalization;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
@@ -26,7 +25,7 @@ public class IdleShutdownTask : IBackgroundTask
 
         var maxIdleMinutesSettings = (await siteService.GetSiteSettingsAsync()).As<IdleMinutesSettings>();
 
-        var maxIdleMinutes = long.Parse(maxIdleMinutesSettings.MaxIdleMinutes, CultureInfo.InvariantCulture.NumberFormat);
+        var maxIdleMinutes = maxIdleMinutesSettings.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return;
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
@@ -20,19 +21,33 @@ public class IdleTimeProviderMiddleware
     }
 }
 
-public class Midulver
+public class IdleTenantEnabler
 {
     private readonly RequestDelegate _next;
-    private readonly ShellSettings _shellSettings;
+    private readonly IRunningShellTable _runningShellTable;
+    private readonly IShellHost _shellHost;
 
-    public Midulver(RequestDelegate next, ShellSettings shellSettings)
+    public IdleTenantEnabler(
+        RequestDelegate next,
+        IRunningShellTable runningShellTable,
+        IShellHost shellHost)
     {
-        _shellSettings = shellSettings;
+        _shellHost = shellHost;
+        _runningShellTable = runningShellTable;
         _next = next;
     }
 
-    public Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
-        return _next(context);
+        var httpRequest = context.Request;
+        var shellSettings = _runningShellTable.Match(httpRequest.Host, httpRequest.Path);
+
+        if (shellSettings?.State == TenantState.Disabled)
+        {
+            shellSettings.State = TenantState.Running;
+            await _shellHost.UpdateShellSettingsAsync(shellSettings);
+        }
+
+        await _next(context);
     }
 }

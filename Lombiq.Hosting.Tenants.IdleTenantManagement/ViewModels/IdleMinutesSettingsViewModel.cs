@@ -2,5 +2,5 @@
 
 public class IdleMinutesSettingsViewModel
 {
-    public string MaxIdleMinutes { get; set; }
+    public int MaxIdleMinutes { get; set; }
 }

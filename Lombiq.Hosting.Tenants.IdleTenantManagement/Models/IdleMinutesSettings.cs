@@ -2,5 +2,5 @@
 
 public class IdleMinutesSettings
 {
-    public string MaxIdleMinutes { get; set; }
+    public int MaxIdleMinutes { get; set; }
 }

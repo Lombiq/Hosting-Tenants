@@ -4,7 +4,7 @@
 
 <fieldset class="form-group" asp-validation-class-for="MaxIdleMinutes">
     <label asp-for="MaxIdleMinutes">@T["Maximum idle minutes"]</label>
-    <input asp-for="MaxIdleMinutes" class="form-control" type="text" />
+    <input asp-for="MaxIdleMinutes" class="form-control" type="number" />
     <span asp-validation-for="MaxIdleMinutes"></span>
     <span class="hint">
         @T["Maximum amount of time in minutes that can be elapsed prior to shutdown due to inactivity"]
