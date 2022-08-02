@@ -41,11 +41,22 @@ public class IdleTenantEnabler
     {
         var httpRequest = context.Request;
         var shellSettings = _runningShellTable.Match(httpRequest.Host, httpRequest.Path);
+        var prefix = httpRequest.Path.ToString().Trim('/');
+
+        var settings = _shellHost
+            .GetAllSettings()
+            .SingleOrDefault(shell => shell.RequestUrlPrefix == prefix);
 
         if (shellSettings?.State == TenantState.Disabled)
         {
             shellSettings.State = TenantState.Running;
             await _shellHost.UpdateShellSettingsAsync(shellSettings);
+        }
+
+        if (settings is { State: TenantState.Disabled })
+        {
+            settings.State = TenantState.Running;
+            await _shellHost.UpdateShellSettingsAsync(settings);
         }
 
         await _next(context);
