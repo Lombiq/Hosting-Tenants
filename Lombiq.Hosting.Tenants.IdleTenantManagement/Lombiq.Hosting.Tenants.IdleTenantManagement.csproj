@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Content Include="Views\IdleMinutesSettings.Edit.cshtml" />
+    <Content Include="Views\_ViewImports.cshtml" />
   </ItemGroup>
 
 </Project>

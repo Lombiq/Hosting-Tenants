@@ -1,10 +1,13 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Extensions;
+﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OrchardCore.BackgroundTasks;
+using OrchardCore.Entities;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
+using OrchardCore.Settings;
+using System.Globalization;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
@@ -17,9 +20,13 @@ public class IdleShutdownTask : IBackgroundTask
         var shellSettings = serviceProvider.GetService<ShellSettings>();
         var logger = serviceProvider.GetService<ILogger<IdleShutdownTask>>();
         var lastActiveTimeAccessor = serviceProvider.GetService<ILastActiveTimeAccessor>();
-        var maxIdleMinutes = shellSettings.RuntimeQuotaSettings().MaxIdleMinutes;
+        var siteService = serviceProvider.GetService<ISiteService>();
         var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
         var shellHost = serviceProvider.GetService<IShellHost>();
+
+        var maxIdleMinutesSettings = (await siteService.GetSiteSettingsAsync()).As<IdleMinutesSettings>();
+
+        var maxIdleMinutes = long.Parse(maxIdleMinutesSettings.MaxIdleMinutes, CultureInfo.InvariantCulture.NumberFormat);
 
         if (maxIdleMinutes <= 0) return;
 

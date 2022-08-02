@@ -1,9 +1,6 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@using Lombiq.Hosting.Tenants.IdleTenantManagement.ViewModels;
+﻿@using Lombiq.Hosting.Tenants.IdleTenantManagement.ViewModels;
 
 @model IdleMinutesSettingsViewModel
-
-@inject IViewLocalizer T;
 
 <fieldset class="form-group" asp-validation-class-for="MaxIdleMinutes">
     <label asp-for="MaxIdleMinutes">@T["Maximum idle minutes"]</label>

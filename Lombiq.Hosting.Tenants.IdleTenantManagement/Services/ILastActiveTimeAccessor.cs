@@ -1,4 +1,5 @@
-﻿using OrchardCore.Modules;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
@@ -16,12 +17,11 @@ public interface ILastActiveTimeAccessor
     /// <summary>
     /// Updates the LastActiveDateTimeUtc to the latest request's time.
     /// </summary>
-    void Update();
+    void Update(IClock clock);
 }
 
 public class LastActiveTimeAccessor : ILastActiveTimeAccessor
 {
-    private readonly IClock _clock;
     private long _lastActiveDateTimeUtcTicks;
 
     public DateTime LastActiveDateTimeUtc
@@ -30,11 +30,11 @@ public class LastActiveTimeAccessor : ILastActiveTimeAccessor
         private set => Interlocked.Exchange(ref _lastActiveDateTimeUtcTicks, value.Ticks);
     }
 
-    public LastActiveTimeAccessor(IClock clock)
+    public LastActiveTimeAccessor(IServiceProvider serviceProvider)
     {
-        _clock = clock;
+        var clock = serviceProvider.GetService<IClock>();
         LastActiveDateTimeUtc = clock.UtcNow;
     }
 
-    public void Update() => LastActiveDateTimeUtc = _clock.UtcNow;
+    public void Update(IClock clock) => LastActiveDateTimeUtc = clock.UtcNow;
 }

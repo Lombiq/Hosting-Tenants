@@ -30,12 +30,15 @@ public class DisableIdleTenantsStartup : StartupBase
     public override void Configure(
         IApplicationBuilder app,
         IEndpointRouteBuilder routes,
-        IServiceProvider serviceProvider) =>
-            app.UseMiddleware<IdleTimeProviderMiddleware>();
+        IServiceProvider serviceProvider)
+    {
+        app.UseMiddleware<IdleTimeProviderMiddleware>();
+        app.UseMiddleware<Midulver>();
+    }
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.AddScoped<ILastActiveTimeAccessor, LastActiveTimeAccessor>();
+        services.AddSingleton<ILastActiveTimeAccessor, LastActiveTimeAccessor>();
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
 
         // Idle Minutes Settings
