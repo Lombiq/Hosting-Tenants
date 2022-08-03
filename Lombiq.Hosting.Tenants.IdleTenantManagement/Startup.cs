@@ -1,21 +1,14 @@
 ﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
-using Lombiq.Hosting.Tenants.IdleTenantManagement.Drivers;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
-using Lombiq.Hosting.Tenants.IdleTenantManagement.Navigation;
-using Lombiq.Hosting.Tenants.IdleTenantManagement.Permissions;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
-using OrchardCore.DisplayManagement.Handlers;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
-using OrchardCore.Navigation;
-using OrchardCore.Security.Permissions;
-using OrchardCore.Settings;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement;
 
@@ -39,11 +32,9 @@ public class DisableIdleTenantsStartup : StartupBase
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
 
         // Idle Minutes Settings
-        services.Configure<IdleMinutesSettings>(
-            _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement"));
-        services.AddTransient<IConfigureOptions<IdleMinutesSettings>, IdleMinutesSettingsConfiguration>();
-        services.AddScoped<IDisplayDriver<ISite>, IdleMinutesSettingsDisplayDriver>();
-        services.AddScoped<IPermissionProvider, IdleMinutesPermissions>();
-        services.AddScoped<INavigationProvider, IdleMinutesSettingsAdminMenu>();
+        services.Configure<IdleMinutesOptions>(options =>
+            _shellConfiguration
+                .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions")
+                .Bind(options));
     }
 }

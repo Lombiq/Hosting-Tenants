@@ -1,12 +1,10 @@
 ﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
-using OrchardCore.Entities;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
-using OrchardCore.Settings;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
@@ -19,13 +17,11 @@ public class IdleShutdownTask : IBackgroundTask
         var shellSettings = serviceProvider.GetService<ShellSettings>();
         var logger = serviceProvider.GetService<ILogger<IdleShutdownTask>>();
         var lastActiveTimeAccessor = serviceProvider.GetService<ILastActiveTimeAccessor>();
-        var siteService = serviceProvider.GetService<ISiteService>();
         var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
         var shellHost = serviceProvider.GetService<IShellHost>();
+        var options = serviceProvider.GetService<IOptions<IdleMinutesOptions>>();
 
-        var maxIdleMinutesSettings = (await siteService.GetSiteSettingsAsync()).As<IdleMinutesSettings>();
-
-        var maxIdleMinutes = maxIdleMinutesSettings.MaxIdleMinutes;
+        var maxIdleMinutes = options.Value.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return;
 
@@ -49,18 +45,14 @@ public class IdleShutdownTask : IBackgroundTask
                 // still active in a failed state. So first we need to correctly start the tenant, then shut it
                 // down for good.
 
-                shellSettings.State = TenantState.Running;
                 await InvokeRestartAsync(shellSettingsManager, shellHost, shellSettings);
                 await InvokeShutdownAsync(shellSettings, shellHost);
             }
         }
     }
 
-    private static Task InvokeShutdownAsync(ShellSettings shellSettings, IShellHost shellHost)
-    {
-        shellSettings.State = TenantState.Disabled;
-        return shellHost.ReleaseShellContextAsync(shellSettings);
-    }
+    private static Task InvokeShutdownAsync(ShellSettings shellSettings, IShellHost shellHost) =>
+        shellHost.ReleaseShellContextAsync(shellSettings);
 
     private static async Task InvokeRestartAsync(
         IShellSettingsManager shellSettingsManager,

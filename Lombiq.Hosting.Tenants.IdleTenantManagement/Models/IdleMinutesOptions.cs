@@ -1,6 +1,6 @@
 ﻿namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 
-public class IdleMinutesSettings
+public class IdleMinutesOptions
 {
     public int MaxIdleMinutes { get; set; }
 }
