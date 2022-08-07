@@ -25,9 +25,9 @@ public class IdleShutdownTask : IBackgroundTask
 
         if (maxIdleMinutes <= 0) return;
 
-        if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock.UtcNow)
+        if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
-            logger.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings.Name);
+            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
 
             try
             {
@@ -35,12 +35,12 @@ public class IdleShutdownTask : IBackgroundTask
             }
             catch (Exception e)
             {
-                logger.LogError(
+                logger?.LogError(
                     e,
                     "Shutting down \"{ShellName}\" because of idle timeout failed with the following exception. Another shutdown will be attempted",
-                    shellSettings.Name);
+                    shellSettings?.Name);
 
-                // If the ShellContext.Dispose() fails (which can happen with a DB error: then the transaction
+                // If the ReleaseShellContextAsync() fails (which can happen with a DB error: then the transaction
                 // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is
                 // still active in a failed state. So first we need to correctly start the tenant, then shut it
                 // down for good.
