@@ -1,14 +1,14 @@
 # Lombiq Hosting - Idle Tenant Management for Orchard Core
 
+[![Lombiq.Hosting.Tenants.IdleTenantManagement NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.IdleTenantManagement?label=Lombiq.Hosting.Tenants.IdleTenantManagement)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.IdleTenantManagement/)
+
 ## About
 
 With the help of this module, you can ensure that any tenant where the feature is enabled will shutdown after a preset time is elapsed. This can be used to free up resources.
 
 ## Documentation
 
-This module contains one feature:
-
-- `Lombiq.Hosting.Tenants.IdleTenantManagement.DisableIdleTenants`
+This module contains one feature: 
 
 ### `Lombiq.Hosting.Tenants.IdleTenantManagement`
 
