@@ -14,6 +14,7 @@ The project consists of the following independent modules:
 
 - [Lombiq Hosting - Tenants Admin Login](Lombiq.Hosting.Tenants.Admin.Login/Readme.md)
 - [Lombiq Hosting - Tenants Management](Lombiq.Hosting.Tenants.Management/Readme.md)
+- [Lombiq Hosting - Tenants Idle Tenant Management](Lombiq.Hosting.Tenants.IdleTenantManagement/Readme.md)
 
 ## Contributing and support
 

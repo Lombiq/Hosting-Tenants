@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Admi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Management", "Lombiq.Hosting.Tenants.Management\Lombiq.Hosting.Tenants.Management.csproj", "{0EEA3C03-E945-423B-A099-844942D90BAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.IdleTenantManagement", "Lombiq.Hosting.Tenants.IdleTenantManagement\Lombiq.Hosting.Tenants.IdleTenantManagement.csproj", "{CE2B8933-B900-4243-B7B3-FB4A66AF0681}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EEA3C03-E945-423B-A099-844942D90BAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE2B8933-B900-4243-B7B3-FB4A66AF0681}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE2B8933-B900-4243-B7B3-FB4A66AF0681}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE2B8933-B900-4243-B7B3-FB4A66AF0681}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE2B8933-B900-4243-B7B3-FB4A66AF0681}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

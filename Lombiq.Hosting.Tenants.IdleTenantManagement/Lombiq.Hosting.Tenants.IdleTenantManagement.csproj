@@ -5,6 +5,19 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <DefaultItemExcludes>$(DefaultItemExcludes);.git*;node_modules\**;Tests\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core</Title>
+    <Authors>Lombiq Technologies</Authors>
+    <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
+    <Description>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core: With the help of this module, you can ensure that any tenant where the feature is enabled will shutdown after a preset time is elapsed. This can be used to free up resources..</Description>
+    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.IdleTenantManagement/Readme.md</PackageProjectUrl>
+    <PackageLicenseFile>License.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,15 +32,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
+    <None Include="License.md" />
+    <None Include="NuGetIcon.png" />
+    <None Include="Readme.md" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="4.5.0" />
+  <ItemGroup>
+    <None Remove="node_modules\**" />
+    <None Remove="Tests\**" />
   </ItemGroup>
 
 </Project>

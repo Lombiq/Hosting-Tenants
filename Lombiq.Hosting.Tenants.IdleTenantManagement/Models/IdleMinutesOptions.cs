@@ -2,5 +2,8 @@
 
 public class IdleMinutesOptions
 {
-    public int MaxIdleMinutes { get; set; }
+    /// <summary>
+    /// Gets or sets the maximum amount of time before the tenant shuts down.
+    /// </summary>
+    public int MaxIdleMinutes { get; set; } = 30;
 }
