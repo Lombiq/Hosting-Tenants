@@ -12,7 +12,7 @@ This module contains one feature:
 
 ### `Lombiq.Hosting.Tenants.IdleTenantManagement`
 
-This feature is available on any tenant. The maximum idle time can be set in the appSettings.json.
+This feature is available on any tenant. The maximum idle time can be set in the appsettings.json.
 
 **NOTE:** Any tenant can have its own set of maximum idle time, however on default there is only one global time set.
 
