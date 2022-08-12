@@ -6,6 +6,12 @@ using OrchardCore.Modules.Manifest;
     Website = "https://github.com/Lombiq/Hosting-Tenants",
     Version = "0.0.1",
     Description = "Lombiq.Hosting.MultiTenancy.Tenants",
+    Category = "Hosting"
+)]
+
+[assembly: Feature(
+    Id = "FeaturesGuard",
+    Name = "Lombiq Hosting-MultiTenancy - Features Guard",
     Category = "Hosting",
     IsAlwaysEnabled = true
 )]
