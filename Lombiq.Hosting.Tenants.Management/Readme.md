@@ -41,7 +41,7 @@ public void ConfigureServices(IServiceCollection services) =>
     services.AddOrchardCms(builder => builder.HideRecipesByTagsFromSetup("hiddenTag1", "hiddenTag2"))
 ```
 
-**NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default hide tag you can call the extension function without any parameter.
+**NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default `HideFromSetupScreen` tag then just call the extension method without any parameter.
 
 ## Dependencies
 
