@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions;
-using OrchardCore.DisplayManagement;
 using OrchardCore.Environment.Shell;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.MultiTenancy.Tenants.Services;
@@ -14,44 +14,41 @@ public class FeaturesGuardService : IFeaturesGuardService
     private readonly RequestDelegate _next;
     private readonly IExtensionManager _extensionManager;
     private readonly OrchardCoreBuilder _orchardCoreBuilder;
-    private readonly IShellFeaturesManager _shellFeaturesManager;
 
     public FeaturesGuardService(
         RequestDelegate next,
         IExtensionManager extensionManager,
-        OrchardCoreBuilder orchardCoreBuilder,
-        IShellFeaturesManager shellFeaturesManager)
+        OrchardCoreBuilder orchardCoreBuilder)
     {
         _next = next;
         _extensionManager = extensionManager;
         _orchardCoreBuilder = orchardCoreBuilder;
-        _shellFeaturesManager = shellFeaturesManager;
     }
 
-    public Task InvokeAsync(
+    public async Task InvokeAsync(
         HttpContext context,
         IOptions<ForbiddenFeaturesOptions> forbiddenOptions,
-        IOptions<AlwaysOnFeaturesOptions> alwaysOnOptions)
+        IOptions<AlwaysOnFeaturesOptions> alwaysOnOptions,
+        IShellFeaturesManager shellFeaturesManager)
     {
+        await DisableFeatures(context, forbiddenOptions, shellFeaturesManager);
+        await EnableFeatures(context, alwaysOnOptions);
 
-        DisableFeatures(context, forbiddenOptions);
-        EnableFeatures(context, alwaysOnOptions);
-
-        return _next(context);
+        await _next.Invoke(context);
     }
 
-    public Task DisableFeatures(HttpContext context, IOptions<ForbiddenFeaturesOptions> options)
+    public async Task DisableFeatures(
+        HttpContext context,
+        IOptions<ForbiddenFeaturesOptions> options,
+        IShellFeaturesManager shellFeaturesManager)
     {
         var forbiddenFeatures = options.Value.ForbiddenFeatures;
 
         var allFeatures = _extensionManager.GetFeatures();
+        var featuresToDisable = allFeatures.Where(feature => forbiddenFeatures.Contains(feature.Id));
+        await shellFeaturesManager.DisableFeaturesAsync(featuresToDisable);
 
-        foreach (var feature in forbiddenFeatures)
-        {
-            // disable features 
-        }
-
-        return _next(context);
+        return;
     }
 
     public Task EnableFeatures(HttpContext context, IOptions<AlwaysOnFeaturesOptions> options)

@@ -1,5 +1,3 @@
-using System;
-using Fluid;
 using Lombiq.Hosting.MultiTenancy.Tenants.Models;
 using Lombiq.Hosting.MultiTenancy.Tenants.Services;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
+using System;
 
 namespace Lombiq.Hosting.MultiTenancy.Tenants;
 
@@ -24,15 +23,17 @@ public class Startup : StartupBase
             _shellConfiguration
                 .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:ForbiddenFeaturesOptions")
                 .Bind(options));
+
         services.Configure<AlwaysOnFeaturesOptions>(options =>
             _shellConfiguration
                 .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:AlwaysOnFeaturesOptions")
                 .Bind(options));
+
         services.AddScoped<IFeaturesGuardService, FeaturesGuardService>();
     }
 
-    public override void Configure(IApplicationBuilder builder, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
+    public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
     {
-       //builder.UseMiddleware<FeaturesGuardService>();
+       app.UseMiddleware<FeaturesGuardService>();
     }
 }
