@@ -5,6 +5,9 @@ using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
@@ -27,7 +30,7 @@ public class IdleShutdownTask : IBackgroundTask
 
         if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
-            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
+            logger?.LogError("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
 
             try
             {

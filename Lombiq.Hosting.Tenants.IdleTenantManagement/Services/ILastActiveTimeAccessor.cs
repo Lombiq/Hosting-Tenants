@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
+using System;
+using System.Threading;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
