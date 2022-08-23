@@ -42,6 +42,8 @@ public class FeaturesGuardService : IFeaturesGuardService
         IOptions<ForbiddenFeaturesOptions> options,
         IShellFeaturesManager shellFeaturesManager)
     {
+        // this currently runs not only on all requests, but also on all tenants. Should only be run on user tenants
+
         var forbiddenFeatures = options.Value.ForbiddenFeatures;
 
         var allFeatures = _extensionManager.GetFeatures();
