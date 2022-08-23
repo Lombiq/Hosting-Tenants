@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NLog;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
@@ -30,7 +31,7 @@ public class IdleShutdownTask : IBackgroundTask
 
         if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
-            logger?.LogError("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
+            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
 
             try
             {

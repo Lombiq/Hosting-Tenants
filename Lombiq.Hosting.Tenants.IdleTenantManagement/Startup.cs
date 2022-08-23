@@ -27,6 +27,7 @@ public class DisableIdleTenantsStartup : StartupBase
         IServiceProvider serviceProvider) =>
             app.UseMiddleware<IdleTimeProviderMiddleware>();
 
+
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILastActiveTimeAccessor, LastActiveTimeAccessor>();
