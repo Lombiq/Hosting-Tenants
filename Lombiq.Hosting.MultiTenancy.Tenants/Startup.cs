@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.DisplayManagement.Events;
+using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
@@ -33,6 +35,9 @@ public class Startup : StartupBase
 
         services.AddScoped<IFeaturesGuardService, FeaturesGuardService>();
         services.AddScoped<IFeatureEventHandler, MediaEnablingEventHandler>();
+
+        services.AddSingleton<IFeatureBuilderEvents, ThemeFeatureBuilderEvents>();
+        services.AddSingleton<IFeatureBuilderEvents, TenantFeatureBuilderEvents>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
