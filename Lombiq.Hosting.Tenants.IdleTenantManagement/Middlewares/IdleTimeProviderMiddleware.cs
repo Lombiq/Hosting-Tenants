@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
 
