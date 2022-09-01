@@ -6,7 +6,7 @@ With the help of this module, you can ensure that any tenant where the feature i
 
 ## Documentation
 
-This module contains one feature: 
+This module contains one feature:
 
 ### `Lombiq.Hosting.Tenants.IdleTenantManagement`
 
