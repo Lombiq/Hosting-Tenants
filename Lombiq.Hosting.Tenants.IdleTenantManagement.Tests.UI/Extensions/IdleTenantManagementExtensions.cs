@@ -13,12 +13,12 @@ public static class IdleTenantManagementExtensions
             (_, argumentsBuilder) =>
             {
                 argumentsBuilder
-                    .Add("--OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions:MaxIdleMinutes")
-                    .Add("1");
+                    .AddValue(
+                        "--OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions:MaxIdleMinutes",
+                        "1");
 
                 argumentsBuilder
-                    .Add("--Logging:LogLevel:Default")
-                    .Add("Information");
+                    .AddValue("--Logging:LogLevel:Default", "Information");
 
                 return Task.CompletedTask;
             };
