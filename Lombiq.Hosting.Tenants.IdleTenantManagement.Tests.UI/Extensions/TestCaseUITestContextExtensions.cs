@@ -10,7 +10,7 @@ public static class TestCaseUITestContextExtensions
     {
         // We are letting the site to sit idle for more than two minutes so that the
         // tenant could be shut down by the background task.
-        await Task.Delay(129420);
+        await Task.Delay(189420);
 
         // If we can access the admin menu after the tenant shut down that means the new shell was created
         // and it is working as intended.
