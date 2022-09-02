@@ -35,13 +35,10 @@ public class Startup : StartupBase
 
         services.AddScoped<IFeaturesGuardService, FeaturesGuardService>();
         services.AddScoped<IFeatureEventHandler, MediaEnablingEventHandler>();
-
-        services.AddSingleton<IFeatureBuilderEvents, ThemeFeatureBuilderEvents>();
-        services.AddSingleton<IFeatureBuilderEvents, TenantFeatureBuilderEvents>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
     {
-       app.UseMiddleware<FeaturesGuardService>();
+       //app.UseMiddleware<FeaturesGuardService>();
     }
 }
