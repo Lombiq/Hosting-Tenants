@@ -1,7 +1,8 @@
+using Lombiq.Hosting.MultiTenancy.Tenants.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using OrchardCore.Environment.Extensions.Features;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Lombiq.Hosting.MultiTenancy.Tenants.Services;
 
@@ -9,22 +10,18 @@ public class TenantFeatureBuilderEvents : IFeatureBuilderEvents
 {
     private readonly IConfiguration _configuration;
 
-    public TenantFeatureBuilderEvents(IHttpContextAccessor hca, IConfiguration configuration) =>
+    public TenantFeatureBuilderEvents(IConfiguration configuration) =>
         _configuration = configuration;
 
     public void Building(FeatureBuildingContext context)
     {
-        var configurationSections = _configuration
-            .GetSection("OrchardCore:Lombiq_Hosting_MultiTenancy_Tenants:ForbiddenFeaturesOptions:ForbiddenFeatures")
-            .GetChildren();
+        var forbiddenFeaturesOptions = _configuration
+            .GetSection("OrchardCore")
+            .GetSection("Lombiq_Hosting_MultiTenancy_Tenants")
+            .GetSection("ForbiddenFeaturesOptions")
+            .Get<ForbiddenFeaturesOptions>();
 
-        var forbiddenFeatures = new List<string>();
-        foreach (var section in configurationSections)
-        {
-            forbiddenFeatures.Add(section.Value);
-        }
-
-        if (forbiddenFeatures.Contains(context.FeatureId))
+        if (forbiddenFeaturesOptions.ForbiddenFeatures.Contains(context.FeatureId))
         {
             context.DefaultTenantOnly = true;
         }

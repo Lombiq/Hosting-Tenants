@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OrchardCore.DisplayManagement.Events;
-using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
@@ -23,11 +21,6 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<ForbiddenFeaturesOptions>(options =>
-            _shellConfiguration
-                .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:ForbiddenFeaturesOptions")
-                .Bind(options));
-
         services.Configure<AlwaysOnFeaturesOptions>(options =>
             _shellConfiguration
                 .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:AlwaysOnFeaturesOptions")
