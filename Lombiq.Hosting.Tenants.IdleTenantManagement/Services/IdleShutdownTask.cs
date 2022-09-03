@@ -26,9 +26,6 @@ public class IdleShutdownTask : IBackgroundTask
 
         var maxIdleMinutes = options.Value.MaxIdleMinutes;
 
-        logger?.LogInformation("MaxIdleMinutes: {MaxIdleMinutes}", maxIdleMinutes);
-        logger?.LogInformation("LastActiveDateTimeUtc: {LastActiveDateTimeUtc}", lastActiveTimeAccessor.LastActiveDateTimeUtc);
-
         if (maxIdleMinutes <= 0) return;
 
         if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
