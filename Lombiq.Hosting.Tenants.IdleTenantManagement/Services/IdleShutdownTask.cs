@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,6 +25,9 @@ public class IdleShutdownTask : IBackgroundTask
         var options = serviceProvider.GetService<IOptions<IdleMinutesOptions>>();
 
         var maxIdleMinutes = options.Value.MaxIdleMinutes;
+
+        logger?.LogInformation("MaxIdleMinutes: {MaxIdleMinutes}", maxIdleMinutes);
+        logger?.LogInformation("LastActiveDateTimeUtc: {LastActiveDateTimeUtc}", lastActiveTimeAccessor.LastActiveDateTimeUtc);
 
         if (maxIdleMinutes <= 0) return;
 

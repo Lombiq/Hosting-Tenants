@@ -18,7 +18,7 @@ public static class IdleTenantManagementExtensions
                         "1");
 
                 argumentsBuilder
-                    .AddWithValue("Logging:LogLevel:Default", "Information");
+                    .AddWithValue("Logging:LogLevel:Default", "Debug");
 
                 return Task.CompletedTask;
             };

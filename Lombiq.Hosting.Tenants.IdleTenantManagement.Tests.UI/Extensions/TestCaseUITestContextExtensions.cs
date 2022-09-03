@@ -16,5 +16,8 @@ public static class TestCaseUITestContextExtensions
         // and it is working as intended.
         await context.SignInDirectlyAsync();
         await context.GoToDashboardAsync();
+
+        var logs = await context.Application.GetLogOutputAsync();
+        context.AppendFailureDump("orchard.log", logs);
     }
 }
