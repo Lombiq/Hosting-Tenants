@@ -25,17 +25,6 @@ public class TenantFeatureBuilderEvents : IFeatureBuilderEvents
         {
             context.DefaultTenantOnly = true;
         }
-
-        // for alwaysEnabledFeatures, set isAlwaysEnabled to true
-        // needs to be run conditionally: only on user tenants (probably not possible from this method)
-        //else
-        //{
-        //    var alwaysEnabledFeatures = _alwaysOnFeaturesOptions.Value.AlwaysOnFeatures;
-        //    if (alwaysEnabledFeatures.Contains(context.FeatureId))
-        //    {
-        //        context.IsAlwaysEnabled = true;
-        //    }
-        //}
     }
 
     public void Built(IFeatureInfo featureInfo)

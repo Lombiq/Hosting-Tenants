@@ -1,6 +1,6 @@
 namespace Lombiq.Hosting.MultiTenancy.Tenants.Constants;
 
-public class FeatureNames
+public static class FeatureNames
 {
     public const string Module = "Lombiq.Hosting.MultiTenancy.";
 

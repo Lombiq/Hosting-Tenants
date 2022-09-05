@@ -27,7 +27,7 @@ public class Startup : StartupBase
                 .Bind(options));
 
         services.AddScoped<IFeaturesGuardService, FeaturesGuardService>();
-        services.AddScoped<IFeatureEventHandler, MediaEnablingEventHandler>();
+        services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
