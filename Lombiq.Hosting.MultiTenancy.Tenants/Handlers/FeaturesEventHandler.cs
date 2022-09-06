@@ -1,5 +1,5 @@
+using Lombiq.Hosting.MultiTenancy.Tenants.Constants;
 using Lombiq.Hosting.MultiTenancy.Tenants.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
@@ -13,18 +13,15 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     private readonly IShellFeaturesManager _shellFeaturesManager;
     private readonly IOptions<AlwaysEnabledFeaturesOptions> _alwaysEnabledFeaturesOptions;
     private readonly ShellSettings _shellSettings;
-    private readonly IHttpContextAccessor _hca;
 
     public FeaturesEventHandler(
         IShellFeaturesManager shellFeaturesManager,
         IOptions<AlwaysEnabledFeaturesOptions> alwaysEnabledFeaturesOptions,
-        ShellSettings shellSettings,
-        IHttpContextAccessor hca)
+        ShellSettings shellSettings)
     {
         _shellFeaturesManager = shellFeaturesManager;
         _alwaysEnabledFeaturesOptions = alwaysEnabledFeaturesOptions;
         _shellSettings = shellSettings;
-        _hca = hca;
     }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -45,20 +42,20 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     public async Task EnableMediaRelatedFeaturesAsync(IFeatureInfo feature)
     {
-        if (feature.Id is not "OrchardCore.Media" and not "OrchardCore.Media.Cache") return; // add constants for feature names
+        if (feature.Id is not FeatureNames.Media and not FeatureNames.MediaCache) return;
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
-        if (feature.Id == "OrchardCore.Media")
+        if (feature.Id == FeatureNames.Media)
         {
-            var featuresToEnable = allFeatures.Where(feature => feature.Id is "OrchardCore.ContentTypes" or
-                "OrchardCore.Liquid" or "OrchardCore.Media.Cache" or "OrchardCore.Settings");
+            var featuresToEnable = allFeatures.Where(feature => feature.Id is FeatureNames.ContentTypes or
+                FeatureNames.Liquid or FeatureNames.MediaCache or FeatureNames.Settings);
 
             await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable);
         }
         else
         {
-            var azureMedia = allFeatures.Where(feature => feature.Id is "OrchardCore.Media.Azure.Storage");
+            var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.Azure);
             await _shellFeaturesManager.EnableFeaturesAsync(azureMedia);
         }
     }

@@ -1,5 +1,4 @@
 using Lombiq.Hosting.MultiTenancy.Tenants.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using OrchardCore.Environment.Extensions.Features;
 using System.Linq;
