@@ -1,4 +1,5 @@
 using Lombiq.Hosting.MultiTenancy.Tenants.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
@@ -10,17 +11,20 @@ namespace Lombiq.Hosting.MultiTenancy.Tenants.Handlers;
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
     private readonly IShellFeaturesManager _shellFeaturesManager;
-    private readonly IOptions<AlwaysOnFeaturesOptions> _alwaysOnFeaturesOptions;
+    private readonly IOptions<AlwaysEnabledFeaturesOptions> _alwaysEnabledFeaturesOptions;
     private readonly ShellSettings _shellSettings;
+    private readonly IHttpContextAccessor _hca;
 
     public FeaturesEventHandler(
         IShellFeaturesManager shellFeaturesManager,
-        IOptions<AlwaysOnFeaturesOptions> alwaysOnFeaturesOptions,
-        ShellSettings shellSettings)
+        IOptions<AlwaysEnabledFeaturesOptions> alwaysEnabledFeaturesOptions,
+        ShellSettings shellSettings,
+        IHttpContextAccessor hca)
     {
         _shellFeaturesManager = shellFeaturesManager;
-        _alwaysOnFeaturesOptions = alwaysOnFeaturesOptions;
+        _alwaysEnabledFeaturesOptions = alwaysEnabledFeaturesOptions;
         _shellSettings = shellSettings;
+        _hca = hca;
     }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -61,8 +65,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     public async Task KeepFeaturesEnabledAsync(IFeatureInfo feature)
     {
-
-        if (_shellSettings.IsDefaultShell() || !_alwaysOnFeaturesOptions.Value.AlwaysOnFeatures.Contains(feature.Id)) return;
+        if (_shellSettings.IsDefaultShell() || !_alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures.Contains(feature.Id))
+        {
+            return;
+        }
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
         var currentFeature = allFeatures.Where(f => f.Id == feature.Id);

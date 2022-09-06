@@ -7,5 +7,5 @@ namespace Lombiq.Hosting.MultiTenancy.Tenants.Services;
 
 public interface IFeaturesGuardService
 {
-    public Task EnableFeatures(HttpContext context, IOptions<AlwaysOnFeaturesOptions> options);
+    public Task EnableFeatures(HttpContext context, IOptions<AlwaysEnabledFeaturesOptions> options);
 }

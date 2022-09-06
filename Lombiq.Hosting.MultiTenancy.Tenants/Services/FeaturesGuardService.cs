@@ -25,7 +25,7 @@ public class FeaturesGuardService : IFeaturesGuardService
     public async Task InvokeAsync(
         HttpContext context,
         IOptions<ForbiddenFeaturesOptions> forbiddenOptions,
-        IOptions<AlwaysOnFeaturesOptions> alwaysOnOptions,
+        IOptions<AlwaysEnabledFeaturesOptions> alwaysOnOptions,
         IShellFeaturesManager shellFeaturesManager)
     {
         // this should only run on user tenants -- and likely only during setup?
@@ -34,9 +34,9 @@ public class FeaturesGuardService : IFeaturesGuardService
         await _next.Invoke(context);
     }
 
-    public Task EnableFeatures(HttpContext context, IOptions<AlwaysOnFeaturesOptions> options)
+    public Task EnableFeatures(HttpContext context, IOptions<AlwaysEnabledFeaturesOptions> options)
     {
-        var alwaysOnFeatures = options.Value.AlwaysOnFeatures;
+        var alwaysOnFeatures = options.Value.AlwaysEnabledFeatures;
         foreach (var feature in alwaysOnFeatures)
         {
             _orchardCoreBuilder.EnableFeature(feature);

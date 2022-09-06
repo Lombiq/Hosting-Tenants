@@ -21,9 +21,9 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<AlwaysOnFeaturesOptions>(options =>
+        services.Configure<AlwaysEnabledFeaturesOptions>(options =>
             _shellConfiguration
-                .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:AlwaysOnFeaturesOptions")
+                .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:AlwaysEnabledFeaturesOptions")
                 .Bind(options));
 
         services.AddScoped<IFeaturesGuardService, FeaturesGuardService>();
