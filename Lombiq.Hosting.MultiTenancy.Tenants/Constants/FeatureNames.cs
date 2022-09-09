@@ -8,7 +8,7 @@ public static class FeatureNames
 
     public const string OrchardCore = nameof(OrchardCore);
 
-    public const string Azure = OrchardCore + "." + "Media.Azure.Storage";
+    public const string AzureStorage = OrchardCore + "." + "Media.Azure.Storage";
     public const string ContentTypes = OrchardCore + "." + "ContentTypes";
     public const string Liquid = OrchardCore + "." + "Liquid";
     public const string Media = OrchardCore + "." + "Media";

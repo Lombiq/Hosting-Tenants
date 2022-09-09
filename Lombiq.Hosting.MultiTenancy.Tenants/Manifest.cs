@@ -5,13 +5,13 @@ using OrchardCore.Modules.Manifest;
     Author = "The Orchard Core Team",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
     Version = "0.0.1",
-    Description = "Lombiq.Hosting.MultiTenancy.Tenants",
+    Description = "Adds useful features for multi-tenant applications.",
     Category = "Hosting"
 )]
 
 [assembly: Feature(
     Id = "FeaturesGuard",
-    Name = "Lombiq Hosting-MultiTenancy - Features Guard",
+    Name = "Lombiq Hosting - MultiTenancy - Features Guard",
     Category = "Hosting",
     IsAlwaysEnabled = true
 )]

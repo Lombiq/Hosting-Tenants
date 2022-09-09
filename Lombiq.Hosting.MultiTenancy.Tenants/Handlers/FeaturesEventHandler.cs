@@ -55,21 +55,21 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
         else
         {
-            var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.Azure);
+            var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
             await _shellFeaturesManager.EnableFeaturesAsync(azureMedia);
         }
     }
 
     public async Task KeepFeaturesEnabledAsync(IFeatureInfo feature)
     {
-        //if (_shellSettings.IsDefaultShell() || !_alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures.Contains(feature.Id))
-        //{
-        //    return;
-        //}
+        if (_shellSettings.IsDefaultShell() || !_alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures.Contains(feature.Id))
+        {
+            return;
+        }
 
-        //var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        //var currentFeature = allFeatures.Where(f => f.Id == feature.Id);
+        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var currentFeature = allFeatures.Where(f => f.Id == feature.Id);
 
-        //await _shellFeaturesManager.EnableFeaturesAsync(currentFeature);
+        await _shellFeaturesManager.EnableFeaturesAsync(currentFeature);
     }
 }
