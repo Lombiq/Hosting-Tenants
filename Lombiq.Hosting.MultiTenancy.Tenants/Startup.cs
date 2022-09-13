@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
+using OrchardCore.Environment.Shell.Descriptor.Models;
 using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.MultiTenancy.Tenants;
@@ -23,5 +24,7 @@ public class Startup : StartupBase
                 .Bind(options));
 
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
+
+        services.AddTransient(service => new ShellFeature("OrchardCore.Users", alwaysEnabled: true));
     }
 }
