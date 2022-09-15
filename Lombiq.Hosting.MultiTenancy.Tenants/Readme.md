@@ -1,17 +1,22 @@
 # Lombiq Hosting MultiTenancy Tenants
 
 
-
 ## About
 
-Add a general overview of the project here. Keep or remove the OSOCE note below as necessary.
-
-Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
+This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.
 
 
 ## Documentation
 
-Add detailed documentation here. If it's a lot of content then create documentation pages under the *Docs* folder and link pages here.
+- To use this feature, enable it on both the Default and the user tenant.
+- Once enabled on the user tenant, the FeaturesGuard feature cannot be disabled.
+- Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`.
+- Additionally, the feature ensures whenever the Media feature is enabled, the following features also get enabled:
+	- Media Cache
+	- ContentTypes
+	- Liquid
+	- Settings
+	- Azure Media Storage
 
 
 ## Contributing and support

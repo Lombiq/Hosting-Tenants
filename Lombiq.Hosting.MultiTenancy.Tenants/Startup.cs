@@ -1,3 +1,4 @@
+using Lombiq.Hosting.MultiTenancy.Tenants.Constants;
 using Lombiq.Hosting.MultiTenancy.Tenants.Handlers;
 using Lombiq.Hosting.MultiTenancy.Tenants.Models;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,6 @@ public class Startup : StartupBase
 
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
-        services.AddTransient(service => new ShellFeature("OrchardCore.Users", alwaysEnabled: true));
+        services.AddTransient(service => new ShellFeature(FeatureNames.Users, alwaysEnabled: true));
     }
 }
