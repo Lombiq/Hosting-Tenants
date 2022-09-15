@@ -11,12 +11,12 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
 - To use this feature, enable it on both the Default and the user tenant.
 - Once enabled on the user tenant, the FeaturesGuard feature cannot be disabled.
 - Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`.
-- Additionally, the feature ensures whenever the Media feature is enabled, the following features also get enabled:
-	- Media Cache
-	- ContentTypes
-	- Liquid
-	- Settings
-	- Azure Media Storage
+- Additionally, the feature ensures whenever the OrchardCore.Media feature is enabled, the following features also get enabled:
+	- OrchardCore.Content.Types
+	- OrchardCore.Liquid
+	- OrchardCore.Media.Azure.Storage
+	- OrchardCore.Media.Cache
+	- OrchardCore.Settings
 
 
 ## Contributing and support
