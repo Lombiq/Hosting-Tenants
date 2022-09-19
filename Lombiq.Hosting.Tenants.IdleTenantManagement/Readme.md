@@ -6,7 +6,7 @@ With the help of this module, you can ensure that a tenant that didn't receive a
 
 ## Documentation
 
-This module contains one feature: 
+This module contains the feature below.
 
 ### `Lombiq.Hosting.Tenants.IdleTenantManagement`
 
