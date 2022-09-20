@@ -40,13 +40,13 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    public async Task EnableMediaRelatedFeaturesAsync(IFeatureInfo feature)
+    public async Task EnableMediaRelatedFeaturesAsync(IFeatureInfo featureInfo)
     {
-        if (feature.Id is not FeatureNames.Media and not FeatureNames.MediaCache) return;
+        if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache) return;
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
-        if (feature.Id == FeatureNames.Media)
+        if (featureInfo.Id == FeatureNames.Media)
         {
             var featuresToEnable = allFeatures.Where(feature => feature.Id is FeatureNames.ContentTypes or
                 FeatureNames.Liquid or FeatureNames.MediaCache or FeatureNames.Settings);
@@ -60,20 +60,20 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
     }
 
-    public async Task KeepFeaturesEnabledAsync(IFeatureInfo feature)
+    public async Task KeepFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
         if (_shellSettings.IsDefaultShell() || _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures == null)
         {
             return;
         }
 
-        if (!_alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures.Contains(feature.Id))
+        if (!_alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures.Contains(featureInfo.Id))
         {
             return;
         }
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        var currentFeature = allFeatures.Where(f => f.Id == feature.Id);
+        var currentFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
 
         await _shellFeaturesManager.EnableFeaturesAsync(currentFeature);
     }
