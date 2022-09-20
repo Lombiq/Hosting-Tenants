@@ -1,7 +1,8 @@
+using Lombiq.Hosting.MultiTenancy.Tenants.Constants;
 using OrchardCore.Modules.Manifest;
 
 [assembly: Module(
-    Name = "Lombiq Hosting MultiTenancy Tenants",
+    Name = "Lombiq Hosting Multi-Tenancy Tenants",
     Author = "The Orchard Core Team",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
     Version = "0.0.1",
@@ -10,8 +11,8 @@ using OrchardCore.Modules.Manifest;
 )]
 
 [assembly: Feature(
-    Id = "FeaturesGuard",
-    Name = "Lombiq Hosting - MultiTenancy - Features Guard",
+    Id = FeatureNames.FeaturesGuard,
+    Name = "Lombiq Hosting - Multi-Tenancy - Features Guard",
     Category = "Hosting",
     IsAlwaysEnabled = true
 )]

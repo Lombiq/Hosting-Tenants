@@ -35,6 +35,7 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
 	- OrchardCore.Media.Cache
 	- OrchardCore.Settings
 
+It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
 
 ## Contributing and support
 

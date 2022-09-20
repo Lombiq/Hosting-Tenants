@@ -6,6 +6,8 @@ public static class FeatureNames
 
     public const string Tenants = Module + "." + nameof(Tenants);
 
+    public const string FeaturesGuard = Tenants + "." + nameof(FeaturesGuard);
+
     public const string OrchardCore = nameof(OrchardCore);
 
     public const string AzureStorage = OrchardCore + "." + "Media.Azure.Storage";

@@ -62,7 +62,9 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     public async Task KeepFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
-        if (_shellSettings.IsDefaultShell() || _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures == null)
+        if (_shellSettings.IsDefaultShell() ||
+            _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures is not { } alwaysEnabledFeatures ||
+            !alwaysEnabledFeatures.Contains(featureInfo.Id))
         {
             return;
         }
