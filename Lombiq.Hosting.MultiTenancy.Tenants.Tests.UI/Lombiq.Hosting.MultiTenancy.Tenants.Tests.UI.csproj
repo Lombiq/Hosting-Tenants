@@ -30,8 +30,4 @@
     <PackageReference Include="Lombiq.Tests.UI" Version="3.5.1-alpha.walma-15.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\test\DotNest.Tenants.Core.Tests.UI\DotNest.Tenants.Core.Tests.UI.csproj" />
-  </ItemGroup>
-
 </Project>
