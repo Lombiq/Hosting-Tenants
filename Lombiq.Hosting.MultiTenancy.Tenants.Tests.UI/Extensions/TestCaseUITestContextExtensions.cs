@@ -1,4 +1,4 @@
-﻿using DotNest.Tenants.Core.Tests.UI.Constants;
+﻿using Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Constants;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Models;
