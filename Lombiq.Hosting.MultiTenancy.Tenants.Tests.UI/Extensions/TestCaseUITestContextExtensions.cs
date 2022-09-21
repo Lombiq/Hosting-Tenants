@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Constants;
+using Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Constants;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Models;
@@ -20,7 +20,7 @@ public static class TestCaseUITestContextExtensions
             FeatureProfile = "features guard",
         };
 
-        await context.CreateAndEnterTenantAsync("Testenant", "tt1", Recipes.DefaultRecipeId, tenantModel);
+        await context.CreateAndEnterTenantAsync("Testenant", "tt1", Recipes.OsoceTestsRecipeId, tenantModel);
 
         // Log into tenant site and navigate to features list.
         await context.GoToRelativeUrlAsync("/tt1/admin/features");
@@ -45,7 +45,7 @@ public static class TestCaseUITestContextExtensions
             FeatureProfile = "features guard",
         };
 
-        await context.CreateAndEnterTenantAsync("Testenant", "tt1", Recipes.DefaultRecipeId, tenantModel);
+        await context.CreateAndEnterTenantAsync("Testenant", "tt1", Recipes.OsoceTestsRecipeId, tenantModel);
 
         // Log into tenant site and navigate to features list.
         await context.GoToRelativeUrlAsync("/tt1/admin/features");
