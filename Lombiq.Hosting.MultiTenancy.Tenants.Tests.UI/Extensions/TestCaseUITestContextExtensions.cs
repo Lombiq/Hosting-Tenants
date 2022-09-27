@@ -4,6 +4,7 @@ using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Extensions;
@@ -24,6 +25,12 @@ public static class TestCaseUITestContextExtensions
 
         // Log into tenant site and navigate to features list.
         // Temporarily only go to admin and see if exception persists.
+        await context.GoToRelativeUrlAsync("/tt1");
+
+#pragma warning disable AsyncFixer02 // Long-running or blocking operations inside an async method
+        Thread.Sleep(10000);
+#pragma warning restore AsyncFixer02 // Long-running or blocking operations inside an async method
+
         await context.GoToRelativeUrlAsync("/tt1/admin");
 
 #pragma warning disable S125 // Sections of code should not be commented out
