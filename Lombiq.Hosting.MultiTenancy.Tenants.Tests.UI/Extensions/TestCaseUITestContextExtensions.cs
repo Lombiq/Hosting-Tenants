@@ -23,8 +23,8 @@ public static class TestCaseUITestContextExtensions
         await context.CreateAndEnterTenantAsync("Testenant", "tt1", Recipes.OsoceTestsRecipeId, tenantModel);
 
         // Log into tenant site and navigate to features list.
-        // Temporarily only go to homepage and see if exception persists.
-        await context.GoToRelativeUrlAsync("/tt1");
+        // Temporarily only go to admin and see if exception persists.
+        await context.GoToRelativeUrlAsync("/tt1/admin");
 
 #pragma warning disable S125 // Sections of code should not be commented out
         // await context.GoToRelativeUrlAsync("/tt1/admin/features");
