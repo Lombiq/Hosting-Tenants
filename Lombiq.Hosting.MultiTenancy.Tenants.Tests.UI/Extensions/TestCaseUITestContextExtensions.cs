@@ -12,25 +12,7 @@ public static class TestCaseUITestContextExtensions
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
 
-        // Create new tenant manually.
-        await context.CreateNewTenantManuallyAsync("Testenant", "tt1", "localhost", "features guard");
-
-        // Set up newly created tenant.
-        await context.ClickReliablyOnAsync(By.LinkText("Setup"));
-        await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
-        context.ExecuteScript("document.evaluate(\"//a[contains(text(),'Open-Source Orchard Core Extensions')]\", " +
-            "document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
-        await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("PasswordConfirmation"), DefaultUser.Password);
-        await context.ClickReliablyOnAsync(By.XPath("//button[@id='SubmitButton']"));
-
-        // Log into tenant site and navigate to features list.
-        await context.GoToRelativeUrlAsync("/tt1/admin/features");
-        await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
-        await context.ClickReliablyOnAsync(By.XPath("//button[contains(., 'Log in')]"));
+        await SetUpNewTenantAndGoToFeaturesListAsync(context);
 
         // Ensure forbidden features are not available in the list.
         context.Missing(By.XPath("//label[@for='OrchardCore.Workflows.Session']"));
@@ -43,6 +25,21 @@ public static class TestCaseUITestContextExtensions
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
 
+        await SetUpNewTenantAndGoToFeaturesListAsync(context);
+
+        // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
+        context.Missing(By.XPath("//a[@id='btn-disable-Lombiq_Hosting_Tenants_Admin_Login_SubTenant']"));
+        context.Missing(By.XPath("//a[@id='btn-disable-DotNest_Hosting_Tenants']"));
+        context.Missing(By.XPath("//a[@id='btn-disable-DotNest_TenantsAdmin_Subtenant']"));
+
+        // Ensure trying to disable other always enabled features does not actually disable them.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
+        await context.ClickModalOkAsync();
+        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
+    }
+
+    public static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context)
+    {
         // Create new tenant manually.
         await context.CreateNewTenantManuallyAsync("Testenant", "tt1", "localhost", "features guard");
 
@@ -62,15 +59,5 @@ public static class TestCaseUITestContextExtensions
         await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(., 'Log in')]"));
-
-        // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
-        context.Missing(By.XPath("//a[@id='btn-disable-Lombiq_Hosting_Tenants_Admin_Login_SubTenant']"));
-        context.Missing(By.XPath("//a[@id='btn-disable-DotNest_Hosting_Tenants']"));
-        context.Missing(By.XPath("//a[@id='btn-disable-DotNest_TenantsAdmin_Subtenant']"));
-
-        // Ensure trying to disable other always enabled features does not actually disable them.
-        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
-        await context.ClickModalOkAsync();
-        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
     }
 }
