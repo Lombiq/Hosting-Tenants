@@ -1,16 +1,15 @@
 # Lombiq Hosting MultiTenancy Tenants
 
-
 ## About
 
 This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.
-
 
 ## Documentation
 
 - To use this feature, enable it on both the Default and the user tenant.
 - Once enabled on the user tenant, the FeaturesGuard feature cannot be disabled.
 - Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`. Example configuration:
+
 ```json
 {
   "OrchardCore": {
@@ -28,12 +27,13 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
   }
 }
 ```
+
 - Additionally, the feature ensures whenever the OrchardCore.Media feature is enabled, the following features also get enabled:
-	- OrchardCore.Content.Types
-	- OrchardCore.Liquid
-	- OrchardCore.Media.Azure.Storage
-	- OrchardCore.Media.Cache
-	- OrchardCore.Settings
+  - OrchardCore.Content.Types
+  - OrchardCore.Liquid
+  - OrchardCore.Media.Azure.Storage
+  - OrchardCore.Media.Cache
+  - OrchardCore.Settings
 
 It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
 
