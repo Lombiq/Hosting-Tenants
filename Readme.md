@@ -12,6 +12,7 @@ Do you want to quickly try out this project and see it in action? Check it out i
 
 The project consists of the following independent modules:
 
+- [Lombiq Hosting - Multi-Tenancy Tenants](Lombiq.Hosting.MultiTenancy.Tenants/Readme.md)
 - [Lombiq Hosting - Tenants Admin Login](Lombiq.Hosting.Tenants.Admin.Login/Readme.md)
 - [Lombiq Hosting - Tenants Management](Lombiq.Hosting.Tenants.Management/Readme.md)
 - [Lombiq Hosting - Tenants Idle Tenant Management](Lombiq.Hosting.Tenants.IdleTenantManagement/Readme.md)
