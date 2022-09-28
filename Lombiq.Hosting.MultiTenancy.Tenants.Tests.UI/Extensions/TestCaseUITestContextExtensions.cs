@@ -20,7 +20,7 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
         await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
         context.ExecuteScript(
-            "document.querySelectorAll(\"a[data-recipe-name='" + Recipes.OsoceTestsRecipeId + "']\")[0].click()");
+            "document.querySelectorAll(\"a[data-recipe-description='TEST: Lombiq's Open-Source Orchard Core Extensions']\")[0].click()");
         await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
