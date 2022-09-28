@@ -1,4 +1,3 @@
-using Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Constants;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
@@ -19,10 +18,8 @@ public static class TestCaseUITestContextExtensions
         // Set up newly created tenant.
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
         await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
-
         context.ExecuteScript("document.evaluate(\"//a[contains(text(),'Open-Source Orchard Core Extensions')]\", " +
             "document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
-
         await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
@@ -52,8 +49,8 @@ public static class TestCaseUITestContextExtensions
         // Set up newly created tenant.
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
         await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
-        context.ExecuteScript(
-            "document.querySelectorAll(\"a[data-recipe-name='" + Recipes.OsoceTestsRecipeId + "']\")[0].click()");
+        context.ExecuteScript("document.evaluate(\"//a[contains(text(),'Open-Source Orchard Core Extensions')]\", " +
+            "document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
         await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
