@@ -16,11 +16,13 @@ public static class TestCaseUITestContextExtensions
         // Create new tenant manually.
         await context.CreateNewTenantManuallyAsync("Testenant", "tt1", "localhost", "features guard");
 
-        // Setup newly created tenant.
+        // Set up newly created tenant.
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
         await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
-        context.ExecuteScript(
-            "document.querySelectorAll(\"a[data-recipe-description='TEST: Lombiq's Open-Source Orchard Core Extensions']\")[0].click()");
+
+        context.ExecuteScript("document.evaluate(\"//a[contains(text(),'Open-Source Orchard Core Extensions')]\", " +
+            "document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
+
         await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
         await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
@@ -47,7 +49,7 @@ public static class TestCaseUITestContextExtensions
         // Create new tenant manually.
         await context.CreateNewTenantManuallyAsync("Testenant", "tt1", "localhost", "features guard");
 
-        // Setup newly created tenant.
+        // Set up newly created tenant.
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
         await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
         context.ExecuteScript(
