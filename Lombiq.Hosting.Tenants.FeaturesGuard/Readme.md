@@ -1,4 +1,4 @@
-# Lombiq Hosting Tenants FeaturesGuard
+# Lombiq Hosting Tenants FeaturesGuard for Orchard Core
 
 [![Lombiq.Hosting.Tenants.FeaturesGuard NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard?label=Lombiq.Hosting.Tenants.FeaturesGuard)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard/)
 
@@ -36,6 +36,36 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
   - OrchardCore.Media.Azure.Storage
   - OrchardCore.Media.Cache
   - OrchardCore.Settings
+
+- Preventing enabling certain features on user tenants is also possible via recipes in a FeatureProfiles step. Example configuration:
+
+```json
+{
+  "name": "FeatureProfiles",
+  "FeatureProfiles": {
+    "Features Guard": {
+      "FeatureRules": [
+        {
+            "Rule": "Exclude",
+            "Expression": "OrchardCore.Workflows.Session"
+        },
+        {
+            "Rule": "Exclude",
+            "Expression": "OrchardCore.Lucene"
+        },
+        {
+            "Rule": "Exclude",
+            "Expression": "OrchardCore.MiniProfiler"
+        },
+        {
+            "Rule": "Exclude",
+            "Expression": "Lombiq.Tests.UI.Shortcuts"
+        }
+      ]
+    }
+  }
+}
+```
 
 It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
 
