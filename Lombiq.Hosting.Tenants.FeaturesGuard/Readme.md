@@ -1,5 +1,7 @@
 # Lombiq Hosting Tenants FeaturesGuard
 
+[![Lombiq.Hosting.Tenants.FeaturesGuard NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard?label=Lombiq.Hosting.Tenants.FeaturesGuard)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard/)
+
 ## About
 
 This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.
