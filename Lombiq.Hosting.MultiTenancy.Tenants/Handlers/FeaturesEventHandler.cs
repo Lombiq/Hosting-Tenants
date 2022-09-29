@@ -1,12 +1,12 @@
-using Lombiq.Hosting.MultiTenancy.Tenants.Constants;
-using Lombiq.Hosting.MultiTenancy.Tenants.Models;
+using Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
+using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.MultiTenancy.Tenants.Handlers;
+namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {

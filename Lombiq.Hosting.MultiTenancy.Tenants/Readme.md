@@ -1,4 +1,4 @@
-# Lombiq Hosting MultiTenancy Tenants
+# Lombiq Hosting Tenants FeaturesGuard
 
 ## About
 
@@ -13,7 +13,7 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
 ```json
 {
   "OrchardCore": {
-    "Lombiq_Hosting_MultiTenancy_Tenants": {
+    "Lombiq_Hosting_Tenants_FeaturesGuard": {
       "AlwaysEnabledFeaturesOptions": {
         "AlwaysEnabledFeatures": [
           "DotNest.Hosting.Tenants",
