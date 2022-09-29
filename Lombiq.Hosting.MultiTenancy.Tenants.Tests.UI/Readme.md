@@ -1,4 +1,4 @@
-# Lombiq Hosting - Multi-Tenancy Tenants - UI Test Extensions
+# Lombiq Hosting - Tenants FeaturesGuard - UI Test Extensions
 
 ## About
 
