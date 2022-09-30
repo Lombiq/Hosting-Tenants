@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Lombiq MultiTenancy for Orchard Core</Title>
+    <Title>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq MultiTenancy for Orchard Core: This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.</Description>
+    <Description>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core: This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;Features</PackageTags>
-    <RepositoryUrl>https://github.com/Lombiq/Helpful-Extensions</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.MultiTenancy.Tenants/Readme.md</PackageProjectUrl>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Tenants;LombiqHostingSuite;</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.FeaturesGuard/Readme.md</PackageProjectUrl>
     <PackageLicenseFile>License.md</PackageLicenseFile>
   </PropertyGroup>
 

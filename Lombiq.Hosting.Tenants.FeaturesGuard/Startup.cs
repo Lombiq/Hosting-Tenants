@@ -1,6 +1,6 @@
-using Lombiq.Hosting.MultiTenancy.Tenants.Constants;
-using Lombiq.Hosting.MultiTenancy.Tenants.Handlers;
-using Lombiq.Hosting.MultiTenancy.Tenants.Models;
+using Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
+using Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
+using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell;
@@ -8,9 +8,9 @@ using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Environment.Shell.Descriptor.Models;
 using OrchardCore.Modules;
 
-namespace Lombiq.Hosting.MultiTenancy.Tenants;
+namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 
-[Feature("FeaturesGuard")]
+[Feature(FeatureNames.FeaturesGuard)]
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -21,7 +21,7 @@ public class Startup : StartupBase
     {
         services.Configure<AlwaysEnabledFeaturesOptions>(options =>
             _shellConfiguration
-                .GetSection("Lombiq_Hosting_MultiTenancy_Tenants:AlwaysEnabledFeaturesOptions")
+                .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:AlwaysEnabledFeaturesOptions")
                 .Bind(options));
 
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();

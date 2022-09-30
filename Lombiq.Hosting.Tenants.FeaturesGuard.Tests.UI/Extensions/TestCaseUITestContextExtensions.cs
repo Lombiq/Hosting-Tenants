@@ -4,7 +4,7 @@ using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.Extensions;
+namespace Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {

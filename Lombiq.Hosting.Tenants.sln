@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Admi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Management", "Lombiq.Hosting.Tenants.Management\Lombiq.Hosting.Tenants.Management.csproj", "{0EEA3C03-E945-423B-A099-844942D90BAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.MultiTenancy.Tenants", "Lombiq.Hosting.MultiTenancy.Tenants\Lombiq.Hosting.MultiTenancy.Tenants.csproj", "{3BFDDA84-E0AE-485A-851D-E27592772ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.FeaturesGuard", "Lombiq.Hosting.Tenants.FeaturesGuard\Lombiq.Hosting.Tenants.FeaturesGuard.csproj", "{3BFDDA84-E0AE-485A-851D-E27592772ADB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.IdleTenantManagement", "Lombiq.Hosting.Tenants.IdleTenantManagement\Lombiq.Hosting.Tenants.IdleTenantManagement.csproj", "{CE2B8933-B900-4243-B7B3-FB4A66AF0681}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI", "Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI\Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.csproj", "{E2F50048-399C-4B51-848C-85D35C938B6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI", "Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI\Lombiq.Hosting.MultiTenancy.Tenants.Tests.UI.csproj", "{BC3DE841-E400-40C5-99C1-96B9299C9B04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI", "Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI\Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI.csproj", "{BC3DE841-E400-40C5-99C1-96B9299C9B04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
