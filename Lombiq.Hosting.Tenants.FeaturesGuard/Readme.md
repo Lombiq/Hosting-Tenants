@@ -4,7 +4,7 @@
 
 ## About
 
-Module to prevent disabling a configurable set of features on tenants. It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
+Module to prevent disabling a configurable set of features on tenants.
 
 ## Documentation
 

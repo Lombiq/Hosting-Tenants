@@ -8,6 +8,8 @@ Various modules that help you build a multi-tenant web application in [Orchard C
 
 Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
 
+It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
+
 ## Documentation
 
 The project consists of the following independent modules:
