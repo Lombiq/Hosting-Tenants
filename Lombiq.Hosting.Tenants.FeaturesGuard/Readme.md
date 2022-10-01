@@ -1,15 +1,15 @@
-# Lombiq Hosting Tenants FeaturesGuard for Orchard Core
+# Lombiq Hosting - Tenants Features Guard for Orchard Core
 
 [![Lombiq.Hosting.Tenants.FeaturesGuard NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard?label=Lombiq.Hosting.Tenants.FeaturesGuard)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard/)
 
 ## About
 
-This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.
+Module to prevent disabling a configurable set of features on tenants. It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
 
 ## Documentation
 
 - To use this feature, enable it on both the Default and the user tenant.
-- Once enabled on the user tenant, the FeaturesGuard feature cannot be disabled.
+- Once enabled on the user tenant, the Features Guard feature cannot be disabled.
 - Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`. Example configuration:
 
 ```json
@@ -18,9 +18,6 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
     "Lombiq_Hosting_Tenants_FeaturesGuard": {
       "AlwaysEnabledFeaturesOptions": {
         "AlwaysEnabledFeatures": [
-          "DotNest.Hosting.Tenants",
-          "DotNest.TenantsAdmin.Subtenant",
-          "Lombiq.Hosting.Tenants.Admin.Login",
           "OrchardCore.Roles",
           "OrchardCore.Users"
         ]
@@ -66,8 +63,6 @@ This module contains the FeaturesGuard feature, which prevents disabling a confi
   }
 }
 ```
-
-It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
 
 ## Contributing and support
 
