@@ -30,7 +30,7 @@ public class IdleShutdownTask : IBackgroundTask
 
         if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
-            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout", shellSettings?.Name);
+            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
 
             try
             {
@@ -40,7 +40,7 @@ public class IdleShutdownTask : IBackgroundTask
             {
                 logger?.LogError(
                     e,
-                    "Shutting down \"{ShellName}\" because of idle timeout failed with the following exception. Another shutdown will be attempted",
+                    "Shutting down \"{ShellName}\" because of idle timeout failed with the following exception. Another shutdown will be attempted.",
                     shellSettings?.Name);
 
                 // If the ReleaseShellContextAsync() fails (which can happen with a DB error: then the transaction

@@ -20,4 +20,4 @@ public void ConfigureServices(IServiceCollection services) =>
         builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames.DisableIdleTenants));
 ```
 
-**NOTE:** This way the feature will also be enabled on the Default tenant. You may not want to use this feature on the default tenant. It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
+**NOTE:** This way the feature will also be enabled on the Default tenant. You may not want to use this feature on the default tenant.

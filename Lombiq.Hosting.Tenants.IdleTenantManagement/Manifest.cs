@@ -15,6 +15,5 @@ using static Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames;
     Description = "Disable tenants not receiving requests after a configured amount of time.",
     Category = "Hosting",
     Priority = "9999",
-    IsAlwaysEnabled = true,
-    Dependencies = new[] { "OrchardCore.BackgroundTasks" }
+    IsAlwaysEnabled = true
 )]
