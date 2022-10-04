@@ -13,7 +13,7 @@ public static class IdleTenantManagementExtensions
             (_, argumentsBuilder) =>
             {
                 argumentsBuilder
-                    .Add("--OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions:MaxIdleMinutes")
+                    .Add("--OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions:MaxIdleMinutes")
                     .Add("1");
 
                 argumentsBuilder
@@ -26,5 +26,5 @@ public static class IdleTenantManagementExtensions
     public static readonly Func<IWebApplicationInstance, Task> AssertAppLogsWithIdleCheckAsync =
         async webApplicationInstance =>
             (await webApplicationInstance.GetLogOutputAsync())
-            .ShouldContain("Shutting down tenant \"Default\" because of idle timeout");
+            .ShouldContain("Shutting down tenant \"Default\" because of idle timeout.");
 }

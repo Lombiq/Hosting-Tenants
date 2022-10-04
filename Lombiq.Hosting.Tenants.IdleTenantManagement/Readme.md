@@ -27,7 +27,7 @@ public void ConfigureServices(IServiceCollection services) =>
   "OrchardCore": {
     "Default": {
       "Lombiq_Hosting_Tenants_IdleTenantManagement": {
-        "IdleMinutesOptions": {
+        "IdleShutdownOptions": {
           "MaxIdleMinutes": 0
         }
       }

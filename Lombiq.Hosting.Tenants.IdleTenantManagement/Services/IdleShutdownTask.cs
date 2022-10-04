@@ -20,7 +20,7 @@ public class IdleShutdownTask : IBackgroundTask
         var lastActiveTimeAccessor = serviceProvider.GetService<ILastActiveTimeAccessor>();
         var shellHost = serviceProvider.GetService<IShellHost>();
 
-        var options = serviceProvider.GetService<IOptions<IdleMinutesOptions>>();
+        var options = serviceProvider.GetService<IOptions<IdleShutdownOptions>>();
         var maxIdleMinutes = options.Value.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return;

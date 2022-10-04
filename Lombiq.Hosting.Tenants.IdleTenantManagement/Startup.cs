@@ -33,9 +33,9 @@ public class ShutDownIdleTenantsStartup : StartupBase
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
 
         // Idle Minutes Settings
-        services.Configure<IdleMinutesOptions>(options =>
+        services.Configure<IdleShutdownOptions>(options =>
             _shellConfiguration
-                .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions")
+                .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions")
                 .Bind(options));
     }
 }
