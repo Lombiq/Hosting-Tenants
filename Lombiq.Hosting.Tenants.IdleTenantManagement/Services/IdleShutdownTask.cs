@@ -11,25 +11,25 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
-[BackgroundTask(Schedule = "* * * * *", Description = "Disable Idle Tenants.")]
+[BackgroundTask(Schedule = "* * * * *", Description = "Shut down idle tenants.")]
 public class IdleShutdownTask : IBackgroundTask
 {
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var clock = serviceProvider.GetService<IClock>();
-        var shellSettings = serviceProvider.GetService<ShellSettings>();
-        var logger = serviceProvider.GetService<ILogger<IdleShutdownTask>>();
         var lastActiveTimeAccessor = serviceProvider.GetService<ILastActiveTimeAccessor>();
-        var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
         var shellHost = serviceProvider.GetService<IShellHost>();
-        var options = serviceProvider.GetService<IOptions<IdleMinutesOptions>>();
 
+        var options = serviceProvider.GetService<IOptions<IdleShutdownOptions>>();
         var maxIdleMinutes = options.Value.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return;
 
         if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
+            var shellSettings = serviceProvider.GetService<ShellSettings>();
+            var logger = serviceProvider.GetService<ILogger<IdleShutdownTask>>();
+
             logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
 
             try
@@ -44,9 +44,10 @@ public class IdleShutdownTask : IBackgroundTask
                     shellSettings?.Name);
 
                 // If the ReleaseShellContextAsync() fails (which can happen with a DB error: then the transaction
-                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is
-                // still active in a failed state. So first we need to correctly start the tenant, then shut it
-                // down for good.
+                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is still
+                // active in a failed state. So first we need to correctly start the tenant, then shut it down for good.
+
+                var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
 
                 await InvokeRestartAsync(shellSettingsManager, shellHost, shellSettings);
                 await InvokeShutdownAsync(shellSettings, shellHost);

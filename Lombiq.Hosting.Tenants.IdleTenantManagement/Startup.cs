@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
@@ -13,19 +13,19 @@ using System;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement;
 
-[Feature(FeatureNames.DisableIdleTenants)]
-public class DisableIdleTenantsStartup : StartupBase
+[Feature(FeatureNames.ShutDownIdleTenants)]
+public class ShutDownIdleTenantsStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
-    public DisableIdleTenantsStartup(IShellConfiguration shellConfiguration) =>
+    public ShutDownIdleTenantsStartup(IShellConfiguration shellConfiguration) =>
         _shellConfiguration = shellConfiguration;
 
     public override void Configure(
         IApplicationBuilder app,
         IEndpointRouteBuilder routes,
         IServiceProvider serviceProvider) =>
-            app.UseMiddleware<IdleTimeProviderMiddleware>();
+        app.UseMiddleware<IdleTimeProviderMiddleware>();
 
     public override void ConfigureServices(IServiceCollection services)
     {
@@ -33,9 +33,9 @@ public class DisableIdleTenantsStartup : StartupBase
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
 
         // Idle Minutes Settings
-        services.Configure<IdleMinutesOptions>(options =>
+        services.Configure<IdleShutdownOptions>(options =>
             _shellConfiguration
-                .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions")
+                .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions")
                 .Bind(options));
     }
 }
