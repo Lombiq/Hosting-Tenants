@@ -44,9 +44,8 @@ public class IdleShutdownTask : IBackgroundTask
                     shellSettings?.Name);
 
                 // If the ReleaseShellContextAsync() fails (which can happen with a DB error: then the transaction
-                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is
-                // still active in a failed state. So first we need to correctly start the tenant, then shut it
-                // down for good.
+                // commits triggered by the dispose will fail) then while the tenant is unavailable the shell is still
+                // active in a failed state. So first we need to correctly start the tenant, then shut it down for good.
 
                 var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
 
