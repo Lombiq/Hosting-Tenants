@@ -17,7 +17,21 @@ This feature is available on any tenant. The maximum idle time can be set in the
 ```csharp
 public void ConfigureServices(IServiceCollection services) =>
     services.AddOrchardCms(
-        builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames.DisableIdleTenants));
+        builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames.ShutDownIdleTenants));
 ```
 
-**NOTE:** This way the feature will also be enabled on the Default tenant. You may not want to use this feature on the default tenant.
+**NOTE:** This way the feature will also be enabled on the Default tenant. You may not want to use this feature on the default tenant, so configure the corresponding `MaxIdleMinutes` as `0`. You can do this in an _appsettings.json_ file like this (see [the docs](https://docs.orchardcore.net/en/latest/docs/reference/core/Configuration/) for more details):
+
+```json
+{
+  "OrchardCore": {
+    "Default": {
+      "Lombiq_Hosting_Tenants_IdleTenantManagement": {
+        "IdleMinutesOptions": {
+          "MaxIdleMinutes": 0
+        }
+      }
+    }
+  }
+}
+```

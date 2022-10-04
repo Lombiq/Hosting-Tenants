@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
-[BackgroundTask(Schedule = "* * * * *", Description = "Disable Idle Tenants.")]
+[BackgroundTask(Schedule = "* * * * *", Description = "Shut down idle tenants.")]
 public class IdleShutdownTask : IBackgroundTask
 {
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)

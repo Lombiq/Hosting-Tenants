@@ -13,12 +13,12 @@ using System;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement;
 
-[Feature(FeatureNames.DisableIdleTenants)]
-public class DisableIdleTenantsStartup : StartupBase
+[Feature(FeatureNames.ShutDownIdleTenants)]
+public class ShutDownIdleTenantsStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
-    public DisableIdleTenantsStartup(IShellConfiguration shellConfiguration) =>
+    public ShutDownIdleTenantsStartup(IShellConfiguration shellConfiguration) =>
         _shellConfiguration = shellConfiguration;
 
     public override void Configure(
