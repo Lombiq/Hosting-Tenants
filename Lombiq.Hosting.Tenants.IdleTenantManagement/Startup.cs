@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Middlewares;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
@@ -25,7 +25,7 @@ public class ShutDownIdleTenantsStartup : StartupBase
         IApplicationBuilder app,
         IEndpointRouteBuilder routes,
         IServiceProvider serviceProvider) =>
-            app.UseMiddleware<IdleTimeProviderMiddleware>();
+        app.UseMiddleware<IdleTimeProviderMiddleware>();
 
     public override void ConfigureServices(IServiceCollection services)
     {
