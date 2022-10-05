@@ -10,9 +10,9 @@ using static Lombiq.Hosting.Tenants.IdleTenantManagement.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = DisableIdleTenants,
-    Name = "Lombiq Hosting - Idle Tenant Management - Disable Idle Tenants",
-    Description = "Disable tenants not receiving requests after a configured amount of time.",
+    Id = ShutDownIdleTenants,
+    Name = "Lombiq Hosting - Idle Tenant Management - Shut Down Idle Tenants",
+    Description = "Shut down tenants not receiving requests after a configured amount of time to conserve computing resources.",
     Category = "Hosting",
     Priority = "9999",
     IsAlwaysEnabled = true
