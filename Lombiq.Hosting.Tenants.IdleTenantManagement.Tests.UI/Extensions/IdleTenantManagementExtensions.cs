@@ -14,7 +14,7 @@ public static class IdleTenantManagementExtensions
             {
                 argumentsBuilder
                     .AddWithValue(
-                        "OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleMinutesOptions:MaxIdleMinutes",
+                        "OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions:MaxIdleMinutes",
                         "1");
 
                 argumentsBuilder
