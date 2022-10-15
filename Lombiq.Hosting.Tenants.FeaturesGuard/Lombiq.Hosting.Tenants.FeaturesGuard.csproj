@@ -41,4 +41,8 @@
     <PackageReference Include="OrchardCore.DisplayManagement" Version="1.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.Common\Lombiq.HelpfulLibraries.Common.csproj" />
+  </ItemGroup>
+
 </Project>
