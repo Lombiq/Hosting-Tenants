@@ -79,7 +79,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         if (!featuresToEnable.Any()) return;
 
-        var breakMeDaddy = "";
         await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable);
     }
 
