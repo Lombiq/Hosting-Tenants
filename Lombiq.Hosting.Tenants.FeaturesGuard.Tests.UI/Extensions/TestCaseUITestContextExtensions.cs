@@ -10,7 +10,7 @@ public static class TestCaseUITestContextExtensions
 {
     public static async Task TestForbiddenFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
-        await context.SignInDirectlyAndGoToDashboardAsync();
+        await context.SignInDirectlyAsync();
 
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
@@ -23,7 +23,7 @@ public static class TestCaseUITestContextExtensions
 
     public static async Task TestAlwaysEnabledFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
-        await context.SignInDirectlyAndGoToDashboardAsync();
+        await context.SignInDirectlyAsync();
 
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
