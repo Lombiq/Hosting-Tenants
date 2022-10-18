@@ -41,15 +41,8 @@ public static class TestCaseUITestContextExtensions
     private static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context, string setupRecipeId)
     {
         const string tenantName = "TestTenant";
-        const string tenantUrlPrefix = "tt1";
 
-        // Create new tenant manually.
-        await context.CreateNewTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "features guard");
-
-        // Set up newly created tenant.
-        await context.ClickReliablyOnAsync(By.LinkText("Setup"));
-
-        context.ChangeCurrentTenant(tenantName, tenantUrlPrefix);
+        await context.CreateAndEnterTenantManuallyAsync(tenantName, "tt1", string.Empty, "features guard");
 
         await context.GoToSetupPageAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
@@ -58,7 +51,6 @@ public static class TestCaseUITestContextExtensions
                 RecipeId = setupRecipeId,
             });
 
-        // Log into tenant site and navigate to features list.
         await context.SignInDirectlyAsync();
         await context.GoToAdminRelativeUrlAsync("/Features");
     }
