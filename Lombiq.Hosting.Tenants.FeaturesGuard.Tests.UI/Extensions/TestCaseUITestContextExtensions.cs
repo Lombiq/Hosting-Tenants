@@ -1,5 +1,5 @@
-using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
+using Lombiq.Tests.UI.Pages;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
 using System.Threading.Tasks;
@@ -8,11 +8,11 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {
-    public static async Task TestForbiddenFeaturesAsync(this UITestContext context)
+    public static async Task TestForbiddenFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
 
-        await SetUpNewTenantAndGoToFeaturesListAsync(context);
+        await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Ensure forbidden features are not available in the list.
         context.Missing(By.XPath("//label[@for='OrchardCore.Workflows.Session']"));
@@ -21,11 +21,11 @@ public static class TestCaseUITestContextExtensions
         context.Missing(By.XPath("//label[@for='Lombiq.Tests.UI.Shortcuts']"));
     }
 
-    public static async Task TestAlwaysEnabledFeaturesAsync(this UITestContext context)
+    public static async Task TestAlwaysEnabledFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
 
-        await SetUpNewTenantAndGoToFeaturesListAsync(context);
+        await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
         context.Missing(By.XPath("//a[@id='btn-disable-Lombiq_Hosting_Tenants_Admin_Login_SubTenant']"));
@@ -38,26 +38,28 @@ public static class TestCaseUITestContextExtensions
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
     }
 
-    public static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context)
+    private static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context, string setupRecipeId)
     {
+        const string tenantName = "TestTenant";
+        const string tenantUrlPrefix = "tt1";
+
         // Create new tenant manually.
-        await context.CreateNewTenantManuallyAsync("Testenant", "tt1", "localhost", "features guard");
+        await context.CreateNewTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "features guard");
 
         // Set up newly created tenant.
         await context.ClickReliablyOnAsync(By.LinkText("Setup"));
-        await context.ClickAndFillInWithRetriesAsync(By.Id("SiteName"), "Testenant");
-        context.ExecuteScript("document.evaluate(\"//a[contains(text(),'Open-Source Orchard Core Extensions')]\", " +
-            "document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue");
-        await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Email"), DefaultUser.Email);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("PasswordConfirmation"), DefaultUser.Password);
-        await context.ClickReliablyOnAsync(By.XPath("//button[@id='SubmitButton']"));
+
+        context.ChangeCurrentTenant(tenantName, tenantUrlPrefix);
+
+        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+            new OrchardCoreSetupParameters(context)
+            {
+                SiteName = tenantName,
+                RecipeId = setupRecipeId,
+            });
 
         // Log into tenant site and navigate to features list.
-        await context.GoToRelativeUrlAsync("/tt1/admin/features");
-        await context.ClickAndFillInWithRetriesAsync(By.Id("UserName"), DefaultUser.UserName);
-        await context.ClickAndFillInWithRetriesAsync(By.Id("Password"), DefaultUser.Password);
-        await context.ClickReliablyOnAsync(By.XPath("//button[contains(., 'Log in')]"));
+        await context.SignInDirectlyAsync();
+        await context.GoToAdminRelativeUrlAsync("/Features");
     }
 }
