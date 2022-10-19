@@ -51,7 +51,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     //Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableMediaAndRelatedFeaturesAsync(feature);
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => KeepMediaRelatedDependentFeaturesEnabledAsync(feature); // try enabling dependencies
+    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => KeepMediaRelatedDependentFeaturesEnabledAsync(feature);
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
@@ -242,62 +242,55 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
 
-        if (featureInfo.Id != FeatureNames.AzureStorage)
+        if (featureInfo.Id == FeatureNames.Contents)
         {
-            if (featureInfo.Id == FeatureNames.Contents)
+            // Re-enable Contents if Liquid is enabled.
+            var liquidFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Liquid);
+            if (currentlyEnabledFeatures.Contains(liquidFeature.SingleOrDefault()))
             {
-                // Re-enable Contents if Liquid is enabled.
-                var liquidFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Liquid);
-                if (currentlyEnabledFeatures.Contains(liquidFeature.SingleOrDefault()))
-                {
-                    var contentsFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Contents);
-                    await _shellFeaturesManager.EnableFeaturesAsync(contentsFeature);
-                }
-
-                return;
-            }
-            else if (featureInfo.Id == FeatureNames.ContentTypes)
-            {
-                // Re-enable Content Types if Contents is enabled.
                 var contentsFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Contents);
-                if (currentlyEnabledFeatures.Contains(contentsFeature.SingleOrDefault()))
-                {
-                    var contentTypesFeature = allFeatures.Where(feature => feature.Id == FeatureNames.ContentTypes);
-                    await _shellFeaturesManager.EnableFeaturesAsync(contentTypesFeature);
-                }
-
-                return;
-            }
-            else if (featureInfo.Id == FeatureNames.Media)
-            {
-                // Re-enable Media if Content Types is enabled.
-                var contentTypesFeature = allFeatures.Where(feature => feature.Id == FeatureNames.ContentTypes);
-                if (currentlyEnabledFeatures.Contains(contentTypesFeature.SingleOrDefault()))
-                {
-                    var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
-                    await _shellFeaturesManager.EnableFeaturesAsync(mediaFeature);
-                }
-
-                return;
-            }
-            else if (featureInfo.Id == FeatureNames.MediaCache)
-            {
-                // Re-enable Media Cache if Media is enabled.
-                var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
-                if (currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()))
-                {
-                    var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
-                    await _shellFeaturesManager.EnableFeaturesAsync(mediaCacheFeature);
-                }
-
-                return;
+                await _shellFeaturesManager.EnableFeaturesAsync(contentsFeature);
             }
 
-            // Re-enable the feature if it is not a dependent feature.
-            var featureToKeepEnabled = allFeatures.Where(feature => feature.Id == featureInfo.Id);
-            await _shellFeaturesManager.EnableFeaturesAsync(featureToKeepEnabled, force: true);
+            return;
         }
-        else
+        else if (featureInfo.Id == FeatureNames.ContentTypes)
+        {
+            // Re-enable Content Types if Contents is enabled.
+            var contentsFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Contents);
+            if (currentlyEnabledFeatures.Contains(contentsFeature.SingleOrDefault()))
+            {
+                var contentTypesFeature = allFeatures.Where(feature => feature.Id == FeatureNames.ContentTypes);
+                await _shellFeaturesManager.EnableFeaturesAsync(contentTypesFeature);
+            }
+
+            return;
+        }
+        else if (featureInfo.Id == FeatureNames.Media)
+        {
+            // Re-enable Media if Content Types is enabled.
+            var contentTypesFeature = allFeatures.Where(feature => feature.Id == FeatureNames.ContentTypes);
+            if (currentlyEnabledFeatures.Contains(contentTypesFeature.SingleOrDefault()))
+            {
+                var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
+                await _shellFeaturesManager.EnableFeaturesAsync(mediaFeature);
+            }
+
+            return;
+        }
+        else if (featureInfo.Id == FeatureNames.MediaCache)
+        {
+            // Re-enable Media Cache if Media is enabled.
+            var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
+            if (currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()))
+            {
+                var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
+                await _shellFeaturesManager.EnableFeaturesAsync(mediaCacheFeature);
+            }
+
+            return;
+        }
+        else if (featureInfo.Id == FeatureNames.AzureStorage)
         {
             //if (!_configuration.IsAzureHosting()) return;
 
@@ -308,7 +301,13 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
                 await _shellFeaturesManager.EnableFeaturesAsync(azureMedia);
             }
+
+            return;
         }
+
+        // Re-enable the feature if it is not a dependent feature.
+        var featureToKeepEnabled = allFeatures.Where(feature => feature.Id == featureInfo.Id);
+        await _shellFeaturesManager.EnableFeaturesAsync(featureToKeepEnabled, force: true);
     }
 
     public async Task KeepAlwaysEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo)
