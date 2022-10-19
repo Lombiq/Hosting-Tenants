@@ -10,8 +10,6 @@ public static class TestCaseUITestContextExtensions
 {
     public static async Task TestForbiddenFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
-        await context.SignInDirectlyAsync();
-
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Ensure forbidden features are not available in the list.
@@ -23,8 +21,6 @@ public static class TestCaseUITestContextExtensions
 
     public static async Task TestAlwaysEnabledFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
-        await context.SignInDirectlyAsync();
-
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
@@ -40,6 +36,8 @@ public static class TestCaseUITestContextExtensions
 
     private static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context, string setupRecipeId)
     {
+        await context.SignInDirectlyAsync();
+
         const string tenantName = "TestTenant";
 
         await context.CreateAndEnterTenantManuallyAsync(tenantName, "tt1", string.Empty, "features guard");
@@ -49,6 +47,7 @@ public static class TestCaseUITestContextExtensions
             {
                 SiteName = tenantName,
                 RecipeId = setupRecipeId,
+                RunSetupOnCurrentPage = true,
             });
 
         await context.SignInDirectlyAsync();
