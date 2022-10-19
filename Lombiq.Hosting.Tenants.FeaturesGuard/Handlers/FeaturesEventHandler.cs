@@ -73,10 +73,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             return;
         }
 
-        // when should this be run though -- is it not a problem if it runs immediately after the very first feature is enabled?
-            // sounds like a problem, but it seemed fine when actually running it?
-        // go by feature priority or category?
-        // try running this after a feature that has a priority greater than 0 was enabled -- but then again, having a 0 < priority feature is not guaranteed
+        // Can likely be run after OC.Settings is enabled as it's set to AlwaysEnabled.
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
         var alwaysEnabledFeaturesInfo = allFeatures.Where(feature => alwaysEnabledFeatures.Contains(feature.Id));
@@ -195,18 +192,26 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     // Now this seems to be working. So add the dependent features here to be enabled straight after their parent feature was
     // Keeps certain features enabled if they are dependent on other features. Or something.
-    public async Task KeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo)
+    public async Task KeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo) // EnabledAsync
     {
-        if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache)
+        if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache and not FeatureNames.ContentTypes)
         {
             return;
         }
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        // is there ever a case where, inside this method, the Media-dependent feature is already enabled? -> looks like no?
+        // is there ever a case where, inside this method, the dependent feature is already enabled? -> looks like no?
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
 
-        if (featureInfo.Id == FeatureNames.Media)
+        if (featureInfo.Id == FeatureNames.ContentTypes)
+        {
+            var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
+            if (!currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()))
+            {
+                await _shellFeaturesManager.EnableFeaturesAsync(mediaFeature);
+            }
+        }
+        else if (featureInfo.Id == FeatureNames.Media)
         {
             var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
 
@@ -229,10 +234,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     // does this work if e.g. Media is disabled, does it keep its dependent features on regardless? -> oh no it dont
     // Keeps certain features enabled if they don't have any dependent features.
-    public async Task KeepMediaAndRelatedFeaturesEnabledAsync(IFeatureInfo featureInfo)
+    public async Task KeepMediaAndRelatedFeaturesEnabledAsync(IFeatureInfo featureInfo) // DisabledAsync
     {
         if (featureInfo.Id is not FeatureNames.AzureStorage and not FeatureNames.Media and not FeatureNames.MediaCache and not
-            FeatureNames.Contents and not FeatureNames.ContentTypes and not FeatureNames.Liquid and not FeatureNames.Settings)
+            FeatureNames.Contents and not FeatureNames.ContentTypes and not FeatureNames.Liquid)
         {
             return;
         }
@@ -241,10 +246,26 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         if (featureInfo.Id != FeatureNames.AzureStorage)
         {
             // filter for dependent features as they cannot be simply re-enabled here
-            if (featureInfo.Id == FeatureNames.MediaCache)
+            // Media also has dependencies (content types and liquid), need to filter for those
+            if (featureInfo.Id == FeatureNames.Media)
             {
-                // in case it's Media Cache being disabled, do enable it -- do so if Media itself is enabled
+                // If it's Media being disabled, re-enable it if ContentTypes is enabled.
                 var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+                var contentTypesFeature = allFeatures.Where(feature => feature.Id == FeatureNames.ContentTypes);
+
+                if (currentlyEnabledFeatures.Contains(contentTypesFeature.SingleOrDefault()))
+                {
+                    var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
+                    await _shellFeaturesManager.EnableFeaturesAsync(mediaFeature);
+                }
+
+                return;
+            }
+            else if (featureInfo.Id == FeatureNames.MediaCache)
+            {
+                // If it's Media.Cache being disabled, re-enable it if Media itself is enabled.
+                var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+                // need to filter for Liquid and ContentTypes too? Or is it unnecessary if Media already depends on those?
                 var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
                 if (currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()))
                 {
@@ -265,6 +286,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             //if (!_configuration.IsAzureHosting()) return;
 
             // in case it's AzureStorage being disabled, do enable it -- do so if Media AND MediaCache are enabled
+                // isn't it enough to filter for Media.Cache only, considering it is dependent on Media already?
             var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
             var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
             var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
