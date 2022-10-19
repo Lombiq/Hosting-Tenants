@@ -7,7 +7,6 @@ using OrchardCore.Environment.Shell;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YesSql.Services;
 
 namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
@@ -31,27 +30,12 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
+
     Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
-
-    //async Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature)
-    //{
-    //    await EnableAlwaysEnabledFeaturesAsync(feature);
-    //    await EnableMediaAndRelatedFeaturesAsync(feature);
-
-    //    // first check if all these features are disabled by default, then see if running the method does properly enable them.
-    //    // After that, see what happens when the already enabled ones are removed from recipe
-    //        // disabled:
-    //        // - Azure Storage
-    //        // - Media Cache
-    //        // -
-    //        // -
-    //        // -
-    //}
 
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    //Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableMediaAndRelatedFeaturesAsync(feature);
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => KeepMediaRelatedDependentFeaturesEnabledAsync(feature);
+    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableAndKeepMediaRelatedDependentFeaturesEnabledAsync(feature);
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
@@ -93,115 +77,25 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable);
     }
 
-    public async Task EnableMediaAndRelatedFeaturesAsync(IFeatureInfo featureInfo)
-    {
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-
-        // make a list of these
-        var mediaAndRelatedFeatures = allFeatures.Where(feature => feature.Id is FeatureNames.AzureStorage or FeatureNames.Media or
-            FeatureNames.Contents or FeatureNames.ContentTypes or FeatureNames.Liquid or FeatureNames.Settings);
-        //var mediaAndRelatedFeatures = allFeatures.Where(feature => feature.Id is FeatureNames.AzureStorage or FeatureNames.Media or
-        //    FeatureNames.MediaCache or FeatureNames.Contents or FeatureNames.ContentTypes or FeatureNames.Liquid or FeatureNames.Settings);
-
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-        var featuresToEnable = new List<IFeatureInfo>();
-
-        // enable Media first (if not already enabled). Then see if more dependencies need explicit enabling before running the foreach
-            // is this even the problem?
-        //var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
-        //var isMediaEnabled = currentlyEnabledFeatures.Contains(mediaFeature.First());
-
-        //if (!isMediaEnabled)
-        //{
-        //    var borkedList = new List<IFeatureInfo> { mediaFeature.FirstOrDefault() };
-        //    await _shellFeaturesManager.EnableFeaturesAsync(borkedList);
-        //}
-
-        //// this does not update in real time
-        //var newlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-
-        foreach (var feature in mediaAndRelatedFeatures)
-        {
-            if (currentlyEnabledFeatures.Contains(feature))
-            {
-                continue;
-            }
-
-            if (feature.Id != FeatureNames.AzureStorage)
-            {
-                // just enable here?
-                featuresToEnable.Add(feature);
-                //var featureToEnable = new List<IFeatureInfo>
-                //{
-                //    feature,
-                //};
-
-                //await _shellFeaturesManager.EnableFeaturesAsync(featureToEnable);
-            }
-            else
-            {
-                // Azure Storage can only be enabled once Media Cache is.
-                if (_configuration.IsAzureHosting() && featureInfo.Id == FeatureNames.MediaCache) // test this locally too
-                {
-                    featuresToEnable.Add(feature);
-
-                    //var featureToEnable = new List<IFeatureInfo>
-                    //{
-                    //    feature,
-                    //};
-
-                    //await _shellFeaturesManager.EnableFeaturesAsync(featureToEnable);
-                }
-
-                continue;
-            }
-        }
-
-        if (!featuresToEnable.Any()) return;
-
-        // enabling them in bulk might be the cause of the shell descriptor exception.
-        // try enabling one by one
-        // either in a foreach in this method
-        // or separately on each call of this method
-
-        // Enable the features one by one to avoid Shell Descriptor exception. as fucking if
-
-        // could always return or call this method from inside the method?
-        // check for dependencies first, enable those before the main feature?
-
-        // debug and see which feature causes exception -- Media Cache. Of course.
-            // but it's not only MC, if other features are not enabled in recipe, multiple features throw this error
-        await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
-        //var eke = new List<IFeatureInfo> { featuresToEnable.FirstOrDefault() };
-        //if (eke.Any())
-        //{
-        //    await _shellFeaturesManager.EnableFeaturesAsync(eke, force: true);
-        //}
-
-        var ga = "";
-        //foreach (var feature in featuresToEnable)
-        //{
-        //    var eke = new List<IFeatureInfo>
-        //    {
-        //        feature,
-        //    };
-
-        //    await _shellFeaturesManager.EnableFeaturesAsync(eke);
-        //}
-    }
-
     // Keeps certain features enabled if they are dependent on other features. Or something.
-    public async Task KeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo) // EnabledAsync
+    // Doesn't this also work during setup?
+    public async Task EnableAndKeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo) // EnabledAsync
     {
         if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache and not
-            FeatureNames.ContentTypes and not FeatureNames.Contents and not FeatureNames.Liquid)
+            FeatureNames.ContentTypes and not FeatureNames.Contents and not FeatureNames.Liquid and not FeatureNames.Settings)
         {
             return;
         }
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
-        if (featureInfo.Id == FeatureNames.Liquid)
+        // Settings is always enabled, so the process can start with it.
+        if (featureInfo.Id == FeatureNames.Settings)
+        {
+            var liquidFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Liquid);
+            await _shellFeaturesManager.EnableFeaturesAsync(liquidFeature);
+        }
+        else if (featureInfo.Id == FeatureNames.Liquid)
         {
             var contentsFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Contents);
             await _shellFeaturesManager.EnableFeaturesAsync(contentsFeature);
@@ -223,7 +117,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
         else if (featureInfo.Id == FeatureNames.MediaCache)
         {
-            //if (!_configuration.IsAzureHosting()) return;
+            if (!_configuration.IsAzureHosting()) return;
 
             var azureMediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
             await _shellFeaturesManager.EnableFeaturesAsync(azureMediaFeature);
@@ -292,7 +186,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
         else if (featureInfo.Id == FeatureNames.AzureStorage)
         {
-            //if (!_configuration.IsAzureHosting()) return;
+            if (!_configuration.IsAzureHosting()) return;
 
             // Re-enable Azure Storage if Media Cache is enabled.
             var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
