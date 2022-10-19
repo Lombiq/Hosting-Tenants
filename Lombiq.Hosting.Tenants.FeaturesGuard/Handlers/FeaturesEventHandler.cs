@@ -51,7 +51,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     //Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableMediaAndRelatedFeaturesAsync(feature);
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => KeepMediaRelatedDependenciesEnabledAsync(feature); // try enabling dependencies
+    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => KeepMediaRelatedDependentFeaturesEnabledAsync(feature); // try enabling dependencies
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
@@ -194,14 +194,16 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     }
 
     // Now this seems to be working. So add the dependent features here to be enabled straight after their parent feature was
-    public async Task KeepMediaRelatedDependenciesEnabledAsync(IFeatureInfo featureInfo)
+    // Keeps certain features enabled if they are dependent on other features. Or something.
+    public async Task KeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
-        if (featureInfo.Id is not FeatureNames.Media)
+        if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache)
         {
             return;
         }
 
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        // is there ever a case where, inside this method, the Media-dependent feature is already enabled? -> looks like no?
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
 
         if (featureInfo.Id == FeatureNames.Media)
@@ -213,9 +215,20 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 await _shellFeaturesManager.EnableFeaturesAsync(mediaCacheFeature);
             }
         }
+        else if (featureInfo.Id == FeatureNames.MediaCache)
+        {
+            //if (!_configuration.IsAzureHosting()) return;
+
+            var azureMediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
+            if (!currentlyEnabledFeatures.Contains(azureMediaFeature.SingleOrDefault()))
+            {
+                await _shellFeaturesManager.EnableFeaturesAsync(azureMediaFeature);
+            }
+        }
     }
 
     // does this work if e.g. Media is disabled, does it keep its dependent features on regardless? -> oh no it dont
+    // Keeps certain features enabled if they don't have any dependent features.
     public async Task KeepMediaAndRelatedFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
         if (featureInfo.Id is not FeatureNames.AzureStorage and not FeatureNames.Media and not FeatureNames.MediaCache and not
@@ -227,22 +240,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
         if (featureInfo.Id != FeatureNames.AzureStorage)
         {
-            if (featureInfo.Id == FeatureNames.Media)
+            // filter for dependent features as they cannot be simply re-enabled here
+            if (featureInfo.Id == FeatureNames.MediaCache)
             {
-                //var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
-                //await _shellFeaturesManager.EnableFeaturesAsync(mediaFeature, force: true);
-
-                // Also enable feature dependent on Media. -> but this cannot be enabled straight away? Such cuckery.
-                // try calling this method again -> still does not work, as if the enabling of Media just didn't finish in time.
-                //var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
-                ////await _shellFeaturesManager.EnableFeaturesAsync(mediaCacheFeature);
-                //await KeepMediaAndRelatedFeaturesEnabledAsync(mediaCacheFeature.First());
-
-                //return;
-            }
-            else if (featureInfo.Id == FeatureNames.MediaCache)
-            {
-                // in case it's Media Cache being disabled, do enable it -- do so if Media itself is enabled?
+                // in case it's Media Cache being disabled, do enable it -- do so if Media itself is enabled
                 var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
                 var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
                 if (currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()))
@@ -254,19 +255,26 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
-            // Enable the feature if it has no dependent feature.
+            // Enable the feature if it is not a dependent feature.
                 // might need to filter further
             var featureToKeepEnabled = allFeatures.Where(feature => feature.Id == featureInfo.Id);
             await _shellFeaturesManager.EnableFeaturesAsync(featureToKeepEnabled, force: true);
         }
         else
         {
-            if (!_configuration.IsAzureHosting()) return;
+            //if (!_configuration.IsAzureHosting()) return;
 
-            // needs to handle case where it is Media which is being disabled
+            // in case it's AzureStorage being disabled, do enable it -- do so if Media AND MediaCache are enabled
+            var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+            var mediaFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Media);
+            var mediaCacheFeature = allFeatures.Where(feature => feature.Id == FeatureNames.MediaCache);
 
-            var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
-            await _shellFeaturesManager.EnableFeaturesAsync(azureMedia);
+            if (currentlyEnabledFeatures.Contains(mediaFeature.SingleOrDefault()) &&
+                currentlyEnabledFeatures.Contains(mediaCacheFeature.SingleOrDefault()))
+            {
+                var azureMedia = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
+                await _shellFeaturesManager.EnableFeaturesAsync(azureMedia);
+            }
         }
     }
 
