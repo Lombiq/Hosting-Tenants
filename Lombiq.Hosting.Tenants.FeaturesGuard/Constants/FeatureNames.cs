@@ -16,6 +16,7 @@ public static class FeatureNames
     public const string Liquid = OrchardCore + "." + "Liquid";
     public const string Media = OrchardCore + "." + "Media";
     public const string MediaCache = OrchardCore + "." + "Media.Cache";
+    public const string Roles = OrchardCore + "." + "Roles";
     public const string Settings = OrchardCore + "." + "Settings";
     public const string Users = OrchardCore + "." + "Users";
 }

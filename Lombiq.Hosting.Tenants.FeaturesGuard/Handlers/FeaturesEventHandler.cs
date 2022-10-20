@@ -1,5 +1,6 @@
 using Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
 using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
@@ -35,50 +36,25 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableAndKeepMediaRelatedDependentFeaturesEnabledAsync(feature);
+    async Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature)
+    {
+        //await EnableAndKeepMediaRelatedDependentFeaturesEnabledAsync(feature);
+        await EnableAlwaysEnabledFeaturesAsync(feature);
+    }
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     async Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature)
     {
-        //await KeepAlwaysEnabledFeaturesEnabledAsync(feature);
-        await KeepMediaAndRelatedFeaturesEnabledAsync(feature);
+        await KeepAlwaysEnabledFeaturesEnabledAsync(feature);
+        //await KeepMediaAndRelatedFeaturesEnabledAsync(feature);
     }
 
     Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     Task IFeatureEventHandler.UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    public async Task EnableAlwaysEnabledFeaturesAsync(IFeatureInfo featureInfo)
-    {
-        if (_shellSettings.IsDefaultShell() ||
-            _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures is not { } alwaysEnabledFeatures)
-        {
-            return;
-        }
-
-        // Can likely be run after OC.Settings is enabled as it's set to AlwaysEnabled.
-
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        var alwaysEnabledFeaturesInfo = allFeatures.Where(feature => alwaysEnabledFeatures.Contains(feature.Id));
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-
-        var featuresToEnable = new List<IFeatureInfo>();
-        foreach (var feature in alwaysEnabledFeaturesInfo)
-        {
-            if (!currentlyEnabledFeatures.Contains(feature))
-            {
-                featuresToEnable.Add(feature);
-            }
-        }
-
-        if (!featuresToEnable.Any()) return;
-
-        await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable);
-    }
-
     // Keeps certain features enabled if they are dependent on other features. Or something.
-    // Doesn't this also work during setup?
     public async Task EnableAndKeepMediaRelatedDependentFeaturesEnabledAsync(IFeatureInfo featureInfo) // EnabledAsync
     {
         if (featureInfo.Id is not FeatureNames.Media and not FeatureNames.MediaCache and not
@@ -204,7 +180,100 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         await _shellFeaturesManager.EnableFeaturesAsync(featureToKeepEnabled, force: true);
     }
 
-    public async Task KeepAlwaysEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo)
+    public async Task EnableAlwaysEnabledFeaturesAsync(IFeatureInfo featureInfo) // EnabledAsync
+    {
+        if (_shellSettings.IsDefaultShell() ||
+            _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures is not { } alwaysEnabledFeatures)
+        {
+            return;
+        }
+
+        // This method also runs on setup -- perhaps it can be allowed to run only after OC.Settings is enabled?
+        // any downsides to letting it run as it pleases? Check log on new setup
+
+
+        // this is also run after a dependency was just re-enabled. Get the dependent feature by looking at the dependencies of
+        // the always enabled features, then enable the feature that is dependent on the featureInfo.Id feature
+        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var alwaysEnabledFeaturesInfo = allFeatures.Where(feature => alwaysEnabledFeatures.Contains(feature.Id));
+        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+
+        // Find all dependent features.
+        var allDependentFeatures = alwaysEnabledFeaturesInfo.Where(feature => feature.Dependencies.Any());
+
+        // Find all dependencies.
+        var allDependencies = new List<IFeatureInfo>();
+        foreach (var alwaysEnabledFeature in alwaysEnabledFeaturesInfo)
+        {
+            if (alwaysEnabledFeature.Dependencies.Any())
+            {
+                foreach (var dependency in alwaysEnabledFeature.Dependencies)
+                {
+                    allDependencies.AddRange(allFeatures.Where(feature => feature.Id == dependency));
+                }
+            }
+        }
+
+        var enabledDependencies = currentlyEnabledFeatures.Intersect(allDependencies);
+
+        var dependentFeaturesThatCanBeEnabled = new List<IFeatureInfo>();
+        if (enabledDependencies.Any())
+        {
+            foreach (var dependentFeature in allDependentFeatures)
+            {
+                foreach (var enabledDependency in enabledDependencies)
+                {
+                    if (dependentFeature.Dependencies.Contains(enabledDependency.Id))
+                    {
+                        dependentFeaturesThatCanBeEnabled.Add(dependentFeature);
+                    }
+                }
+            }
+        }
+
+        // don't we need to enable dependencies first?
+        // find dependencies that need enabling
+        var currentlyDisabledDependencies = allDependencies.Where(dependency => !currentlyEnabledFeatures.Contains(dependency));
+        if (currentlyDisabledDependencies.Any())
+        {
+            await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledDependencies);
+
+            return;
+        }
+
+        // run this if no dependencies need enabling
+        // Find features that can be enabled and are not yet enabled.
+        var featuresToEnable = dependentFeaturesThatCanBeEnabled
+            .Distinct()
+            .Where(feature => !currentlyEnabledFeatures.Contains(feature));
+
+        if (featuresToEnable.Any())
+        {
+            var featureToEnableList = new List<IFeatureInfo> { featuresToEnable.FirstOrDefault() };
+            await _shellFeaturesManager.EnableFeaturesAsync(featureToEnableList);
+        }
+
+
+        // Can likely be run after OC.Settings is enabled as it's set to AlwaysEnabled.
+            // but features cannot be enabled in bulk, so how is it going to be done one by one?
+                // could just go by whether featureInfo.Id is in alwaysEnabledFeatures
+
+
+        //var featuresToEnable = new List<IFeatureInfo>();
+        //foreach (var feature in alwaysEnabledFeaturesInfo)
+        //{
+        //    if (!currentlyEnabledFeatures.Contains(feature))
+        //    {
+        //        featuresToEnable.Add(feature);
+        //    }
+        //}
+
+        //if (!featuresToEnable.Any()) return;
+
+        //await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable);
+    }
+
+    public async Task KeepAlwaysEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo) // DisabledAsync
     {
         if (_shellSettings.IsDefaultShell() ||
             _alwaysEnabledFeaturesOptions.Value.AlwaysEnabledFeatures is not { } alwaysEnabledFeatures ||
@@ -218,9 +287,62 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             return;
         }
 
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        var currentFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
 
+
+        // Need to deal with dependencies first -- how
+        // require specifying dependencies for each feature in appsettings.json?
+        // a dynamic solution would be better and could be used for Media and co as well -- check in OC source if this is available
+        // can anything be done with featureInfo's [] Dependencies?
+
+        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+
+        if (featureInfo.Dependencies.Any())
+        {
+            var currentlyDisabledDependencies = new List<IFeatureInfo>();
+
+            // If a dependency is not enabled, enable it first.
+            // enabling them in a loop seems to cause exception. Enable only one, and do the rest in EnabledAsync()?
+            
+            
+            
+            //var dependencyFeature = allFeatures.Where(feature => feature.Id == featureInfo.Dependencies.FirstOrDefault());
+            //var isDependencyFeatureEnabled = currentlyEnabledFeatures.Contains(dependencyFeature.SingleOrDefault());
+            //if (!isDependencyFeatureEnabled)
+            //{
+            //    currentlyDisabledDependencies.AddRange(dependencyFeature);
+            //    await _shellFeaturesManager.EnableFeaturesAsync(dependencyFeature);
+            //}
+
+
+            foreach (var dependency in featureInfo.Dependencies)
+            {
+                var dependencyFeature = allFeatures.Where(feature => feature.Id == dependency);
+
+                var isDependencyFeatureEnabled = currentlyEnabledFeatures.Contains(dependencyFeature.SingleOrDefault());
+                if (!isDependencyFeatureEnabled)
+                {
+                    currentlyDisabledDependencies.AddRange(dependencyFeature);
+                }
+            }
+
+            // Cannot enable dependent feature here if any of the dependencies are only just being enabled.
+            if (currentlyDisabledDependencies.Any())
+            {
+                // does not work if there are multiple dependencies -- it will try to enable the same dependency multiple times
+                // Cannot enable all dependencies at once, so enable one and take care of the rest in EnabledAsync().
+                //var dependencyToEnable = new List<IFeatureInfo> { currentlyDisabledDependencies.FirstOrDefault() };
+                //await _shellFeaturesManager.EnableFeaturesAsync(dependencyToEnable);
+
+                // fuck it, enable OC.Settings and let EnabledAsync() do the rest
+                var settingsFeature = allFeatures.Where(feature => feature.Id == FeatureNames.Settings);
+                await _shellFeaturesManager.EnableFeaturesAsync(settingsFeature);
+
+                return;
+            }
+        }
+
+        var currentFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
         await _shellFeaturesManager.EnableFeaturesAsync(currentFeature);
     }
 }

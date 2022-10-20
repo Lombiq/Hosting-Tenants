@@ -27,5 +27,6 @@ public class Startup : StartupBase
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
         services.AddTransient(service => new ShellFeature(FeatureNames.Users, alwaysEnabled: true));
+        services.AddTransient(service => new ShellFeature(FeatureNames.Roles, alwaysEnabled: true));
     }
 }
