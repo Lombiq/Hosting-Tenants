@@ -47,6 +47,7 @@ public static class TestCaseUITestContextExtensions
             {
                 SiteName = tenantName,
                 RecipeId = setupRecipeId,
+                TablePrefix = tenantName,
                 RunSetupOnCurrentPage = true,
             });
 
