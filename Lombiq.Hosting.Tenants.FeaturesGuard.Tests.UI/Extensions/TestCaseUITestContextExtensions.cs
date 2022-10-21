@@ -40,7 +40,7 @@ public static class TestCaseUITestContextExtensions
 
         const string tenantName = "TestTenant";
 
-        await context.CreateAndEnterTenantManuallyAsync(tenantName, "tt1", string.Empty, "features guard");
+        await context.CreateAndChangeToTenantManuallyAsync(tenantName, "tt1", string.Empty, "features guard");
 
         await context.GoToSetupPageAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
