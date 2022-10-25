@@ -33,6 +33,7 @@ public class Startup : StartupBase
 
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
+        // probably not usable at all
         if (_shellSettings.IsDefaultShell()) // reversed
         {
             var whatsThisThen = _shellConfiguration.GetSection(
@@ -46,6 +47,7 @@ public class Startup : StartupBase
             //}
         }
 
+        // these necessary even?
         services.AddTransient(service => new ShellFeature(FeatureNames.Users, alwaysEnabled: true));
         services.AddTransient(service => new ShellFeature(FeatureNames.Roles, alwaysEnabled: true));
     }
