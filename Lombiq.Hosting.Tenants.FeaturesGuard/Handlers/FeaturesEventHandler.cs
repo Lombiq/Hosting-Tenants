@@ -197,22 +197,16 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var allConditionalFeatures = allFeatures.Where(feature => conditionallyEnabledFeatures.ContainsKey(feature.Id));
 
         // returns all dependencies, not only the immediate ones
-        var exManagerTest = _extensionManager.GetFeatureDependencies(FeatureNames.AzureStorage);
+        //var exManagerTest = _extensionManager.GetFeatureDependencies(FeatureNames.AzureStorage);
 
-        var azureFeature = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
+        //var azureFeature = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
 
         // THIS DOES ENABLE DEPENDENCIES JUST FINE -- WTF 😆😂💊🌞😆😂😂
-        await _shellFeaturesManager.EnableFeaturesAsync(azureFeature, force: true);
+        //await _shellFeaturesManager.EnableFeaturesAsync(azureFeature, force: true);
 
         // do nothing if the feature that was just enabled is not part of the condition features
         // also check if one of the conditional features' dependencies was just enabled (among all of their dependencies)
 
-        // Immediate dependencies of all conditional features.
-        var allConditionalFeaturesDependencies = await DiscoverAllDependenciesAsync(allFeatures, allConditionalFeatures);
-        if (!conditionallyEnabledFeatures.Values.Contains(featureInfo.Id) && !allConditionalFeaturesDependencies.Contains(featureInfo))
-        {
-            return;
-        }
 
 
 
@@ -261,38 +255,9 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         // check which dependencies are currently enabled
         var enabledDependencies = currentlyEnabledFeatures.Intersect(conditionalFeatureDependencies);
 
-        // trying to enable the dependency and then checking for an error (tossed when dependency's dependency is not enabled)
-        // is not a walkable path as error is not thrown here. No way to catch here? Try tho
-            // it's not even an error though, it's simply a warning in the log
-
         // but what happens if a dependency's dependency is not enabled?
             // might need to discover ALL dependencies and enable them one by one
     }
-
-    // only finds the immediate dependencies for now
-        // e.g. in the case of Azure Storage it finds Media.Cache but not Media -- unsure if proper this way
-    // should be unnecessary with latest ✨revelations✨
-    private static async Task<IEnumerable<IFeatureInfo>> DiscoverAllDependenciesAsync(
-        IEnumerable<IFeatureInfo> allFeatures,
-        IEnumerable<IFeatureInfo> features)
-    {
-        var allDependencies = new List<IFeatureInfo>();
-
-        foreach (var feature in features)
-        {
-            if (feature.Dependencies.Any())
-            {
-                foreach (var dependency in feature.Dependencies)
-                {
-                    var dependencyFeature = allFeatures.Where(feature => feature.Id == dependency);
-                    allDependencies.AddRange(dependencyFeature);
-                }
-            }
-        }
-
-        return allDependencies.Distinct();
-    }
-
 
     public async Task EnableAlwaysEnabledFeaturesAsync(IFeatureInfo featureInfo) // EnabledAsync
     {
