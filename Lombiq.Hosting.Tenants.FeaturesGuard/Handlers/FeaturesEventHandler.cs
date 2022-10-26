@@ -41,16 +41,13 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    async Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature)
-    {
-        await EnableConditionallyEnabledFeaturesAsync(feature);
-    }
+    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     async Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature)
     {
-        //await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
+        await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
         await DisableConditionallyEnabledFeaturesAsync(feature);
     }
 
@@ -88,7 +85,14 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var conditionalFeatureIds = new List<string>();
         foreach (var keyValuePair in conditionallyEnabledFeatures)
         {
-            if (keyValuePair.Value == featureInfo.Id)
+            var valueFormatted = new List<string>();
+            var separatedValues = keyValuePair.Value.SplitByCommas();
+            foreach (var separatedValue in separatedValues)
+            {
+                valueFormatted.Add(separatedValue.Trim());
+            }
+
+            if (valueFormatted.Contains(featureInfo.Id))
             {
                 conditionalFeatureIds.Add(keyValuePair.Key);
             }
@@ -132,7 +136,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         {
             var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
 
-            // Don't force as manually disabled dependencies should disable the conditional feature.
+            // Don't force since manually disabled dependencies should disable the conditional feature.
             await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
         }
     }
