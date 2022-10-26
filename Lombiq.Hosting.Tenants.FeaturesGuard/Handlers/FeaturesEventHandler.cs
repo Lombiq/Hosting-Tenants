@@ -42,7 +42,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     async Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature)
     {
-        await EnableConditionallyEnabledFeaturesAsync(feature);
+        await EnableConditionallyEnabledFeatureAsync(feature);
     }
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -182,7 +182,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         await _shellFeaturesManager.EnableFeaturesAsync(featureToKeepEnabled, force: true);
     }
 
-    public async Task EnableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo) // EnabledAsync
+    public async Task EnableConditionallyEnabledFeatureAsync(IFeatureInfo featureInfo) // EnabledAsync
     {
         // CONDITIONAL FEATURE - feature A (key)
         // CONDITION FEATURE - feature B (value)
@@ -193,70 +193,36 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             return;
         }
 
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
-        var allConditionalFeatures = allFeatures.Where(feature => conditionallyEnabledFeatures.ContainsKey(feature.Id));
-
-        // returns all dependencies, not only the immediate ones
-        //var exManagerTest = _extensionManager.GetFeatureDependencies(FeatureNames.AzureStorage);
-
-        //var azureFeature = allFeatures.Where(feature => feature.Id == FeatureNames.AzureStorage);
-
-        // THIS DOES ENABLE DEPENDENCIES JUST FINE -- WTF 😆😂💊🌞😆😂😂
-        //await _shellFeaturesManager.EnableFeaturesAsync(azureFeature, force: true);
-
-        // do nothing if the feature that was just enabled is not part of the condition features
-        // also check if one of the conditional features' dependencies was just enabled (among all of their dependencies)
-
-
-
-
-        // if a condition feature was just enabled, enable the corresponding conditional feature
-
-
-        var conditionFeatureWasJustEnabled = conditionallyEnabledFeatures.Values.Contains(featureInfo.Id);
-        if (!conditionFeatureWasJustEnabled)
+        if (!conditionallyEnabledFeatures.Values.Contains(featureInfo.Id))
         {
-            // in this case, a dependency of a conditional feature was just enabled
-        }
-
-        var conditionalFeature = allFeatures.Where(
-            feature => feature.Id == conditionallyEnabledFeatures.FirstOrDefault(entry => entry.Value == featureInfo.Id).Key);
-
-
-        // if conditionalFeature has dependencies, those need to be enabled first
-            // how to enable conditionalFeature after though?
-                // try checking whether the current feature is a dependency of one of the conditional features,
-                // if so, check if that feature's condition feature is enabled --
-                // if both of these are true, enable conditional feature dependent on current feature
-
-        // this would be needed in case it's not one of the dependencies that was just enabled
-        // Immediate dependencies of conditional feature.
-        var conditionalFeatureDependencies =
-            allFeatures.Where(feature => conditionalFeature.SingleOrDefault().Dependencies.Contains(feature.Id));
-
-
-
-
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-
-        // Check which dependencies are currently NOT enabled.
-        var currentlyDisabledDependencies = conditionalFeatureDependencies.WhereNot(
-            feature => currentlyEnabledFeatures.Contains(feature));
-
-        // If no dependencies are disabled, conditional feature can be straight-up enabled.
-        if (!currentlyDisabledDependencies.Any())
-        {
-            await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
             return;
         }
 
-        // but if there are disabled dependencies, oh boi, that is where the fun begins
+        // so just... if featureInfo.Id is one of the condition features, enable its corresponding conditional feature
+            // unless the conditional feature is already enabled
 
-        // check which dependencies are currently enabled
-        var enabledDependencies = currentlyEnabledFeatures.Intersect(conditionalFeatureDependencies);
+        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
-        // but what happens if a dependency's dependency is not enabled?
-            // might need to discover ALL dependencies and enable them one by one
+        var conditionalFeatureIds = new List<string>();
+        foreach (var keyValuePair in conditionallyEnabledFeatures)
+        {
+            if (keyValuePair.Value == featureInfo.Id)
+            {
+                conditionalFeatureIds.Add(keyValuePair.Key);
+            }
+        }
+
+        var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
+
+        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+        var currentlyDisabledFeatures = allFeatures.Except(currentlyEnabledFeatures);
+
+        // account for multiple
+        var currentlyDisabledConditionalFeautures = currentlyDisabledFeatures.Intersect(conditionalFeatures);
+        if (currentlyDisabledConditionalFeautures.Any())
+        {
+            await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledConditionalFeautures, force: true);
+        }
     }
 
     public async Task EnableAlwaysEnabledFeaturesAsync(IFeatureInfo featureInfo) // EnabledAsync
