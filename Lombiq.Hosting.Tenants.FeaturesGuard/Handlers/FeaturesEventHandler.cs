@@ -92,8 +92,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
 
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-        var currentlyDisabledFeatures = allFeatures.Except(currentlyEnabledFeatures);
+        var currentlyDisabledFeatures = await _shellFeaturesManager.GetDisabledFeaturesAsync();
 
         // Handle multiple conditional features as well.
         var currentlyDisabledConditionalFeatures = currentlyDisabledFeatures.Intersect(conditionalFeatures);
