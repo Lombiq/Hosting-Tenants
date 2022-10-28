@@ -4,37 +4,38 @@
 
 ## About
 
-Module to prevent disabling a configurable set of features on tenants.
+A module that makes it possible to conditionally enable and conditionally keep enabled, or entirely prevent enabling, configurable sets of features on tenants.
 
 ## Documentation
 
-- To use this feature, enable it on both the Default and the user tenant.
-- Once enabled on the user tenant, the Features Guard feature cannot be disabled.
-- Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`. Example configuration:
+- To use this feature, enable it on both the Default and the user tenant, and make sure the app is hosted on Azure.
+- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified in appsettings.json using `ConditionallyEnabledFeaturesOptions`.
+Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
 
 ```json
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_FeaturesGuard": {
-      "AlwaysEnabledFeaturesOptions": {
-        "AlwaysEnabledFeatures": [
-          "OrchardCore.Roles",
-          "OrchardCore.Users"
-        ]
+      "ConditionallyEnabledFeaturesOptions": {
+        "ConditionallyEnabledFeatures": {
+          "EnableFeatureIfOtherFeatureIsEnabled": {
+            // "Enable this feature and keep it enabled": "If any of these features are enabled",
+            "OrchardCore.Media.Azure.Storage": "OrchardCore.Media",
+            "OrchardCore.Twitter": "OrchardCore.Media, OrchardCore.Workflows"
+          }
+        }
       }
     },
-  }
 }
 ```
 
-- Additionally, the feature ensures whenever the OrchardCore.Media feature is enabled, the following features also get enabled:
-  - OrchardCore.Content.Types
-  - OrchardCore.Liquid
-  - OrchardCore.Media.Azure.Storage
-  - OrchardCore.Media.Cache
-  - OrchardCore.Settings
+Example case 1:
+- Enables Azure Storage when Media is enabled. Keeps Azure Storage enabled as long as OrchardCore.Media is enabled, with the exception where if one of Azure Media's dependencies is disabled, Azure Media does not get re-enabled.
+Example case 2:
+- Enables Twitter when Media or Workflows is enabled. Keeps Twitter enabled as long as either Media or Workflows is enabled, with the exception where if one of Twitter's dependencies is disabled, Twitter does not get re-enabled.
 
-- Preventing enabling certain features on user tenants is also possible via recipes in a FeatureProfiles step. Example configuration:
+
+- Preventing enabling certain features on user tenants is possible via recipes in a FeatureProfiles step. Example configuration:
 
 ```json
 {
