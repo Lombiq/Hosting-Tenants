@@ -8,6 +8,8 @@ A module that makes it possible to conditionally enable and conditionally keep e
 
 ## Documentation
 
+### Conditionally enabling features
+
 - To use this feature, enable it on both the Default and the user tenant, and make sure the app is hosted on Azure.
 - Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified in appsettings.json using `ConditionallyEnabledFeaturesOptions`.
 Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
@@ -31,9 +33,11 @@ Conditionally enabled features need to be provided with a singular or multiple c
 
 Example case 1:
 - Enables Azure Storage when Media is enabled. Keeps Azure Storage enabled as long as OrchardCore.Media is enabled, with the exception where if one of Azure Media's dependencies is disabled, Azure Media does not get re-enabled.
+
 Example case 2:
 - Enables Twitter when Media or Workflows is enabled. Keeps Twitter enabled as long as either Media or Workflows is enabled, with the exception where if one of Twitter's dependencies is disabled, Twitter does not get re-enabled.
 
+### Preventing enabling features
 
 - Preventing enabling certain features on user tenants is possible via recipes in a FeatureProfiles step. Example configuration:
 
