@@ -32,14 +32,14 @@ Conditionally enabled features need to be provided with a singular or multiple c
 ```
 
 Example case 1:
-- Enables Azure Storage when Media is enabled. Keeps Azure Storage enabled as long as OrchardCore.Media is enabled, with the exception where if one of Azure Media's dependencies is disabled, Azure Media does not get re-enabled.
+- Enables `Azure Storage` when `Media` is enabled. Keeps `Azure Storage` enabled as long as `Media` is enabled, with the exception where if one of `Azure Storage`'s dependencies is disabled, `Azure Media` does not get re-enabled.
 
 Example case 2:
-- Enables Twitter when Media or Workflows is enabled. Keeps Twitter enabled as long as either Media or Workflows is enabled, with the exception where if one of Twitter's dependencies is disabled, Twitter does not get re-enabled.
+- Enables `Twitter` when `Media` or `Workflows` is enabled. Keeps `Twitter` enabled as long as either `Media` or `Workflows` remains enabled, with the exception where if one of `Twitter`'s dependencies is disabled, `Twitter` does not get re-enabled.
 
 ### Preventing enabling features
 
-- Preventing enabling certain features on user tenants is possible via recipes in a FeatureProfiles step. Example configuration:
+- Preventing enabling certain features on user tenants is possible via recipes in a `FeatureProfiles` step. Example configuration:
 
 ```json
 {
