@@ -3,11 +3,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Descriptor.Models;
+using OrchardCore.Environment.Shell.Descriptor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static OrchardCore.DisplayManagement.Shapes.ShapeDebugView;
+using ISession = YesSql.ISession;
 
 namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
@@ -16,32 +18,39 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     private readonly IShellFeaturesManager _shellFeaturesManager;
     private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;
     private readonly ShellSettings _shellSettings;
+    private readonly IShellDescriptorManager _shellDescriptorManager;
+    private readonly ISession _session;
 
     public FeaturesEventHandler(
         IShellFeaturesManager shellFeaturesManager,
         IOptions<ConditionallyEnabledFeaturesOptions> conditionallyEnabledFeaturesOptions,
         ShellSettings shellSettings,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IShellDescriptorManager shellDescriptorManager,
+        ISession session)
     {
         _shellFeaturesManager = shellFeaturesManager;
         _conditionallyEnabledFeaturesOptions = conditionallyEnabledFeaturesOptions;
         _shellSettings = shellSettings;
+        _shellDescriptorManager = shellDescriptorManager;
+        _session = session;
     }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
+    //Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
 
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
+    Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
     Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     async Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature)
     {
-        await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
-        await DisableConditionallyEnabledFeaturesAsync(feature);
+        //await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
+        //await DisableConditionallyEnabledFeaturesAsync(feature);
     }
 
     Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -91,6 +100,12 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             }
         }
 
+        // During setup, currentlyEnabledFeatures are not properly updated inbetween EnabledAsync() calls,
+        // therefore conditionalFeatures that were already enabled as part of a previous keyValuePair are enabled
+        // again, which throws exception, or something
+
+
+        // does currentlyDisabledFeatures get updated inbetween EnabledAsync() calls? -> no it dont
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
         var currentlyDisabledFeatures = await _shellFeaturesManager.GetDisabledFeaturesAsync();
 
@@ -98,7 +113,58 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var currentlyDisabledConditionalFeatures = currentlyDisabledFeatures.Intersect(conditionalFeatures);
         if (currentlyDisabledConditionalFeatures.Any())
         {
+            //var currentlyDisabledConditionalFeatureIds = currentlyDisabledConditionalFeatures.Select(feature => feature.Id);
+
+            var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
+
+            // if shellDescriptor's Features already contains a currentlyDisabledFeature, remove that feature
+            var featuresToEnable = currentlyDisabledConditionalFeatures.ToList();
+            foreach (var feature in currentlyDisabledConditionalFeatures)
+            {
+                if (shellDescriptor.Features.Contains(new ShellFeature(feature.Id)))
+                {
+                    featuresToEnable.Remove(feature);
+                }
+            }
+
+            // if none remain, none to do
+            if (!featuresToEnable.Any())
+            {
+                return;
+            }
+
+            var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+            var allEnabledFeatures = currentlyEnabledFeatures.ToList();
+            allEnabledFeatures.AddRange(currentlyDisabledConditionalFeatures);
+            var shellFeatures = allEnabledFeatures.Select(feature => new ShellFeature(feature.Id)).ToArray();
+
+            // during second run, does the Features list already include Twitter before assigning shellFeatures to it? -> yes
+                // same if the below is commented out?
+            shellDescriptor.Features = shellFeatures;
+            shellDescriptor.Installed = shellDescriptor.Installed.Union(shellDescriptor.Features).ToList();
+
+            _session.Save(shellDescriptor);
+
+
+            // is this call still necessary if the above is done manually? -> the above is not enough to enable the feature
             await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledConditionalFeatures, force: true);
+
+            // try dis
+            //await _shellDescriptorManager.UpdateShellDescriptorAsync(
+            //    2,
+            //    currentlyDisabledConditionalFeatureIds.Select(id => new ShellFeature(id)).ToArray());
+
+            // ShellScope.AddDeferredTask?
+
+            //try
+            //{
+            //    await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledConditionalFeatures, force: true);
+            //}
+            //catch (InvalidOperationException)
+            //{
+            //    // is this even caught -> yes
+            //    var iable = "";
+            //}
         }
     }
 
