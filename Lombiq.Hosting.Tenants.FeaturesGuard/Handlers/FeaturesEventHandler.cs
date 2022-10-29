@@ -79,7 +79,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
         var conditionalFeatureIds = new List<string>();
-        foreach (var keyValuePair in conditionallyEnabledFeatures)
+        conditionallyEnabledFeatures.ForEach(keyValuePair =>
         {
             var valueFormatted = new List<string>();
             var separatedValues = keyValuePair.Value.SplitByCommas();
@@ -92,7 +92,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             {
                 conditionalFeatureIds.Add(keyValuePair.Key);
             }
-        }
+        });
 
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
         var currentlyDisabledFeatures = await _shellFeaturesManager.GetDisabledFeaturesAsync();
