@@ -23,7 +23,6 @@ public static class TestCaseUITestContextExtensions
     {
         // For a comprehensive summary of the feature activation and deactivation rules, see:
         // https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.FeaturesGuard/Readme.md
-
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
@@ -34,18 +33,20 @@ public static class TestCaseUITestContextExtensions
         // After setup, Twitter should be enabled.
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
-        // When Workflows gets disabled but Media is enabled, Twitter should remain enabled.
-        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Workflows']"));
+        // When ChartJs gets disabled but UIKit is enabled, Twitter should remain enabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-Lombiq_ChartJs']"));
         await context.ClickModalOkAsync();
+        context.Exists(By.XPath("//a[@id='btn-disable-Lombiq_UIKit']"));
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
-        // When Media gets disabled and Workflows is also disabled, Twitter should get disabled.
-        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Media']"));
+        // When UIKit gets disabled and ChartJs is also disabled, Twitter should get disabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-Lombiq_UIKit']"));
         await context.ClickModalOkAsync();
+        context.Exists(By.XPath("//a[@id='btn-enable-Lombiq_ChartJs']"));
         context.Exists(By.XPath("//a[@id='btn-enable-OrchardCore_Twitter']"));
 
-        // When Media is enabled, Twitter should get enabled.
-        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-enable-OrchardCore_Media']"));
+        // When UIKit is enabled, Twitter should get enabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-enable-Lombiq_UIKit']"));
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
     }
 
