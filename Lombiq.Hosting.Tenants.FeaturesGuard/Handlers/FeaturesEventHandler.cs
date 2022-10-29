@@ -38,8 +38,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    //Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
-
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -49,8 +47,8 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     async Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature)
     {
-        //await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
-        //await DisableConditionallyEnabledFeaturesAsync(feature);
+        await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
+        await DisableConditionallyEnabledFeaturesAsync(feature);
     }
 
     Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -115,6 +113,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         {
             //var currentlyDisabledConditionalFeatureIds = currentlyDisabledConditionalFeatures.Select(feature => feature.Id);
 
+            // check features list during second run -- should contain Twitter -> and it do!
             var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
 
             // if shellDescriptor's Features already contains a currentlyDisabledFeature, remove that feature
@@ -133,17 +132,17 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
-            var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-            var allEnabledFeatures = currentlyEnabledFeatures.ToList();
-            allEnabledFeatures.AddRange(currentlyDisabledConditionalFeatures);
-            var shellFeatures = allEnabledFeatures.Select(feature => new ShellFeature(feature.Id)).ToArray();
+            //var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+            //var allEnabledFeatures = currentlyEnabledFeatures.ToList();
+            //allEnabledFeatures.AddRange(currentlyDisabledConditionalFeatures);
+            //var shellFeatures = allEnabledFeatures.Select(feature => new ShellFeature(feature.Id)).ToArray();
 
             // during second run, does the Features list already include Twitter before assigning shellFeatures to it? -> yes
                 // same if the below is commented out?
-            shellDescriptor.Features = shellFeatures;
-            shellDescriptor.Installed = shellDescriptor.Installed.Union(shellDescriptor.Features).ToList();
+            //shellDescriptor.Features = shellFeatures;
+            //shellDescriptor.Installed = shellDescriptor.Installed.Union(shellDescriptor.Features).ToList();
 
-            _session.Save(shellDescriptor);
+            //_session.Save(shellDescriptor);
 
 
             // is this call still necessary if the above is done manually? -> the above is not enough to enable the feature

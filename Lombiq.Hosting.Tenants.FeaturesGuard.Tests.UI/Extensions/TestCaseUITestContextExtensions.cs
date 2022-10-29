@@ -19,8 +19,11 @@ public static class TestCaseUITestContextExtensions
         context.Missing(By.XPath("//label[@for='Lombiq.Tests.UI.Shortcuts']"));
     }
 
-    public static async Task TestAlwaysEnabledFeaturesAsync(this UITestContext context, string setupRecipeId)
+    public static async Task TestConditionallyEnabledFeaturesAsync(this UITestContext context, string setupRecipeId)
     {
+        // For a comprehensive summary of the feature activation and deactivation rules, see:
+        // https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.FeaturesGuard/Readme.md
+
         await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId);
 
         // Lombiq's features that are set to always remain enabled from Manifest should have no disable button.
@@ -28,10 +31,32 @@ public static class TestCaseUITestContextExtensions
         context.Missing(By.XPath("//a[@id='btn-disable-DotNest_Hosting_Tenants']"));
         context.Missing(By.XPath("//a[@id='btn-disable-DotNest_TenantsAdmin_Subtenant']"));
 
-        // Ensure trying to disable other always enabled features does not actually disable them.
-        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
+        // After setup, Twitter should be enabled.
+        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+
+        // When Workflows gets disabled but Media is enabled, Twitter should remain enabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Workflows']"));
         await context.ClickModalOkAsync();
-        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
+        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+
+        // When Media gets disabled and Workflows is also disabled, Twitter should get disabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Media']"));
+        await context.ClickModalOkAsync(); // this needed?
+        context.Exists(By.XPath("//a[@id='btn-enable-OrchardCore_Twitter']"));
+
+        // When Media is enabled, Twitter should get enabled.
+        await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-enable-OrchardCore_Media']"));
+        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+        
+        // Enables Twitter when Media or Workflows is enabled. Keeps Twitter enabled as long as either Media
+        // or Workflows remains enabled, with the exception where if one of Twitter's dependencies is disabled,
+        // Twitter does not get re-enabled.
+
+
+        // Ensure trying to disable other always enabled features does not actually disable them.
+        //await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
+        //await context.ClickModalOkAsync();
+        //context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Users']"));
     }
 
     private static async Task SetUpNewTenantAndGoToFeaturesListAsync(UITestContext context, string setupRecipeId)
