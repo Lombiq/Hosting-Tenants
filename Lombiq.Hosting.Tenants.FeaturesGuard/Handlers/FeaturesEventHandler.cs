@@ -108,19 +108,16 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             // If shellDescriptor's Features already contains a feature that is found in currentlyDisabledFeatures,
             // remove it from the list.
             var featuresToEnable = currentlyDisabledConditionalFeatures.ToList();
-            foreach (var feature in currentlyDisabledConditionalFeatures)
+            currentlyDisabledConditionalFeatures.ForEach(feature =>
             {
                 if (shellDescriptor.Features.Contains(new ShellFeature(feature.Id)))
                 {
                     featuresToEnable.Remove(feature);
                 }
-            }
+            });
 
             // If none remain, none to do.
-            if (!featuresToEnable.Any())
-            {
-                return;
-            }
+            if (!featuresToEnable.Any()) return;
 
             await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledConditionalFeatures, force: true);
         }
