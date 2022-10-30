@@ -31,8 +31,6 @@ public static class OrchardCoreBuilderExtensions
     {
         builder.ConfigureServices((tenantServices, serviceProvider) =>
         {
-            // unbind first? or why does it not overwrite
-
             var shellConfiguration = serviceProvider
                 .GetRequiredService<IShellConfiguration>()
                 .GetSection(
