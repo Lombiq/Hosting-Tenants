@@ -34,9 +34,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
+    Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
+
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
     Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -105,7 +106,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             // but it's more accurate than IShellDescriptorManager's methods.
             var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
 
-            // If shellDescriptor's Features already contains a feature that is found in currentlyDisabledFeatures,
+            // If Shell Descriptor's Features already contains a feature that is found in currentlyDisabledFeatures,
             // remove it from the list.
             var featuresToEnable = currentlyDisabledConditionalFeatures.ToList();
             currentlyDisabledConditionalFeatures.ForEach(feature =>
@@ -160,7 +161,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         {
             var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
 
-            // Don't force since manually disabled dependencies should disable the conditional feature.
+            // Don't force feature activation since manually disabled dependencies should disable the conditional feature.
             await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
         }
     }
@@ -196,7 +197,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         var conditionalFeatureIds = new List<string>();
         var conditionFeatureIds = new List<string>();
-        foreach (var keyValuePair in conditionallyEnabledFeatures)
+        conditionallyEnabledFeatures.ForEach(keyValuePair =>
         {
             var valueFormatted = new List<string>();
             var separatedValues = keyValuePair.Value.SplitByCommas();
@@ -210,7 +211,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 conditionalFeatureIds.Add(keyValuePair.Key);
                 conditionFeatureIds.AddRange(valueFormatted);
             }
-        }
+        });
 
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
         var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
