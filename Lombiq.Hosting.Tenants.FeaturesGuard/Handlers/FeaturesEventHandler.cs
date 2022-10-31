@@ -95,33 +95,25 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             }
         }
 
-        var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
-        var currentlyDisabledFeatures = await _shellFeaturesManager.GetDisabledFeaturesAsync();
-
         // Handle multiple conditional features as well.
-        var currentlyDisabledConditionalFeatures = currentlyDisabledFeatures.Intersect(conditionalFeatures);
-        if (currentlyDisabledConditionalFeatures.Any())
+        var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
+
+        // During setup, Shell Descriptor can become out of sync with the DB when it comes to enabled features,
+        // but it's more accurate than IShellDescriptorManager's methods.
+        var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
+
+        // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
+        // from the list.
+        var featuresToEnable = conditionalFeatures.ToList();
+        conditionalFeatures.ForEach(feature =>
         {
-            // During setup, Shell Descriptor can become out of sync with the DB when it comes to enabled features,
-            // but it's more accurate than IShellDescriptorManager's methods.
-            var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
-
-            // If Shell Descriptor's Features already contains a feature that is found in currentlyDisabledFeatures,
-            // remove it from the list.
-            var featuresToEnable = currentlyDisabledConditionalFeatures.ToList();
-            currentlyDisabledConditionalFeatures.ForEach(feature =>
+            if (shellDescriptor.Features.Contains(new ShellFeature(feature.Id)))
             {
-                if (shellDescriptor.Features.Contains(new ShellFeature(feature.Id)))
-                {
-                    featuresToEnable.Remove(feature);
-                }
-            });
+                featuresToEnable.Remove(feature);
+            }
+        });
 
-            // If none remain, none to do.
-            if (!featuresToEnable.Any()) return;
-
-            await _shellFeaturesManager.EnableFeaturesAsync(currentlyDisabledConditionalFeatures, force: true);
-        }
+        await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
     }
 
     /// <summary>
