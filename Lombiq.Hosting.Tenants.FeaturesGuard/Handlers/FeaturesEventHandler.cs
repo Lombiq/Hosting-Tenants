@@ -80,7 +80,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
         var conditionalFeatureIds = new List<string>();
-        conditionallyEnabledFeatures.ForEach(keyValuePair =>
+        foreach (var keyValuePair in conditionallyEnabledFeatures)
         {
             var valueFormatted = new List<string>();
             var separatedValues = keyValuePair.Value.SplitByCommas();
@@ -93,7 +93,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             {
                 conditionalFeatureIds.Add(keyValuePair.Key);
             }
-        });
+        }
 
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
         var currentlyDisabledFeatures = await _shellFeaturesManager.GetDisabledFeaturesAsync();
@@ -197,7 +197,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         var conditionalFeatureIds = new List<string>();
         var conditionFeatureIds = new List<string>();
-        conditionallyEnabledFeatures.ForEach(keyValuePair =>
+        foreach (var keyValuePair in conditionallyEnabledFeatures)
         {
             var valueFormatted = new List<string>();
             var separatedValues = keyValuePair.Value.SplitByCommas();
@@ -211,7 +211,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 conditionalFeatureIds.Add(keyValuePair.Key);
                 conditionFeatureIds.AddRange(valueFormatted);
             }
-        });
+        }
 
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
         var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
