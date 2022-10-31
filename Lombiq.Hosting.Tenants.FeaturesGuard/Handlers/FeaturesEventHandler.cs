@@ -153,17 +153,8 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             conditionFeatureIdsList.Add(separatedValue.Trim());
         }
 
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIdsList.Contains(feature.Id));
-
-        var currentlyEnabledConditionFeatures = currentlyEnabledFeatures.Intersect(conditionFeatures);
-        if (currentlyEnabledConditionFeatures.Any())
-        {
-            var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
-
-            // Don't force feature activation since manually disabled dependencies should disable the conditional feature.
-            await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
-        }
+        var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
+        await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature, force: true);
     }
 
     /// <summary>
@@ -213,17 +204,17 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             }
         }
 
-        var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
-        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
 
         // Only disable conditional feature if none of its condition features are enabled.
         var currentlyEnabledConditionFeatures = currentlyEnabledFeatures.Intersect(conditionFeatures);
-
-        // Handle multiple conditional features as well.
-        var currentlyEnabledConditionalFeatures = currentlyEnabledFeatures.Intersect(conditionalFeatures);
-        if (currentlyEnabledConditionalFeatures.Any() && !currentlyEnabledConditionFeatures.Any())
+        if (!currentlyEnabledConditionFeatures.Any())
         {
+            // Handle multiple conditional features as well.
+            var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
+            var currentlyEnabledConditionalFeatures = currentlyEnabledFeatures.Intersect(conditionalFeatures);
+
             await _shellFeaturesManager.DisableFeaturesAsync(currentlyEnabledConditionalFeatures);
         }
     }
