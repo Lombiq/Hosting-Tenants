@@ -10,7 +10,7 @@ A module that makes it possible to conditionally enable and conditionally keep e
 
 ### Conditionally enabling features
 
-- To use this feature, enable it on both the Default and the user tenant, and make sure the app is hosted on Azure.
+- To use this feature, enable it on both the Default and the user tenant.
 - Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified in appsettings.json using `ConditionallyEnabledFeaturesOptions`.
 Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
 
@@ -32,14 +32,14 @@ Conditionally enabled features need to be provided with a singular or multiple c
 ```
 
 Example case 1:
-- Enables `Azure Storage` when `Media` is enabled. Keeps `Azure Storage` enabled as long as `Media` is enabled, with the exception where if one of `Azure Storage`'s dependencies is disabled, `Azure Media` does not get re-enabled.
+- Enables `Azure Storage` when `Media` is enabled. Keeps `Azure Storage` enabled as long as `Media` is enabled.
 
 Example case 2:
-- Enables `Twitter` when `Media` or `Workflows` is enabled. Keeps `Twitter` enabled as long as either `Media` or `Workflows` remains enabled, with the exception where if one of `Twitter`'s dependencies is disabled, `Twitter` does not get re-enabled.
+- Enables `Twitter` when `Media` or `Workflows` is enabled. Keeps `Twitter` enabled as long as either `Media` or `Workflows` remains enabled.
 
 ### Preventing enabling features
 
-- Preventing enabling certain features on user tenants is possible via recipes in a `FeatureProfiles` step. Example configuration:
+- Preventing enabling certain features on user tenants is possible via recipes in a `FeatureProfiles` step. For more on the Feature Profiles feature, see the [official documentation](https://docs.orchardcore.net/en/latest/docs/reference/modules/Tenants/#feature-profiles). Example configuration:
 
 ```json
 {
@@ -68,9 +68,3 @@ Example case 2:
   }
 }
 ```
-
-## Contributing and support
-
-Bug reports, feature requests, comments, questions, code contributions and love letters are warmly welcome. You can send them to us via GitHub issues and pull requests. Please adhere to our [open-source guidelines](https://lombiq.com/open-source-guidelines) while doing so.
-
-This project is developed by [Lombiq Technologies](https://lombiq.com/). Commercial-grade support is available through Lombiq.
