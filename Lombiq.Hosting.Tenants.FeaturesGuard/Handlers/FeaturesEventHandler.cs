@@ -145,8 +145,15 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             conditionFeatureIdsList.Add(separatedValue.Trim());
         }
 
-        var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
-        await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature, force: true);
+        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIdsList.Contains(feature.Id));
+
+        var currentlyEnabledConditionFeatures = currentlyEnabledFeatures.Intersect(conditionFeatures);
+        if (currentlyEnabledConditionFeatures.Any())
+        {
+            var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
+            await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
+        }
     }
 
     /// <summary>
