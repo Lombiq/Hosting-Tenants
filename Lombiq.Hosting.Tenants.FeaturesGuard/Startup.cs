@@ -13,14 +13,19 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
+    private readonly IConfiguration _configuration;
 
-    public Startup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
+    public Startup(IConfiguration configuration, IShellConfiguration shellConfiguration)
+    {
+        _configuration = configuration;
+        _shellConfiguration = shellConfiguration;
+    }
 
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
-        if (_shellConfiguration.IsAzureHosting())
+        if (_configuration.IsAzureHosting())
         {
             services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
                 _shellConfiguration
@@ -28,7 +33,7 @@ public class Startup : StartupBase
                     .Bind(options));
         }
 
-        if (_shellConfiguration.IsUITesting())
+        if (_configuration.IsUITesting())
         {
             services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
                 _shellConfiguration
