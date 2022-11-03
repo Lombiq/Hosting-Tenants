@@ -13,13 +13,9 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
-    private readonly IConfiguration _configuration;
 
-    public Startup(IConfiguration configuration, IShellConfiguration shellConfiguration)
-    {
-        _configuration = configuration;
+    public Startup(IConfiguration configuration, IShellConfiguration shellConfiguration) => 
         _shellConfiguration = shellConfiguration;
-    }
 
     public override void ConfigureServices(IServiceCollection services)
     {
