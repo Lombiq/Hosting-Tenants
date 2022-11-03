@@ -50,5 +50,5 @@
 	<PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="4.7.0" />
 	<PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="4.7.0" />
   </ItemGroup>
-	
+
 </Project>
