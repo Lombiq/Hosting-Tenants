@@ -25,20 +25,9 @@ public class Startup : StartupBase
     {
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
-        if (_configuration.IsAzureHosting())
-        {
-            services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
-                _shellConfiguration
-                    .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:ConditionallyEnabledFeaturesOptions:ConditionallyEnabledFeatures")
-                    .Bind(options));
-        }
-
-        if (_configuration.IsUITesting())
-        {
-            services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
-                _shellConfiguration
-                    .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:TestConditionallyEnabledFeaturesOptions:ConditionallyEnabledFeatures")
-                    .Bind(options));
-        }
+        services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
+            _shellConfiguration
+                .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:ConditionallyEnabledFeaturesOptions:ConditionallyEnabledFeatures")
+                .Bind(options));
     }
 }
