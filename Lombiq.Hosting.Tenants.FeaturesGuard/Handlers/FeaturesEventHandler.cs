@@ -105,13 +105,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
         // from the list.
         var featuresToEnable = conditionalFeatures.ToList();
-        conditionalFeatures.ForEach(feature =>
+        foreach (var feature in conditionalFeatures.Where(feature => shellDescriptor.Features.Contains(new ShellFeature(feature.Id))))
         {
-            if (shellDescriptor.Features.Contains(new ShellFeature(feature.Id)))
-            {
-                featuresToEnable.Remove(feature);
-            }
-        });
+            featuresToEnable.Remove(feature);
+        }
 
         await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
     }
