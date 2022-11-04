@@ -11,9 +11,25 @@ A module that makes it possible to conditionally enable and conditionally keep e
 ### Conditionally enabling features
 
 - To use this feature, enable it on both the Default and the user tenant.
-- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified in appsettings.json using `ConditionallyEnabledFeaturesOptions`.
+- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified either in appsettings.json using `ConditionallyEnabledFeaturesOptions` or in Program via the `ConfigureFeaturesGuard()` extension method.
 Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
 
+Program config example:
+```
+builder.Services
+    .AddOrchardCms(orchardCoreBuilder =>
+        orchardCoreBuilder.ConfigureFeaturesGuard(
+            new Dictionary<string, IEnumerable<string>>
+            {
+                // "Enable this feature and keep it enabled": "If any of these features are enabled",
+                ["OrchardCore.Media.Azure.Storage"] = new List<string> { "OrchardCore.Media" },
+                ["OrchardCore.Twitter"] = new List<string> { "Lombiq.UIKit", "Lombiq.ChartJs" },
+            }));
+```
+
+- `ConfigureFeaturesGuardForAzureStorage()` is also available to add `Azure Storage` as a conditional feature and `Media` as its condition feature.
+
+appsettings.json config example:
 ```json
 {
   "OrchardCore": {
