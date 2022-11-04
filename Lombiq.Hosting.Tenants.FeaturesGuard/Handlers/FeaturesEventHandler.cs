@@ -78,14 +78,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         // Enable conditional features if they are not already enabled.
         var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
 
-        var conditionalFeatureIds = new List<string>();
-        foreach (var keyValuePair in conditionallyEnabledFeatures)
-        {
-            if (keyValuePair.Value.Contains(featureInfo.Id))
-            {
-                conditionalFeatureIds.Add(keyValuePair.Key);
-            }
-        }
+        var conditionalFeatureIds = conditionallyEnabledFeatures
+            .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
+            .Select(keyValuePair => keyValuePair.Key)
+            .ToList();
 
         // Handle multiple conditional features as well.
         var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
@@ -168,13 +164,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         var conditionalFeatureIds = new List<string>();
         var conditionFeatureIds = new List<string>();
-        foreach (var keyValuePair in conditionallyEnabledFeatures)
+        foreach (var keyValuePair in conditionallyEnabledFeatures.Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id)))
         {
-            if (keyValuePair.Value.Contains(featureInfo.Id))
-            {
-                conditionalFeatureIds.Add(keyValuePair.Key);
-                conditionFeatureIds.AddRange(keyValuePair.Value);
-            }
+            conditionalFeatureIds.Add(keyValuePair.Key);
+            conditionFeatureIds.AddRange(keyValuePair.Value);
         }
 
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
