@@ -41,6 +41,7 @@ public static class TestCaseUITestContextExtensions
 
         // When either UIKit or ChartJs is enabled, Twitter should not be deactivatable.
         await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+        await context.ClickModalOkAsync();
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
         // When UIKit gets disabled and ChartJs is also disabled, Twitter should get disabled.
