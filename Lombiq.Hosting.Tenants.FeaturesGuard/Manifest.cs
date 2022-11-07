@@ -6,7 +6,7 @@ using OrchardCore.Modules.Manifest;
     Author = "Lombiq Technologies",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
     Version = "0.0.1",
-    Description = "Prevents disabling a configurable set of features on tenants. .",
+    Description = "Prevents disabling a configurable set of features on tenants.",
     Category = "Hosting"
 )]
 

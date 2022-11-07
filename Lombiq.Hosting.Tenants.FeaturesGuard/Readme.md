@@ -4,37 +4,58 @@
 
 ## About
 
-Module to prevent disabling a configurable set of features on tenants.
+A module that makes it possible to conditionally enable and conditionally keep enabled, or entirely prevent enabling, configurable sets of features on tenants.
 
 ## Documentation
 
-- To use this feature, enable it on both the Default and the user tenant.
-- Once enabled on the user tenant, the Features Guard feature cannot be disabled.
-- Features that should not be deactivatable can be specified in the appsettings JSON file using `AlwaysEnabledFeaturesOptions`. Example configuration:
+### Conditionally enabling features
 
+- To use this feature, enable it on both the Default and the user tenant.
+- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified either in _appsettings.json_ using `ConditionallyEnabledFeaturesOptions` or in `Program` via the `ConfigureFeaturesGuard()` extension method.
+Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
+
+`Program` config example:
+```
+builder.Services
+    .AddOrchardCms(orchardCoreBuilder =>
+        orchardCoreBuilder.ConfigureFeaturesGuard(
+            new Dictionary<string, IEnumerable<string>>
+            {
+                // "Enable this feature and keep it enabled": "If any of these features are enabled",
+                ["OrchardCore.Media.Azure.Storage"] = new[] { "OrchardCore.Media" },
+                ["OrchardCore.Twitter"] = new[] { "Lombiq.UIKit", "Lombiq.ChartJs" },
+            }));
+```
+
+- `ConfigureFeaturesGuardForAzureStorage()` is also available to add `Azure Storage` as a conditional feature and `Media` as its condition feature.
+
+_appsettings.json_ config example:
 ```json
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_FeaturesGuard": {
-      "AlwaysEnabledFeaturesOptions": {
-        "AlwaysEnabledFeatures": [
-          "OrchardCore.Roles",
-          "OrchardCore.Users"
-        ]
+      "ConditionallyEnabledFeaturesOptions": {
+        "ConditionallyEnabledFeatures": {
+          "EnableFeatureIfOtherFeatureIsEnabled": {
+            // "Enable this feature and keep it enabled": "If any of these features are enabled",
+            "OrchardCore.Media.Azure.Storage": "OrchardCore.Media",
+            "OrchardCore.Twitter": "OrchardCore.Media, OrchardCore.Workflows"
+          }
+        }
       }
     },
-  }
 }
 ```
 
-- Additionally, the feature ensures whenever the OrchardCore.Media feature is enabled, the following features also get enabled:
-  - OrchardCore.Content.Types
-  - OrchardCore.Liquid
-  - OrchardCore.Media.Azure.Storage
-  - OrchardCore.Media.Cache
-  - OrchardCore.Settings
+Example case 1:
+- Enables `Azure Storage` when `Media` is enabled. Keeps `Azure Storage` enabled as long as `Media` is enabled.
 
-- Preventing enabling certain features on user tenants is also possible via recipes in a FeatureProfiles step. Example configuration:
+Example case 2:
+- Enables `Twitter` when `Media` or `Workflows` is enabled. Keeps `Twitter` enabled as long as either `Media` or `Workflows` remains enabled.
+
+### Preventing enabling features
+
+- Preventing enabling certain features on user tenants is possible via recipes in a `FeatureProfiles` step. For more on the Feature Profiles feature, see the [official documentation](https://docs.orchardcore.net/en/latest/docs/reference/modules/Tenants/#feature-profiles). Example configuration:
 
 ```json
 {
@@ -63,9 +84,3 @@ Module to prevent disabling a configurable set of features on tenants.
   }
 }
 ```
-
-## Contributing and support
-
-Bug reports, feature requests, comments, questions, code contributions and love letters are warmly welcome. You can send them to us via GitHub issues and pull requests. Please adhere to our [open-source guidelines](https://lombiq.com/open-source-guidelines) while doing so.
-
-This project is developed by [Lombiq Technologies](https://lombiq.com/). Commercial-grade support is available through Lombiq.
