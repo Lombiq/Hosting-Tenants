@@ -14,7 +14,7 @@ It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.
 
 The project consists of the following independent modules:
 
-- [Lombiq Hosting - Multi-Tenancy Tenants](Lombiq.Hosting.MultiTenancy.Tenants/Readme.md)
+- [Lombiq Hosting - Tenants Features Guard](Lombiq.Hosting.Tenants.FeaturesGuard/Readme.md)
 - [Lombiq Hosting - Tenants Admin Login](Lombiq.Hosting.Tenants.Admin.Login/Readme.md)
 - [Lombiq Hosting - Tenants Management](Lombiq.Hosting.Tenants.Management/Readme.md)
 - [Lombiq Hosting - Tenants Idle Tenant Management](Lombiq.Hosting.Tenants.IdleTenantManagement/Readme.md)
