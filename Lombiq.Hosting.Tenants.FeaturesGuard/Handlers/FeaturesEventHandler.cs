@@ -65,9 +65,9 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
 
         var allConditionFeatureIds = new List<string>();
-        foreach (var conditionFeatureIdList in conditionallyEnabledFeatures.Values)
+        foreach (var conditionFeatureIds in conditionallyEnabledFeatures.Values)
         {
-            allConditionFeatureIds.AddRange(conditionFeatureIdList);
+            allConditionFeatureIds.AddRange(conditionFeatureIds);
         }
 
         if (!allConditionFeatureIds.Contains(featureInfo.Id))

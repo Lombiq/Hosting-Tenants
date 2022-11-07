@@ -39,7 +39,7 @@ public static class TestCaseUITestContextExtensions
         context.Exists(By.XPath("//a[@id='btn-disable-Lombiq_UIKit']"));
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
-        // When either UIKit or ChartJs is enabled, Twitter should not be deactivatable.
+        // When either UIKit or ChartJs is enabled, it should not be possible to disable Twitter.
         await context.ClickReliablyOnAsync(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
         await context.ClickModalOkAsync();
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
