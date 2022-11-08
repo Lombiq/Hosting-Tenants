@@ -69,7 +69,7 @@ Example case 2:
         },
         {
             "Rule": "Exclude",
-            "Expression": "OrchardCore.Lucene"
+            "Expression": "OrchardCore.Search.Lucene"
         },
         {
             "Rule": "Exclude",
