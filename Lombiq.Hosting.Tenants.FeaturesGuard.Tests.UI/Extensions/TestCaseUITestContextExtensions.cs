@@ -14,7 +14,7 @@ public static class TestCaseUITestContextExtensions
 
         // Ensure forbidden features are not available in the list.
         context.Missing(By.XPath("//label[@for='OrchardCore.Workflows.Session']"));
-        context.Missing(By.XPath("//label[@for='OrchardCore.Lucene']"));
+        context.Missing(By.XPath("//label[@for='OrchardCore.Search.Lucene']"));
         context.Missing(By.XPath("//label[@for='OrchardCore.MiniProfiler']"));
         context.Missing(By.XPath("//label[@for='Lombiq.Tests.UI.Shortcuts']"));
     }
