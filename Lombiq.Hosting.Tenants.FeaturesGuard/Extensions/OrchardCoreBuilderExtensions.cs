@@ -22,6 +22,23 @@ public static class OrchardCoreBuilderExtensions
     }
 
     /// <summary>
+    /// Binds Elasticsearch as the conditional feature and Search or Indexing as the condition feature to
+    /// <see cref="ConditionallyEnabledFeaturesOptions"/>.
+    /// </summary>
+    public static OrchardCoreBuilder ConfigureFeaturesGuardForElasticsearch(this OrchardCoreBuilder builder)
+    {
+        builder.ConfigureServices((tenantServices, _) =>
+            tenantServices.PostConfigure<ConditionallyEnabledFeaturesOptions>(options =>
+                options.EnableFeatureIfOtherFeatureIsEnabled = new Dictionary<string, IEnumerable<string>>
+                {
+                    ["OrchardCore.Search.Elasticsearch"] =
+                        new List<string> { "OrchardCore.Search", "OrchardCore.Indexing" },
+                }));
+
+        return builder;
+    }
+
+    /// <summary>
     /// Binds the provided dictionary's keys and values as the conditional and condition features to
     /// <see cref="ConditionallyEnabledFeaturesOptions"/>.
     /// </summary>
