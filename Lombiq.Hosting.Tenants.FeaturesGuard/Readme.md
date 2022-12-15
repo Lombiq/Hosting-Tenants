@@ -11,7 +11,7 @@ A module that makes it possible to conditionally enable and conditionally keep e
 ### Conditionally enabling features
 
 - To use this feature, enable it on both the Default and the user tenant.
-- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified either in _appsettings.json_ using `ConditionallyEnabledFeaturesOptions` or in `Program` via the `ConfigureFeaturesGuard()` extension method.
+- Features that should be conditionally enabled, as well as the features whose status acts as the condition, can be specified either in _appsettings.json_ using `ConditionallyEnabledFeaturesOptions` or in `Program` via the `ConfigureFeaturesGuard()` or `ConfigureFeaturesGuardWithoutOverriding()` extension method.
 Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
 
 `Program` config example:
@@ -27,7 +27,8 @@ builder.Services
             }));
 ```
 
-- `ConfigureFeaturesGuardForAzureStorage()` is also available to add `Azure Storage` as a conditional feature and `Media` as its condition feature.
+- `ConfigureFeaturesGuardForAzureStorage()` is available to add `Azure Storage` as a conditional feature and `Media` as its condition feature.
+- `ConfigureFeaturesGuardForElasticsearch()` is available to add `Elasticsearch` as a conditional feature and `Indexing` or `Search` as its condition feature.
 
 _appsettings.json_ config example:
 ```json
