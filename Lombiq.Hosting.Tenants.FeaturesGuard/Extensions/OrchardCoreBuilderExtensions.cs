@@ -1,4 +1,5 @@
 using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -13,10 +14,11 @@ public static class OrchardCoreBuilderExtensions
     {
         builder.ConfigureServices((tenantServices, _) =>
             tenantServices.PostConfigure<ConditionallyEnabledFeaturesOptions>(options =>
-                options.EnableFeatureIfOtherFeatureIsEnabled = new Dictionary<string, IEnumerable<string>>
-                {
-                    ["OrchardCore.Media.Azure.Storage"] = new List<string> { "OrchardCore.Media" },
-                }));
+                options.AddDictionaryToEnableFeatureIfOtherFeatureIsEnabled(
+                    new Dictionary<string, IEnumerable<string>>
+                    {
+                        ["OrchardCore.Media.Azure.Storage"] = new List<string> { "OrchardCore.Media" },
+                    })));
 
         return builder;
     }
@@ -29,11 +31,12 @@ public static class OrchardCoreBuilderExtensions
     {
         builder.ConfigureServices((tenantServices, _) =>
             tenantServices.PostConfigure<ConditionallyEnabledFeaturesOptions>(options =>
-                options.EnableFeatureIfOtherFeatureIsEnabled = new Dictionary<string, IEnumerable<string>>
-                {
-                    ["OrchardCore.Search.Elasticsearch"] =
-                        new List<string> { "OrchardCore.Search", "OrchardCore.Indexing" },
-                }));
+                options.AddDictionaryToEnableFeatureIfOtherFeatureIsEnabled(
+                    new Dictionary<string, IEnumerable<string>>
+                    {
+                        ["OrchardCore.Search.Elasticsearch"] =
+                            new List<string> { "OrchardCore.Search", "OrchardCore.Indexing" },
+                    })));
 
         return builder;
     }
@@ -50,5 +53,22 @@ public static class OrchardCoreBuilderExtensions
                 options.EnableFeatureIfOtherFeatureIsEnabled = configDictionary));
 
         return builder;
+    }
+
+    private static ConditionallyEnabledFeaturesOptions AddDictionaryToEnableFeatureIfOtherFeatureIsEnabled(
+        this ConditionallyEnabledFeaturesOptions options,
+        Dictionary<string, IEnumerable<string>> dictionary)
+    {
+        if (options.EnableFeatureIfOtherFeatureIsEnabled == null)
+        {
+            options.EnableFeatureIfOtherFeatureIsEnabled = dictionary;
+        }
+        else
+        {
+            options.EnableFeatureIfOtherFeatureIsEnabled
+                .AddRange(dictionary);
+        }
+
+        return options;
     }
 }
