@@ -15,7 +15,8 @@ A module that makes it possible to conditionally enable and conditionally keep e
 Conditionally enabled features need to be provided with a singular or multiple condition features, where the status of the condition features determines whether the corresponding conditional feature is enabled or disabled. Example configuration:
 
 `Program` config example:
-```
+
+```c#
 builder.Services
     .AddOrchardCms(orchardCoreBuilder =>
         orchardCoreBuilder.ConfigureFeaturesGuard(
@@ -31,6 +32,7 @@ builder.Services
 - `ConfigureFeaturesGuardForElasticsearch()` is available to add `Elasticsearch` as a conditional feature and `Indexing` or `Search` as its condition feature.
 
 _appsettings.json_ config example:
+
 ```json
 {
   "OrchardCore": {
@@ -49,9 +51,11 @@ _appsettings.json_ config example:
 ```
 
 Example case 1:
+
 - Enables `Azure Storage` when `Media` is enabled. Keeps `Azure Storage` enabled as long as `Media` is enabled.
 
 Example case 2:
+
 - Enables `Twitter` when `Media` or `Workflows` is enabled. Keeps `Twitter` enabled as long as either `Media` or `Workflows` remains enabled.
 
 ### Preventing enabling features
