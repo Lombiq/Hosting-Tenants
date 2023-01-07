@@ -1,5 +1,6 @@
 using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -55,8 +56,9 @@ public static class OrchardCoreBuilderExtensions
                 }
                 else
                 {
-                    options.EnableFeatureIfOtherFeatureIsEnabled
-                        .AddRange(configDictionary);
+                    options.EnableFeatureIfOtherFeatureIsEnabled.AddRange(
+                        configDictionary.Where(dictionaryItem =>
+                            !options.EnableFeatureIfOtherFeatureIsEnabled.ContainsKey(dictionaryItem.Key)));
                 }
             }));
 
