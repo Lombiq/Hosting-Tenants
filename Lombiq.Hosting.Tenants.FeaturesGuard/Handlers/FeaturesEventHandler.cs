@@ -92,11 +92,14 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
         // from the list.
+        // Double enumeration is necessary, since we can't remove from the List without breaking enumeration.
+#pragma warning disable CA1851 // Possible multiple enumerations of 'IEnumerable' collection
         var featuresToEnable = conditionalFeatures.ToList();
         foreach (var feature in conditionalFeatures.Where(feature => shellDescriptor.Features.Contains(new ShellFeature(feature.Id))))
         {
             featuresToEnable.Remove(feature);
         }
+#pragma warning restore CA1851 // Possible multiple enumerations of 'IEnumerable' collection
 
         await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
     }
