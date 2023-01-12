@@ -83,23 +83,14 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             .Select(keyValuePair => keyValuePair.Key)
             .ToList();
 
-        // Handle multiple conditional features as well.
-        var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
-
         // During setup, Shell Descriptor can become out of sync with the DB when it comes to enabled features,
         // but it's more accurate than IShellDescriptorManager's methods.
         var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
 
         // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
-        // from the list.
-        // Double enumeration is necessary, since we can't remove from the List without breaking enumeration.
-#pragma warning disable CA1851 // Possible multiple enumerations of 'IEnumerable' collection
-        var featuresToEnable = conditionalFeatures.ToList();
-        foreach (var feature in conditionalFeatures.Where(feature => shellDescriptor.Features.Contains(new ShellFeature(feature.Id))))
-        {
-            featuresToEnable.Remove(feature);
-        }
-#pragma warning restore CA1851 // Possible multiple enumerations of 'IEnumerable' collection
+        // from the list. Handle multiple conditional features as well.
+        var featuresToEnable = allFeatures.Where(feature =>
+            conditionalFeatureIds.Contains(feature.Id) && !shellDescriptor.Features.Contains(new ShellFeature(feature.Id)));
 
         await _shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
     }
