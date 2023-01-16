@@ -45,7 +45,7 @@ public class TenantsIndexFilter : IAsyncResultFilter
         if (actionRouteController == typeof(AdminController).ControllerName() &&
             actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
             actionRouteValue is nameof(AdminController.Edit) &&
-            context.Result is ViewResult viewResult &&
+            context.Result is ViewResult &&
             await _authorizationService.AuthorizeAsync(
                 _hca.HttpContext.User,
                 TenantAdminPermissions.LoginAsAdmin)
