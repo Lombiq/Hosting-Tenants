@@ -17,24 +17,24 @@ public class IdleShutdownTask : IBackgroundTask
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
         var clock = serviceProvider.GetService<IClock>();
-        var lastActiveTimeAccessor = serviceProvider.GetService<ILastActiveTimeAccessor>();
-        var shellHost = serviceProvider.GetService<IShellHost>();
+        var lastActiveTime = serviceProvider.GetService<ILastActiveTimeAccessor>().LastActiveDateTimeUtc;
 
-        var options = serviceProvider.GetService<IOptions<IdleShutdownOptions>>();
-        var maxIdleMinutes = options.Value.MaxIdleMinutes;
+        var maxIdleMinutes = serviceProvider.GetService<IOptions<IdleShutdownOptions>>().Value.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0) return;
 
-        if (lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
+        if (lastActiveTime.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
             var shellSettings = serviceProvider.GetService<ShellSettings>();
             var logger = serviceProvider.GetService<ILogger<IdleShutdownTask>>();
 
-            logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
+            logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
+
+            var shellHost = serviceProvider.GetService<IShellHost>();
 
             try
             {
-                await InvokeShutdownAsync(shellSettings, shellHost);
+                await shellHost.ReleaseShellContextAsync(shellSettings);
             }
             catch (Exception e)
             {
@@ -50,20 +50,17 @@ public class IdleShutdownTask : IBackgroundTask
                 var shellSettingsManager = serviceProvider.GetService<IShellSettingsManager>();
 
                 await InvokeRestartAsync(shellSettingsManager, shellHost, shellSettings);
-                await InvokeShutdownAsync(shellSettings, shellHost);
+                await shellHost.ReleaseShellContextAsync(shellSettings);
             }
         }
     }
-
-    private static Task InvokeShutdownAsync(ShellSettings shellSettings, IShellHost shellHost) =>
-        shellHost.ReleaseShellContextAsync(shellSettings);
 
     private static async Task InvokeRestartAsync(
         IShellSettingsManager shellSettingsManager,
         IShellHost shellHost,
         ShellSettings shellSettings)
     {
-        await shellSettingsManager.SaveSettingsAsync(shellSettings);
         await shellHost.UpdateShellSettingsAsync(shellSettings);
+        await shellSettingsManager.SaveSettingsAsync(shellSettings);
     }
 }
