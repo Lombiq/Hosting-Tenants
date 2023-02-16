@@ -48,7 +48,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         await DisableConditionallyEnabledFeaturesAsync(feature);
     }
 
-    Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
+    Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask; // #spell-check-ignore-line
 
     Task IFeatureEventHandler.UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
