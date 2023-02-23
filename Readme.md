@@ -1,14 +1,14 @@
 # Lombiq Hosting - Tenants for Orchard Core
 
-[![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/) [![Lombiq.Hosting.Tenants.IdleTenantManagement NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.IdleTenantManagement?label=Lombiq.Hosting.Tenants.IdleTenantManagement)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.IdleTenantManagement/) [![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/) [![Lombiq.Hosting.Tenants.FeaturesGuard NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard?label=Lombiq.Hosting.Tenants.FeaturesGuard)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard/)
+[![Lombiq.Hosting.Tenants.Admin.Login NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Admin.Login?label=Lombiq.Hosting.Tenants.Admin.Login)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Admin.Login/) [![Lombiq.Hosting.Tenants.FeaturesGuard NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard?label=Lombiq.Hosting.Tenants.FeaturesGuard)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard/) [![Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI?label=Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI/) [![Lombiq.Hosting.Tenants.IdleTenantManagement NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.IdleTenantManagement?label=Lombiq.Hosting.Tenants.IdleTenantManagement)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.IdleTenantManagement/) [![Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI?label=Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI/) [![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
 
 ## About
 
-Various modules that help you build a multi-tenant web application in [Orchard Core](https://orchardcore.net/). You can watch a demo video of the modules [here](https://www.youtube.com/watch?v=c9hemoYcjIM&lc=Ugy5jqNChriMx9mLBFN4AaABAg).
+Various modules that help you build a multi-tenant web application with [Orchard Core](https://orchardcore.net/). You can watch a demo video of some of the functionality [here](https://www.youtube.com/watch?v=c9hemoYcjIM&lc=Ugy5jqNChriMx9mLBFN4AaABAg).
 
 Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
 
-It's also available on all sites of [DotNest, the Orchard SaaS](https://dotnest.com/).
+We at Lombiq use this suite of modules to make [DotNest, the Orchard SaaS](https://dotnest.com/) better.
 
 ## Documentation
 
