@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
-public class DynamicMediaSizeActionFilter : IAsyncAuthorizationFilter, IOrderedFilter
+public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter
 {
     public int Order => 950; // Set the order above the InternalMediaSizeFilter (900)
 
@@ -16,8 +16,9 @@ public class DynamicMediaSizeActionFilter : IAsyncAuthorizationFilter, IOrderedF
         var maxFileSize = await context
             .HttpContext
             .RequestServices
-            .GetRequiredService<IMediaQuoteService>()
-            .GetRemainingMediaSpaceLeftAsync();
+            .GetRequiredService<IMediaStorageQuotaService>()
+            .GetRemainingMediaSpaceQuotaLeftAsync();
+
         var formOptions = new FormOptions
         {
             MultipartBodyLengthLimit = maxFileSize,

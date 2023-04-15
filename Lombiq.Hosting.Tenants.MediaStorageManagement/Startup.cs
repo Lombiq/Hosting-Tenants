@@ -22,12 +22,12 @@ public class Startup : StartupBase
                 .GetSection("Lombiq_Hosting_Tenants_MediaStorageManagement:Media_Storage_Management_Options")
                 .Bind(options));
 
-        services.AddScoped<IMediaQuoteService, MediaQuoteService>();
+        services.AddScoped<IMediaStorageQuotaService, MediaStorageQuotaService>();
 
         services.Configure<MvcOptions>(options =>
         {
-            options.Filters.Add(typeof(UploadFileSizeFilter));
-            options.Conventions.Add(new DynamicMediaSizeApplicationModelConvention());
+            options.Filters.Add(typeof(UploadFileSizeShapeFilter));
+            options.Conventions.Add(new MediaStorageQuotaActionFilterConvention());
         });
     }
 }

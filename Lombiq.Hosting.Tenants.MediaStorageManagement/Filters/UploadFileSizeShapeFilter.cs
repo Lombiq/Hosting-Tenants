@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
-public class UploadFileSizeFilter : IAsyncResultFilter
+public class UploadFileSizeShapeFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IMediaQuoteService _mediaQuoteService;
+    private readonly IMediaStorageQuotaService _mediaStorageQuotaService;
 
-    public UploadFileSizeFilter(
+    public UploadFileSizeShapeFilter(
         IShapeFactory shapeFactory,
         ILayoutAccessor layoutAccessor,
-        IMediaQuoteService mediaQuoteService)
+        IMediaStorageQuotaService mediaStorageQuotaService)
     {
         _shapeFactory = shapeFactory;
         _layoutAccessor = layoutAccessor;
-        _mediaQuoteService = mediaQuoteService;
+        _mediaStorageQuotaService = mediaStorageQuotaService;
     }
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
@@ -45,7 +45,7 @@ public class UploadFileSizeFilter : IAsyncResultFilter
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Footer"];
-            var maximumSpace = _mediaQuoteService.MaxSpaceForTenantInMegabytes();
+            var maximumSpace = _mediaStorageQuotaService.MaxSpaceForTenantInMegabytes();
             await contentZone.AddAsync(await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
                 "UploadFileSize",
                 viewModel => viewModel.MaximumSpace = maximumSpace));

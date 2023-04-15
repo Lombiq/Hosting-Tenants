@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 
-public class MediaQuoteService : IMediaQuoteService
+public class MediaStorageQuotaService : IMediaStorageQuotaService
 {
     private readonly MediaStorageManagementOptions _mediaStorageManagementOptions;
     private readonly IMediaFileStore _mediaFileStore;
 
-    public MediaQuoteService(
+    public MediaStorageQuotaService(
         IOptions<MediaStorageManagementOptions> mediaStorageManagementOptions,
         IMediaFileStore mediaFileStore)
     {
@@ -19,7 +19,7 @@ public class MediaQuoteService : IMediaQuoteService
         _mediaFileStore = mediaFileStore;
     }
 
-    public async Task<long> GetRemainingMediaSpaceLeftAsync()
+    public async Task<long> GetRemainingMediaSpaceQuotaLeftAsync()
     {
         var directoryContent = _mediaFileStore.GetDirectoryContentAsync(includeSubDirectories: true);
 
@@ -28,6 +28,7 @@ public class MediaQuoteService : IMediaQuoteService
         return MaxSpaceForTenantInBytes() - sumSize;
     }
 
-    public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuote;
+    public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuota;
+
     public float MaxSpaceForTenantInMegabytes() => MaxSpaceForTenantInBytes() / 1024f / 1024f;
 }

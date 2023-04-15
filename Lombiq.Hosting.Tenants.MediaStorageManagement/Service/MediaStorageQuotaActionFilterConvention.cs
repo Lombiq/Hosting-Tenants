@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 
-public class DynamicMediaSizeApplicationModelConvention : IApplicationModelConvention
+public class MediaStorageQuotaActionFilterConvention : IApplicationModelConvention
 {
     public void Apply(ApplicationModel application)
     {
@@ -17,6 +17,6 @@ public class DynamicMediaSizeApplicationModelConvention : IApplicationModelConve
         var targetAction = targetController?.Actions.FirstOrDefault(action =>
             action.ActionName == nameof(AdminController.Upload));
 
-        targetAction?.Filters.Add(new DynamicMediaSizeActionFilter());
+        targetAction?.Filters.Add(new MediaStorageQuotaActionFilter());
     }
 }

@@ -1,47 +1,44 @@
 # Lombiq Hosting - Tenants Media Storage Management for Orchard Core
 
-[![Lombiq.Hosting.Tenants.Management NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Management?label=Lombiq.Hosting.Tenants.Management)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Management/)
+[![Lombiq.Hosting.Tenants.MediaStorageManagement NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.MediaStorageManagement?label=Lombiq.Hosting.Tenants.MediaStorageManagement)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.MediaStorageManagement/)
 
 ## About
 
-With the help of this module, you can set restrictions on tenant creation.
+With the help of this module, you can set restrictions regarding maximum media space per tenant.
 
 ## Documentation
 
-This module contains two features:
+This module currently contains one feature:
 
-- `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
-- `Lombiq.Hosting.Tenants.Management.HideRecipesFromSetup`
+- `Lombiq.Hosting.Tenants.MediaStorageManagement`
 
-### `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
+### `Lombiq.Hosting.Tenants.MediaStorageManagement`
 
-With this module, you can specify a list of host names that cannot be used to create a tenant. You can write the list of forbidden host names as a JSON array in the `appsettings.json` as follows:
+With this module, you can specify how much space would you like to limit each tenant's storage space. The default is 1GB. If you want to set it to 2GB e.g. you can do it in bytes as an environment variable or in `appsettings.json` as follows:
 
 ```json
 "OrchardCore": {
-  "Lombiq_Hosting_Tenants_Management": {
-    "Forbidden_Tenants_Options": {
-      "RequestUrlHosts": [
-        "forbidden.hostname1.net",
-        "forbidden.hostname2.net"
-      ]
+  "Lombiq_Hosting_Tenants_MediaStorageManagement": {
+    "Media_Storage_Management_Options": {
+      "MaximumSpace": 2147483648
     }
   }  
 }
 ```
 
-### `Lombiq.Hosting.Tenants.Management.HideRecipesFromSetup`
+Tenant based configuration can be defined as the following, for more details read the [Orchard Core documentation](https://docs.orchardcore.net/en/main/docs/reference/core/Configuration/#tenant-postconfiguration).
 
-With this module, you can specify tags for recipes that won't be listed on the setup screen of tenants. Recipes with those tags will still be available from the Default tenant admin UI and they'll also be available to be used via the `AutoSetup` feature.
-
-By default you can use `"HiddenFromSetupScreen"` tag on the recipe to hide it or you can specify the recipe tags you want to hide using the `HideRecipesByTagsFromSetup()` method in the web project's `ConfigureServices()`.
-
-```csharp
-public void ConfigureServices(IServiceCollection services) =>
-    services.AddOrchardCms(builder => builder.HideRecipesByTagsFromSetup("hiddenTag1", "hiddenTag2"))
+```json
+"OrchardCore": {
+  "TenantName": {
+    "Lombiq_Hosting_Tenants_MediaStorageManagement": {
+      "Media_Storage_Management_Options": {
+        "MaximumSpace": 2147483648
+      }
+    }
+  }
+}
 ```
-
-**NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default `HideFromSetupScreen` tag then just call the extension method without any parameter.
 
 ## Dependencies
 
