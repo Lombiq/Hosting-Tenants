@@ -10,16 +10,13 @@ public class DynamicMediaSizeApplicationModelConvention : IApplicationModelConve
 {
     public void Apply(ApplicationModel application)
     {
-        // Find the desired controller by name
         var targetController = application.Controllers.FirstOrDefault(controller =>
             controller.ControllerName == typeof(AdminController).ControllerName() &&
             controller.Actions.Any(action => action.ActionName == nameof(AdminController.Upload)));
 
-        // Find the desired action by name
         var targetAction = targetController?.Actions.FirstOrDefault(action =>
             action.ActionName == nameof(AdminController.Upload));
 
-        // Add the DynamicMediaSizeActionFilter to the action
         targetAction?.Filters.Add(new DynamicMediaSizeActionFilter());
     }
 }
