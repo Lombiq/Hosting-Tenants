@@ -2,6 +2,17 @@
 @using Lombiq.Hosting.Tenants.MediaStorageManagement.ViewModels
 
 @model UploadFileSizeViewModel
+<style at="Head">
+    @* This direct styling is needed to override the TheAdmin theme styling which causes error message to overflow. *@
+    :root[data-theme] .upload {
+        height: 100%;
+    }
+    :root[data-theme] .upload .error-message {
+        overflow: unset;
+        white-space: normal;
+    }
+
+</style>
 
 <script asp-name="dynamic-upload-limit" at="Foot" depends-on="media">
 $(function () {
@@ -14,13 +25,4 @@ $(function () {
     });
 });
 </script>
-<style>
-    :root[data-theme] .upload {
-        height: 100%;
-    }
-    :root[data-theme] .upload .error-message {
-        overflow: unset;
-        white-space: normal;
-    }
 
-</style>
