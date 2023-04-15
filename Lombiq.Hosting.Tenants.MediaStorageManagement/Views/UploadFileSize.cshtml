@@ -1,0 +1,16 @@
+@using Lombiq.Hosting.Tenants.MediaStorageManagement.Service
+@using Microsoft.AspNetCore.Mvc.Localization
+
+@inject IMediaQuoteService MediaQuoteService
+@{
+    var asd = await MediaQuoteService.GetRemainingMediaSpaceLeft();
+    var maxSize = (asd / 1024f) / 1024f;
+}
+<script asp-name="dynamic-upload-limit" at="Foot" depends-on="media">
+$(function () {
+    bus.$on('ErrorOnUpload', function (model) {
+        model.errorMessage =
+        @T["You may only store {0} MB of Media files for your site, and it seems that you’d just go over that. But don’t worry! If you delete some large files, you should be able to upload new ones. Also, you can contact us for a larger quota.", maxSize].Json();
+    });
+});
+</script>
