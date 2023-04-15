@@ -17,10 +17,11 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        var maximumStorageQuota =
+            _shellConfiguration.GetValue<long?>(
+                "Lombiq_Hosting_Tenants_MediaStorageManagement:Media_Storage_Management_Options:MaximumSpace");
         services.Configure<MediaStorageManagementOptions>(options =>
-            _shellConfiguration
-                .GetSection("Lombiq_Hosting_Tenants_MediaStorageManagement:Media_Storage_Management_Options")
-                .Bind(options));
+            options.MaximumStorageQuota = maximumStorageQuota ?? 1_073_741_824);
 
         services.AddScoped<IMediaStorageQuotaService, MediaStorageQuotaService>();
 
