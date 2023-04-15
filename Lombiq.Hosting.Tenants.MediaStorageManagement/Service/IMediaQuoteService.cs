@@ -4,5 +4,8 @@ namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 
 public interface IMediaQuoteService
 {
-    Task<long> GetRemainingMediaSpaceLeft();
+    Task<long> GetRemainingMediaSpaceLeftAsync();
+    long MaxSpaceForTenantInBytes();
+
+    float MaxSpaceForTenantInMegabytes();
 }

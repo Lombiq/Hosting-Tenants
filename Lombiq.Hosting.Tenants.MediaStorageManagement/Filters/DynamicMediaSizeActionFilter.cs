@@ -17,7 +17,7 @@ public class DynamicMediaSizeActionFilter : IAsyncAuthorizationFilter, IOrderedF
             .HttpContext
             .RequestServices
             .GetRequiredService<IMediaQuoteService>()
-            .GetRemainingMediaSpaceLeft();
+            .GetRemainingMediaSpaceLeftAsync();
         var formOptions = new FormOptions
         {
             MultipartBodyLengthLimit = maxFileSize,
@@ -26,7 +26,7 @@ public class DynamicMediaSizeActionFilter : IAsyncAuthorizationFilter, IOrderedF
         context.HttpContext.Features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, formOptions));
 
         var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
-        if (maxRequestBodySizeFeature != null && !maxRequestBodySizeFeature.IsReadOnly)
+        if (maxRequestBodySizeFeature is { IsReadOnly: false })
         {
             maxRequestBodySizeFeature.MaxRequestBodySize = maxFileSize;
         }
