@@ -1,9 +1,7 @@
 using Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 using Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
-using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 
@@ -22,8 +20,7 @@ public class Startup : StartupBase
         services.Configure<MvcOptions>(options =>
         {
             options.Filters.Add(typeof(UploadFileSizeFilter));
+            options.Conventions.Add(new DynamicMediaSizeApplicationModelConvention());
         });
-
-        services.AddSingleton<IConfigureOptions<MvcOptions>, UploadFileLimitOptions>();
     }
 }
