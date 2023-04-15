@@ -14,6 +14,7 @@ using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.FeatureName
     Name = "Lombiq Hosting - Tenants Media Storage Management - Quota Management",
     Description = "Ability to configure storage quota for tenants.",
     Category = "Hosting",
+    IsAlwaysEnabled = true,
     Dependencies = new[]
     {
         "OrchardCore.Media",
