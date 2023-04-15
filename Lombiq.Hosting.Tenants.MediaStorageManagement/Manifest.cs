@@ -18,5 +18,6 @@ using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.FeatureName
     {
         "OrchardCore.Media",
         "OrchardCore.DisplayManagement",
+        "OrchardCore.ResourceManagement",
     }
 )]
