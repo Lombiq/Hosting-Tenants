@@ -8,11 +8,10 @@ namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
 public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter
 {
-    public int Order => 950; // Set the order above the InternalMediaSizeFilter (900)
+    public int Order => 950; // Should be above the InternalMediaSizeFilter (900) to override its value.
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        // Read the max file size from the configuration
         var maxFileSize = await context
             .HttpContext
             .RequestServices
