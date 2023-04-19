@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
+using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.MediaStorageManagementOptionsConstants;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement;
 
@@ -21,7 +22,7 @@ public class Startup : StartupBase
             _shellConfiguration.GetValue<long?>(
                 "Lombiq_Hosting_Tenants_MediaStorageManagement:Media_Storage_Management_Options:MaximumSpace");
         services.Configure<MediaStorageManagementOptions>(options =>
-            options.MaximumStorageQuota = maximumStorageQuota ?? 1_073_741_824);
+            options.MaximumStorageQuota = maximumStorageQuota ?? MaximumStorageQuota);
 
         services.AddScoped<IMediaStorageQuotaService, MediaStorageQuotaService>();
 
