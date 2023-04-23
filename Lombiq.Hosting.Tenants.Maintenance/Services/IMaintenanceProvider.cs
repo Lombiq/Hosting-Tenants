@@ -9,12 +9,12 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Services;
 public interface IMaintenanceProvider
 {
     /// <summary>
-    /// The ID of the maintenance task.
+    /// Gets the ID of the maintenance task.
     /// </summary>
     string Id { get; }
 
     /// <summary>
-    /// The order of the maintenance task. The lower the number the earlier the task will be executed.
+    /// Gets the order of the maintenance task. The lower the number the earlier the task will be executed.
     /// </summary>
     int Order { get; }
 

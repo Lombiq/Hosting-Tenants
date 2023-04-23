@@ -6,7 +6,7 @@ using OrchardCore.Modules;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateTenantUrl;
 
-[Feature(Constants.FeatureNames.Maintenance_UpdateTenantUrl)]
+[Feature(Constants.FeatureNames.UpdateTenantUrl)]
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;

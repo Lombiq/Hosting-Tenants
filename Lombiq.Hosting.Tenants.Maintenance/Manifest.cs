@@ -17,7 +17,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = Maintenance_UpdateTenantUrl,
+    Id = UpdateTenantUrl,
     Name = "Lombiq Hosting - Tenants Maintenance - Update Tenant URL",
     Description = "Updates the URL of the tenant (e.g., when the production database is copied to staging).",
     Category = "Maintenance",

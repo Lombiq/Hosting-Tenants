@@ -4,5 +4,5 @@ public static class FeatureNames
 {
     public const string Module = "Lombiq.Hosting.Tenants.Maintenance";
     public const string Maintenance = Module;
-    public const string Maintenance_UpdateTenantUrl = Maintenance + ".UpdateTenantUrl";
+    public const string UpdateTenantUrl = Maintenance + "." + nameof(UpdateTenantUrl);
 }
