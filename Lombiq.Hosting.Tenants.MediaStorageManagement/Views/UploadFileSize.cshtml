@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Lombiq.Hosting.Tenants.MediaStorageManagement.ViewModels
+
+@model UploadFileSizeViewModel
+<style at="Head">
+    @* These specific selectors are needed to override the TheAdmin theme styling which causes error message to overflow. *@
+    :root[data-theme] .upload {
+        height: 100%;
+    }
+    :root[data-theme] .upload .error-message {
+        overflow: unset;
+        white-space: normal;
+    }
+
+</style>
+
+<script asp-name="dynamic-upload-limit" at="Foot" depends-on="media">
+$(function () {
+    bus.$on('ErrorOnUpload', function (model) {
+        if (model.errorMessage !== "This file exceeds the maximum upload size"){
+            return;
+        }
+        model.errorMessage =
+        @T["You may only store {0} MB of Media files for your site, and it seems that you’d just go over that. But don’t worry! If you delete some large files, you should be able to upload new ones. Also, you can contact us for a larger quota.", Model.MaximumSpace].Json();
+    });
+});
+</script>
+
