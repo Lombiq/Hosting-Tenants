@@ -46,4 +46,4 @@ To configure the task, you need to add the following to your `appsettings.json`:
 }
 ```
 
-**NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name.~~~~
+**NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
