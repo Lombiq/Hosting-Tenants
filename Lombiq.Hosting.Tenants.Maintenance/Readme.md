@@ -38,8 +38,8 @@ To configure the task, you need to add the following to your `appsettings.json`:
     "Lombiq_Hosting_Tenants_Maintenance": {
       "UpdateTenantUrl": {
         "Enabled": true,
-        "DefaultTenantUrl": "mydomain.com"
-        "TenantUrl": "{TenantName}.mydomain.com"
+        "DefaultTenantUrl": "domain.com"
+        "TenantUrl": "{TenantName}.domain.com"
       }
     },
   }
