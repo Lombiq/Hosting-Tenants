@@ -28,7 +28,7 @@ It's a maintenance task that updates the tenants' URL based on the app configura
 public void ConfigureServices(IServiceCollection services) =>
     services.AddOrchardCms(
         builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.UpdateTenantUrl));
-```~~~~
+```
 
 To configure the task, you need to add the following to your `appsettings.json`:
 
@@ -38,10 +38,10 @@ To configure the task, you need to add the following to your `appsettings.json`:
     "Lombiq_Hosting_Tenants_Maintenance": {
       "UpdateTenantUrl": {
         "Enabled": true,
-        "DefaultTenantUrl": "domain.com"
+        "DefaultTenantUrl": "domain.com",
         "TenantUrl": "{TenantName}.domain.com"
       }
-    },
+    }
   }
 }
 ```
