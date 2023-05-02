@@ -93,12 +93,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         foreach (var feature in featuresToEnable)
         {
-            if (_previouslyAddedFeatures.Contains(feature))
+            if (!_previouslyAddedFeatures.Contains(feature))
             {
-                return;
+                _previouslyAddedFeatures.Add(feature);
             }
-
-            _previouslyAddedFeatures.Add(feature);
         }
 
         await _shellFeaturesManager.EnableFeaturesAsync(_previouslyAddedFeatures, force: true);
