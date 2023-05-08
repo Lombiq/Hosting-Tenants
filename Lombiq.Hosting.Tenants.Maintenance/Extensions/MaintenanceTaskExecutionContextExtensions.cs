@@ -1,4 +1,6 @@
-namespace Lombiq.Hosting.Tenants.Maintenance.Models;
+using Lombiq.Hosting.Tenants.Maintenance.Models;
+
+namespace Lombiq.Hosting.Tenants.Maintenance.Extensions;
 
 public static class MaintenanceTaskExecutionContextExtensions
 {

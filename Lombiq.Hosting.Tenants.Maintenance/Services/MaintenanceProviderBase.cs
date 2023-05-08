@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using System.Threading.Tasks;
 
