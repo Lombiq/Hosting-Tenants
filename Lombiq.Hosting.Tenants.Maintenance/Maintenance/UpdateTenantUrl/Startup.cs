@@ -1,4 +1,5 @@
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
@@ -16,9 +17,8 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        // Temporarily commenting out.
-        //// services.AddScoped<IMaintenanceProvider, UpdateShellRequestUrlMaintenanceProvider>();
-        //// services.AddScoped<IMaintenanceProvider, UpdateSiteUrlMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, UpdateShellRequestUrlMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, UpdateSiteUrlMaintenanceProvider>();
 
         var options = new UpdateTenantUrlMaintenanceOptions();
         var configSection = _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:UpdateTenantUrl");
