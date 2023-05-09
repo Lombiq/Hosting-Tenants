@@ -1,6 +1,5 @@
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
-using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Data;
 using OrchardCore.Data.Migration;
@@ -17,7 +16,8 @@ public class Startup : StartupBase
         services.AddScoped<IDataMigration, Migrations>();
         services.AddSingleton<IIndexProvider, MaintenanceTaskExecutionIndexProvider>();
 
-        services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
-        services.AddScoped<IMaintenanceManager, MaintenanceManager>();
+        // Temporarily commenting out.
+        //// services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
+        //// services.AddScoped<IMaintenanceManager, MaintenanceManager>();
     }
 }
