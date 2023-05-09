@@ -24,13 +24,16 @@ public class MaintenanceRunnerService : ModularTenantEvents
         _shellHost = shellHost;
     }
 
-    public override Task ActivatedAsync()
+    public override async Task ActivatedAsync()
     {
-        if (_shellSettings.State != TenantState.Running) return Task.CompletedTask;
-        return Task.CompletedTask;
+        if (_shellSettings.State != TenantState.Running) return;
 
+#pragma warning disable IDE0059
+#pragma warning disable S1481
+        var shellScope = await _shellHost.GetScopeAsync(_shellSettings.Name);
+#pragma warning restore S1481
+#pragma warning restore IDE0059
         // Getting the scope here is important because the shell might not be fully initialized yet.
-        //// var shellScope = await _shellHost.GetScopeAsync(_shellSettings.Name);
         //// var maintenanceManager = shellScope.ServiceProvider.GetService<IMaintenanceManager>();
         ////
         //// _logger.LogInformation(
