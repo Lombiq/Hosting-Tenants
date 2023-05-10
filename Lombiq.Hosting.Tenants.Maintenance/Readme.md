@@ -2,7 +2,7 @@
 
 ## About
 
-With the help of this module you can execute maintenance tasks on tenants.
+With the help of this module you can execute maintenance tasks on tenants. These tasks can be anything that you want to run on tenants, like updating the tenants' URL based on the app configuration.
 
 ## Documentation
 
@@ -30,7 +30,7 @@ public void ConfigureServices(IServiceCollection services) =>
         builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.UpdateTenantUrl));
 ```
 
-To configure the task, you need to add the following to your `appsettings.json`:
+To configure the task, you need to add the following to your _appsettings.json_:
 
 ```json
 {
