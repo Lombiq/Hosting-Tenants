@@ -1,8 +1,10 @@
 using Lombiq.Hosting.Tenants.FeaturesGuard.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Descriptor;
+using OrchardCore.Environment.Shell.Scope;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,8 +17,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;
     private readonly ShellSettings _shellSettings;
     private readonly IShellDescriptorManager _shellDescriptorManager;
-
-    private readonly List<IFeatureInfo> _previouslyAddedFeatures = new();
 
     public FeaturesEventHandler(
         IShellFeaturesManager shellFeaturesManager,
@@ -87,19 +87,23 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
         // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
         // from the list. Handle multiple conditional features as well.
-        var featuresToEnable = allFeatures.Where(feature =>
-            conditionalFeatureIds.Contains(feature.Id) &&
-            !shellDescriptor.Features.Any(shellFeature => conditionalFeatureIds.Contains(shellFeature.Id)));
 
-        foreach (var feature in featuresToEnable)
+        if (conditionalFeatureIds.Count > 0)
         {
-            if (!_previouslyAddedFeatures.Contains(feature))
+            ShellScope.AddDeferredTask(async scope =>
             {
-                _previouslyAddedFeatures.Add(feature);
-            }
-        }
+                var featuresToEnable = allFeatures
+                    .Where(feature =>
+                        conditionalFeatureIds.Contains(feature.Id) &&
+                        !shellDescriptor.Features.Any(shellFeature => conditionalFeatureIds.Contains(shellFeature.Id)))
+                    .ToList();
 
-        await _shellFeaturesManager.EnableFeaturesAsync(_previouslyAddedFeatures, force: true);
+                var shellFeaturesManager =
+                    scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
+
+                await shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
+            });
+        }
     }
 
     /// <summary>
