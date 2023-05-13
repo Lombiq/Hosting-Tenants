@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Maintenance.TenantUrlMaintenanceCore;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -23,6 +24,9 @@ public class UpdateSiteUrlMaintenanceProvider : MaintenanceProviderBase
         _shellSettings = shellSettings;
         _options = options;
     }
+
+    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
+        Task.FromResult(!string.IsNullOrEmpty(_options.Value.TenantUrl) && !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
