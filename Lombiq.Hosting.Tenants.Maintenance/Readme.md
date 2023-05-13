@@ -20,24 +20,15 @@ public void ConfigureServices(IServiceCollection services) =>
 
 To add new maintenance tasks, you need to implement the `IMaintenanceProvider` interface and register it as a service.
 
-### `Lombiq.Hosting.Tenants.Maintenance.UpdateTenantUrl`
+### `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`
 
-It's a maintenance task that updates the tenants' URL based on the app configuration. It is available on any tenant. To make your application execute this task, you need to add the following to your `Startup.cs`:
-
-```csharp
-public void ConfigureServices(IServiceCollection services) =>
-    services.AddOrchardCms(
-        builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.UpdateTenantUrl));
-```
-
-To configure the task, you need to add the following to your _appsettings.json_:
+Provides the core functionality for updating the tenants' URL based on the app configuration. It's a dependency of the `UpdateSiteUrl` and `UpdateShellRequestUrls` maintenance tasks and the configuration options affect them as well. The following configuration options are available to set the tenant URLs:
 
 ```json
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
-      "UpdateTenantUrl": {
-        "Enabled": true,
+      "TenantUrlMaintenance": {
         "DefaultTenantUrl": "domain.com",
         "TenantUrl": "{TenantName}.domain.com"
       }
@@ -47,3 +38,17 @@ To configure the task, you need to add the following to your _appsettings.json_:
 ```
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
+
+### `Lombiq.Hosting.Tenants.Maintenance.UpdateSiteUrl`
+
+It's a maintenance task that updates the site's base URL in the site settings based on the app configuration (see `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`). It is available on any tenant. To make your application execute this task, you need to add the following to your `Startup.cs`:
+
+```csharp
+public void ConfigureServices(IServiceCollection services) =>
+    services.AddOrchardCms(
+        builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.UpdateTenantUrl));
+```
+
+### `Lombiq.Hosting.Tenants.Maintenance.UpdateShellRequestUrls`
+
+It's a maintenance task that updates the shell's request URLs in each tenant's shell settings based on the app configuration (see `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`). It is available only for the default tenant.

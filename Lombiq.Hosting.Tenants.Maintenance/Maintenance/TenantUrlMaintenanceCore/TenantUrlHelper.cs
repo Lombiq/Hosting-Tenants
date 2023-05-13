@@ -1,10 +1,10 @@
 using OrchardCore.Environment.Shell;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateTenantUrl;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.TenantUrlMaintenanceCore;
 
 internal static class TenantUrlHelper
 {
-    public static string GetTenantUrl(UpdateTenantUrlMaintenanceOptions options, ShellSettings shellSettings)
+    public static string GetTenantUrl(TenantUrlMaintenanceOptions options, ShellSettings shellSettings)
     {
 #pragma warning disable CA1308 // Normalize strings to uppercase
         var evaluatedTenantUrl = options.TenantUrl.Replace(

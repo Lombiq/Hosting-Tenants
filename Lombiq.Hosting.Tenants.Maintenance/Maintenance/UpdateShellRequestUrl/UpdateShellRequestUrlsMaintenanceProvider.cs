@@ -1,4 +1,5 @@
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
+using Lombiq.Hosting.Tenants.Maintenance.Maintenance.TenantUrlMaintenanceCore;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
@@ -7,17 +8,17 @@ using OrchardCore.Environment.Shell.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateTenantUrl;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateShellRequestUrl;
 
-public class UpdateShellRequestUrlMaintenanceProvider : MaintenanceProviderBase
+public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly ShellSettings _shellSettings;
-    private readonly IOptions<UpdateTenantUrlMaintenanceOptions> _options;
+    private readonly IOptions<TenantUrlMaintenanceOptions> _options;
     private readonly IShellSettingsManager _shellSettingsManager;
 
-    public UpdateShellRequestUrlMaintenanceProvider(
+    public UpdateShellRequestUrlsMaintenanceProvider(
         ShellSettings shellSettings,
-        IOptions<UpdateTenantUrlMaintenanceOptions> options,
+        IOptions<TenantUrlMaintenanceOptions> options,
         IShellSettingsManager shellSettingsManager)
     {
         _shellSettings = shellSettings;
@@ -25,12 +26,8 @@ public class UpdateShellRequestUrlMaintenanceProvider : MaintenanceProviderBase
         _shellSettingsManager = shellSettingsManager;
     }
 
-    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context)
-    {
-        if (!_options.Value.Enabled || !_shellSettings.IsDefaultShell()) return Task.FromResult(false);
-
-        return Task.FromResult(!context.WasLatestExecutionSuccessful());
-    }
+    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
+        Task.FromResult(_shellSettings.IsDefaultShell() && !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
