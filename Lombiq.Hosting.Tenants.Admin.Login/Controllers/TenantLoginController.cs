@@ -77,7 +77,7 @@ public class TenantLoginController : Controller
         }
 
         await _userSignInManager.SignInAsync(adminUser, isPersistent: false);
-        _logger.LogInformation(1, "An admin user logged in from the Default tenant.");
+        _logger.LogInformation("An admin user logged in from the Default tenant.");
 
         return RedirectToAction("Index", "Admin", new { area = "OrchardCore.Admin" });
     }
