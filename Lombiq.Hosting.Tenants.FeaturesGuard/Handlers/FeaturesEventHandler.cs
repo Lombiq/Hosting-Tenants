@@ -12,9 +12,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
-#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 public sealed class FeaturesEventHandler : IFeatureEventHandler
-#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 {
     private readonly IShellFeaturesManager _shellFeaturesManager;
     private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;

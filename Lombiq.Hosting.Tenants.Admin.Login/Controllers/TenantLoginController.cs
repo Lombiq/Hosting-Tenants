@@ -77,9 +77,7 @@ public class TenantLoginController : Controller
         }
 
         await _userSignInManager.SignInAsync(adminUser, isPersistent: false);
-#pragma warning disable CA1848 // Use the LoggerMessage delegates
         _logger.LogInformation(1, "An admin user logged in from the Default tenant.");
-#pragma warning restore CA1848 // Use the LoggerMessage delegates
 
         return RedirectToAction("Index", "Admin", new { area = "OrchardCore.Admin" });
     }
