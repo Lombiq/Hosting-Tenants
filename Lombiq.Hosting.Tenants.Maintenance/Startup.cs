@@ -13,7 +13,7 @@ public class Startup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<StoreCollectionOptions>(o => o.Collections.Add(DocumentCollections.Maintenance));
+        services.Configure<StoreCollectionOptions>(options => options.Collections.Add(DocumentCollections.Maintenance));
         services.AddScoped<IDataMigration, Migrations>();
         services.AddSingleton<IIndexProvider, MaintenanceTaskExecutionIndexProvider>();
 

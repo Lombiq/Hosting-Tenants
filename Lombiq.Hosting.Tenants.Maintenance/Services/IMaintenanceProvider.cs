@@ -22,7 +22,7 @@ public interface IMaintenanceProvider
     /// Determines whether the maintenance task should be executed.
     /// </summary>
     /// <param name="context">Provides information about the current execution.</param>
-    /// <returns>True if the maintenance task should be executed, false otherwise.</returns>
+    /// <returns><see langword="true"/> if the maintenance task should be executed, <see langword="false"/> otherwise.</returns>
     Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context);
 
     /// <summary>

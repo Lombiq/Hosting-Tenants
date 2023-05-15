@@ -1,5 +1,7 @@
 # Lombiq Hosting - Tenant Maintenance for Orchard Core
 
+[![Lombiq.Hosting.Tenants.Maintenance NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.Maintenance?label=Lombiq.Hosting.Tenants.Maintenance)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.Maintenance/)
+
 ## About
 
 With the help of this module you can execute maintenance tasks on tenants. These tasks can be anything that you want to run on tenants, like updating the tenants' URL based on the app configuration.

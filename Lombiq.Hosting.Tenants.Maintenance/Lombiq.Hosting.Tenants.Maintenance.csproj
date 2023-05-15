@@ -9,7 +9,7 @@
     <PropertyGroup>
         <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core</Title>
         <Authors>Lombiq Technologies</Authors>
-        <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
+        <Copyright>Copyright © 2021, Lombiq Technologies Ltd.</Copyright>
         <Description>Lombiq Hosting - Tenants Maintenance for Orchard Core: With the help of this module you can execute maintenance tasks on tenants.</Description>
         <PackageIcon>NuGetIcon.png</PackageIcon>
         <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;Maintenance</PackageTags>

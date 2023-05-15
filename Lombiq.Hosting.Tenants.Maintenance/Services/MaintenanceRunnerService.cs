@@ -26,8 +26,7 @@ public class MaintenanceRunnerService : ModularTenantEvents
     {
         if (_shellSettings.State != TenantState.Running) return;
 
-        // Getting the scope here is important because the shell might not be fully initialized yet.
-        _logger.LogInformation(
+        _logger.LogDebug(
             "Executing maintenance tasks on shell '{ShellName}'.",
             _shellSettings.Name);
         await _maintenanceManager.ExecuteMaintenanceTasksAsync();

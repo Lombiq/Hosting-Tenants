@@ -45,7 +45,7 @@ public class MaintenanceManager : IMaintenanceManager
 
     public async Task ExecuteMaintenanceTasksAsync()
     {
-        var orderedProviders = _maintenanceProviders.OrderBy(p => p.Order);
+        var orderedProviders = _maintenanceProviders.OrderBy(provider => provider.Order);
         foreach (var provider in orderedProviders)
         {
             var currentExecution = new MaintenanceTaskExecutionData
@@ -55,7 +55,6 @@ public class MaintenanceManager : IMaintenanceManager
             };
             var context = new MaintenanceTaskExecutionContext
             {
-                // GetLatestExecutionTask = () => GetLatestExecutionByMaintenanceIdAsync(provider.Id),
                 LatestExecution = await GetLatestExecutionByMaintenanceIdAsync(provider.Id),
                 CurrentExecution = currentExecution,
             };
