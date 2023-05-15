@@ -43,7 +43,9 @@ Provides the core functionality for updating the tenants' URL based on the app c
 
 ### `Lombiq.Hosting.Tenants.Maintenance.UpdateSiteUrl`
 
-It's a maintenance task that updates the site's base URL in the site settings based on the app configuration (see `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`). It is available on any tenant. To make your application execute this task, you need to add the following to your `Startup.cs`:
+It's a maintenance task that updates the site's base URL in the site settings based on the app configuration. It is available on any tenant.
+
+To make your application execute this task, you need to add the following to your `Startup.cs`:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services) =>
@@ -51,6 +53,40 @@ public void ConfigureServices(IServiceCollection services) =>
         builder => builder.AddTenantFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.UpdateTenantUrl));
 ```
 
+The following configuration options are available to set the site URL:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "UpdateSiteUrl": {
+        "SiteUrl": "https://domain.com/{TenantName}"
+      }
+    }
+  }
+}
+```
+
+**NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
+
 ### `Lombiq.Hosting.Tenants.Maintenance.UpdateShellRequestUrls`
 
-It's a maintenance task that updates the shell's request URLs in each tenant's shell settings based on the app configuration (see `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`). It is available only for the default tenant.
+It's a maintenance task that updates the shell's request URLs in each tenant's shell settings based on the app configuration. It is available only for the default tenant.
+
+The following configuration options are available to set the shell request URLs:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "UpdateShellRequestUrl": {
+        "DefaultRequestUrl": "domain.com",
+        "RequestUrl": "{TenantName}.domain.com",
+        "RequestUrlPrefix": "{TenantName}"
+      }
+    }
+  }
+}
+```
+
+**NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.

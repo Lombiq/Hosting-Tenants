@@ -1,11 +1,9 @@
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
-using Lombiq.Hosting.Tenants.Maintenance.Maintenance.TenantUrlMaintenanceCore;
+using Lombiq.Hosting.Tenants.Maintenance.Helpers;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Environment.Shell.Models;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateShellRequestUrl;
@@ -13,12 +11,12 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateShellRequestUrl;
 public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly ShellSettings _shellSettings;
-    private readonly IOptions<TenantUrlMaintenanceOptions> _options;
+    private readonly IOptions<UpdateShellRequestUrlMaintenanceOptions> _options;
     private readonly IShellSettingsManager _shellSettingsManager;
 
     public UpdateShellRequestUrlsMaintenanceProvider(
         ShellSettings shellSettings,
-        IOptions<TenantUrlMaintenanceOptions> options,
+        IOptions<UpdateShellRequestUrlMaintenanceOptions> options,
         IShellSettingsManager shellSettingsManager)
     {
         _shellSettings = shellSettings;
@@ -32,13 +30,29 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var allShellSettings = await _shellSettingsManager.LoadSettingsAsync();
-        foreach (var shellSettings in allShellSettings.Where(settings => settings.State == TenantState.Running))
+        foreach (var shellSettings in allShellSettings)
         {
-            string tenantUrl = TenantUrlHelper.GetTenantUrl(_options.Value, shellSettings);
-            shellSettings.RequestUrlHost = tenantUrl;
+            shellSettings.RequestUrlHost = GetTenantUrl(_options.Value, shellSettings);
+            shellSettings.RequestUrlPrefix = TenantUrlHelpers.ReplaceTenantName(
+                _options.Value.RequestUrlPrefix,
+                shellSettings.Name);
+
             await _shellSettingsManager.SaveSettingsAsync(shellSettings);
         }
 
         context.ReloadShellAfterMaintenanceCompletion = true;
+    }
+
+    private static string GetTenantUrl(UpdateShellRequestUrlMaintenanceOptions options, ShellSettings shellSettings)
+    {
+        var evaluatedRequestUrl = !string.IsNullOrEmpty(options.RequestUrl)
+            ? TenantUrlHelpers.ReplaceTenantName(options.RequestUrl, shellSettings.Name)
+            : string.Empty;
+        var defaultShellRequestUrl =
+            string.IsNullOrEmpty(options.DefaultShellRequestUrl)
+                ? evaluatedRequestUrl
+                : options.DefaultShellRequestUrl;
+
+        return shellSettings.IsDefaultShell() ? defaultShellRequestUrl : evaluatedRequestUrl;
     }
 }
