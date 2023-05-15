@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Environment.Shell.Descriptor;
+using OrchardCore.Environment.Shell.Descriptor.Models;
 using OrchardCore.Environment.Shell.Scope;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,18 +16,15 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     private readonly IShellFeaturesManager _shellFeaturesManager;
     private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;
     private readonly ShellSettings _shellSettings;
-    private readonly IShellDescriptorManager _shellDescriptorManager;
 
     public FeaturesEventHandler(
         IShellFeaturesManager shellFeaturesManager,
         IOptions<ConditionallyEnabledFeaturesOptions> conditionallyEnabledFeaturesOptions,
-        ShellSettings shellSettings,
-        IShellDescriptorManager shellDescriptorManager)
+        ShellSettings shellSettings)
     {
         _shellFeaturesManager = shellFeaturesManager;
         _conditionallyEnabledFeaturesOptions = conditionallyEnabledFeaturesOptions;
         _shellSettings = shellSettings;
-        _shellDescriptorManager = shellDescriptorManager;
     }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -73,37 +70,48 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             return;
         }
 
-        // Enable conditional features if they are not already enabled.
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var allFeatures = (await _shellFeaturesManager
+            .GetAvailableFeaturesAsync())
+            .ToList();
 
         var conditionalFeatureIds = conditionallyEnabledFeatures
             .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
             .Select(keyValuePair => keyValuePair.Key)
             .ToList();
 
-        // During setup, Shell Descriptor can become out of sync with the DB when it comes to enabled features,
-        // but it's more accurate than IShellDescriptorManager's methods.
-        var shellDescriptor = await _shellDescriptorManager.GetShellDescriptorAsync();
-
-        // If Shell Descriptor's Features already contains a feature that is found in conditionalFeatures, remove it
-        // from the list. Handle multiple conditional features as well.
-
-        if (conditionalFeatureIds.Count > 0)
+        if (!conditionalFeatureIds.Any())
         {
-            ShellScope.AddDeferredTask(async scope =>
-            {
-                var featuresToEnable = allFeatures
-                    .Where(feature =>
-                        conditionalFeatureIds.Contains(feature.Id) &&
-                        !shellDescriptor.Features.Any(shellFeature => conditionalFeatureIds.Contains(shellFeature.Id)))
-                    .ToList();
-
-                var shellFeaturesManager =
-                    scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
-
-                await shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
-            });
+            return;
         }
+
+        if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
+        {
+            throw new KeyNotFoundException($"Conditional feature with given ID do not exist.");
+        }
+
+        ShellScope.AddDeferredTask(async scope =>
+        {
+            var shellDescriptor = scope.ServiceProvider.GetRequiredService<ShellDescriptor>();
+
+            var featureIdsToEnable = conditionalFeatureIds
+                .Except(shellDescriptor.Features.Select(shellFeature => shellFeature.Id))
+                .Distinct()
+                .ToList();
+
+            if (!featureIdsToEnable.Any())
+            {
+                return;
+            }
+
+            var featuresToEnable = allFeatures
+                .Where(feature =>
+                    featureIdsToEnable.Contains(feature.Id))
+                .ToList();
+
+            var shellFeaturesManager = scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
+
+            await shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
+        });
     }
 
     /// <summary>
