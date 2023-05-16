@@ -5,5 +5,5 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {
-    public static Task TestMaintenanceExecution(this UITestContext context) => Task.CompletedTask;
+    public static Task TestMaintenanceExecutionAsync(this UITestContext context) => Task.CompletedTask;
 }
