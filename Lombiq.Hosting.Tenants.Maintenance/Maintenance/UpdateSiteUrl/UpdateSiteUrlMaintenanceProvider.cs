@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Helpers;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -24,10 +25,17 @@ public class UpdateSiteUrlMaintenanceProvider : MaintenanceProviderBase
         _options = options;
     }
 
+    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
+        Task.FromResult(_options.Value.IsEnabled && !context.WasLatestExecutionSuccessful());
+
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var siteSettings = await _siteService.LoadSiteSettingsAsync();
-        siteSettings.BaseUrl = TenantUrlHelpers.ReplaceTenantName(_options.Value.SiteUrl, _shellSettings.Name);
+        siteSettings.BaseUrl = TenantUrlHelpers.GetTenantUrl(
+            _options.Value.DefaultTenantSiteUrl,
+            _options.Value.SiteUrl,
+            _shellSettings);
+
         await _siteService.UpdateSiteSettingsAsync(siteSettings);
     }
 }

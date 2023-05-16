@@ -22,25 +22,6 @@ public void ConfigureServices(IServiceCollection services) =>
 
 To add new maintenance tasks, you need to implement the `IMaintenanceProvider` interface and register it as a service.
 
-### `Lombiq.Hosting.Tenants.Maintenance.TenantUrlMaintenanceCore`
-
-Provides the core functionality for updating the tenants' URL based on the app configuration. It's a dependency of the `UpdateSiteUrl` and `UpdateShellRequestUrls` maintenance tasks and the configuration options affect them as well. The following configuration options are available to set the tenant URLs:
-
-```json
-{
-  "OrchardCore": {
-    "Lombiq_Hosting_Tenants_Maintenance": {
-      "TenantUrlMaintenance": {
-        "DefaultTenantUrl": "domain.com",
-        "TenantUrl": "{TenantName}.domain.com"
-      }
-    }
-  }
-}
-```
-
-**NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
-
 ### `Lombiq.Hosting.Tenants.Maintenance.UpdateSiteUrl`
 
 It's a maintenance task that updates the site's base URL in the site settings based on the app configuration. It is available on any tenant.
@@ -60,7 +41,9 @@ The following configuration options are available to set the site URL:
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
       "UpdateSiteUrl": {
-        "SiteUrl": "https://domain.com/{TenantName}"
+        "IsEnabled": true,
+        "SiteUrl": "https://domain.com/{TenantName}",
+        "DefaultTenantSiteUrl": "https://domain.com"
       }
     }
   }
@@ -80,7 +63,8 @@ The following configuration options are available to set the shell request URLs:
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
       "UpdateShellRequestUrl": {
-        "DefaultRequestUrl": "domain.com",
+        "IsEnabled": true,
+        "DefaultShellRequestUrl": "domain.com",
         "RequestUrl": "{TenantName}.domain.com",
         "RequestUrlPrefix": "{TenantName}"
       }

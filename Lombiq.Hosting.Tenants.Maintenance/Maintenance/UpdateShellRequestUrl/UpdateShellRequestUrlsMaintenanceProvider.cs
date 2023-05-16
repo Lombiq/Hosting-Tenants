@@ -25,14 +25,19 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_shellSettings.IsDefaultShell() && !context.WasLatestExecutionSuccessful());
+        Task.FromResult(_options.Value.IsEnabled &&
+            _shellSettings.IsDefaultShell() &&
+            !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var allShellSettings = await _shellSettingsManager.LoadSettingsAsync();
         foreach (var shellSettings in allShellSettings)
         {
-            shellSettings.RequestUrlHost = GetTenantUrl(_options.Value, shellSettings);
+            shellSettings.RequestUrlHost = TenantUrlHelpers.GetTenantUrl(
+                _options.Value.DefaultShellRequestUrl,
+                _options.Value.RequestUrl,
+                shellSettings);
             shellSettings.RequestUrlPrefix = TenantUrlHelpers.ReplaceTenantName(
                 _options.Value.RequestUrlPrefix,
                 shellSettings.Name);
@@ -41,18 +46,5 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
         }
 
         context.ReloadShellAfterMaintenanceCompletion = true;
-    }
-
-    private static string GetTenantUrl(UpdateShellRequestUrlMaintenanceOptions options, ShellSettings shellSettings)
-    {
-        var evaluatedRequestUrl = !string.IsNullOrEmpty(options.RequestUrl)
-            ? TenantUrlHelpers.ReplaceTenantName(options.RequestUrl, shellSettings.Name)
-            : string.Empty;
-        var defaultShellRequestUrl =
-            string.IsNullOrEmpty(options.DefaultShellRequestUrl)
-                ? evaluatedRequestUrl
-                : options.DefaultShellRequestUrl;
-
-        return shellSettings.IsDefaultShell() ? defaultShellRequestUrl : evaluatedRequestUrl;
     }
 }
