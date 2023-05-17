@@ -61,6 +61,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
+            // Retrieving all condition feature ids.
             var allConditionFeatureIds = GetAllConditionFeatureIds(conditionallyEnabledFeatures, featureInfo);
 
             if (!allConditionFeatureIds.Any())
@@ -68,8 +69,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
-            var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
-
+            // Retrieving all conditional feature ids that are dependent on the current FeatureInfo.
             var conditionalFeatureIds = conditionallyEnabledFeatures
                 .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
                 .Select(keyValuePair => keyValuePair.Key)
@@ -80,6 +80,8 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
+            var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
+
             // Throw an exception if a non existing conditional feature was given.
             if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
             {
@@ -88,9 +90,9 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
             var shellDescriptor = scope.ServiceProvider.GetRequiredService<ShellDescriptor>();
 
+            // Sorting conditional features that are already enabled.
             var featureIdsToEnable = conditionalFeatureIds
                 .Except(shellDescriptor.Features.Select(shellFeature => shellFeature.Id))
-                .Distinct()
                 .ToList();
 
             if (!featureIdsToEnable.Any())
@@ -98,6 +100,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
+            // Getting the corresponding IFeatureInfo for every feature id that should be enabled.
             var featuresToEnable = allFeatures
                 .Where(feature => featureIdsToEnable.Contains(feature.Id))
                 .ToList();
