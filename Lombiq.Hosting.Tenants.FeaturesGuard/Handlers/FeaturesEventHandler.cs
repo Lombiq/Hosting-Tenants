@@ -51,46 +51,47 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// Enables conditional features (key) if one of their corresponding condition features (value) was enabled.
     /// </summary>
     /// <param name="featureInfo">The feature that was just enabled.</param>
-    public async Task EnableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
+    public Task EnableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
     {
-        if (_shellSettings.IsDefaultShell() ||
-            _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
-        {
-            return;
-        }
-
-        var allConditionFeatureIds = new List<string>();
-        foreach (var conditionFeatureIds in conditionallyEnabledFeatures.Values)
-        {
-            allConditionFeatureIds.AddRange(conditionFeatureIds);
-        }
-
-        if (!allConditionFeatureIds.Contains(featureInfo.Id))
-        {
-            return;
-        }
-
-        var allFeatures = (await _shellFeaturesManager
-            .GetAvailableFeaturesAsync())
-            .ToList();
-
-        var conditionalFeatureIds = conditionallyEnabledFeatures
-            .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
-            .Select(keyValuePair => keyValuePair.Key)
-            .ToList();
-
-        if (!conditionalFeatureIds.Any())
-        {
-            return;
-        }
-
-        if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
-        {
-            throw new KeyNotFoundException($"Conditional feature with given ID do not exist.");
-        }
-
         ShellScope.AddDeferredTask(async scope =>
         {
+            if (_shellSettings.IsDefaultShell() ||
+                _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+            {
+                return;
+            }
+
+            var allConditionFeatureIds = new List<string>();
+
+            foreach (var conditionFeatureIds in conditionallyEnabledFeatures.Values)
+            {
+                allConditionFeatureIds.AddRange(conditionFeatureIds);
+            }
+
+            if (!allConditionFeatureIds.Contains(featureInfo.Id))
+            {
+                return;
+            }
+
+            var allFeatures = (await _shellFeaturesManager
+                    .GetAvailableFeaturesAsync())
+                .ToList();
+
+            var conditionalFeatureIds = conditionallyEnabledFeatures
+                .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
+                .Select(keyValuePair => keyValuePair.Key)
+                .ToList();
+
+            if (!conditionalFeatureIds.Any())
+            {
+                return;
+            }
+
+            if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
+            {
+                throw new KeyNotFoundException($"Conditional feature with given ID do not exist.");
+            }
+
             var shellDescriptor = scope.ServiceProvider.GetRequiredService<ShellDescriptor>();
 
             var featureIdsToEnable = conditionalFeatureIds
@@ -104,14 +105,15 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             }
 
             var featuresToEnable = allFeatures
-                .Where(feature =>
-                    featureIdsToEnable.Contains(feature.Id))
+                .Where(feature => featureIdsToEnable.Contains(feature.Id))
                 .ToList();
 
             var shellFeaturesManager = scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
 
             await shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
         });
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
