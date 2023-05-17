@@ -27,7 +27,8 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 [assembly: Feature(
     Id = UpdateShellRequestUrls,
     Name = "Lombiq Hosting - Tenants Maintenance - Update Shell Request URLs",
-    Description = "Updates the shell request URLs of each tenant (e.g., when the production database is copied to staging). It's executed only on the default tenant.",
+    Description = "Updates the shell request URLs of each tenant (e.g., when the production database is copied to staging)." +
+        " It's executed only on the default tenant.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
     Dependencies = new[] { Maintenance }
