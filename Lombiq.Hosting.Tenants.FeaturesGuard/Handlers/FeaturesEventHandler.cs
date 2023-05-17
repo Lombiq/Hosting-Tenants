@@ -53,29 +53,23 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <param name="featureInfo">The feature that was just enabled.</param>
     public Task EnableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
     {
+        // We are using a Deferred Task so we can avoid recursive executions upon tenant setup.
         ShellScope.AddDeferredTask(async scope =>
         {
             if (_shellSettings.IsDefaultShell() ||
-                _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+                IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
             {
                 return;
             }
 
-            var allConditionFeatureIds = new List<string>();
+            var allConditionFeatureIds = GetAllConditionFeatureIds(conditionallyEnabledFeatures, featureInfo);
 
-            foreach (var conditionFeatureIds in conditionallyEnabledFeatures.Values)
-            {
-                allConditionFeatureIds.AddRange(conditionFeatureIds);
-            }
-
-            if (!allConditionFeatureIds.Contains(featureInfo.Id))
+            if (!allConditionFeatureIds.Any())
             {
                 return;
             }
 
-            var allFeatures = (await _shellFeaturesManager
-                    .GetAvailableFeaturesAsync())
-                .ToList();
+            var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
 
             var conditionalFeatureIds = conditionallyEnabledFeatures
                 .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
@@ -87,6 +81,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
+            // Throw an exception if a non existing conditional feature was given.
             if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
             {
                 throw new KeyNotFoundException($"Conditional feature with given ID do not exist.");
@@ -124,7 +119,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     public async Task KeepConditionallyEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
         if (_shellSettings.IsDefaultShell() ||
-            _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+            IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
         {
             return;
         }
@@ -135,7 +130,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
 
         // Re-enable conditional feature if any its condition features are enabled.
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
         var conditionFeatureIds = conditionallyEnabledFeatures[featureInfo.Id];
 
         var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
@@ -157,25 +152,21 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     public async Task DisableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
     {
         if (_shellSettings.IsDefaultShell() ||
-            _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+            IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
         {
             return;
         }
 
-        var allConditionFeatureIds = new List<string>();
-        foreach (var conditionFeatureIdList in conditionallyEnabledFeatures.Values)
-        {
-            allConditionFeatureIds.AddRange(conditionFeatureIdList);
-        }
+        var allConditionFeatureIds = GetAllConditionFeatureIds(conditionallyEnabledFeatures, featureInfo);
 
-        if (!allConditionFeatureIds.Contains(featureInfo.Id))
+        if (!allConditionFeatureIds.Any())
         {
             return;
         }
 
         // If current feature is one of the condition features, disable its corresponding conditional features if they
         // are not already disabled.
-        var allFeatures = await _shellFeaturesManager.GetAvailableFeaturesAsync();
+        var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
 
         var conditionalFeatureIds = new List<string>();
         var conditionFeatureIds = new List<string>();
@@ -185,7 +176,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             conditionFeatureIds.AddRange(keyValuePair.Value);
         }
 
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
+        var currentlyEnabledFeatures = (await _shellFeaturesManager.GetEnabledFeaturesAsync()).ToList();
         var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
 
         // Only disable conditional feature if none of its condition features are enabled.
@@ -198,5 +189,22 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
             await _shellFeaturesManager.DisableFeaturesAsync(currentlyEnabledConditionalFeatures);
         }
+    }
+
+    private IDictionary<string, IEnumerable<string>> IsConditionallyEnabledFeaturesOptionsPopulated() =>
+        _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled ?? null;
+
+    private static IEnumerable<string> GetAllConditionFeatureIds(
+        IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
+        IFeatureInfo featureInfo)
+    {
+        var allConditionFeatureIds = new List<string>();
+
+        foreach (var conditionFeatureIdList in conditionallyEnabledFeatures.Values)
+        {
+            allConditionFeatureIds.AddRange(conditionFeatureIdList);
+        }
+
+        return !allConditionFeatureIds.Contains(featureInfo.Id) ? Enumerable.Empty<string>() : allConditionFeatureIds;
     }
 }
