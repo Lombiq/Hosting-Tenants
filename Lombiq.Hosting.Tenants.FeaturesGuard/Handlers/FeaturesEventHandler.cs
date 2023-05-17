@@ -200,7 +200,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         return true;
     }
 
-
     private static IEnumerable<string> GetAllConditionFeatureIds(
         IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
         IFeatureInfo featureInfo)
