@@ -148,9 +148,13 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <summary>
     /// When a condition feature (value) is disabled, disables the corresponding conditional features (key) if all of
     /// their condition features are disabled.
-    /// In my opinion this doesn't need to use DeferredTask because disabling features never happens
-    /// numerous times in a row while enabling features does when a tenant is being initialized.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// It seems that this doesn't need to use DeferredTask because disabling features never happens numerous times in a
+    /// row while enabling features does when a tenant is being initialized.
+    /// </para>
+    /// </remarks>
     /// <param name="featureInfo">The feature that was just disabled.</param>
     public async Task DisableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
     {
