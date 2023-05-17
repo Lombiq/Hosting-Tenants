@@ -56,8 +56,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         // We are using a Deferred Task so we can avoid recursive executions upon tenant setup.
         ShellScope.AddDeferredTask(async scope =>
         {
-            if (_shellSettings.IsDefaultShell() ||
-                IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
+            if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
             {
                 return;
             }
@@ -118,8 +117,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <param name="featureInfo">The feature that was just disabled.</param>
     public async Task KeepConditionallyEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo)
     {
-        if (_shellSettings.IsDefaultShell() ||
-            IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
+        if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
         {
             return;
         }
@@ -151,8 +149,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <param name="featureInfo">The feature that was just disabled.</param>
     public async Task DisableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
     {
-        if (_shellSettings.IsDefaultShell() ||
-            IsConditionallyEnabledFeaturesOptionsPopulated() is not { } conditionallyEnabledFeatures)
+        if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
         {
             return;
         }
@@ -191,8 +188,18 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         }
     }
 
-    private IDictionary<string, IEnumerable<string>> IsConditionallyEnabledFeaturesOptionsPopulated() =>
-        _conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled ?? null;
+    private bool IsConditionallyEnabledFeaturesOptionsPopulated(out IDictionary<string, IEnumerable<string>> conditionalFeatures)
+    {
+        if (_conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+        {
+            conditionalFeatures = null;
+            return false;
+        }
+
+        conditionalFeatures = conditionallyEnabledFeatures;
+        return true;
+    }
+
 
     private static IEnumerable<string> GetAllConditionFeatureIds(
         IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
@@ -205,6 +212,8 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             allConditionFeatureIds.AddRange(conditionFeatureIdList);
         }
 
-        return !allConditionFeatureIds.Contains(featureInfo.Id) ? Enumerable.Empty<string>() : allConditionFeatureIds;
+        var distinctFeatureIds = allConditionFeatureIds.Distinct();
+
+        return !allConditionFeatureIds.Contains(featureInfo.Id) ? Enumerable.Empty<string>() : distinctFeatureIds;
     }
 }
