@@ -9,7 +9,7 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {
-    public static async Task TestSiteUrlMaintenanceExecution(this UITestContext context)
+    public static async Task TestSiteUrlMaintenanceExecutionAsync(this UITestContext context)
     {
         await context.SignInDirectlyAsync();
         await context.GoToAdminRelativeUrlAsync("/Settings/general");
