@@ -34,13 +34,14 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
         var allShellSettings = await _shellSettingsManager.LoadSettingsAsync();
         foreach (var shellSettings in allShellSettings)
         {
-            shellSettings.RequestUrlHost = TenantUrlHelpers.GetTenantUrl(
+            shellSettings.RequestUrlHost = TenantUrlHelpers.GetEvaluatedValueForTenant(
                 _options.Value.DefaultShellRequestUrl,
                 _options.Value.RequestUrl,
                 shellSettings);
-            shellSettings.RequestUrlPrefix = TenantUrlHelpers.ReplaceTenantName(
+            shellSettings.RequestUrlPrefix = TenantUrlHelpers.GetEvaluatedValueForTenant(
+                _options.Value.DefaultShellRequestUrlPrefix,
                 _options.Value.RequestUrlPrefix,
-                shellSettings.Name);
+                shellSettings);
 
             await _shellSettingsManager.SaveSettingsAsync(shellSettings);
         }
