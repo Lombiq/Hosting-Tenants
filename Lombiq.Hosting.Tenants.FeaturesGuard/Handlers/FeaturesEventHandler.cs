@@ -12,11 +12,6 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
-    private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;
-
-    public FeaturesEventHandler(IOptions<ConditionallyEnabledFeaturesOptions> conditionallyEnabledFeaturesOptions) =>
-        _conditionallyEnabledFeaturesOptions = conditionallyEnabledFeaturesOptions;
-
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -37,7 +32,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// Enables or disables conditional features depending on ConditionallyEnabledFeaturesOptions.
     /// Prevents disabling features that should be enabled according to their conditions.
     /// </summary>
-    private Task HandleConditionallyEnabledFeaturesAsync()
+    private static Task HandleConditionallyEnabledFeaturesAsync()
     {
         ShellScope.AddDeferredTask(async scope =>
         {
@@ -46,7 +41,15 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
-            var shellFeaturesManager = scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
+            var shellFeaturesManager = scope
+                .ServiceProvider
+                .GetRequiredService<IShellFeaturesManager>();
+
+            var conditionallyEnabledFeaturesOptions = scope
+                .ServiceProvider
+                .GetRequiredService<IOptions<ConditionallyEnabledFeaturesOptions>>()
+                .Value
+                .EnableFeatureIfOtherFeatureIsEnabled;
 
             var enabledFeatures = (await shellFeaturesManager.GetEnabledFeaturesAsync())
                 .ToHashSet();
@@ -55,7 +58,11 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 .Select(feature => feature.Id)
                 .ToHashSet();
 
-            if (!GetFeaturesToBeEnabledAndDisabled(enabledFeaturesIds, out var featuresToEnableIds, out var featuresToDisableIds))
+            if (!GetFeaturesToBeEnabledAndDisabled(
+                    conditionallyEnabledFeaturesOptions,
+                    enabledFeaturesIds,
+                    out var featuresToEnableIds,
+                    out var featuresToDisableIds))
             {
                 return;
             }
@@ -90,12 +97,13 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <returns>A boolean value whether ConditionallyEnabledFeaturesOptions is populated or not.
     /// Also produces <paramref name="featuresToEnable"/> and <paramref name="featuresToDisable"/>.
     /// </returns>
-    private bool GetFeaturesToBeEnabledAndDisabled(
+    private static bool GetFeaturesToBeEnabledAndDisabled(
+        IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
         IReadOnlySet<string> enabledFeatureIds,
         out HashSet<string> featuresToEnable,
         out HashSet<string> featuresToDisable)
     {
-        if (_conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
+        if (!conditionallyEnabledFeatures.Any())
         {
             featuresToEnable = null;
             featuresToDisable = null;
