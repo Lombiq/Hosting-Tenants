@@ -1,6 +1,6 @@
+using Lombiq.Hosting.Tenants.EnvironmentRobots.Extensions;
 using Lombiq.Hosting.Tenants.EnvironmentRobots.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
@@ -25,9 +25,7 @@ public class EnvironmentRobotsMiddleware
 
     public Task InvokeAsync(HttpContext context)
     {
-        bool isProduction = _options.Value.IsProduction ?? _hostEnvironment.IsProduction();
-
-        if (!isProduction)
+        if (!_hostEnvironment.IsProductionWithConfiguration(_options))
         {
             context.Response.Headers.Add("X-Robots-Tag", "noindex, nofollow");
         }
