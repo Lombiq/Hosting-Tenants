@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Environment.Shell.Descriptor.Models;
 using OrchardCore.Environment.Shell.Scope;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +12,10 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
-    private readonly IShellFeaturesManager _shellFeaturesManager;
     private readonly IOptions<ConditionallyEnabledFeaturesOptions> _conditionallyEnabledFeaturesOptions;
-    private readonly ShellSettings _shellSettings;
 
-    public FeaturesEventHandler(
-        IShellFeaturesManager shellFeaturesManager,
-        IOptions<ConditionallyEnabledFeaturesOptions> conditionallyEnabledFeaturesOptions,
-        ShellSettings shellSettings)
-    {
-        _shellFeaturesManager = shellFeaturesManager;
+    public FeaturesEventHandler(IOptions<ConditionallyEnabledFeaturesOptions> conditionallyEnabledFeaturesOptions) =>
         _conditionallyEnabledFeaturesOptions = conditionallyEnabledFeaturesOptions;
-        _shellSettings = shellSettings;
-    }
 
     Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
@@ -33,191 +23,107 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
     Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => EnableConditionallyEnabledFeaturesAsync(feature);
+    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
 
     Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    async Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature)
-    {
-        await KeepConditionallyEnabledFeaturesEnabledAsync(feature);
-        await DisableConditionallyEnabledFeaturesAsync(feature);
-    }
+    Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
 
     Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask; // #spell-check-ignore-line
 
     Task IFeatureEventHandler.UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     /// <summary>
-    /// Enables conditional features (key) if one of their corresponding condition features (value) was enabled.
+    /// Enables or disables conditional features depending on ConditionallyEnabledFeaturesOptions.
+    /// Prevents disabling features that should be enabled according to their conditions.
     /// </summary>
-    /// <param name="featureInfo">The feature that was just enabled.</param>
-    public Task EnableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
+    private Task HandleConditionallyEnabledFeaturesAsync()
     {
-        // We are using a Deferred Task so we can avoid recursive executions upon tenant setup.
         ShellScope.AddDeferredTask(async scope =>
         {
-            if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
+            if (scope.ShellContext.Settings.IsDefaultShell())
             {
                 return;
             }
-
-            // Retrieving all condition feature ids.
-            var allConditionFeatureIds = GetAllConditionFeatureIds(conditionallyEnabledFeatures, featureInfo);
-
-            if (!allConditionFeatureIds.Any())
-            {
-                return;
-            }
-
-            // Retrieving all conditional feature ids that are dependent on the current FeatureInfo.
-            var conditionalFeatureIds = conditionallyEnabledFeatures
-                .Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id))
-                .Select(keyValuePair => keyValuePair.Key)
-                .ToList();
-
-            if (!conditionalFeatureIds.Any())
-            {
-                return;
-            }
-
-            var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
-
-            // Throw an exception if a non existing conditional feature was given.
-            if (conditionalFeatureIds.Except(allFeatures.Select(feature => feature.Id)).Any())
-            {
-                throw new KeyNotFoundException($"Conditional feature with given ID do not exist.");
-            }
-
-            var shellDescriptor = scope.ServiceProvider.GetRequiredService<ShellDescriptor>();
-
-            // Sorting conditional features that are already enabled.
-            var featureIdsToEnable = conditionalFeatureIds
-                .Except(shellDescriptor.Features.Select(shellFeature => shellFeature.Id))
-                .ToList();
-
-            if (!featureIdsToEnable.Any())
-            {
-                return;
-            }
-
-            // Getting the corresponding IFeatureInfo for every feature id that should be enabled.
-            var featuresToEnable = allFeatures
-                .Where(feature => featureIdsToEnable.Contains(feature.Id))
-                .ToList();
 
             var shellFeaturesManager = scope.ServiceProvider.GetRequiredService<IShellFeaturesManager>();
 
-            await shellFeaturesManager.EnableFeaturesAsync(featuresToEnable, force: true);
+            var enabledFeatures = (await shellFeaturesManager.GetEnabledFeaturesAsync())
+                .ToHashSet();
+
+            var enabledFeaturesIds = enabledFeatures
+                .Select(feature => feature.Id)
+                .ToHashSet();
+
+            if (!GetFeaturesToBeEnabledAndDisabled(enabledFeaturesIds, out var featuresToEnableIds, out var featuresToDisableIds))
+            {
+                return;
+            }
+
+            var availableFeatures = await shellFeaturesManager.GetAvailableFeaturesAsync();
+
+            var featuresToEnable = availableFeatures
+                .Where(feature => featuresToEnableIds.Contains(feature.Id))
+                .ToList();
+
+            var featuresToDisable = enabledFeatures
+                .Where(feature => featuresToDisableIds.Contains(feature.Id))
+                .ToList();
+
+            if (!featuresToEnable.Any() && !featuresToDisable.Any())
+            {
+                return;
+            }
+
+            await shellFeaturesManager.UpdateFeaturesAsync(featuresToDisable, featuresToEnable, true);
         });
 
         return Task.CompletedTask;
     }
 
     /// <summary>
-    /// When a conditional feature (key) is disabled, keeps the conditional feature enabled if any of the corresponding
-    /// condition features (value) are enabled.
+    /// Extracts the feature ids from ConditionallyEnabledFeaturesOptions and separates them into
+    /// <paramref name="featuresToEnable"></paramref> and  <paramref name="featuresToDisable"></paramref> hash sets
+    /// and compares them to <paramref name="enabledFeatureIds"/> collection to determine which features need to be
+    /// enabled or disabled.
     /// </summary>
-    /// <param name="featureInfo">The feature that was just disabled.</param>
-    public async Task KeepConditionallyEnabledFeaturesEnabledAsync(IFeatureInfo featureInfo)
-    {
-        if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
-        {
-            return;
-        }
-
-        if (!conditionallyEnabledFeatures.ContainsKey(featureInfo.Id))
-        {
-            return;
-        }
-
-        // Re-enable conditional feature if any its condition features are enabled.
-        var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
-        var conditionFeatureIds = conditionallyEnabledFeatures[featureInfo.Id];
-
-        var currentlyEnabledFeatures = await _shellFeaturesManager.GetEnabledFeaturesAsync();
-        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
-
-        var currentlyEnabledConditionFeatures = currentlyEnabledFeatures.Intersect(conditionFeatures);
-        if (currentlyEnabledConditionFeatures.Any())
-        {
-            var conditionalFeature = allFeatures.Where(feature => feature.Id == featureInfo.Id);
-            await _shellFeaturesManager.EnableFeaturesAsync(conditionalFeature);
-        }
-    }
-
-    /// <summary>
-    /// When a condition feature (value) is disabled, disables the corresponding conditional features (key) if all of
-    /// their condition features are disabled.
-    /// In my opinion this doesn't need to use DeferredTask because disabling features never happens
-    /// numerous times in a row while enabling features does when a tenant is being initialized.
-    /// </summary>
-    /// <param name="featureInfo">The feature that was just disabled.</param>
-    public async Task DisableConditionallyEnabledFeaturesAsync(IFeatureInfo featureInfo)
-    {
-        if (_shellSettings.IsDefaultShell() || !IsConditionallyEnabledFeaturesOptionsPopulated(out var conditionallyEnabledFeatures))
-        {
-            return;
-        }
-
-        var allConditionFeatureIds = GetAllConditionFeatureIds(conditionallyEnabledFeatures, featureInfo);
-
-        if (!allConditionFeatureIds.Any())
-        {
-            return;
-        }
-
-        // If current feature is one of the condition features, disable its corresponding conditional features if they
-        // are not already disabled.
-        var allFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
-
-        var conditionalFeatureIds = new List<string>();
-        var conditionFeatureIds = new List<string>();
-        foreach (var keyValuePair in conditionallyEnabledFeatures.Where(keyValuePair => keyValuePair.Value.Contains(featureInfo.Id)))
-        {
-            conditionalFeatureIds.Add(keyValuePair.Key);
-            conditionFeatureIds.AddRange(keyValuePair.Value);
-        }
-
-        var currentlyEnabledFeatures = (await _shellFeaturesManager.GetEnabledFeaturesAsync()).ToList();
-        var conditionFeatures = allFeatures.Where(feature => conditionFeatureIds.Contains(feature.Id));
-
-        // Only disable conditional feature if none of its condition features are enabled.
-        var currentlyEnabledConditionFeatures = currentlyEnabledFeatures.Intersect(conditionFeatures);
-        if (!currentlyEnabledConditionFeatures.Any())
-        {
-            // Handle multiple conditional features as well.
-            var conditionalFeatures = allFeatures.Where(feature => conditionalFeatureIds.Contains(feature.Id));
-            var currentlyEnabledConditionalFeatures = currentlyEnabledFeatures.Intersect(conditionalFeatures);
-
-            await _shellFeaturesManager.DisableFeaturesAsync(currentlyEnabledConditionalFeatures);
-        }
-    }
-
-    private bool IsConditionallyEnabledFeaturesOptionsPopulated(out IDictionary<string, IEnumerable<string>> conditionalFeatures)
+    /// <returns>A boolean value whether ConditionallyEnabledFeaturesOptions is populated or not.
+    /// Also produces <paramref name="featuresToEnable"/> and <paramref name="featuresToDisable"/>
+    /// </returns>
+    private bool GetFeaturesToBeEnabledAndDisabled(
+        IReadOnlySet<string> enabledFeatureIds,
+        out HashSet<string> featuresToEnable,
+        out HashSet<string> featuresToDisable)
     {
         if (_conditionallyEnabledFeaturesOptions.Value.EnableFeatureIfOtherFeatureIsEnabled is not { } conditionallyEnabledFeatures)
         {
-            conditionalFeatures = null;
+            featuresToEnable = null;
+            featuresToDisable = null;
             return false;
         }
 
-        conditionalFeatures = conditionallyEnabledFeatures;
-        return true;
-    }
+        var featuresToEnableIds = new HashSet<string>();
+        var featuresToDisableIds = new HashSet<string>();
 
-    private static IEnumerable<string> GetAllConditionFeatureIds(
-        IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
-        IFeatureInfo featureInfo)
-    {
-        var allConditionFeatureIds = new List<string>();
-
-        foreach (var conditionFeatureIdList in conditionallyEnabledFeatures.Values)
+        foreach (var condition in conditionallyEnabledFeatures)
         {
-            allConditionFeatureIds.AddRange(conditionFeatureIdList);
+            var hasConditional = enabledFeatureIds.Contains(condition.Key);
+            var hasCondition = enabledFeatureIds.Intersect(condition.Value).Any();
+
+            if (hasCondition && !hasConditional)
+            {
+                featuresToEnableIds.Add(condition.Key);
+            }
+
+            if (!hasCondition && hasConditional)
+            {
+                featuresToDisableIds.Add(condition.Key);
+            }
         }
 
-        var distinctFeatureIds = allConditionFeatureIds.Distinct();
+        featuresToEnable = featuresToEnableIds;
+        featuresToDisable = featuresToDisableIds;
 
-        return !allConditionFeatureIds.Contains(featureInfo.Id) ? Enumerable.Empty<string>() : distinctFeatureIds;
+        return featuresToEnableIds.Any() || featuresToDisableIds.Any();
     }
 }
