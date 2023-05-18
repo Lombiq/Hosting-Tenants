@@ -75,7 +75,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 return;
             }
 
-            await shellFeaturesManager.UpdateFeaturesAsync(featuresToDisable, featuresToEnable, true);
+            await shellFeaturesManager.UpdateFeaturesAsync(featuresToDisable, featuresToEnable, force: true);
         });
 
         return Task.CompletedTask;
