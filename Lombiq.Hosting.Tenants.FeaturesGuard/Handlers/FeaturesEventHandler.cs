@@ -88,7 +88,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// enabled or disabled.
     /// </summary>
     /// <returns>A boolean value whether ConditionallyEnabledFeaturesOptions is populated or not.
-    /// Also produces <paramref name="featuresToEnable"/> and <paramref name="featuresToDisable"/>
+    /// Also produces <paramref name="featuresToEnable"/> and <paramref name="featuresToDisable"/>.
     /// </returns>
     private bool GetFeaturesToBeEnabledAndDisabled(
         IReadOnlySet<string> enabledFeatureIds,
