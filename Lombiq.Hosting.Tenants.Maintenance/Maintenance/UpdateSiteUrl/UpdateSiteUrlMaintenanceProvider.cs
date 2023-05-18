@@ -31,7 +31,7 @@ public class UpdateSiteUrlMaintenanceProvider : MaintenanceProviderBase
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var siteSettings = await _siteService.LoadSiteSettingsAsync();
-        siteSettings.BaseUrl = TenantUrlHelpers.GetTenantUrl(
+        siteSettings.BaseUrl = TenantUrlHelpers.GetEvaluatedValueForTenant(
             _options.Value.DefaultTenantSiteUrl,
             _options.Value.SiteUrl,
             _shellSettings);
