@@ -18,8 +18,7 @@ internal static class TenantUrlHelpers
         var evaluatedValue = !string.IsNullOrEmpty(valueForAnyTenant)
             ? ReplaceTenantName(valueForAnyTenant, shellSettings.Name)
             : string.Empty;
-        var evaluatedValueForDefaultTenant = valueForDefaultTenant ?? evaluatedValue;
 
-        return shellSettings.IsDefaultShell() ? evaluatedValueForDefaultTenant : evaluatedValue;
+        return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
     }
 }
