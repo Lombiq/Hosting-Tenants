@@ -59,7 +59,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 .Select(feature => feature.Id)
                 .ToHashSet();
 
-            if (!GetFeaturesToBeEnabledAndDisabled(
+            if (!TryGetFeaturesToBeEnabledAndDisabled(
                     conditionallyEnabledFeaturesOptions,
                     enabledFeaturesIds,
                     out var featuresToEnableIds,
@@ -108,7 +108,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// <returns>A boolean value whether ConditionallyEnabledFeaturesOptions is populated or not.
     /// Also produces <paramref name="featuresToEnable"/> and <paramref name="featuresToDisable"/>.
     /// </returns>
-    private static bool GetFeaturesToBeEnabledAndDisabled(
+    private static bool TryGetFeaturesToBeEnabledAndDisabled(
         IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
         IReadOnlySet<string> enabledFeatureIds,
         out HashSet<string> featuresToEnable,
