@@ -25,14 +25,9 @@ public class SearchBotBlockerMiddleware
 
     public Task InvokeAsync(HttpContext context)
     {
-        bool? isProduction = _options.Value.IsProduction;
+        bool isProduction = _options.Value.IsProduction ?? _hostEnvironment.IsProduction();
 
-        if (!isProduction.HasValue)
-        {
-            isProduction = _hostEnvironment.IsProduction();
-        }
-
-        if (!isProduction.Value)
+        if (!isProduction)
         {
             context.Response.Headers.Add("X-Robots-Tag", "noindex, nofollow");
         }
