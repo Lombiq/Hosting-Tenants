@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Scope;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -73,9 +74,20 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 .Where(feature => featuresToEnableIds.Contains(feature.Id))
                 .ToList();
 
+            if (featuresToEnable.Any(feature => feature.DefaultTenantOnly || feature.EnabledByDependencyOnly))
+            {
+                throw new InvalidOperationException("'DefaultTenantOnly' feature can't be enabled by FeaturesGuard");
+            }
+
             var featuresToDisable = enabledFeatures
                 .Where(feature => featuresToDisableIds.Contains(feature.Id))
                 .ToList();
+
+            if (featuresToEnable.Any(feature => feature.IsAlwaysEnabled || feature.EnabledByDependencyOnly))
+            {
+                throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard");
+            }
+
 
             if (!featuresToEnable.Any() && !featuresToDisable.Any())
             {
