@@ -76,7 +76,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
             if (featuresToEnable.Any(feature => feature.DefaultTenantOnly || feature.EnabledByDependencyOnly))
             {
-                throw new InvalidOperationException("'DefaultTenantOnly' feature can't be enabled by FeaturesGuard");
+                throw new InvalidOperationException("'DefaultTenantOnly' feature can't be enabled by FeaturesGuard.");
             }
 
             var featuresToDisable = enabledFeatures
@@ -85,7 +85,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
 
             if (featuresToEnable.Any(feature => feature.IsAlwaysEnabled || feature.EnabledByDependencyOnly))
             {
-                throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard");
+                throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard.");
             }
 
             if (!featuresToEnable.Any() && !featuresToDisable.Any())
