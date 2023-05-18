@@ -1,22 +1,22 @@
-using Lombiq.Hosting.Tenants.SearchBotBlocker.Models;
+using Lombiq.Hosting.Tenants.EnvironmentRobots.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.SearchBotBlocker.Middlewares;
+namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Middlewares;
 
-public class SearchBotBlockerMiddleware
+public class EnvironmentRobotsMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IHostEnvironment _hostEnvironment;
-    private readonly IOptions<SearchBotBlockerOptions> _options;
+    private readonly IOptions<EnvironmentRobotsOptions> _options;
 
-    public SearchBotBlockerMiddleware(
+    public EnvironmentRobotsMiddleware(
         RequestDelegate next,
         IHostEnvironment hostEnvironment,
-        IOptions<SearchBotBlockerOptions> options)
+        IOptions<EnvironmentRobotsOptions> options)
     {
         _next = next;
         _hostEnvironment = hostEnvironment;

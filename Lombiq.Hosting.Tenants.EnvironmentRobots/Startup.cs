@@ -1,6 +1,6 @@
-using Lombiq.Hosting.Tenants.SearchBotBlocker.Constants;
-using Lombiq.Hosting.Tenants.SearchBotBlocker.Middlewares;
-using Lombiq.Hosting.Tenants.SearchBotBlocker.Models;
+using Lombiq.Hosting.Tenants.EnvironmentRobots.Constants;
+using Lombiq.Hosting.Tenants.EnvironmentRobots.Middlewares;
+using Lombiq.Hosting.Tenants.EnvironmentRobots.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ using System;
 
 namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 
-[Feature(FeatureNames.SearchBotBlocker)]
+[Feature(FeatureNames.EnvironmentRobots)]
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -21,13 +21,13 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        var options = new SearchBotBlockerOptions();
+        var options = new EnvironmentRobotsOptions();
         var configSection = _shellConfiguration
-            .GetSection("Lombiq_Hosting_Tenants_SearchBotBlocker:SearchBotBlockerOptions");
+            .GetSection("Lombiq_Hosting_Tenants_EnvironmentRobots:EnvironmentRobotsOptions");
         configSection.Bind(options);
-        services.Configure<SearchBotBlockerOptions>(configSection);
+        services.Configure<EnvironmentRobotsOptions>(configSection);
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider) =>
-        app.UseMiddleware<SearchBotBlockerMiddleware>();
+        app.UseMiddleware<EnvironmentRobotsMiddleware>();
 }

@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Hosting;
 
-namespace Lombiq.Hosting.Tenants.SearchBotBlocker.Models;
+namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Models;
 
 /// <summary>
 /// Further configuration options for the module.
 /// </summary>
-public class SearchBotBlockerOptions
+public class EnvironmentRobotsOptions
 {
     /// <summary>
     /// Gets or sets a value indicating whether to add a noindex, nofollow meta tag when the app is not running in a

@@ -1,4 +1,4 @@
-namespace Lombiq.Hosting.Tenants.SearchBotBlocker.Constants;
+namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Constants;
 
 public static class FeatureNames
 {
@@ -6,5 +6,5 @@ public static class FeatureNames
 
     public const string Tenants = Module + "." + nameof(Tenants);
 
-    public const string SearchBotBlocker = Tenants + "." + nameof(SearchBotBlocker);
+    public const string EnvironmentRobots = Tenants + "." + nameof(EnvironmentRobots);
 }
