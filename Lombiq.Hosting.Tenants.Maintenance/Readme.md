@@ -66,6 +66,7 @@ The following configuration options are available to set the shell request URLs:
         "IsEnabled": true,
         "DefaultShellRequestUrl": "domain.com",
         "RequestUrl": "{TenantName}.domain.com",
+        "DefaultShellRequestUrlPrefix": "",
         "RequestUrlPrefix": "{TenantName}"
       }
     }

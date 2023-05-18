@@ -10,16 +10,15 @@ internal static class TenantUrlHelpers
         url?.Replace("{TenantName}", tenantName.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
-    public static string GetTenantUrl(string urlForDefaultTenant, string urlForAnyTenant, ShellSettings shellSettings)
+    public static string GetEvaluatedValueForTenant(
+        string valueForDefaultTenant,
+        string valueForAnyTenant,
+        ShellSettings shellSettings)
     {
-        var evaluatedRequestUrl = !string.IsNullOrEmpty(urlForAnyTenant)
-            ? ReplaceTenantName(urlForAnyTenant, shellSettings.Name)
+        var evaluatedValue = !string.IsNullOrEmpty(valueForAnyTenant)
+            ? ReplaceTenantName(valueForAnyTenant, shellSettings.Name)
             : string.Empty;
-        var defaultShellRequestUrl =
-            string.IsNullOrEmpty(urlForDefaultTenant)
-                ? evaluatedRequestUrl
-                : urlForDefaultTenant;
 
-        return shellSettings.IsDefaultShell() ? defaultShellRequestUrl : evaluatedRequestUrl;
+        return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
     }
 }
