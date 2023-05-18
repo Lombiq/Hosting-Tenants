@@ -6,4 +6,5 @@ public class UpdateShellRequestUrlMaintenanceOptions
     public string DefaultShellRequestUrl { get; set; }
     public string RequestUrl { get; set; }
     public string RequestUrlPrefix { get; set; }
+    public string DefaultShellRequestUrlPrefix { get; set; }
 }
