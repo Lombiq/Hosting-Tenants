@@ -1,4 +1,4 @@
-using Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
+using Lombiq.Hosting.Tenants.SearchBotBlocker.Constants;
 using OrchardCore.Modules.Manifest;
 
 [assembly: Module(
