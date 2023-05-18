@@ -88,7 +88,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard");
             }
 
-
             if (!featuresToEnable.Any() && !featuresToDisable.Any())
             {
                 return;
