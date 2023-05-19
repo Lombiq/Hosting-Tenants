@@ -27,7 +27,7 @@ public static class TestCaseUITestContextExtensions
                 callback(xRobotsTag.includes ('noindex, nofollow'));
             };");
 
-        if (missing)
+        if (shouldBeMissing)
         {
             context.Missing(metaTagXPath);
             isXRobotsInHeader.ShouldBe(expected: false);
