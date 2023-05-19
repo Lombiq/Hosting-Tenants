@@ -30,7 +30,7 @@ public class IdleShutdownTask : IBackgroundTask
         {
             var logger = serviceProvider.GetRequiredService<ILogger<IdleShutdownTask>>();
 
-            logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
+            logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings.Name);
 
             var shellHost = serviceProvider.GetRequiredService<IShellHost>();
 
