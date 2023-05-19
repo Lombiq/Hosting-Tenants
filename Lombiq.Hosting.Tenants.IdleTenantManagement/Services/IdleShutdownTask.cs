@@ -1,4 +1,5 @@
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
@@ -13,40 +14,27 @@ namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 [BackgroundTask(Schedule = "* * * * *", Description = "Shut down idle tenants.")]
 public class IdleShutdownTask : IBackgroundTask
 {
-    private readonly ILogger<IdleShutdownTask> _logger;
-    private readonly IClock _clock;
-    private readonly IOptions<IdleShutdownOptions> _options;
-    private readonly IShellHost _shellHost;
-    private readonly ShellSettings _shellSettings;
-    private readonly ILastActiveTimeAccessor _lastActiveTimeAccessor;
-
-    public IdleShutdownTask(
-        ILogger<IdleShutdownTask> logger,
-        IClock clock,
-        IOptions<IdleShutdownOptions> options,
-        IShellHost shellHost,
-        ShellSettings shellSettings,
-        ILastActiveTimeAccessor lastActiveTimeAccessor)
-    {
-        _logger = logger;
-        _clock = clock;
-        _options = options;
-        _shellHost = shellHost;
-        _shellSettings = shellSettings;
-        _lastActiveTimeAccessor = lastActiveTimeAccessor;
-    }
-
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var maxIdleMinutes = _options.Value.MaxIdleMinutes;
+        var maxIdleMinutes = serviceProvider.GetRequiredService<IOptions<IdleShutdownOptions>>().Value.MaxIdleMinutes;
 
-        if (maxIdleMinutes <= 0 || _shellSettings.IsDefaultShell()) return;
+        var shellSettings = serviceProvider.GetRequiredService<ShellSettings>();
 
-        if (_lastActiveTimeAccessor.LastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= _clock?.UtcNow)
+        if (maxIdleMinutes <= 0 || shellSettings.IsDefaultShell()) return;
+
+        var clock = serviceProvider.GetRequiredService<IClock>();
+
+        var lastActiveDateTimeUtc = serviceProvider.GetRequiredService<ILastActiveTimeAccessor>().LastActiveDateTimeUtc;
+
+        if (lastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= clock?.UtcNow)
         {
-            _logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", _shellSettings?.Name);
+            var logger = serviceProvider.GetRequiredService<ILogger<IdleShutdownTask>>();
 
-            await _shellHost.ReleaseShellContextAsync(_shellSettings);
+            logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", shellSettings?.Name);
+
+            var shellHost = serviceProvider.GetRequiredService<IShellHost>();
+
+            await shellHost.ReleaseShellContextAsync(shellSettings, eventSource: false);
         }
     }
 }
