@@ -17,7 +17,7 @@ public static class TestCaseUITestContextExtensions
         await context.GoToHomePageAsync();
 
         // Checking the response header with JavaScript.
-        var isXRobotsInHeader = context.Driver.ExecuteAsyncScript(@"
+        var isHeaderPresent = context.Driver.ExecuteAsyncScript(@"
             var callback = arguments[arguments.length - 1];
             var xhr = new XMLHttpRequest();
             xhr.open('GET', window.location.href);
@@ -30,12 +30,12 @@ public static class TestCaseUITestContextExtensions
         if (shouldBeMissing)
         {
             context.Missing(metaTagXPath);
-            isXRobotsInHeader.ShouldBe(expected: false);
+            isHeaderPresent.ShouldBe(expected: false);
         }
         else
         {
             context.Exists(metaTagXPath);
-            isXRobotsInHeader.ShouldBe(expected: true);
+            isHeaderPresent.ShouldBe(expected: true);
         }
     }
 }
