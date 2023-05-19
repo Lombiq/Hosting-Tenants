@@ -3,6 +3,8 @@ using Lombiq.Hosting.Tenants.EnvironmentRobots.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Middlewares;
@@ -27,7 +29,17 @@ public class EnvironmentRobotsMiddleware
     {
         if (!_hostEnvironment.IsProductionWithConfiguration(_options))
         {
-            context.Response.Headers.Add("X-Robots-Tag", "noindex, nofollow");
+            var headerValue = context.Response.Headers["X-Robots-Tag"].FirstOrDefault() ?? string.Empty;
+
+            var directives = new List<string>();
+
+            if (!headerValue.Contains("noindex")) directives.Add("noindex");
+            if (!headerValue.Contains("nofollow")) directives.Add("nofollow");
+
+            if (directives.Any())
+            {
+                context.Response.Headers["X-Robots-Tag"] = $"{headerValue}, {string.Join(", ", directives)}";
+            }
         }
 
         return _next(context);
