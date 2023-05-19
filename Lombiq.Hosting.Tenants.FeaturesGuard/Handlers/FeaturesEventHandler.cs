@@ -83,7 +83,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 .Where(feature => featuresToDisableIds.Contains(feature.Id))
                 .ToList();
 
-            if (featuresToEnable.Any(feature => feature.IsAlwaysEnabled || feature.EnabledByDependencyOnly))
+            if (featuresToDisable.Any(feature => feature.IsAlwaysEnabled || feature.EnabledByDependencyOnly))
             {
                 throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard.");
             }
