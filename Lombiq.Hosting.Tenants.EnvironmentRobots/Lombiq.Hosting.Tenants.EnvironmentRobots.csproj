@@ -10,7 +10,7 @@
     <Title>Lombiq Hosting - Tenants EnvironmentRobots for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
-    <Description>EnvironmentRobots for Orchard Core: This module contains the EnvironmentRobots feature, which prevents search bots from indexing non-production environments by adding a meta tag and a respone header with noindex, nofollow values.</Description>
+    <Description>EnvironmentRobots for Orchard Core: This module contains the EnvironmentRobots feature, which prevents search bots from indexing non-production environments by adding a meta tag and a response header with noindex, nofollow values.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
