@@ -33,8 +33,15 @@ public class EnvironmentRobotsMiddleware
 
             var directives = new List<string>();
 
-            if (!headerValue.Contains("noindex")) directives.Add("noindex");
-            if (!headerValue.Contains("nofollow")) directives.Add("nofollow");
+            if (!headerValue.Contains("noindex"))
+            {
+                directives.Add("noindex");
+            }
+
+            if (!headerValue.Contains("nofollow"))
+            {
+                directives.Add("nofollow");
+            }
 
             if (directives.Any())
             {

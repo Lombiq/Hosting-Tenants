@@ -37,7 +37,6 @@ public class EnvironmentRobotsMetaTagFilter : IResultFilter
 
     public void OnResultExecuted(ResultExecutedContext context)
     {
-        // Intentionally left empty, we don't need the function, but we need to add it because of the interface
-        // implementation.
+        // Intentionally empty. Required by interface implementation only.
     }
 }

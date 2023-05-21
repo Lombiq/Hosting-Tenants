@@ -16,15 +16,15 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAsync();
         await context.GoToHomePageAsync();
 
-        // Checking the response header with JavaScript.
+        // The easiest way to check the response header during UI testing is with JavaScript by sending a GET request.
         var isHeaderPresent = context.Driver.ExecuteAsyncScript(@"
-            var callback = arguments[arguments.length - 1];
-            var xhr = new XMLHttpRequest();
+            const callback = arguments[arguments.length - 1];
+            const xhr = new XMLHttpRequest();
             xhr.open('GET', window.location.href);
             xhr.send();
             xhr.onload = function() {
-                var xRobotsTag = xhr.getResponseHeader('X-Robots-Tag') ?? '';
-                callback(xRobotsTag.includes ('noindex, nofollow'));
+                const xRobotsTag = xhr.getResponseHeader('X-Robots-Tag') ?? '';
+                callback(xRobotsTag.includes('noindex, nofollow'));
             };");
 
         if (shouldBeMissing)

@@ -8,5 +8,5 @@ public static class IHostEnvironmentEnvironmentRobotsExtensions
     public static bool IsProductionWithConfiguration(
         this IHostEnvironment hostEnvironment,
         IOptions<EnvironmentRobotsOptions> options) =>
-        options.Value.IsProduction ?? hostEnvironment.IsProduction();
+            options.Value.IsProduction ?? hostEnvironment.IsProduction();
 }
