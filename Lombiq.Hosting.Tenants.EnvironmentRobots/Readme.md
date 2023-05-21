@@ -29,4 +29,4 @@ The module determines whether a app is non-production based on the `IsProduction
 To use the module, follow these steps:
 
 - Enable the `Lombiq.Hosting.Tenants.EnvironmentRobots` feature from the admin dashboard.
-- Optionally, configure the `IsProduction` option for each tenant as described above.
+- Optionally, configure the `IsProduction` option as described above.
