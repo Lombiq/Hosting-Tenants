@@ -45,7 +45,7 @@ public class EnvironmentRobotsMiddleware
 
             if (directives.Any())
             {
-                context.Response.Headers["X-Robots-Tag"] = $"{headerValue}, {string.Join(", ", directives)}";
+                context.Response.Headers["X-Robots-Tag"] = $"{string.Join(", ", directives)}";
             }
         }
 
