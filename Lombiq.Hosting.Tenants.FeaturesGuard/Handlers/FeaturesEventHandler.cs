@@ -13,21 +13,21 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
-    Task IFeatureEventHandler.InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
+    public Task InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
+    public Task InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
+    public Task EnablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.EnabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
+    public Task EnabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
 
-    Task IFeatureEventHandler.DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
+    public Task DisablingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
-    Task IFeatureEventHandler.DisabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
+    public Task DisabledAsync(IFeatureInfo feature) => HandleConditionallyEnabledFeaturesAsync();
 
-    Task IFeatureEventHandler.UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask; // #spell-check-ignore-line
+    public Task UninstallingAsync(IFeatureInfo feature) => Task.CompletedTask; // #spell-check-ignore-line
 
-    Task IFeatureEventHandler.UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
+    public Task UninstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     /// <summary>
     /// Enables or disables conditional features depending on ConditionallyEnabledFeaturesOptions.
