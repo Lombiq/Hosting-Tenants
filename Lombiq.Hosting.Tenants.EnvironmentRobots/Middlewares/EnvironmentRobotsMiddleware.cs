@@ -31,7 +31,7 @@ public class EnvironmentRobotsMiddleware
         {
             var headerValue = context.Response.Headers["X-Robots-Tag"].FirstOrDefault() ?? string.Empty;
 
-            var directives = new List<string>();
+            var directives = new List<string> { headerValue };
 
             if (!headerValue.Contains("noindex"))
             {
@@ -43,7 +43,7 @@ public class EnvironmentRobotsMiddleware
                 directives.Add("nofollow");
             }
 
-            if (directives.Any())
+            if (directives.Count > 1)
             {
                 context.Response.Headers["X-Robots-Tag"] = $"{string.Join(", ", directives)}";
             }
