@@ -25,7 +25,9 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
 
         var listed = await directoryContent.ToListAsync();
         var sumSize = listed.Where(item => item.Length > 0).Sum(item => item.Length);
-        return MaxSpaceForTenantInBytes() - sumSize;
+        var remainingSpace = MaxSpaceForTenantInBytes() - sumSize;
+
+        return remainingSpace < 0 ? 0 : remainingSpace;
     }
 
     public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuota;
