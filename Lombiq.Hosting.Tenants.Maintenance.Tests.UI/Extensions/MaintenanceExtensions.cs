@@ -19,4 +19,19 @@ public static class MaintenanceExtensions
 
                 return Task.CompletedTask;
             };
+
+    public static void SetAddSiteOwnerPermissionToRoleMaintenanceConfiguration(
+        this OrchardCoreUITestExecutorConfiguration configuration) => configuration.OrchardCoreConfiguration.BeforeAppStart +=
+            (_, argumentsBuilder) =>
+            {
+                argumentsBuilder
+                    .AddWithValue(
+                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole:IsEnabled",
+                        value: true)
+                    .AddWithValue(
+                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole:Role",
+                        value: "Editor");
+
+                return Task.CompletedTask;
+            };
 }
