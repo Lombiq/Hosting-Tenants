@@ -8,7 +8,7 @@ namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 public interface IMediaStorageQuotaService
 {
     /// <summary>
-    /// Returns remaining quota space left in bytes.
+    /// Returns remaining quota space left in bytes. It is always a non-negative number, meaning the minimum value is 0.
     /// </summary>
     Task<long> GetRemainingMediaSpaceQuotaLeftAsync();
 
