@@ -6,4 +6,5 @@ public static class FeatureNames
     public const string Maintenance = Module;
     public const string UpdateSiteUrl = Maintenance + "." + nameof(UpdateSiteUrl);
     public const string UpdateShellRequestUrls = Maintenance + "." + nameof(UpdateShellRequestUrls);
+    public const string AddSiteOwnerPermissionToRole = Maintenance + "." + nameof(AddSiteOwnerPermissionToRole);
 }
