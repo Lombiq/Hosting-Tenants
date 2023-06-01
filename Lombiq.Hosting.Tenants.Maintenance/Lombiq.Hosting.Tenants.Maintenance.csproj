@@ -41,4 +41,12 @@
         <None Remove="Tests\**" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
+        <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.Common\Lombiq.HelpfulLibraries.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="5.1.1" />
+    </ItemGroup>
+
 </Project>
