@@ -4,7 +4,6 @@ using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using OrchardCore.Security;
-using System.Linq;
 using System.Threading.Tasks;
 using static OrchardCore.Security.Permissions.Permission;
 using static OrchardCore.Security.StandardPermissions;
@@ -33,7 +32,7 @@ public class AddSiteOwnerPermissionToRoleMaintenanceProvider : MaintenanceProvid
     {
         if (await _roleManager.FindByNameAsync(_options.Value.Role) is not Role role) return;
 
-        if (role.RoleClaims.Any(claim => claim.ClaimType == ClaimType && claim.ClaimValue == SiteOwner.Name)) return;
+        if (role.RoleClaims.Exists(claim => claim.ClaimType == ClaimType && claim.ClaimValue == SiteOwner.Name)) return;
 
         role.RoleClaims.Add(new RoleClaim { ClaimType = ClaimType, ClaimValue = SiteOwner.Name });
 
