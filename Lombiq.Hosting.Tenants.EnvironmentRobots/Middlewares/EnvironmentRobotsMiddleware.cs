@@ -31,7 +31,12 @@ public class EnvironmentRobotsMiddleware
         {
             var headerValue = context.Response.Headers["X-Robots-Tag"].FirstOrDefault() ?? string.Empty;
 
-            var directives = new List<string> { headerValue };
+            var directives = new List<string>();
+
+            if (!string.IsNullOrEmpty(headerValue))
+            {
+                directives.Add(headerValue);
+            }
 
             if (!headerValue.Contains("noindex"))
             {
