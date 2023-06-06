@@ -39,7 +39,7 @@ public class SetupWithRecipesFilterService : ISetupService
         }
 
         var hiddenTags = _hideRecipesFromSetupOptions.Value.HiddenTags;
-        return recipesDescriptors.Where(recipe => !recipe.Tags.Exist(tag => hiddenTags.Contains(tag)));
+        return recipesDescriptors.Where(recipe => !recipe.Tags.Exists(tag => hiddenTags.Contains(tag)));
     }
 
     public Task<string> SetupAsync(SetupContext context) => _setupService.SetupAsync(context);
