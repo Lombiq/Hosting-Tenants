@@ -38,10 +38,13 @@ public class EnvironmentRobotsMiddleware
                 directives.Add(headerValue);
             }
 
+            // False warning, since headerValue is initialized to string.Empty if it would be null.
+#pragma warning disable S2259 // Null pointers should not be dereferenced
             if (!headerValue.Contains("noindex"))
             {
                 directives.Add("noindex");
             }
+#pragma warning restore S2259 // Null pointers should not be dereferenced
 
             if (!headerValue.Contains("nofollow"))
             {
