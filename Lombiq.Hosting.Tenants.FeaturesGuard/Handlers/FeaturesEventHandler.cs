@@ -13,6 +13,8 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
+    private bool _deferredTaskExecuted;
+
     public Task InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
     public Task InstalledAsync(IFeatureInfo feature) => Task.CompletedTask;
@@ -33,10 +35,17 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// Enables or disables conditional features depending on ConditionallyEnabledFeaturesOptions.
     /// Prevents disabling features that should be enabled according to their conditions.
     /// </summary>
-    private static Task HandleConditionallyEnabledFeaturesAsync()
+    private Task HandleConditionallyEnabledFeaturesAsync()
     {
+        if (_deferredTaskExecuted)
+        {
+            return Task.CompletedTask;
+        }
+
         ShellScope.AddDeferredTask(async scope =>
         {
+            _deferredTaskExecuted = true;
+
             if (scope.ShellContext.Settings.IsDefaultShell())
             {
                 return;
