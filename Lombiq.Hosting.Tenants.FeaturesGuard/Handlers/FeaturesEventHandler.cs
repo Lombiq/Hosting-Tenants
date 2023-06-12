@@ -42,10 +42,10 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
             return Task.CompletedTask;
         }
 
+        _deferredTaskExecuted = true;
+
         ShellScope.AddDeferredTask(async scope =>
         {
-            _deferredTaskExecuted = true;
-
             if (scope.ShellContext.Settings.IsDefaultShell())
             {
                 return;
