@@ -47,7 +47,7 @@ public static class TestCaseUITestContextExtensions
         // Doing the same checks but with recipes. Starting with a new tenant to make sure that the starting state is
         // correct.
         context.SwitchCurrentTenantToDefault();
-        await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId, "TestTenant2", "testtenant2");
+        await SetUpNewTenantAndGoToFeaturesListAsync(context, setupRecipeId, "TestTenant2", "test-tenant2");
 
         // Note that when doing feature operations via recipes, we deliberately use the JSON Import feature, not the
         // ExecuteRecipeDirectlyAsync() shortcut. This way, we can make sure that it works the same as it would for a
@@ -62,7 +62,7 @@ public static class TestCaseUITestContextExtensions
         UITestContext context,
         string setupRecipeId,
         string tenantName = "TestTenant1",
-        string tenantUrlPrefix = "testtenant1")
+        string tenantUrlPrefix = "test-tenant1")
     {
         await context.SignInDirectlyAsync();
 
