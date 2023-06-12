@@ -13,7 +13,7 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
 public sealed class FeaturesEventHandler : IFeatureEventHandler
 {
-    private bool _deferredTaskExecuted;
+    private bool _deferredTaskTriggered;
 
     public Task InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
@@ -37,12 +37,12 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// </summary>
     private Task HandleConditionallyEnabledFeaturesAsync()
     {
-        if (_deferredTaskExecuted)
+        if (_deferredTaskTriggered)
         {
             return Task.CompletedTask;
         }
 
-        _deferredTaskExecuted = true;
+        _deferredTaskTriggered = true;
 
         ShellScope.AddDeferredTask(async scope =>
         {
