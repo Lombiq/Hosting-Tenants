@@ -94,3 +94,21 @@ The following configuration options are available to set the shell request URLs:
 ```
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
+
+### `Lombiq.Hosting.Tenants.Maintenance.RemoveLoginInfos`
+
+It's a maintenance task that removes the login infos of users from the database. It is available only for the default tenant.
+
+The following configuration should be used to allow the maintenance to run:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "RemoveLoginInfos": {
+        "IsEnabled": true
+      }
+    }
+  }
+}
+```
