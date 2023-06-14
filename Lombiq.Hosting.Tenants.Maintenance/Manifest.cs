@@ -42,3 +42,12 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { Maintenance }
 )]
+
+[assembly: Feature(
+    Id = RemoveLoginInfos,
+    Name = "Lombiq Hosting - Tenants Maintenance - Remove Login Infos",
+    Description = "Removes login infos from every user account, like Azure AD links.",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { Maintenance }
+)]
