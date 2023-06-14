@@ -97,7 +97,7 @@ The following configuration options are available to set the shell request URLs:
 
 ### `Lombiq.Hosting.Tenants.Maintenance.RemoveLoginInfos`
 
-It's a maintenance task that removes the login infos of users from the database. It is available only for the default tenant.
+It's a maintenance task that removes the login infos of users from the database. It is available only for the default tenant. Useful if you have Azure AD enabled in your production environment and you want to reset staging to the production database. Then you would get "System.InvalidOperationException: Provider AzureAD is already linked for userName" error without removing the login infos.
 
 The following configuration should be used to allow the maintenance to run:
 
