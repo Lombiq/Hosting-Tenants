@@ -1,7 +1,9 @@
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,13 +15,16 @@ public class RemoveLoginInfosMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly IOptions<RemoveLoginInfosMaintenanceOptions> _options;
     private readonly ISession _session;
+    private readonly UserManager<IUser> _userManager;
 
     public RemoveLoginInfosMaintenanceProvider(
         IOptions<RemoveLoginInfosMaintenanceOptions> options,
-        ISession session)
+        ISession session,
+        UserManager<IUser> userManager)
     {
         _options = options;
         _session = session;
+        _userManager = userManager;
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
@@ -33,6 +38,7 @@ public class RemoveLoginInfosMaintenanceProvider : MaintenanceProviderBase
         foreach (var user in users)
         {
             user.LoginInfos.RemoveAll();
+            await _userManager.UpdateAsync(user);
         }
     }
 }
