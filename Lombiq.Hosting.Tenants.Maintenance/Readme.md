@@ -97,7 +97,7 @@ The following configuration options are available to set the shell request URLs:
 
 ### `Lombiq.Hosting.Tenants.Maintenance.RemoveUsers`
 
-It's a maintenance task that removes users from the database with the given email domain. It is available only for the default tenant. Useful if you have Azure AD enabled in your production environment and you want to reset staging to the production database. Then you would get "System.InvalidOperationException: Provider AzureAD is already linked for userName" error, so deleting those users.
+It's a maintenance task that removes users from the database with the given email domain. It is available only for the default tenant. Useful if you have Azure AD enabled in your production environment and you want to reset staging to the production database. Then you would get "System.InvalidOperationException: Provider AzureAD is already linked for userName" error, so deleting those users will solve the error.
 
 The following configuration should be used to allow the maintenance to run:
 
