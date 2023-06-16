@@ -4,7 +4,7 @@
 
 ## About
 
-A module that prevents search bots from indexing non-production environments.
+A module that prevents search bots from indexing non-production environments. Watch a demo video of it from the Orchard Community Meeting [here](https://youtu.be/Rp3ao2ZbNRs).
 
 ## Documentation
 
