@@ -66,7 +66,7 @@ public static class TestCaseUITestContextExtensions
     {
         await context.SignInDirectlyAsync();
 
-        await context.CreateAndSwitchToTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "features guard");
+        await context.CreateAndSwitchToTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "Features Guard");
 
         await context.GoToSetupPageAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
