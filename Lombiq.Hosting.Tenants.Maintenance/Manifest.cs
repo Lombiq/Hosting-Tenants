@@ -42,3 +42,12 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { Maintenance }
 )]
+
+[assembly: Feature(
+    Id = RemoveUsers,
+    Name = "Lombiq Hosting - Tenants Maintenance - Remove Users",
+    Description = "Removes users with the configured email domain.",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { Maintenance }
+)]
