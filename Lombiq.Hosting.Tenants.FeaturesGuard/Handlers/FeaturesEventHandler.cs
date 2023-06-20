@@ -123,7 +123,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         out HashSet<string> featuresToEnable,
         out HashSet<string> featuresToDisable)
     {
-        if (!conditionallyEnabledFeatures.Any())
+        if (conditionallyEnabledFeatures?.Any() != true)
         {
             featuresToEnable = null;
             featuresToDisable = null;
