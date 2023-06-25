@@ -3,18 +3,18 @@ using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Microsoft.Extensions.Logging;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YesSql;
+using IOrchardClock = OrchardCore.Modules.IClock;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Services;
 
 public class MaintenanceManager : IMaintenanceManager
 {
-    private readonly IClock _clock;
+    private readonly IOrchardClock _clock;
     private readonly ILogger<MaintenanceManager> _logger;
     private readonly IEnumerable<IMaintenanceProvider> _maintenanceProviders;
     private readonly ISession _session;
@@ -22,7 +22,7 @@ public class MaintenanceManager : IMaintenanceManager
     private readonly ShellSettings _shellSettings;
 
     public MaintenanceManager(
-        IClock clock,
+        IOrchardClock clock,
         ILogger<MaintenanceManager> logger,
         IEnumerable<IMaintenanceProvider> maintenanceProviders,
         ISession session,

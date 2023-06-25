@@ -38,7 +38,10 @@ public static class OrchardCoreBuilderExtensions
     {
         builder.ConfigureServices((tenantServices, _) =>
             tenantServices.PostConfigure<ConditionallyEnabledFeaturesOptions>(options =>
-                options.EnableFeatureIfOtherFeatureIsEnabled = configDictionary));
+            {
+                options.EnableFeatureIfOtherFeatureIsEnabled.Clear();
+                options.EnableFeatureIfOtherFeatureIsEnabled.AddRange(configDictionary);
+            }));
 
         return builder;
     }
@@ -50,9 +53,9 @@ public static class OrchardCoreBuilderExtensions
         builder.ConfigureServices((tenantServices, _) =>
             tenantServices.PostConfigure<ConditionallyEnabledFeaturesOptions>(options =>
             {
-                if (options.EnableFeatureIfOtherFeatureIsEnabled == null)
+                if (!options.EnableFeatureIfOtherFeatureIsEnabled.Any())
                 {
-                    options.EnableFeatureIfOtherFeatureIsEnabled = configDictionary;
+                    options.EnableFeatureIfOtherFeatureIsEnabled.AddRange(configDictionary);
                 }
                 else
                 {

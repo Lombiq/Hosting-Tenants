@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <DefaultItemExcludes>$(DefaultItemExcludes);.git*;node_modules\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Lombiq Hosting - Tenants EnvironmentRobots for Orchard Core</Title>
+    <Authors>Lombiq Technologies</Authors>
+    <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
+    <Description>EnvironmentRobots for Orchard Core: This module contains the EnvironmentRobots feature, which prevents search bots from indexing non-production environments by adding a meta tag and a response header with noindex, nofollow values.</Description>
+    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EnvironmentRobots/Readme.md</PackageProjectUrl>
+    <PackageLicenseFile>License.md</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="License.md" Pack="true" PackagePath="" />
+    <None Include="Readme.md" />
+    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="node_modules\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.6.0" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.6.0" />
+  </ItemGroup>
+</Project>

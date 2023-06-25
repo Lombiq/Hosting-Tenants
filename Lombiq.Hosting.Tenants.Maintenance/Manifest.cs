@@ -33,3 +33,21 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { Maintenance }
 )]
+
+[assembly: Feature(
+    Id = AddSiteOwnerPermissionToRole,
+    Name = "Lombiq Hosting - Tenants Maintenance - Add Site Owner Permission To Role",
+    Description = "Adds the Site Owner permission to a role (e.g., when the production database is copied to staging).",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { Maintenance }
+)]
+
+[assembly: Feature(
+    Id = RemoveUsers,
+    Name = "Lombiq Hosting - Tenants Maintenance - Remove Users",
+    Description = "Removes users with the configured email domain.",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { Maintenance }
+)]

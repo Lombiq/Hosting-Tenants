@@ -23,11 +23,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.Settings" Version="1.5.0" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Settings" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Users.Abstractions" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Users.Core" Version="1.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,6 +41,14 @@
     <ItemGroup>
         <None Remove="node_modules\**" />
         <None Remove="Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
+        <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.Common\Lombiq.HelpfulLibraries.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

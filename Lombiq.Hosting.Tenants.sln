@@ -15,13 +15,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Idle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI", "Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI\Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI.csproj", "{BC3DE841-E400-40C5-99C1-96B9299C9B04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.MediaStorageManagement", "Lombiq.Hosting.Tenants.MediaStorageManagement\Lombiq.Hosting.Tenants.MediaStorageManagement.csproj", "{EFF031F1-7464-428E-9343-B1173529AC54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.MediaStorageManagement", "Lombiq.Hosting.Tenants.MediaStorageManagement\Lombiq.Hosting.Tenants.MediaStorageManagement.csproj", "{EFF031F1-7464-428E-9343-B1173529AC54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI", "Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI\Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI.csproj", "{4BE4E5C8-7DB6-49D2-855E-7220B039DDF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI", "Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI\Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI.csproj", "{4BE4E5C8-7DB6-49D2-855E-7220B039DDF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.Maintenance", "Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj", "{6D3217B9-EA0F-4608-BA9B-B9B935AEDF3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Maintenance", "Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj", "{6D3217B9-EA0F-4608-BA9B-B9B935AEDF3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.Maintenance.Tests.UI", "Lombiq.Hosting.Tenants.Maintenance.Tests.UI\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.csproj", "{5E1E19E5-18EB-49A1-B392-3BD74418D9FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Maintenance.Tests.UI", "Lombiq.Hosting.Tenants.Maintenance.Tests.UI\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.csproj", "{5E1E19E5-18EB-49A1-B392-3BD74418D9FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.EnvironmentRobots", "Lombiq.Hosting.Tenants.EnvironmentRobots\Lombiq.Hosting.Tenants.EnvironmentRobots.csproj", "{DDFE8464-C855-4292-B3B9-F36A7989882B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI", "Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI\Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI.csproj", "{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +73,14 @@ Global
 		{5E1E19E5-18EB-49A1-B392-3BD74418D9FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E1E19E5-18EB-49A1-B392-3BD74418D9FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E1E19E5-18EB-49A1-B392-3BD74418D9FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFE8464-C855-4292-B3B9-F36A7989882B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFE8464-C855-4292-B3B9-F36A7989882B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFE8464-C855-4292-B3B9-F36A7989882B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFE8464-C855-4292-B3B9-F36A7989882B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -34,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore" Version="1.5.0" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.5.0" />
-    <PackageReference Include="OrchardCore.Tenants" Version="1.5.0" />
-    <PackageReference Include="Scrutor" Version="4.2.0" />
+    <PackageReference Include="OrchardCore" Version="1.6.0" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
+    <PackageReference Include="OrchardCore.Tenants" Version="1.6.0" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="5.1.1" />
+    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="6.0.0" />
   </ItemGroup>
 
 </Project>
