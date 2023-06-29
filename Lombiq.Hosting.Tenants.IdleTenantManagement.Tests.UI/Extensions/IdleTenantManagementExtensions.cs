@@ -26,5 +26,5 @@ public static class IdleTenantManagementExtensions
     public static readonly Func<IWebApplicationInstance, Task> AssertAppLogsWithIdleCheckAsync =
         async webApplicationInstance =>
             (await webApplicationInstance.GetLogOutputAsync())
-            .ShouldContain("Shutting down tenant \"Default\" because of idle timeout.");
+            .ShouldContain("Shutting down tenant \"IdleTenantShutdown\" because of idle timeout.");
 }
