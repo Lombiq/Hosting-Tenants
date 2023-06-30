@@ -3,5 +3,5 @@
 public static class TenantNames
 {
     public const string IdleTenantShutdown = nameof(IdleTenantShutdown);
-    public const string idletenantprefix = nameof(idletenantprefix);
+    public const string IdleTenantPrefix = "idletenantprefix";
 }
