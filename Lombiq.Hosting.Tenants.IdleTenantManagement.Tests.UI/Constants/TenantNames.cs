@@ -2,6 +2,6 @@
 
 public static class TenantNames
 {
-    public static readonly string IdleTenantShutdown = nameof(IdleTenantShutdown);
-    public static readonly string idletenantprefix = nameof(idletenantprefix);
+    public const string IdleTenantShutdown = nameof(IdleTenantShutdown);
+    public const string idletenantprefix = nameof(idletenantprefix);
 }
