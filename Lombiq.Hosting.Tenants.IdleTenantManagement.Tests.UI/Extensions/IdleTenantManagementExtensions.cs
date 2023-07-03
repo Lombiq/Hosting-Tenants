@@ -3,7 +3,7 @@ using Lombiq.Tests.UI.Services;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
-using static Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.Constants.TenantNames;
+using static Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.Constants.IdleTenantData;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.Extensions;
 
@@ -27,5 +27,5 @@ public static class IdleTenantManagementExtensions
     public static readonly Func<IWebApplicationInstance, Task> AssertAppLogsWithIdleCheckAsync =
         async webApplicationInstance =>
             (await webApplicationInstance.GetLogOutputAsync())
-            .ShouldContain($"Shutting down tenant \"{IdleTenantShutdown}\" because of idle timeout.");
+            .ShouldContain($"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
 }
