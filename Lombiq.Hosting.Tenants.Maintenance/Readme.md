@@ -62,7 +62,8 @@ The following configuration options are available to set the site URL:
       "UpdateSiteUrl": {
         "IsEnabled": true,
         "SiteUrl": "https://domain.com/{TenantName}",
-        "DefaultTenantSiteUrl": "https://domain.com"
+        "DefaultTenantSiteUrl": "https://domain.com",
+        "SiteUrlFromTenantName": ""
       }
     }
   }
@@ -70,6 +71,26 @@ The following configuration options are available to set the site URL:
 ```
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
+
+Custom URL generation is also an option, in this case, you need to leave the `SiteUrl` property empty and add your tenants' name and URL:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "UpdateSiteUrl": {
+        "IsEnabled": true,
+        "SiteUrl": "",
+        "DefaultTenantSiteUrl": "https://domain.com",
+        "SiteUrlFromTenantName": {
+          "Tenant1": "https://domain.com/custom-url",
+          "Tenant2": "https://custom-domain.com"
+        }
+      }
+    }
+  }
+}
+```
 
 ### `Lombiq.Hosting.Tenants.Maintenance.UpdateShellRequestUrls`
 

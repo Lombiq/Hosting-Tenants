@@ -1,4 +1,5 @@
 using OrchardCore.Environment.Shell;
+using System.Collections.Generic;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Helpers;
 
@@ -9,6 +10,29 @@ internal static class TenantUrlHelpers
 #pragma warning disable CA1308 // Normalize strings to uppercase
         url?.Replace("{TenantName}", tenantName.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
+
+    public static string GetEvaluatedValueForTenant(
+        string valueForDefaultTenant,
+        string valueForAnyTenant,
+        IDictionary<string, string> valueForTenantByName,
+        ShellSettings shellSettings)
+    {
+        string evaluatedValue = string.Empty;
+
+        if (!string.IsNullOrEmpty(valueForAnyTenant))
+        {
+            evaluatedValue = ReplaceTenantName(valueForAnyTenant, shellSettings.Name);
+        }
+        else if (valueForTenantByName.Count > 0)
+        {
+            foreach (var pair in valueForTenantByName)
+            {
+                if (pair.Key == shellSettings.Name) evaluatedValue = pair.Value;
+            }
+        }
+
+        return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
+    }
 
     public static string GetEvaluatedValueForTenant(
         string valueForDefaultTenant,

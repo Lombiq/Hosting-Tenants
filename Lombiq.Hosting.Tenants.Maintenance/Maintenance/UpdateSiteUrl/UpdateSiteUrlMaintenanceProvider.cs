@@ -34,6 +34,7 @@ public class UpdateSiteUrlMaintenanceProvider : MaintenanceProviderBase
         siteSettings.BaseUrl = TenantUrlHelpers.GetEvaluatedValueForTenant(
             _options.Value.DefaultTenantSiteUrl,
             _options.Value.SiteUrl,
+            _options.Value.SiteUrlFromTenantName,
             _shellSettings);
 
         await _siteService.UpdateSiteSettingsAsync(siteSettings);
