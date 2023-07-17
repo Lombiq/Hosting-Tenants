@@ -72,7 +72,7 @@ The following configuration options are available to set the site URL:
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
 
-Custom URL generation is also an option, in this case, you need to leave the `SiteUrl` property empty and add your tenants' name and URL:
+Defining each tenant's URL separately is also an option, in this case, you need to leave the `SiteUrl` property empty and add your tenants' name and URL in `SiteUrlFromTenantName`:
 
 ```json
 {
