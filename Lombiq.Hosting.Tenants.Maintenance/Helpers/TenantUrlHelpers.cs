@@ -14,8 +14,8 @@ internal static class TenantUrlHelpers
     public static string GetEvaluatedValueForTenant(
         string valueForDefaultTenant,
         string valueForAnyTenant,
-        IDictionary<string, string> valueForTenantByName,
-        ShellSettings shellSettings)
+        ShellSettings shellSettings,
+        IDictionary<string, string> valueForTenantByName = null)
     {
         string evaluatedValue = string.Empty;
 
@@ -23,25 +23,13 @@ internal static class TenantUrlHelpers
         {
             evaluatedValue = ReplaceTenantName(valueForAnyTenant, shellSettings.Name);
         }
-        else if (valueForTenantByName.Count > 0)
+        else if (valueForTenantByName?.Count > 0)
         {
             foreach (var pair in valueForTenantByName)
             {
                 if (pair.Key == shellSettings.Name) evaluatedValue = pair.Value;
             }
         }
-
-        return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
-    }
-
-    public static string GetEvaluatedValueForTenant(
-        string valueForDefaultTenant,
-        string valueForAnyTenant,
-        ShellSettings shellSettings)
-    {
-        var evaluatedValue = !string.IsNullOrEmpty(valueForAnyTenant)
-            ? ReplaceTenantName(valueForAnyTenant, shellSettings.Name)
-            : string.Empty;
 
         return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
     }
