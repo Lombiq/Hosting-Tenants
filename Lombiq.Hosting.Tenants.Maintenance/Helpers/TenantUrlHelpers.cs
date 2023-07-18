@@ -23,7 +23,7 @@ internal static class TenantUrlHelpers
         {
             evaluatedValue = ReplaceTenantName(valueForAnyTenant, shellSettings.Name);
         }
-        else if (valueForTenantByName?.Count > 0)
+        else if (valueForTenantByName?.Any() == true)
         {
             foreach (var pair in valueForTenantByName)
             {
