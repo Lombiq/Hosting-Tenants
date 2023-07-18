@@ -17,7 +17,7 @@ internal static class TenantUrlHelpers
         ShellSettings shellSettings,
         IDictionary<string, string> valueForTenantByName = null)
     {
-        string evaluatedValue = string.Empty;
+        var evaluatedValue = string.Empty;
 
         if (!string.IsNullOrEmpty(valueForAnyTenant))
         {
