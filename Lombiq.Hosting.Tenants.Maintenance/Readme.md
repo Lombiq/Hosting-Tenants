@@ -62,8 +62,7 @@ The following configuration options are available to set the site URL:
       "UpdateSiteUrl": {
         "IsEnabled": true,
         "SiteUrl": "https://domain.com/{TenantName}",
-        "DefaultTenantSiteUrl": "https://domain.com",
-        "SiteUrlFromTenantName": ""
+        "DefaultTenantSiteUrl": "https://domain.com"
       }
     }
   }
@@ -72,7 +71,7 @@ The following configuration options are available to set the site URL:
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
 
-Defining each tenant's URL separately is also an option, in this case, you need to leave the `SiteUrl` property empty and add your tenants' name and URL in `SiteUrlFromTenantName`:
+Defining each tenant's URL separately is also an option, in this case, you have to use the `SiteUrlFromTenantName` property instead of `SiteUrl` and add your tenants' name and URL:
 
 ```json
 {
@@ -80,7 +79,6 @@ Defining each tenant's URL separately is also an option, in this case, you need 
     "Lombiq_Hosting_Tenants_Maintenance": {
       "UpdateSiteUrl": {
         "IsEnabled": true,
-        "SiteUrl": "",
         "DefaultTenantSiteUrl": "https://domain.com",
         "SiteUrlFromTenantName": {
           "Tenant1": "https://domain.com/custom-url",
