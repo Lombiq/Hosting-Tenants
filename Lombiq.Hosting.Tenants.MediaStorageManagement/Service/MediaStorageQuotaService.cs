@@ -19,15 +19,15 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
         _mediaFileStore = mediaFileStore;
     }
 
-    public async Task<long> GetRemainingMediaSpaceQuotaLeftAsync()
+    public async Task<long> GetRemainingMediaStorageQuotaLeftAsync()
     {
         var directoryContent = _mediaFileStore.GetDirectoryContentAsync(includeSubDirectories: true);
 
         var listed = await directoryContent.ToListAsync();
         var sumSize = listed.Where(item => item.Length > 0).Sum(item => item.Length);
-        var remainingSpace = MaxStorageQuotaForTenantInBytes() - sumSize;
+        var remainingStorageQuota = MaxStorageQuotaForTenantInBytes() - sumSize;
 
-        return remainingSpace < 0 ? 0 : remainingSpace;
+        return remainingStorageQuota < 0 ? 0 : remainingStorageQuota;
     }
 
     public long MaxStorageQuotaForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuotaBytes;

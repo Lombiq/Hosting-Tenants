@@ -11,7 +11,7 @@ public interface IMediaStorageQuotaService
     /// Returns remaining storage quota space left in bytes. It is always a non-negative number, meaning the minimum
     /// value is 0.
     /// </summary>
-    Task<long> GetRemainingMediaSpaceQuotaLeftAsync();
+    Task<long> GetRemainingMediaStorageQuotaLeftAsync();
 
     /// <summary>
     /// Returns the maximum storage quota space in bytes.
