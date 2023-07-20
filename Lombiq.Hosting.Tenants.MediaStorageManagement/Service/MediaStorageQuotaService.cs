@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
+using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
 using Microsoft.Extensions.Options;
 using OrchardCore.Media;
 using System.Linq;
@@ -30,7 +30,7 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
         return remainingSpace < 0 ? 0 : remainingSpace;
     }
 
-    public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuota;
+    public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuotaBytes;
 
     public float MaxSpaceForTenantInMegabytes() => MaxSpaceForTenantInBytes() / 1024f / 1024f;
 }

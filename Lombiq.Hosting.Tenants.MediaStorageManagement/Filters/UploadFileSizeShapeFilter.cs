@@ -45,10 +45,10 @@ public class UploadFileSizeShapeFilter : IAsyncResultFilter
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Footer"];
-            var maximumSpace = _mediaStorageQuotaService.MaxSpaceForTenantInMegabytes();
+            var maximumSpaceBytes = _mediaStorageQuotaService.MaxSpaceForTenantInMegabytes();
             await contentZone.AddAsync(await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
                 "UploadFileSize",
-                viewModel => viewModel.MaximumSpace = maximumSpace));
+                viewModel => viewModel.MaximumSpaceBytes = maximumSpaceBytes));
         }
 
         await next();
