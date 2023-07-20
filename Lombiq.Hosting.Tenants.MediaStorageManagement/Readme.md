@@ -22,7 +22,7 @@ With this module, you can specify how much space would you like to limit each te
 "OrchardCore": {
   "Lombiq_Hosting_Tenants_MediaStorageManagement": {
     "Media_Storage_Management_Options": {
-      "MaximumSpaceBytes": 2147483648
+      "MaximumStorageQuotaBytes": 2147483648
     }
   }  
 }
@@ -35,7 +35,7 @@ Tenant based configuration can be defined as the following, for more details rea
   "TenantName": {
     "Lombiq_Hosting_Tenants_MediaStorageManagement": {
       "Media_Storage_Management_Options": {
-        "MaximumSpaceBytes": 2147483648
+        "MaximumStorageQuotaBytes": 2147483648
       }
     }
   }

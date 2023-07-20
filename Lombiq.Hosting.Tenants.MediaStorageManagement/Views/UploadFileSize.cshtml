@@ -21,7 +21,7 @@ $(function () {
             return;
         }
         model.errorMessage =
-        @T["You may only store {0} MB of Media files for your site, and it seems that you’d just go over that. But don’t worry! If you delete some large files, you should be able to upload new ones. Also, you can contact us for a larger quota.", Model.MaximumSpaceBytes].Json();
+        @T["You may only store {0} MB of Media files for your site, and it seems that you’d just go over that. But don’t worry! If you delete some large files, you should be able to upload new ones. Also, you can contact us for a larger quota.", Model.MaximumStorageQuotaMegaBytes].Json();
     });
 });
 </script>
