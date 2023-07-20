@@ -9,15 +9,15 @@ public static class MediaStorageManagementExtensions
 {
     public static void SetMediaStorageManagementOptionsForUITest(
         this OrchardCoreUITestExecutorConfiguration configuration,
-        long maximumSpaceBytes)
+        long maximumStorageQuotaBytes)
     {
         configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
             {
                 argumentsBuilder
                     .AddWithValue(
-                        "OrchardCore:Lombiq_Hosting_Tenants_MediaStorageManagement:Media_Storage_Management_Options:MaximumSpaceBytes",
-                        maximumSpaceBytes);
+                        "OrchardCore:Lombiq_Hosting_Tenants_MediaStorageManagement:MaximumStorageQuotaBytes",
+                        maximumStorageQuotaBytes);
 
                 return Task.CompletedTask;
             };
