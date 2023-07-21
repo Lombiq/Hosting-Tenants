@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
+using Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +16,7 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
             .HttpContext
             .RequestServices
             .GetRequiredService<IMediaStorageQuotaService>()
-            .GetRemainingMediaSpaceQuotaLeftAsync();
+            .GetRemainingMediaStorageQuotaBytesAsync();
 
         var formOptions = new FormOptions
         {

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 
@@ -8,17 +8,22 @@ namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 public interface IMediaStorageQuotaService
 {
     /// <summary>
-    /// Returns remaining quota space left in bytes. It is always a non-negative number, meaning the minimum value is 0.
+    /// Returns the remaining storage space left from the quota in bytes. It is always a non-negative number, meaning
+    /// the minimum value is 0.
     /// </summary>
-    Task<long> GetRemainingMediaSpaceQuotaLeftAsync();
+    Task<long> GetRemainingMediaStorageQuotaBytesAsync();
 
     /// <summary>
-    /// Returns the maximum quota space in bytes.
+    /// Returns the maximum storage space form the quota in bytes.
     /// </summary>
-    long MaxSpaceForTenantInBytes();
+    long GetMaxStorageQuotaBytes();
+}
 
+public static class MediaStorageQuotaServiceExtensions
+{
     /// <summary>
-    /// Returns the maximum quota space in Megabytes.
+    /// Returns the maximum storage quota space in Megabytes.
     /// </summary>
-    float MaxSpaceForTenantInMegabytes();
+    public static float GetMaxStorageQuotaMegabytes(this IMediaStorageQuotaService mediaStorageQuotaService) =>
+        mediaStorageQuotaService.GetMaxStorageQuotaBytes() / 1024f / 1024f;
 }

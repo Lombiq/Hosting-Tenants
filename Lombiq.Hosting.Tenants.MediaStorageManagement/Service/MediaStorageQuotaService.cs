@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
+using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
 using Microsoft.Extensions.Options;
 using OrchardCore.Media;
 using System.Linq;
@@ -19,18 +19,16 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
         _mediaFileStore = mediaFileStore;
     }
 
-    public async Task<long> GetRemainingMediaSpaceQuotaLeftAsync()
+    public async Task<long> GetRemainingMediaStorageQuotaBytesAsync()
     {
         var directoryContent = _mediaFileStore.GetDirectoryContentAsync(includeSubDirectories: true);
 
         var listed = await directoryContent.ToListAsync();
-        var sumSize = listed.Where(item => item.Length > 0).Sum(item => item.Length);
-        var remainingSpace = MaxSpaceForTenantInBytes() - sumSize;
+        var sumBytes = listed.Where(item => item.Length > 0).Sum(item => item.Length);
+        var remainingStorageQuotaBytes = GetMaxStorageQuotaBytes() - sumBytes;
 
-        return remainingSpace < 0 ? 0 : remainingSpace;
+        return remainingStorageQuotaBytes < 0 ? 0 : remainingStorageQuotaBytes;
     }
 
-    public long MaxSpaceForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuota;
-
-    public float MaxSpaceForTenantInMegabytes() => MaxSpaceForTenantInBytes() / 1024f / 1024f;
+    public long GetMaxStorageQuotaBytes() => _mediaStorageManagementOptions.MaximumStorageQuotaBytes;
 }
