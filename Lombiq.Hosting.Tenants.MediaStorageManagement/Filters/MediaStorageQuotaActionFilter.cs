@@ -16,7 +16,7 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
             .HttpContext
             .RequestServices
             .GetRequiredService<IMediaStorageQuotaService>()
-            .GetRemainingMediaStorageQuotaLeftAsync();
+            .GetRemainingMediaStorageQuotaBytesAsync();
 
         var formOptions = new FormOptions
         {
