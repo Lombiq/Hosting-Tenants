@@ -31,6 +31,4 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
     }
 
     public long MaxStorageQuotaForTenantInBytes() => _mediaStorageManagementOptions.MaximumStorageQuotaBytes;
-
-    public float MaxStorageQuotaForTenantInMegabytes() => MaxStorageQuotaForTenantInBytes() / 1024f / 1024f;
 }
