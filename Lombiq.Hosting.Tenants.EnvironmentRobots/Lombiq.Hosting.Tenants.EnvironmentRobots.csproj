@@ -34,8 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.6.0" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
-    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.6.0" />
+    <!-- Temporary upgrade to nighlty version until every submodule is upgraded to 1.7.0 -->
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.7.0-preview-17520" />
   </ItemGroup>
 </Project>
