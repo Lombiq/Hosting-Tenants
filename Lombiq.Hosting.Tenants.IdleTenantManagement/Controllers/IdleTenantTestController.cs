@@ -46,7 +46,7 @@ public class IdleTenantTestController : Controller
             await _shellHost.ReleaseShellContextAsync(iwetShellSettings);
             await _shellHost.ReleaseShellContextAsync(bnmShellSettings);
 
-            await Task.Delay(1000);
+            await Task.Delay(1000, HttpContext.RequestAborted);
 
             await _httpClient.GetAsync(psiShellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
             await _httpClient.GetAsync(iwetShellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
