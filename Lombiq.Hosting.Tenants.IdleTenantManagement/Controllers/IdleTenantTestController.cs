@@ -1,7 +1,9 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
+﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Modules;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +12,8 @@ using System.Threading.Tasks;
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Controllers;
 
 [Authorize]
+[Route("idle-tenant-test")]
+[Feature(FeatureNames.ShutDownIdleTenants)]
 public class IdleTenantTestController : Controller
 {
     private readonly IIdleShutdown _idleShutdown;
@@ -52,6 +56,7 @@ public class IdleTenantTestController : Controller
         return "OK";
     }
 
+    [HttpGet("shutdown")]
     public async Task<string> ShutdownWithService()
     {
         await _idleShutdown.ShutDownIdleTenantsAsync();
