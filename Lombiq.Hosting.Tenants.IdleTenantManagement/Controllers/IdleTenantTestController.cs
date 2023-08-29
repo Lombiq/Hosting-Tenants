@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Constants;
 using Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,23 +34,15 @@ public class IdleTenantTestController : Controller
 
     public async Task<string> Index()
     {
-        var psiShellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "PsiProctor");
-        var iwetShellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "ikwileentaart");
-        var bnmShellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "beaesmark");
+        var shellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "allmodules");
 
         _httpClient.BaseAddress ??= new Uri(HttpContext.Request.Scheme + "://" + HttpContext.Request.Host);
 
         for (int i = 0; i < 1000; i++)
         {
-            await _shellHost.ReleaseShellContextAsync(psiShellSettings);
-            await _shellHost.ReleaseShellContextAsync(iwetShellSettings);
-            await _shellHost.ReleaseShellContextAsync(bnmShellSettings);
+            await _shellHost.ReleaseShellContextAsync(shellSettings);
 
-            await Task.Delay(1000, HttpContext.RequestAborted);
-
-            await _httpClient.GetAsync(psiShellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
-            await _httpClient.GetAsync(iwetShellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
-            await _httpClient.GetAsync(bnmShellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
+            await _httpClient.GetAsync(shellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
         }
 
         return "OK";
