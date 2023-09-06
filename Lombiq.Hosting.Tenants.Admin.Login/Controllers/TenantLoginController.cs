@@ -51,12 +51,12 @@ public class TenantLoginController : Controller
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Index(string password)
     {
-        if (_shellSettings.Name.EqualsOrdinalIgnoreCase(ShellHelper.DefaultShellName))
+        if (_shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
         {
             return NotFound();
         }
 
-        var defaultShell = await _shellHost.GetScopeAsync(ShellHelper.DefaultShellName);
+        var defaultShell = await _shellHost.GetScopeAsync(ShellSettings.DefaultShellName);
         var tenantLoginPasswordValidator = defaultShell?.ServiceProvider.GetService<ITenantLoginPasswordValidator>();
 
         if (defaultShell == null ||
