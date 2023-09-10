@@ -9,10 +9,14 @@ namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.Extensions;
 public static class TestCaseUITestContextExtensions
 {
     public static async Task TestIdleTenantManagerBehaviorAsync(
-        this UITestContext context)
+        this UITestContext context,
+        string recipeId = null)
     {
         // Setting up new tenant to test the feature
         await context.CreateAndSwitchToTenantManuallyAsync(IdleTenantName, IdleTenantPrefix, string.Empty);
+
+        // This is needed for testing in NuGet as the RecipeId is different.
+        var setupRecipeId = recipeId ?? IdleTenantRecipe;
 
         // Because this test is aimed at a single tenant's behavior we don't need dynamic tenant data.
         // The used constants here can be found at IdleTenantManagement.Tests.UI/Constants/IdleTenantData.
@@ -20,7 +24,7 @@ public static class TestCaseUITestContextExtensions
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = IdleTenantName,
-                RecipeId = IdleTenantRecipe,
+                RecipeId = setupRecipeId,
                 TablePrefix = IdleTenantName,
                 RunSetupOnCurrentPage = true,
             });
