@@ -15,15 +15,13 @@ public static class TestCaseUITestContextExtensions
         // Setting up new tenant to test the feature
         await context.CreateAndSwitchToTenantManuallyAsync(IdleTenantName, IdleTenantPrefix, string.Empty);
 
-        var setupRecipeId = recipeId ?? DefaultIdleTenantSetupRecipeId;
-
         // Because this test is aimed at a single tenant's behavior we don't need dynamic tenant data.
         // The used constants here can be found at IdleTenantManagement.Tests.UI/Constants/IdleTenantData.
         await context.GoToSetupPageAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = IdleTenantName,
-                RecipeId = setupRecipeId,
+                RecipeId = recipeId,
                 TablePrefix = IdleTenantName,
                 RunSetupOnCurrentPage = true,
             });
