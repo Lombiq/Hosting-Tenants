@@ -10,13 +10,12 @@ public static class TestCaseUITestContextExtensions
 {
     public static async Task TestIdleTenantManagerBehaviorAsync(
         this UITestContext context,
-        string recipeId = null)
+        string recipeId = DefaultIdleTenantSetupRecipeId)
     {
         // Setting up new tenant to test the feature
         await context.CreateAndSwitchToTenantManuallyAsync(IdleTenantName, IdleTenantPrefix, string.Empty);
 
-        // This is needed for testing in NuGet as the RecipeId is different.
-        var setupRecipeId = recipeId ?? IdleTenantRecipe;
+        var setupRecipeId = recipeId ?? DefaultIdleTenantSetupRecipeId;
 
         // Because this test is aimed at a single tenant's behavior we don't need dynamic tenant data.
         // The used constants here can be found at IdleTenantManagement.Tests.UI/Constants/IdleTenantData.
