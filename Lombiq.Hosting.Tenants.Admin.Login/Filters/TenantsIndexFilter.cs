@@ -54,7 +54,7 @@ public class TenantsIndexFilter : IAsyncResultFilter
             var shellSettings = _shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
             if (shellSettings != null &&
                 shellSettings.State == TenantState.Running &&
-                !shellSettings.Name.EqualsOrdinalIgnoreCase(ShellHelper.DefaultShellName))
+                !shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
             {
                 var layout = await _layoutAccessor.GetLayoutAsync();
                 var contentZone = layout.Zones["Content"];

@@ -4,5 +4,5 @@ public static class IdleTenantData
 {
     public const string IdleTenantName = nameof(IdleTenantName);
     public const string IdleTenantPrefix = "idletenantprefix";
-    public const string IdleTenantRecipe = "Lombiq.OSOCE.Tests";
+    public const string DefaultIdleTenantSetupRecipeId = "Lombiq.OSOCE.Tests";
 }
