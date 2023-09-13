@@ -35,9 +35,17 @@
 
   <ItemGroup>
     <!-- Temporary upgrade to nighlty version until every submodule is upgraded to 1.7.0 -->
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.AdminDashboard" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.7.0-preview-17520" />
     <PackageReference Include="OrchardCore.Email.Abstractions" Version="1.7.0-preview-17520" />
     <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.7.0-preview-17520" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
     <PackageReference Include="YesSql.Abstractions" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
   </ItemGroup>
 </Project>
