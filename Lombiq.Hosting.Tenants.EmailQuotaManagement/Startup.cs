@@ -28,5 +28,8 @@ public class Startup : StartupBase
             options.EmailQuota = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuota")
                 ?? DefaultEmailQuota);
 
+        services.AddScoped<IQuotaService, QuotaService>();
+        services.Decorate<ISmtpService, EmailQuotaService>();
+        services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
     }
 }
