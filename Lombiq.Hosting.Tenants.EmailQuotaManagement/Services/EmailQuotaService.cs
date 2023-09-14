@@ -42,7 +42,7 @@ public class EmailQuotaService : ISmtpService
         }
 
         var currentQuota = await _quotaService.GetCurrentQuotaAsync();
-        if (_emailQuotaOptions.EmailQuota < currentQuota.CurrentEmailQuotaCount)
+        if (_emailQuotaOptions.EmailQuota <= currentQuota.CurrentEmailQuotaCount)
         {
             return SmtpResult.Failed(T["The email quota ({currentQuota}) for the site has been exceeded.", _emailQuotaOptions.EmailQuota]);
         }
