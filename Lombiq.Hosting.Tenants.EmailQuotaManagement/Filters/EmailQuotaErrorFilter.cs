@@ -1,7 +1,7 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using OrchardCore.AdminDashboard.Controllers;
+using OrchardCore.Admin.Controllers;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
@@ -34,10 +34,12 @@ public class EmailQuotaErrorFilter : IAsyncResultFilter
         }
 
         var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
+        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
         var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
 
-        if (actionRouteController == typeof(DashboardController).ControllerName() &&
-            actionRouteValue is nameof(DashboardController.Index) &&
+        if (actionRouteController == typeof(AdminController).ControllerName() &&
+            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" &&
+            actionRouteValue is nameof(AdminController.Index) &&
             context.Result is ViewResult &&
             await _quotaService.IsQuotaOverTheLimitAsync())
         {
