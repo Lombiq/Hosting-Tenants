@@ -19,10 +19,14 @@ public class QuotaService : IQuotaService
         _emailQuotaOptions = emailQuotaOptions.Value;
     }
 
-    public async Task<bool> IsQuotaOverTheLimitAsync()
+    public async Task<QuotaResult> IsQuotaOverTheLimitAsync()
     {
         var currentQuota = await GetCurrentQuotaAsync();
-        return _emailQuotaOptions.EmailQuota <= currentQuota.CurrentEmailQuotaCount;
+        return new QuotaResult
+        {
+            IsOverQuota = _emailQuotaOptions.EmailQuota <= currentQuota.CurrentEmailQuotaCount,
+            EmailQuota = currentQuota,
+        };
     }
 
     public async Task<EmailQuota> GetCurrentQuotaAsync()

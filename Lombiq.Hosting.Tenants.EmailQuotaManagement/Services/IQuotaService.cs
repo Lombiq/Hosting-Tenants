@@ -11,7 +11,7 @@ public interface IQuotaService
     /// <summary>
     /// Checks if the quota is over the limit.
     /// </summary>
-    Task<bool> IsQuotaOverTheLimitAsync();
+    Task<QuotaResult> IsQuotaOverTheLimitAsync();
 
     /// <summary>
     /// Gets the current quota.
