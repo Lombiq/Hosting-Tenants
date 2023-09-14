@@ -1,5 +1,6 @@
 ﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -8,10 +9,20 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 public class QuotaService : IQuotaService
 {
     private readonly ISession _session;
+    private readonly EmailQuotaOptions _emailQuotaOptions;
 
-    public QuotaService(ISession session)
+    public QuotaService(
+        ISession session,
+        IOptions<EmailQuotaOptions> emailQuotaOptions)
     {
         _session = session;
+        _emailQuotaOptions = emailQuotaOptions.Value;
+    }
+
+    public async Task<bool> IsQuotaOverTheLimitAsync()
+    {
+        var currentQuota = await GetCurrentQuotaAsync();
+        return _emailQuotaOptions.EmailQuota <= currentQuota.CurrentEmailQuotaCount;
     }
 
     public async Task<EmailQuota> GetCurrentQuotaAsync()
