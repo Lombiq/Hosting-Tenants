@@ -14,5 +14,10 @@ using OrchardCore.Modules.Manifest;
     Id = FeatureNames.EmailQuotaManagement,
     Name = "Lombiq Hosting - Tenants - Email Quota Management",
     Category = "Hosting",
-    IsAlwaysEnabled = true
+    IsAlwaysEnabled = true,
+    Dependencies = new[]
+    {
+        "OrchardCore.Emails",
+        "Lombiq.HelpfulExtensions.Emails",
+    }
 )]

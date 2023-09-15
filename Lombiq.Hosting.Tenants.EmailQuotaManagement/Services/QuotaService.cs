@@ -44,6 +44,11 @@ public class QuotaService : IQuotaService
     public void IncreaseQuota(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailQuotaCount++;
+        SaveQuota(emailQuota);
+    }
+
+    public void SaveQuota(EmailQuota emailQuota)
+    {
         _session.Save(emailQuota);
     }
 

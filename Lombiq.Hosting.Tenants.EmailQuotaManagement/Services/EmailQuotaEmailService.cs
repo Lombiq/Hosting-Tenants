@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lombiq.HelpfulExtensions.Extensions.Emails.Extensions;
 using Microsoft.AspNetCore.Identity;
 using OrchardCore.Email;
+using OrchardCore.Email.Services;
 using OrchardCore.Security;
 using OrchardCore.Security.Services;
 using OrchardCore.Users;
@@ -17,33 +18,30 @@ using static OrchardCore.Security.StandardPermissions;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class NotifyAdminsHandler : IEmailQoutaReachedHandler
+public class EmailQuotaEmailService : IEmailQuotaEmailService
 {
     private readonly IEmailTemplateService _emailTemplateService;
     private readonly ShellSettings _shellSettings;
-    private readonly ISmtpService _smtpService;
     private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
-    public NotifyAdminsHandler(
+    public EmailQuotaEmailService(
         IEmailTemplateService emailTemplateService,
         ShellSettings shellSettings,
-        ISmtpService smtpService,
         IRoleService roleService,
         UserManager<IUser> userManager)
     {
         _emailTemplateService = emailTemplateService;
         _shellSettings = shellSettings;
-        _smtpService = smtpService;
         _roleService = roleService;
         _userManager = userManager;
     }
 
-    public async Task HandleEmailQuotaReachedAsync()
+    public async Task<MailMessage> CreateEmailForExceedingQuota()
     {
         var emailTemplate = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuote", new
         {
-            HostName = _shellSettings.Name
+            HostName = _shellSettings.Name,
         });
 
         // Get users with site owner permission.
@@ -67,9 +65,6 @@ public class NotifyAdminsHandler : IEmailQoutaReachedHandler
             IsHtmlBody = true,
         };
 
-        await _smtpService.SendAsync(emailMessage);
-
-        //send notification to admins
-
+        return emailMessage;
     }
 }

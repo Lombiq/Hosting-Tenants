@@ -27,4 +27,9 @@ public interface IQuotaService
     /// Resets the given quota to 0.
     /// </summary>
     void ResetQuota(EmailQuota emailQuota);
+
+    /// <summary>
+    /// Saves the given quota.
+    /// </summary>
+    void SaveQuota(EmailQuota emailQuota);
 }
