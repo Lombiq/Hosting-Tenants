@@ -39,7 +39,7 @@ public class EmailSenderQuotaService : ISmtpService
         var isQuotaOverResult = await _quotaService.IsQuotaOverTheLimitAsync();
         if (isQuotaOverResult.IsOverQuota)
         {
-            await SendAlertEmailIfNecessary(isQuotaOverResult.EmailQuota);
+            await SendAlertEmailIfNecessaryAsync(isQuotaOverResult.EmailQuota);
 
             return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
         }
@@ -53,11 +53,11 @@ public class EmailSenderQuotaService : ISmtpService
         return emailResult;
     }
 
-    private async Task SendAlertEmailIfNecessary(EmailQuota emailQuota)
+    private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
         if (IsSameMonth(_clock.UtcNow, emailQuota.LastReminder)) return;
 
-        var emailMessage = await _emailQuotaEmailService.CreateEmailForExceedingQuota();
+        var emailMessage = await _emailQuotaEmailService.CreateEmailForExceedingQuotaAsync();
         var reminderResult = await _smtpService.SendAsync(emailMessage);
 
         if (reminderResult == SmtpResult.Success)

@@ -33,7 +33,7 @@ public class EmailQuotaEmailService : IEmailQuotaEmailService
         _userManager = userManager;
     }
 
-    public async Task<MailMessage> CreateEmailForExceedingQuota()
+    public async Task<MailMessage> CreateEmailForExceedingQuotaAsync()
     {
         var emailTemplate = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuote", new
         {

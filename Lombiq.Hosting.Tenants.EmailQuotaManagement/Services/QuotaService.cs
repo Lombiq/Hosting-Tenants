@@ -62,10 +62,8 @@ public class QuotaService : IQuotaService
         SaveQuota(emailQuota);
     }
 
-    public void SaveQuota(EmailQuota emailQuota)
-    {
+    public void SaveQuota(EmailQuota emailQuota) =>
         _session.Save(emailQuota);
-    }
 
     public void ResetQuota(EmailQuota emailQuota)
     {
