@@ -9,6 +9,11 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 public interface IQuotaService
 {
     /// <summary>
+    /// Checks if the emails should be limited.
+    /// </summary>
+    bool ShouldLimitEmails();
+
+    /// <summary>
     /// Checks if the quota is over the limit.
     /// </summary>
     Task<QuotaResult> IsQuotaOverTheLimitAsync();

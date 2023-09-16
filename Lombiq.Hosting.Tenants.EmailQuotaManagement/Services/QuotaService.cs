@@ -1,6 +1,9 @@
 ﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using OrchardCore.Email;
+using OrchardCore.Environment.Shell.Configuration;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -10,13 +13,25 @@ public class QuotaService : IQuotaService
 {
     private readonly ISession _session;
     private readonly EmailQuotaOptions _emailQuotaOptions;
+    private readonly IShellConfiguration _shellConfiguration;
+    private readonly SmtpSettings _smtpOptions;
 
     public QuotaService(
         ISession session,
-        IOptions<EmailQuotaOptions> emailQuotaOptions)
+        IOptions<EmailQuotaOptions> emailQuotaOptions,
+        IShellConfiguration shellConfiguration,
+        IOptions<SmtpSettings> smtpOptions)
     {
         _session = session;
         _emailQuotaOptions = emailQuotaOptions.Value;
+        _shellConfiguration = shellConfiguration;
+        _smtpOptions = smtpOptions.Value;
+    }
+
+    public bool ShouldLimitEmails()
+    {
+        var originalHost = _shellConfiguration.GetValue<string>("SmtpSettings:Host");
+        return originalHost == _smtpOptions.Host;
     }
 
     public async Task<QuotaResult> IsQuotaOverTheLimitAsync()
