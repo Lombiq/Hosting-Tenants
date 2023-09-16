@@ -17,10 +17,11 @@ This module currently contains one feature:
 ### `Lombiq.Hosting.Tenants.EmailQuotaManagement`
 
 With this module, you can specify how much space would you like to limit each tenant's maximum email quota. The default is 1000 per month. You can change this value in the `appsettings.json` file or with an environment variable. When the quota is reached the email won't be sent and also the following will happen:
+
 - An email will be sent to the tenant's users who has Site Owner permission.
 - A warning message will be shown that the limit has been reached on the admin dashboard.
 
-Also a warning message is always shown with the current email quota status on the email settings page when the same host is used as the predefined one from the environment variables or from the `appsettings.json` file. 
+Also a warning message is always shown with the current email quota status on the email settings page when the same host is used as the predefined one from the environment variables or from the `appsettings.json` file.
 
 ```json
 "OrchardCore": {
