@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Lombiq Hosting - Tenants EnvironmentRobots for Orchard Core</Title>
+    <Title>Lombiq Hosting - Tenants Email Quota Management for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
-    <Description>EnvironmentRobots for Orchard Core: This module contains the EnvironmentRobots feature, which prevents search bots from indexing non-production environments by adding a meta tag and a response header with noindex, nofollow values.</Description>
+    <Description>Lombiq Hosting - Tenants Email Quota Management for Orchard Core: With the help of this module, you can set restrictions regarding maximum email sent per tenant. See the project website for detailed documentation.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EnvironmentRobots/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EmailQuotaManagement/Readme.md</PackageProjectUrl>
     <PackageLicenseFile>License.md</PackageLicenseFile>
   </PropertyGroup>
 
@@ -49,9 +49,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
     <ProjectReference Include="..\..\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Views\EmailTemplate__EmailQuote.cshtml" />
   </ItemGroup>
 </Project>
