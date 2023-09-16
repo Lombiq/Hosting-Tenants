@@ -1,18 +1,14 @@
 ﻿using Lombiq.HelpfulExtensions.Extensions.Emails.Services;
-using OrchardCore.Environment.Shell;
-using OrchardCore.Environment.Shell.Scope;
-using System.Threading.Tasks;
-using Lombiq.HelpfulExtensions.Extensions.Emails.Extensions;
 using Microsoft.AspNetCore.Identity;
 using OrchardCore.Email;
-using OrchardCore.Email.Services;
+using OrchardCore.Environment.Shell;
 using OrchardCore.Security;
 using OrchardCore.Security.Services;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using System.Collections.Generic;
-using System.IO.Enumeration;
 using System.Linq;
+using System.Threading.Tasks;
 using static OrchardCore.Security.Permissions.Permission;
 using static OrchardCore.Security.StandardPermissions;
 
