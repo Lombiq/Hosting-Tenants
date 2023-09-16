@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Data.Migration;
 using OrchardCore.Email;
+using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using YesSql.Indexes;
@@ -34,10 +35,15 @@ public class Startup : StartupBase
                 ?? DefaultEmailQuota);
 
         services.AddScoped<IQuotaService, QuotaService>();
-        services.Decorate<ISmtpService, EmailQuotaService>();
+        services.Decorate<ISmtpService, EmailSenderQuotaService>();
         services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
-        services.Configure<MvcOptions>(options => options.Filters.Add(typeof(EmailQuotaErrorFilter)));
+        services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(typeof(EmailQuotaErrorFilter));
+                options.Filters.Add(typeof(EmailSettingsQuotaFilter));
+            }
+        );
 
         services.AddScoped<IEmailQuotaEmailService, EmailQuotaEmailService>();
     }

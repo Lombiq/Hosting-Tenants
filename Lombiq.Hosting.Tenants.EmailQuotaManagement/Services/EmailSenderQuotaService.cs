@@ -1,47 +1,37 @@
 ﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Options;
 using OrchardCore.Email;
-using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using System;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class EmailQuotaService : ISmtpService
+public class EmailSenderQuotaService : ISmtpService
 {
-    private readonly IStringLocalizer<EmailQuotaService> T;
+    private readonly IStringLocalizer<EmailSenderQuotaService> T;
     private readonly ISmtpService _smtpService;
     private readonly IQuotaService _quotaService;
-    private readonly IShellConfiguration _shellConfiguration;
-    private readonly SmtpSettings _smtpOptions;
     private readonly IEmailQuotaEmailService _emailQuotaEmailService;
     private readonly IClock _clock;
 
-    public EmailQuotaService(
+    public EmailSenderQuotaService(
         ISmtpService smtpService,
-        IOptions<SmtpSettings> smtpOptions,
-        IStringLocalizer<EmailQuotaService> stringLocalizer,
+        IStringLocalizer<EmailSenderQuotaService> stringLocalizer,
         IQuotaService quotaService,
-        IShellConfiguration shellConfiguration,
         IEmailQuotaEmailService emailQuotaEmailService,
         IClock clock)
     {
         _smtpService = smtpService;
-        _smtpOptions = smtpOptions.Value;
         T = stringLocalizer;
         _quotaService = quotaService;
-        _shellConfiguration = shellConfiguration;
         _emailQuotaEmailService = emailQuotaEmailService;
         _clock = clock;
     }
 
     public async Task<SmtpResult> SendAsync(MailMessage message)
     {
-        var originalHost = _shellConfiguration.GetValue<string>("SmtpSettings:Host");
-        if (originalHost != _smtpOptions.Host)
+        if (!_quotaService.ShouldLimitEmails())
         {
             return await _smtpService.SendAsync(message);
         }

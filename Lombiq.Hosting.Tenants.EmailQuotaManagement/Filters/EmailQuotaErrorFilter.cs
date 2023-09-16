@@ -41,6 +41,7 @@ public class EmailQuotaErrorFilter : IAsyncResultFilter
             actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" &&
             actionRouteValue is nameof(AdminController.Index) &&
             context.Result is ViewResult &&
+            _quotaService.ShouldLimitEmails() &&
             (await _quotaService.IsQuotaOverTheLimitAsync()).IsOverQuota)
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
