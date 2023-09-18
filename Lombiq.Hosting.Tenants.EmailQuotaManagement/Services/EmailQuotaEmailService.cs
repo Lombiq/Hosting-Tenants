@@ -35,11 +35,6 @@ public class EmailQuotaEmailService : IEmailQuotaEmailService
 
     public async Task<MailMessage> CreateEmailForExceedingQuotaAsync()
     {
-        var emailTemplate = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuote", new
-        {
-            HostName = _shellSettings.Name,
-        });
-
         // Get users with site owner permission.
         var roles = await _roleService.GetRolesAsync();
         var siteOwnerRoles = roles.Where(role =>
@@ -57,7 +52,6 @@ public class EmailQuotaEmailService : IEmailQuotaEmailService
         {
             Bcc = siteOwnerEmails.Join(","),
             Subject = "[Action Required] Your DotNest site has run over its e-mail quota",
-            Body = emailTemplate,
             IsHtmlBody = true,
         };
 
