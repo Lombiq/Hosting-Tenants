@@ -10,7 +10,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.Extensions;
 public static class TestCaseUITestContextExtensions
 {
     private const string SuccessfulSubject = "Successful test message";
-    private const string UnSuccessfulSubject = "Successful test message";
+    private const string UnSuccessfulSubject = "Unsuccessful test message";
     private const string DashboardWarning =
         "//p[contains(@class,'alert-danger')][contains(.,'It seems that your site sent out more e-mails')]";
 
