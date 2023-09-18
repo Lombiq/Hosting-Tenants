@@ -1,9 +1,9 @@
-﻿namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Constants;
+namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Constants;
 
 public static class MediaStorageManagementOptionsConstants
 {
     /// <summary>
-    /// Default MaximumStorageQuota in bytes representing 1GB.
+    /// Default maximum storage quota in bytes representing 1GB.
     /// </summary>
-    public const long MaximumStorageQuota = 1_073_741_824;
+    public const long MaximumStorageQuotaBytes = 1_073_741_824;
 }

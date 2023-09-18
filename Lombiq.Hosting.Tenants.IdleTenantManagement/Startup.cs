@@ -25,7 +25,7 @@ public class ShutDownIdleTenantsStartup : StartupBase
         IApplicationBuilder app,
         IEndpointRouteBuilder routes,
         IServiceProvider serviceProvider) =>
-        app.UseMiddleware<IdleTimeProviderMiddleware>();
+            app.UseMiddleware<IdleTimeProviderMiddleware>();
 
     public override void ConfigureServices(IServiceCollection services)
     {

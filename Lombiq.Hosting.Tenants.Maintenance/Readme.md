@@ -71,6 +71,25 @@ The following configuration options are available to set the site URL:
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
 
+Defining each tenant's URL separately is also an option, in this case, you have to use the `SiteUrlFromTenantName` property instead of `SiteUrl` and add your tenants' name and URL:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "UpdateSiteUrl": {
+        "IsEnabled": true,
+        "DefaultTenantSiteUrl": "https://domain.com",
+        "SiteUrlFromTenantName": {
+          "Tenant1": "https://domain.com/custom-url",
+          "Tenant2": "https://custom-domain.com"
+        }
+      }
+    }
+  }
+}
+```
+
 ### `Lombiq.Hosting.Tenants.Maintenance.UpdateShellRequestUrls`
 
 It's a maintenance task that updates the shell's request URLs in each tenant's shell settings based on the app configuration. It is available only for the default tenant.
@@ -94,3 +113,22 @@ The following configuration options are available to set the shell request URLs:
 ```
 
 **NOTE**: The `{TenantName}` placeholder will be replaced with the actual tenant name automatically.
+
+### `Lombiq.Hosting.Tenants.Maintenance.RemoveUsers`
+
+It's a maintenance task that removes users from the database with the given email domain. It is available only for the default tenant. Useful if you have Azure AD enabled in your production environment and you want to reset staging to the production database. Then you would get "System.InvalidOperationException: Provider AzureAD is already linked for userName" error, so deleting those users will solve the error.
+
+The following configuration should be used to allow the maintenance to run:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "RemoveUsers": {
+        "IsEnabled": true,
+        "EmailDomain": "example.com"
+      }
+    }
+  }
+}
+```

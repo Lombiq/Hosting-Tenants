@@ -31,12 +31,20 @@ public class EnvironmentRobotsMiddleware
         {
             var headerValue = context.Response.Headers["X-Robots-Tag"].FirstOrDefault() ?? string.Empty;
 
-            var directives = new List<string> { headerValue };
+            var directives = new List<string>();
 
+            if (!string.IsNullOrEmpty(headerValue))
+            {
+                directives.Add(headerValue);
+            }
+
+            // False warning, since headerValue is initialized to string.Empty if it would be null.
+#pragma warning disable S2259 // Null pointers should not be dereferenced
             if (!headerValue.Contains("noindex"))
             {
                 directives.Add("noindex");
             }
+#pragma warning restore S2259 // Null pointers should not be dereferenced
 
             if (!headerValue.Contains("nofollow"))
             {

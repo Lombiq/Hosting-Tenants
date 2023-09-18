@@ -1,4 +1,6 @@
 using OrchardCore.Environment.Shell;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Helpers;
 
@@ -13,11 +15,22 @@ internal static class TenantUrlHelpers
     public static string GetEvaluatedValueForTenant(
         string valueForDefaultTenant,
         string valueForAnyTenant,
-        ShellSettings shellSettings)
+        ShellSettings shellSettings,
+        IDictionary<string, string> valueForTenantByName = null)
     {
-        var evaluatedValue = !string.IsNullOrEmpty(valueForAnyTenant)
-            ? ReplaceTenantName(valueForAnyTenant, shellSettings.Name)
-            : string.Empty;
+        var evaluatedValue = string.Empty;
+
+        if (!string.IsNullOrEmpty(valueForAnyTenant))
+        {
+            evaluatedValue = ReplaceTenantName(valueForAnyTenant, shellSettings.Name);
+        }
+        else if (valueForTenantByName?.Any() == true)
+        {
+            foreach (var pair in valueForTenantByName)
+            {
+                if (pair.Key == shellSettings.Name) evaluatedValue = pair.Value;
+            }
+        }
 
         return shellSettings.IsDefaultShell() ? valueForDefaultTenant : evaluatedValue;
     }
