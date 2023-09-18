@@ -1,7 +1,5 @@
-﻿using Lombiq.HelpfulExtensions.Extensions.Emails.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using OrchardCore.Email;
-using OrchardCore.Environment.Shell;
 using OrchardCore.Security;
 using OrchardCore.Security.Services;
 using OrchardCore.Users;
@@ -16,19 +14,13 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
 public class EmailQuotaEmailService : IEmailQuotaEmailService
 {
-    private readonly IEmailTemplateService _emailTemplateService;
-    private readonly ShellSettings _shellSettings;
     private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
     public EmailQuotaEmailService(
-        IEmailTemplateService emailTemplateService,
-        ShellSettings shellSettings,
         IRoleService roleService,
         UserManager<IUser> userManager)
     {
-        _emailTemplateService = emailTemplateService;
-        _shellSettings = shellSettings;
         _roleService = roleService;
         _userManager = userManager;
     }
