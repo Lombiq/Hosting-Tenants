@@ -1,15 +1,13 @@
 ﻿@{
     ViewLayout = "Layout__EmailTemplate";
 }
-﻿<p>@T["Hi,"]</p>
+
+<p>@T["Hi,"]</p>
 <p>
     @T["It seems that your {0} site sent out more e-mails than the available quota for this month. E-mail sending has " +
-        "been stopped until next month (any feature sending out e-mails will fail). Check out the " +
-        "<a href=\"https://dotnest.com/pricing\" target=\"_blank\">Pricing page</a> to see what options you have to " +
-        "send more e-mails, or don’t hesitate to <a href=\"https://dotnest.com/contact-us\" target=\"_blank\">contact " +
-        "us</a> if you have questions!", Model.HostName]
+        "been stopped until next month (any feature sending out e-mails will fail).", Model.HostName]
 </p>
 <p>
     @T["Thank you,"]<br/>
-    @T["Your DotNest Crew"]
+    @T["Your Admin Crew"]
 </p>
