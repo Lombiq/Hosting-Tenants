@@ -2,5 +2,5 @@
 
 public static class EmailQuotaOptionsConstants
 {
-    public const int DefaultEmailQuota = 1;
+    public const int DefaultEmailQuota = 1000;
 }
