@@ -1,12 +1,27 @@
 ﻿@using Newtonsoft.Json
+@using Lombiq.Hosting.Tenants.Management.Controllers
+@using OrchardCore.Mvc.Core.Utilities
 
-<div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
-    <label for="ShellSettings_input" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
-    <div class="@Orchard.GetEndCssClasses()">
-        <div id="ShellSettings_editor" asp-for="Text" style="min-height: 400px;" class="form-control"></div>
-        <textarea id="ShellSettings_input" hidden>@Html.Raw(Model.Settings)</textarea>
+@model Lombiq.Hosting.Tenants.Management.Models.ShellSettingsEditorViewModel
+
+
+<form asp-action="Edit"
+      asp-controller="ShellSettingsEditor"
+      asp-area="Lombiq.Hosting.Tenants.Management"
+      method="post"
+      class="no-multisubmit">
+    <div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
+        <label asp-for="Settings" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
+        <div class="@Orchard.GetEndCssClasses()">
+            <div id="@Html.IdFor(x => x.Settings)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
+            <textarea asp-for="Settings" hidden>@Html.Raw(Model.Settings)</textarea>
+        </div>
     </div>
-</div>
+    <div class="mb-3">
+        <input hidden asp-for="TenantId" value="@Model.TenantId"/>
+        <button class="btn btn-primary save" type="submit">@T["Save settings"]</button>
+    </div>
+</form>
 
 <script asp-name="monaco" depends-on="admin" at="Foot"></script>
 <script at="Foot" depends-on="monaco">
@@ -33,8 +48,8 @@
 
             setTheme();
 
-            var editor = monaco.editor.create(document.getElementById('ShellSettings_editor'), settings);
-            var textArea = document.getElementById('ShellSettings_input');
+            var editor = monaco.editor.create(document.getElementById('@Html.IdFor(id => id.Settings)_editor'), settings);
+            var textArea = document.getElementById('@Html.IdFor(id => id.Settings)');
 
             editor.getModel().setValue(textArea.value);
 
