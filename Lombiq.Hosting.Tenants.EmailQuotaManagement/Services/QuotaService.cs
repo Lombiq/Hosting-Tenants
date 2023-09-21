@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell.Configuration;
+using OrchardCore.Modules;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -15,17 +16,20 @@ public class QuotaService : IQuotaService
     private readonly EmailQuotaOptions _emailQuotaOptions;
     private readonly IShellConfiguration _shellConfiguration;
     private readonly SmtpSettings _smtpOptions;
+    private readonly IClock _clock;
 
     public QuotaService(
         ISession session,
         IOptions<EmailQuotaOptions> emailQuotaOptions,
         IShellConfiguration shellConfiguration,
-        IOptions<SmtpSettings> smtpOptions)
+        IOptions<SmtpSettings> smtpOptions,
+        IClock clock)
     {
         _session = session;
         _emailQuotaOptions = emailQuotaOptions.Value;
         _shellConfiguration = shellConfiguration;
         _smtpOptions = smtpOptions.Value;
+        _clock = clock;
     }
 
     public bool ShouldLimitEmails()
@@ -50,7 +54,11 @@ public class QuotaService : IQuotaService
 
         if (currentQuota != null) return currentQuota;
 
-        currentQuota = new EmailQuota();
+        currentQuota = new EmailQuota
+        {
+            // Need to set default value otherwise the database might complain about being 01/01/0001 out of range.
+            LastReminder = _clock.UtcNow.AddMonths(-1),
+        };
         _session.Save(currentQuota);
 
         return currentQuota;
