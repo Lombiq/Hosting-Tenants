@@ -26,3 +26,12 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { "OrchardCore.Setup" }
 )]
+
+[assembly: Feature(
+    Id = ShellSettingsEditor,
+    Name = "Lombiq Hosting - Tenants Management - Shell Settings Editor",
+    Description = "",
+    Category = "Hosting",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { "OrchardCore.Tenants" }
+)]
