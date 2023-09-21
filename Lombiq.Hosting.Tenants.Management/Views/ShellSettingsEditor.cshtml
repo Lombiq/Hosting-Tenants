@@ -1,9 +1,5 @@
 ﻿@using Newtonsoft.Json
-@using Lombiq.Hosting.Tenants.Management.Controllers
-@using OrchardCore.Mvc.Core.Utilities
-
 @model Lombiq.Hosting.Tenants.Management.Models.ShellSettingsEditorViewModel
-
 
 <form asp-action="Edit"
       asp-controller="ShellSettingsEditor"
@@ -11,10 +7,10 @@
       method="post"
       class="no-multisubmit">
     <div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
-        <label asp-for="Settings" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
+        <label asp-for="Json" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
         <div class="@Orchard.GetEndCssClasses()">
-            <div id="@Html.IdFor(x => x.Settings)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
-            <textarea asp-for="Settings" hidden>@Html.Raw(Model.Settings)</textarea>
+            <div id="@Html.IdFor(x => x.Json)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
+            <textarea asp-for="Json" hidden>@Html.Raw(Model.Json)</textarea>
         </div>
     </div>
     <div class="mb-3">
@@ -48,8 +44,8 @@
 
             setTheme();
 
-            var editor = monaco.editor.create(document.getElementById('@Html.IdFor(id => id.Settings)_editor'), settings);
-            var textArea = document.getElementById('@Html.IdFor(id => id.Settings)');
+            var editor = monaco.editor.create(document.getElementById('@Html.IdFor(id => id.Json)_editor'), settings);
+            var textArea = document.getElementById('@Html.IdFor(id => id.Json)');
 
             editor.getModel().setValue(textArea.value);
 

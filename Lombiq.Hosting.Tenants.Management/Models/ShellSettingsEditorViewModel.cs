@@ -2,6 +2,6 @@
 
 public class ShellSettingsEditorViewModel
 {
-    public string Settings { get; set; }
+    public string Json { get; set; }
     public string TenantId { get; set; }
 }

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
-using System.Threading.Tasks;
 using OrchardCore.Tenants.Controllers;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Controllers;
 
@@ -16,16 +16,13 @@ namespace Lombiq.Hosting.Tenants.Management.Controllers;
 public class ShellSettingsEditorController : Controller
 {
     private readonly IAuthorizationService _authorizationService;
-    private readonly ShellSettings _shellSettings;
     private readonly IShellHost _shellHost;
 
     public ShellSettingsEditorController(
         IAuthorizationService authorizationService,
-        ShellSettings shellSettings,
         IShellHost shellHost)
     {
         _authorizationService = authorizationService;
-        _shellSettings = shellSettings;
         _shellHost = shellHost;
     }
 
@@ -44,7 +41,7 @@ public class ShellSettingsEditorController : Controller
         }
 
         var jsonConfigurationParser = new JsonConfigurationParser();
-        var shellSettingsDictionary = jsonConfigurationParser.ParseConfiguration(model.Settings);
+        var shellSettingsDictionary = jsonConfigurationParser.ParseConfiguration(model.Json);
         foreach (var key in shellSettingsDictionary.Keys)
         {
             shellSettings[key] = shellSettingsDictionary[key];

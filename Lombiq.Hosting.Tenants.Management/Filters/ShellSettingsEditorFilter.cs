@@ -17,8 +17,6 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
     private readonly IShapeFactory _shapeFactory;
     private readonly IShellHost _shellHost;
 
-
-
     public ShellSettingsEditorFilter(
         ILayoutAccessor layoutAccessor,
         IShapeFactory shapeFactory,
@@ -49,14 +47,13 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
             {
                 var layout = await _layoutAccessor.GetLayoutAsync();
                 var contentZone = layout.Zones["Content"];
-                var asJsonNode = shellSettings.ShellConfiguration.AsJsonNode();
-                var jsonString = asJsonNode.ToJsonString();
+                var shellConfigurationAsJson = shellSettings.ShellConfiguration.AsJsonNode().ToJsonString();
                 await contentZone.AddAsync(
                     await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
                         "ShellSettingsEditor",
                         viewModel =>
                         {
-                            viewModel.Settings = jsonString;
+                            viewModel.Json = shellConfigurationAsJson;
                             viewModel.TenantId = context.RouteData.Values["Id"].ToString();
                         }),
                     "6");
@@ -65,6 +62,4 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
 
         await next();
     }
-
-
 }
