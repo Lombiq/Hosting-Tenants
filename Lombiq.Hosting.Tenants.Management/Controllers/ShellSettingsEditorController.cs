@@ -52,12 +52,12 @@ public class ShellSettingsEditorController : Controller
 
         await _shellHost.UpdateShellSettingsAsync(shellSettings);
         return RedirectToAction(
-            nameof(AdminController.Index),
+            nameof(AdminController.Edit),
             typeof(AdminController).ControllerName(),
             new
             {
-                area = "OrchardCore.Tenants"
-                //id = model.TenantId,
+                area = "OrchardCore.Tenants",
+                id = model.TenantId,
             });
     }
 
