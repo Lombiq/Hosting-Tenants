@@ -23,15 +23,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Temporary upgrade to nighlty version until every submodule is upgraded to 1.7.0 -->
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.Settings" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.Users.Abstractions" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.Users.Core" Version="1.7.0-preview-17520" />
-        <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0-preview-17520" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.Settings" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.Users.Abstractions" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.Users.Core" Version="1.7.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,7 +48,7 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="6.0.0" />
+        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="8.0.0" />
     </ItemGroup>
 
 </Project>

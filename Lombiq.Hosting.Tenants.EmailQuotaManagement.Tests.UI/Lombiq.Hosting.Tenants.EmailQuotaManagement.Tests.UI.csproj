@@ -6,14 +6,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Lombiq Hosting - Tenants Media Storage Management - UI Test Extensions</Title>
+    <Title>Lombiq Hosting - Tenants Email Quota Management - UI Test Extensions</Title>
     <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
-    <Description>Extension methods that test various features in Lombiq Hosting - Tenants Media Storage Management, with the help of Lombiq UI Testing Toolbox for Orchard Core. See the project website for detailed documentation.</Description>
+    <Description>Extension methods that test various features in Lombiq Hosting - Tenants Email Quota Management, with the help of Lombiq UI Testing Toolbox for Orchard Core. See the project website for detailed documentation.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Tenants;LombiqHostingSuite;Shouldly;xUnit;UITesting;Testing</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI/Readme.md</PackageProjectUrl>
     <PackageLicenseFile>License.md</PackageLicenseFile>
   </PropertyGroup>
 

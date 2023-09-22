@@ -23,11 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Temporary upgrade to nighlty version until every submodule is upgraded to 1.7.0 -->
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-    <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0-preview-17520" />
-    <PackageReference Include="OrchardCore" Version="1.7.0-preview-17520" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0" />
+    <PackageReference Include="OrchardCore" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>

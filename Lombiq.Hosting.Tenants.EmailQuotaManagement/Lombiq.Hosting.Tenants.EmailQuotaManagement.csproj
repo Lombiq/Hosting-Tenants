@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Title>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core</Title>
+    <Title>Lombiq Hosting - Tenants Email Quota Management for Orchard Core</Title>
     <Authors>Lombiq Technologies</Authors>
-    <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
-    <Description>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core: This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.</Description>
+    <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
+    <Description>Lombiq Hosting - Tenants Email Quota Management for Orchard Core: With the help of this module, you can set restrictions regarding maximum email sent per tenant. See the project website for detailed documentation.</Description>
     <PackageIcon>NuGetIcon.png</PackageIcon>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;Tenants;LombiqHostingSuite;</PackageTags>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.FeaturesGuard/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EmailQuotaManagement/Readme.md</PackageProjectUrl>
     <PackageLicenseFile>License.md</PackageLicenseFile>
   </PropertyGroup>
 
@@ -34,21 +34,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Admin" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Email.Core" Version="1.7.0" />
     <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
-    <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0" />
-    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.AdminDashboard" Version="1.7.0" />
     <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Email.Abstractions" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.7.0" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="YesSql.Abstractions" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.Common\Lombiq.HelpfulLibraries.Common.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
+    <ProjectReference Include="..\..\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="8.0.0" />
-    <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="8.0.0" />
+    <PackageReference Include="Lombiq.HelpfulExtensions" Version="7.0.0" />
   </ItemGroup>
-
 </Project>

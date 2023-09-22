@@ -34,11 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Temporary upgrade to nighlty version until every submodule is upgraded to 1.7.0 -->
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0-preview-17520" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0-preview-17520" />
-    <PackageReference Include="OrchardCore.Tenants" Version="1.7.0-preview-17520" />
-    <PackageReference Include="OrchardCore.Users" Version="1.7.0-preview-17520" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Tenants" Version="1.7.0" />
+    <PackageReference Include="OrchardCore.Users" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
@@ -46,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="6.0.0" />
+    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
