@@ -42,9 +42,3 @@ public void ConfigureServices(IServiceCollection services) =>
 ```
 
 **NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default `HideFromSetupScreen` tag then just call the extension method without any parameter.
-
-## Dependencies
-
-This module has the following dependencies:
-
-- [Lombiq Helpful Libraries for Orchard Core](https://github.com/Lombiq/Helpful-Libraries)

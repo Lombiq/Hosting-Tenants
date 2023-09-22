@@ -73,7 +73,7 @@ public class EmailSenderQuotaService : ISmtpService
         ShellScope.AddDeferredTask(async _ =>
         {
             var emailParameters = await _emailQuotaEmailService.CreateEmailForExceedingQuotaAsync();
-            emailParameters.Body = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuote", new
+            emailParameters.Body = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuota", new
             {
                 HostName = _shellSettings.Name,
             });

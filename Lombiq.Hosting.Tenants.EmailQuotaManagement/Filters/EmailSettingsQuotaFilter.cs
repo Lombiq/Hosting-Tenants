@@ -57,8 +57,7 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             await contentZone.AddAsync(
                 await _shapeFactory.CreateAsync("EmailSettingsQuota", new
                 {
-                    CurrentEmailCount = quota.CurrentEmailQuotaCount,
-                    _emailQuotaOptions.EmailQuota,
+                    CurrentEmailCount = quota.CurrentEmailQuotaCount, EmailQuota = _emailQuotaOptions.EmailQuotaPerMonth,
                 }),
                 "0");
         }

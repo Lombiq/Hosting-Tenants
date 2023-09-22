@@ -43,7 +43,7 @@ public class QuotaService : IQuotaService
         var currentQuota = await GetCurrentQuotaAsync();
         return new QuotaResult
         {
-            IsOverQuota = _emailQuotaOptions.EmailQuota <= currentQuota.CurrentEmailQuotaCount,
+            IsOverQuota = _emailQuotaOptions.EmailQuotaPerMonth <= currentQuota.CurrentEmailQuotaCount,
             EmailQuota = currentQuota,
         };
     }
