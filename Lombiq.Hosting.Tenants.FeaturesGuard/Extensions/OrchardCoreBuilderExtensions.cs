@@ -30,6 +30,17 @@ public static class OrchardCoreBuilderExtensions
             });
 
     /// <summary>
+    /// Binds Email Quota Management as the conditional feature and Email as the condition feature to
+    /// <see cref="ConditionallyEnabledFeaturesOptions"/>.
+    /// </summary>
+    public static OrchardCoreBuilder ConfigureFeaturesGuardForEmailQuota(this OrchardCoreBuilder builder) =>
+        builder.ConfigureFeaturesGuardWithoutOverriding(
+            new Dictionary<string, IEnumerable<string>>
+            {
+                ["Lombiq.Hosting.Tenants.EmailQuotaManagement"] = new List<string> { "OrchardCore.Email" },
+            });
+
+    /// <summary>
     /// Binds the provided dictionary's keys and values as the conditional and condition features to
     /// <see cref="ConditionallyEnabledFeaturesOptions"/>.
     /// </summary>
