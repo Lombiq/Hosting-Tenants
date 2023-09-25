@@ -34,7 +34,7 @@ public class IdleTenantTestController : Controller
 
     public async Task<string> Index()
     {
-        var shellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "allmodules");
+        var shellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "princentest");
         var host = string.IsNullOrEmpty(shellSettings.RequestUrlHost)
             ? HttpContext.Request.Host.ToString()
             : shellSettings.RequestUrlHost;
