@@ -30,7 +30,7 @@ public class Startup : StartupBase
         services.AddDataMigration<EmailQuotaMigrations>();
         services.AddSingleton<IIndexProvider, EmailQuotaIndexProvider>();
         services.Configure<EmailQuotaOptions>(options =>
-            options.EmailQuota = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuota")
+            options.EmailQuotaPerMonth = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuota")
                 ?? DefaultEmailQuota);
 
         services.AddScoped<IQuotaService, QuotaService>();
