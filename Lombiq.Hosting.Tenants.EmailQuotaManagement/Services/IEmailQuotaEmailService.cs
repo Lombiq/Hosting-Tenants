@@ -1,4 +1,5 @@
 ﻿using OrchardCore.Email;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -12,5 +13,5 @@ public interface IEmailQuotaEmailService
     /// <summary>
     /// Creates the <see cref="MailMessage"/> that could be sent to the site owners when the email quota is exceeded.
     /// </summary>
-    Task<MailMessage> CreateEmailForExceedingQuotaAsync();
+    Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync();
 }
