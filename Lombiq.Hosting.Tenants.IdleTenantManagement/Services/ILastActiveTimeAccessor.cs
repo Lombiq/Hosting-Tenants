@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
 using System;
 using System.Threading;
@@ -28,7 +28,7 @@ public class LastActiveTimeAccessor : ILastActiveTimeAccessor
 
     public DateTime LastActiveDateTimeUtc
     {
-        get => new(Interlocked.CompareExchange(ref _lastActiveDateTimeUtcTicks, 0, 0));
+        get => new(Interlocked.CompareExchange(ref _lastActiveDateTimeUtcTicks, 0, 0), DateTimeKind.Utc);
         private set => Interlocked.Exchange(ref _lastActiveDateTimeUtcTicks, value.Ticks);
     }
 
