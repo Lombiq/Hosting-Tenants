@@ -32,18 +32,20 @@ public class IdleTenantTestController : Controller
         _shellSettingsManager = shellSettingsManager;
     }
 
-    public async Task<string> Index()
+    public async Task<string> Index(int releaseCount = 1000, string backupTenantName = "ikwileentaart")
     {
-        var shellSettings = (await _shellSettingsManager.LoadSettingsAsync()).First(shellSettings => shellSettings.Name == "princentest");
+        var shellSettings = (await _shellSettingsManager.LoadSettingsAsync())
+            .FirstOrDefault(tenantShellSettings => tenantShellSettings.Name == "princentest");
+        shellSettings ??= (await _shellSettingsManager.LoadSettingsAsync())
+            .First(tenantShellSettings => tenantShellSettings.Name == backupTenantName);
         var host = string.IsNullOrEmpty(shellSettings.RequestUrlHost)
             ? HttpContext.Request.Host.ToString()
             : shellSettings.RequestUrlHost;
         _httpClient.BaseAddress ??= new Uri(HttpContext.Request.Scheme + "://" + host);
 
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < releaseCount; i++)
         {
             await _shellHost.ReleaseShellContextAsync(shellSettings);
-
             await _httpClient.GetAsync(shellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
         }
 
