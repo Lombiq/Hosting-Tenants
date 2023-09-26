@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using OrchardCore.Email;
 using OrchardCore.Security;
 using OrchardCore.Security.Services;
 using OrchardCore.Users;
@@ -25,7 +24,7 @@ public class EmailQuotaEmailService : IEmailQuotaEmailService
         _userManager = userManager;
     }
 
-    public async Task<MailMessage> CreateEmailForExceedingQuotaAsync()
+    public async Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync()
     {
         // Get users with site owner permission.
         var roles = await _roleService.GetRolesAsync();
@@ -39,14 +38,6 @@ public class EmailQuotaEmailService : IEmailQuotaEmailService
             siteOwners.AddRange(await _userManager.GetUsersInRoleAsync(role.RoleName));
         }
 
-        var siteOwnerEmails = siteOwners.Select(user => (user as User)?.Email);
-        var emailMessage = new MailMessage
-        {
-            Bcc = siteOwnerEmails.Join(","),
-            Subject = "[Action Required] Your DotNest site has run over its e-mail quota",
-            IsHtmlBody = true,
-        };
-
-        return emailMessage;
+        return siteOwners.Select(user => (user as User)?.Email);
     }
 }
