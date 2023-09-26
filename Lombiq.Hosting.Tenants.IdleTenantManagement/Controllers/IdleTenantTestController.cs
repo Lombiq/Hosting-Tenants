@@ -7,6 +7,7 @@ using OrchardCore.Modules;
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Controllers;
@@ -32,7 +33,10 @@ public class IdleTenantTestController : Controller
         _shellSettingsManager = shellSettingsManager;
     }
 
-    public async Task<string> Index(int releaseCount = 1000, string backupTenantName = "ikwileentaart")
+    public async Task<string> Index(
+        int releaseCount = 1000,
+        string backupTenantName = "ikwileentaart",
+        int shouldWait = 0)
     {
         var shellSettings = (await _shellSettingsManager.LoadSettingsAsync())
             .FirstOrDefault(tenantShellSettings => tenantShellSettings.Name == "princentest");
@@ -46,7 +50,9 @@ public class IdleTenantTestController : Controller
         for (int i = 0; i < releaseCount; i++)
         {
             await _shellHost.ReleaseShellContextAsync(shellSettings);
+            Wait(shouldWait);
             await _httpClient.GetAsync(shellSettings.RequestUrlPrefix, HttpContext.RequestAborted);
+            Wait(shouldWait);
         }
 
         return "OK";
@@ -58,5 +64,13 @@ public class IdleTenantTestController : Controller
         await _idleShutdown.ShutDownIdleTenantsAsync();
 
         return "OK";
+    }
+
+    private void Wait(int shouldWait)
+    {
+        if (shouldWait > 0)
+        {
+            Thread.Sleep(shouldWait);
+        }
     }
 }
