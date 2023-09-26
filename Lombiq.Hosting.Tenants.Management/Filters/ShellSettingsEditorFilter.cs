@@ -53,7 +53,8 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
                 var contentZone = layout.Zones["Content"];
                 var editableItems = shellSettings.ShellConfiguration.AsEnumerable().Where(item =>
                     item.Value != null
-                    && (!item.Key.Contains(':') || item.Key.Contains($"{shellSettings.Name}:")))
+                    && item.Key.Contains($"{shellSettings.Name}:")
+                    )
                     .ToDictionary(key => key.Key, value => value.Value);
 
                 await contentZone.AddAsync(
