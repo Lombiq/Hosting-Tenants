@@ -1,13 +1,14 @@
 ﻿using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
 using Lombiq.Hosting.Tenants.Management.Permissions;
-using Lombiq.Hosting.Tenants.Management.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Controllers;
@@ -40,11 +41,10 @@ public class ShellSettingsEditorController : Controller
             return NotFound();
         }
 
-        var jsonConfigurationParser = new JsonConfigurationParser();
-        var shellSettingsDictionary = jsonConfigurationParser.ParseConfiguration(model.Json);
-        foreach (var key in shellSettingsDictionary.Keys)
+        var settingsDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.Json);
+        foreach (var key in settingsDictionary.Keys)
         {
-            shellSettings[key] = shellSettingsDictionary[key];
+            shellSettings[key] = settingsDictionary[key];
         }
 
         await _shellHost.UpdateShellSettingsAsync(shellSettings);
@@ -57,6 +57,4 @@ public class ShellSettingsEditorController : Controller
                 id = model.TenantId,
             });
     }
-
-
 }
