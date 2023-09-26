@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.Envi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI", "Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI\Lombiq.Hosting.Tenants.EnvironmentRobots.Tests.UI.csproj", "{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.EmailQuotaManagement", "Lombiq.Hosting.Tenants.EmailQuotaManagement\Lombiq.Hosting.Tenants.EmailQuotaManagement.csproj", "{86432617-36A6-4E2D-A2F8-202057D92979}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI", "Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI\Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.csproj", "{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{158D7234-FA0B-413A-BE30-1CA6D8DB11F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86432617-36A6-4E2D-A2F8-202057D92979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86432617-36A6-4E2D-A2F8-202057D92979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86432617-36A6-4E2D-A2F8-202057D92979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86432617-36A6-4E2D-A2F8-202057D92979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
