@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
+using System;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -67,15 +68,51 @@ public class QuotaService : IQuotaService
     public void IncreaseQuota(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailQuotaCount++;
-        SaveQuota(emailQuota);
+        _session.Save(emailQuota);
     }
 
-    public void SaveQuota(EmailQuota emailQuota) =>
+    public void SaveQuotaReminder(EmailQuota emailQuota)
+    {
+        emailQuota.LastReminder = _clock.UtcNow;
+        emailQuota.LastReminderPercentage = CurrentUsagePercentage(emailQuota);
         _session.Save(emailQuota);
+    }
+
+    public bool ShouldSendReminderEmail(EmailQuota emailQuota, int? currentPercentage = null)
+    {
+        currentPercentage ??= CurrentUsagePercentage(emailQuota);
+        if (currentPercentage < 80)
+        {
+            return false;
+        }
+
+        var isSameMonth = IsSameMonth(_clock.UtcNow, emailQuota.LastReminder);
+
+        if (!isSameMonth)
+        {
+            return true;
+        }
+
+        switch (emailQuota.LastReminderPercentage)
+        {
+            case >= 80 when currentPercentage < 90:
+            case >= 90 when currentPercentage < 100:
+            case >= 100:
+                return false;
+            default:
+                return true;
+        }
+    }
 
     public void ResetQuota(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailQuotaCount = 0;
         _session.Save(emailQuota);
     }
+
+    public int CurrentUsagePercentage(EmailQuota emailQuota) =>
+        emailQuota.CurrentEmailQuotaCount / _emailQuotaOptions.EmailQuotaPerMonth * 100;
+
+    private static bool IsSameMonth(DateTime date1, DateTime date2) =>
+        date1.Month == date2.Month && date1.Year == date2.Year;
 }

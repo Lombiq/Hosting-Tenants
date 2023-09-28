@@ -6,4 +6,5 @@ public class EmailQuota
 {
     public int CurrentEmailQuotaCount { get; set; }
     public DateTime LastReminder { get; set; }
+    public int LastReminderPercentage { get; set; }
 }

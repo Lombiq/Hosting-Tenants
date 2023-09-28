@@ -8,6 +8,7 @@ public class EmailQuotaIndex : MapIndex
 {
     public int CurrentEmailQuotaCount { get; set; }
     public DateTime LastReminder { get; set; }
+    public int LastReminderPercentage { get; set; }
 }
 
 public class EmailQuotaIndexProvider : IndexProvider<EmailQuota>
@@ -18,5 +19,6 @@ public class EmailQuotaIndexProvider : IndexProvider<EmailQuota>
             {
                 CurrentEmailQuotaCount = emailQuota.CurrentEmailQuotaCount,
                 LastReminder = emailQuota.LastReminder,
+                LastReminderPercentage = emailQuota.LastReminderPercentage,
             });
 }

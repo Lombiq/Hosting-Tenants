@@ -34,7 +34,17 @@ public interface IQuotaService
     void ResetQuota(EmailQuota emailQuota);
 
     /// <summary>
-    /// Saves the given quota.
+    /// Saves the given quota on reminder sent.
     /// </summary>
-    void SaveQuota(EmailQuota emailQuota);
+    void SaveQuotaReminder(EmailQuota emailQuota);
+
+    /// <summary>
+    /// Returns <see langword="true"/> if the reminder email should be sent.
+    /// </summary>
+    bool ShouldSendReminderEmail(EmailQuota emailQuota, int? currentPercentage = null);
+
+    /// <summary>
+    /// Returns the current quota usage percentage.
+    /// </summary>
+    int CurrentUsagePercentage(EmailQuota emailQuota);
 }

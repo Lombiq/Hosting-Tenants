@@ -11,8 +11,18 @@ public class EmailQuotaMigrations : DataMigration
     {
         SchemaBuilder.CreateMapIndexTable<EmailQuotaIndex>(
             table => table.Column<int>(nameof(EmailQuotaIndex.CurrentEmailQuotaCount))
-                .Column<DateTime>(nameof(EmailQuotaIndex.LastReminder)));
+                .Column<DateTime>(nameof(EmailQuotaIndex.LastReminder))
+                .Column<int>(nameof(EmailQuotaIndex.LastReminderPercentage)));
 
-        return 1;
+        return 2;
+    }
+
+    public int UpdateFrom1()
+    {
+        SchemaBuilder.AlterTable(nameof(EmailQuotaIndex), table => table
+            .AddColumn<int>(nameof(EmailQuotaIndex.LastReminderPercentage))
+        );
+
+        return 2;
     }
 }

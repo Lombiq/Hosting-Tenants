@@ -4,8 +4,8 @@ using Microsoft.Extensions.Localization;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Scope;
-using OrchardCore.Modules;
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -16,7 +16,6 @@ public class EmailSenderQuotaService : ISmtpService
     private readonly ISmtpService _smtpService;
     private readonly IQuotaService _quotaService;
     private readonly IEmailQuotaEmailService _emailQuotaEmailService;
-    private readonly IClock _clock;
     private readonly ShellSettings _shellSettings;
     private readonly IEmailTemplateService _emailTemplateService;
 
@@ -25,7 +24,6 @@ public class EmailSenderQuotaService : ISmtpService
         IStringLocalizer<EmailSenderQuotaService> stringLocalizer,
         IQuotaService quotaService,
         IEmailQuotaEmailService emailQuotaEmailService,
-        IClock clock,
         ShellSettings shellSettings,
         IEmailTemplateService emailTemplateService)
     {
@@ -33,7 +31,6 @@ public class EmailSenderQuotaService : ISmtpService
         T = stringLocalizer;
         _quotaService = quotaService;
         _emailQuotaEmailService = emailQuotaEmailService;
-        _clock = clock;
         _shellSettings = shellSettings;
         _emailTemplateService = emailTemplateService;
     }
@@ -46,10 +43,11 @@ public class EmailSenderQuotaService : ISmtpService
         }
 
         var isQuotaOverResult = await _quotaService.IsQuotaOverTheLimitAsync();
+        await SendAlertEmailIfNecessaryAsync(isQuotaOverResult.EmailQuota);
+
+        // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            await SendAlertEmailIfNecessaryAsync(isQuotaOverResult.EmailQuota);
-
             return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
         }
 
@@ -64,32 +62,60 @@ public class EmailSenderQuotaService : ISmtpService
 
     private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
-        if (IsSameMonth(_clock.UtcNow, emailQuota.LastReminder)) return;
+        var currentUsagePercentage = _quotaService.CurrentUsagePercentage(emailQuota);
+        if (!_quotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        emailQuota.LastReminder = _clock.UtcNow;
-        _quotaService.SaveQuota(emailQuota);
+        var siteOwnerEmails = (await _emailQuotaEmailService.CollectUserEmailsForExceedingQuotaAsync()).ToList();
+        if (currentUsagePercentage >= 100)
+        {
+            var emailMessage = new MailMessage
+            {
+                Subject = T["[Action Required] Your DotNest site has run over its e-mail quota"],
+                IsHtmlBody = true,
+            };
+            SendQuotaEmail(siteOwnerEmails, emailMessage, "EmailQuota", currentUsagePercentage);
+            _quotaService.SaveQuotaReminder(emailQuota);
+            return;
+        }
 
-        var siteOwnerEmails = await _emailQuotaEmailService.CollectUserEmailsForExceedingQuotaAsync();
+        SendQuotaEmailWithPercentage(siteOwnerEmails, currentUsagePercentage);
+        _quotaService.SaveQuotaReminder(emailQuota);
+    }
+
+    private void SendQuotaEmailWithPercentage(
+        IEnumerable<string> siteOwnerEmails,
+        int percentage)
+    {
         var emailMessage = new MailMessage
         {
-            Subject = T["[Action Required] Your DotNest site has run over its e-mail quota"],
+            Subject = T["[Warning] Your DotNest site has used {0}% of its e-mail quota", percentage],
             IsHtmlBody = true,
         };
+        SendQuotaEmail(siteOwnerEmails, emailMessage, $"EmailQuotaWarning", percentage);
+    }
 
+    private void SendQuotaEmail(
+        IEnumerable<string> siteOwnerEmails,
+        MailMessage emailMessage,
+        string emailTemplateName,
+        int percentage)
+    {
         foreach (var siteOwnerEmail in siteOwnerEmails)
         {
             ShellScope.AddDeferredTask(async _ =>
             {
                 emailMessage.To = siteOwnerEmail;
-                emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuota", new
+                emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {
                     HostName = _shellSettings.Name,
+                    Percentage = percentage,
                 });
+                // ISmtpService must be used within this class otherwise it won't call the original ISmtpService
+                // implementation, but loop back to here.
                 await _smtpService.SendAsync(emailMessage);
             });
         }
     }
 
-    private static bool IsSameMonth(DateTime date1, DateTime date2) =>
-        date1.Month == date2.Month && date1.Year == date2.Year;
+
 }
