@@ -78,7 +78,7 @@ public class EmailSenderQuotaService : ISmtpService
             return;
         }
 
-        SendQuotaEmailWithPercentage(siteOwnerEmails, currentUsagePercentage);
+        SendQuotaEmailWithPercentage(siteOwnerEmails, currentUsagePercentage / 10 * 10);
         _quotaService.SaveQuotaReminder(emailQuota);
     }
 

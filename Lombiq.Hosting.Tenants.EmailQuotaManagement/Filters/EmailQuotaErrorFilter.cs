@@ -41,13 +41,24 @@ public class EmailQuotaErrorFilter : IAsyncResultFilter
             actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" &&
             actionRouteValue is nameof(AdminController.Index) &&
             context.Result is ViewResult &&
-            _quotaService.ShouldLimitEmails() &&
-            (await _quotaService.IsQuotaOverTheLimitAsync()).IsOverQuota)
+            _quotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
+            var currentEmailQuota = await _quotaService.IsQuotaOverTheLimitAsync();
 
-            await contentZone.AddAsync(await _shapeFactory.CreateAsync("EmailQuotaError"), "0");
+            var roundedCurrentPercentage = _quotaService.CurrentUsagePercentage(currentEmailQuota.EmailQuota) / 10 * 10;
+
+            if (roundedCurrentPercentage >= 80)
+            {
+                await contentZone.AddAsync(
+                    await _shapeFactory.CreateAsync("EmailQuotaError", new
+                    {
+                        currentEmailQuota.IsOverQuota,
+                        UsagePercentage = roundedCurrentPercentage,
+                    }),
+                    "0");
+            }
         }
 
         await next();
