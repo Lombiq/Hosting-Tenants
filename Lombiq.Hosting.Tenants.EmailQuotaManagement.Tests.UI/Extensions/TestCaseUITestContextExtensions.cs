@@ -37,6 +37,8 @@ public static class TestCaseUITestContextExtensions
             context.SuccessMessageExists();
             CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, i + 1);
             var warningLevel = Convert.ToInt32((double)(i + 1) / maximumEmailQuota * 100) / 10 * 10;
+            if (!moduleShouldInterfere) continue;
+
             if (warningLevel >= 100)
             {
                 await context.GoToDashboardAsync();
