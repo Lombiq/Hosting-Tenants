@@ -111,7 +111,7 @@ public class QuotaService : IQuotaService
     }
 
     public int CurrentUsagePercentage(EmailQuota emailQuota) =>
-        emailQuota.CurrentEmailQuotaCount / _emailQuotaOptions.EmailQuotaPerMonth * 100;
+        Convert.ToInt32(Math.Round((double)emailQuota.CurrentEmailQuotaCount / _emailQuotaOptions.EmailQuotaPerMonth * 100, 0));
 
     private static bool IsSameMonth(DateTime date1, DateTime date2) =>
         date1.Month == date2.Month && date1.Year == date2.Year;
