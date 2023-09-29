@@ -34,7 +34,7 @@ public class Startup : StartupBase
                 ?? DefaultEmailQuota);
 
         services.AddScoped<IQuotaService, QuotaService>();
-        services.Decorate<ISmtpService, EmailSenderQuotaService>();
+        services.Decorate<ISmtpService, QuotaManagingSmtpServiceDecorator>();
         services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
         services.Configure<MvcOptions>(options =>

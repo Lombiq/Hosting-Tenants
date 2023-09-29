@@ -10,27 +10,24 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class EmailSenderQuotaService : ISmtpService
+public class QuotaManagingSmtpServiceDecorator : ISmtpService
 {
-    private readonly IStringLocalizer<EmailSenderQuotaService> T;
+    private readonly IStringLocalizer<QuotaManagingSmtpServiceDecorator> T;
     private readonly ISmtpService _smtpService;
     private readonly IQuotaService _quotaService;
-    private readonly IEmailQuotaEmailService _emailQuotaEmailService;
     private readonly ShellSettings _shellSettings;
     private readonly IEmailTemplateService _emailTemplateService;
 
-    public EmailSenderQuotaService(
+    public QuotaManagingSmtpServiceDecorator(
         ISmtpService smtpService,
-        IStringLocalizer<EmailSenderQuotaService> stringLocalizer,
+        IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
         IQuotaService quotaService,
-        IEmailQuotaEmailService emailQuotaEmailService,
         ShellSettings shellSettings,
         IEmailTemplateService emailTemplateService)
     {
         _smtpService = smtpService;
         T = stringLocalizer;
         _quotaService = quotaService;
-        _emailQuotaEmailService = emailQuotaEmailService;
         _shellSettings = shellSettings;
         _emailTemplateService = emailTemplateService;
     }
@@ -65,45 +62,35 @@ public class EmailSenderQuotaService : ISmtpService
         var currentUsagePercentage = _quotaService.CurrentUsagePercentage(emailQuota);
         if (!_quotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        var siteOwnerEmails = (await _emailQuotaEmailService.CollectUserEmailsForExceedingQuotaAsync()).ToList();
+        var siteOwnerEmails = (await _quotaService.CollectUserEmailsForExceedingQuotaAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
-            var emailMessage = new MailMessage
-            {
-                Subject = T["[Action Required] Your DotNest site has run over its e-mail quota"],
-                IsHtmlBody = true,
-            };
-            SendQuotaEmail(siteOwnerEmails, emailMessage, "EmailQuota", currentUsagePercentage);
+            SendQuotaEmail(siteOwnerEmails, "EmailQuotaExhaustedError", currentUsagePercentage);
             _quotaService.SaveQuotaReminder(emailQuota);
             return;
         }
 
-        SendQuotaEmailWithPercentage(siteOwnerEmails, currentUsagePercentage / 10 * 10);
+        SendQuotaEmail(siteOwnerEmails, $"EmailQuotaWarning", currentUsagePercentage / 10 * 10);
         _quotaService.SaveQuotaReminder(emailQuota);
-    }
-
-    private void SendQuotaEmailWithPercentage(
-        IEnumerable<string> siteOwnerEmails,
-        int percentage)
-    {
-        var emailMessage = new MailMessage
-        {
-            Subject = T["[Warning] Your DotNest site has used {0}% of its e-mail quota", percentage],
-            IsHtmlBody = true,
-        };
-        SendQuotaEmail(siteOwnerEmails, emailMessage, $"EmailQuotaWarning", percentage);
     }
 
     private void SendQuotaEmail(
         IEnumerable<string> siteOwnerEmails,
-        MailMessage emailMessage,
         string emailTemplateName,
         int percentage)
     {
+        var emailMessage = new MailMessage
+        {
+            IsHtmlBody = true,
+        };
         foreach (var siteOwnerEmail in siteOwnerEmails)
         {
             ShellScope.AddDeferredTask(async _ =>
             {
+                emailMessage.Subject = await _emailTemplateService.RenderEmailTemplateAsync($"{emailTemplateName}_Subject", new
+                {
+                    Percentage = percentage,
+                });
                 emailMessage.To = siteOwnerEmail;
                 emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {
