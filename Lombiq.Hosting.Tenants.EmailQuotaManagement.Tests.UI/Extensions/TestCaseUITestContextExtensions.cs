@@ -42,7 +42,7 @@ public static class TestCaseUITestContextExtensions
             if (warningLevel >= 100)
             {
                 await context.GoToDashboardAsync();
-                context.CheckExistence(By.XPath(DashboardExceededMessage), exists: moduleShouldInterfere);
+                context.CheckExistence(By.XPath(DashboardExceededMessage), exists: true);
             }
             else if (warningLevel >= 80)
             {
@@ -50,7 +50,7 @@ public static class TestCaseUITestContextExtensions
                 context.CheckExistence(
                     By.XPath($"//p[contains(@class,'alert-warning')]" +
                         $"[contains(.,'It seems that your site sent out {warningLevel.ToTechnicalString()}% of e-mail')]"),
-                    exists: moduleShouldInterfere);
+                    exists: true);
                 if (!warningEmails.Contains(warningLevel))
                 {
                     warningEmails.Add(warningLevel);
