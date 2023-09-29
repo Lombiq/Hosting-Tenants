@@ -1,4 +1,7 @@
 ﻿@{
     ViewLayout = "Layout__EmailTemplate";
 }
-@T["<p>Hi,</p><p> It seems that your {0} site sent out {1}% of the available e-mail quota for this month. E-mail sending will be stopped until next month (any feature sending out e-mails will fail), when the quota is exceeded.</p><p> Thank you,<br/> Your Admin Crew</p> ", Model.HostName, Model.Percentage]
+@T["<p>Hi,</p><p> It seems that your {0} site sent out {1}% of the available e-mail quota for this month." +
+    " E-mail sending will be stopped until next month (any feature sending out e-mails will fail), when the quota" +
+    " is exceeded.</p><p> Thank you,<br/> Your Admin Crew</p> ",
+    Model.HostName, Model.Percentage]
