@@ -15,18 +15,18 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IQuotaService _quotaService;
+    private readonly IEmailQuotaService _emailQuotaService;
     private readonly EmailQuotaOptions _emailQuotaOptions;
 
     public EmailSettingsQuotaFilter(
         IShapeFactory shapeFactory,
         ILayoutAccessor layoutAccessor,
-        IQuotaService quotaService,
+        IEmailQuotaService emailQuotaService,
         IOptions<EmailQuotaOptions> emailQuotaOptions)
     {
         _shapeFactory = shapeFactory;
         _layoutAccessor = layoutAccessor;
-        _quotaService = quotaService;
+        _emailQuotaService = emailQuotaService;
         _emailQuotaOptions = emailQuotaOptions.Value;
     }
 
@@ -48,16 +48,16 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             context.Result is ViewResult &&
             context.RouteData.Values.TryGetValue("GroupId", out var groupId) &&
             (string)groupId == "email" &&
-            _quotaService.ShouldLimitEmails())
+            _emailQuotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
 
-            var quota = await _quotaService.GetCurrentQuotaAsync();
+            var quota = await _emailQuotaService.GetCurrentQuotaAsync();
             await contentZone.AddAsync(
-                await _shapeFactory.CreateAsync("EmailSettingsQuota", new
+                await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
                 {
-                    CurrentEmailCount = quota.CurrentEmailQuotaCount,
+                    CurrentEmailCount = quota.CurrentEmailUsageCount,
                     EmailQuota = _emailQuotaOptions.EmailQuotaPerMonth,
                 }),
                 "0");

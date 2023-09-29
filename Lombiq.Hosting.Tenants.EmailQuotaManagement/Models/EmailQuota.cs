@@ -4,7 +4,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 
 public class EmailQuota
 {
-    public int CurrentEmailQuotaCount { get; set; }
-    public DateTime LastReminder { get; set; }
+    public int CurrentEmailUsageCount { get; set; }
+    public DateTime LastReminderUtc { get; set; }
     public int LastReminderPercentage { get; set; }
 }

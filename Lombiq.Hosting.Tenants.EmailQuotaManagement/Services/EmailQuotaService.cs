@@ -20,7 +20,7 @@ using static OrchardCore.Security.StandardPermissions;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class QuotaService : IQuotaService
+public class EmailQuotaService : IEmailQuotaService
 {
     private readonly ISession _session;
     private readonly EmailQuotaOptions _emailQuotaOptions;
@@ -30,7 +30,7 @@ public class QuotaService : IQuotaService
     private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
-    public QuotaService(
+    public EmailQuotaService(
         ISession session,
         IOptions<EmailQuotaOptions> emailQuotaOptions,
         IShellConfiguration shellConfiguration,
@@ -76,7 +76,7 @@ public class QuotaService : IQuotaService
         var currentQuota = await GetCurrentQuotaAsync();
         return new QuotaResult
         {
-            IsOverQuota = _emailQuotaOptions.EmailQuotaPerMonth <= currentQuota.CurrentEmailQuotaCount,
+            IsOverQuota = _emailQuotaOptions.EmailQuotaPerMonth <= currentQuota.CurrentEmailUsageCount,
             EmailQuota = currentQuota,
         };
     }
@@ -90,7 +90,7 @@ public class QuotaService : IQuotaService
         currentQuota = new EmailQuota
         {
             // Need to set default value otherwise the database might complain about being 01/01/0001 out of range.
-            LastReminder = _clock.UtcNow.AddMonths(-1),
+            LastReminderUtc = _clock.UtcNow.AddMonths(-1),
         };
         _session.Save(currentQuota);
 
@@ -99,13 +99,13 @@ public class QuotaService : IQuotaService
 
     public void IncreaseQuota(EmailQuota emailQuota)
     {
-        emailQuota.CurrentEmailQuotaCount++;
+        emailQuota.CurrentEmailUsageCount++;
         _session.Save(emailQuota);
     }
 
     public void SaveQuotaReminder(EmailQuota emailQuota)
     {
-        emailQuota.LastReminder = _clock.UtcNow;
+        emailQuota.LastReminderUtc = _clock.UtcNow;
         emailQuota.LastReminderPercentage = CurrentUsagePercentage(emailQuota);
         _session.Save(emailQuota);
     }
@@ -118,7 +118,7 @@ public class QuotaService : IQuotaService
             return false;
         }
 
-        var isSameMonth = IsSameMonth(_clock.UtcNow, emailQuota.LastReminder);
+        var isSameMonth = IsSameMonth(_clock.UtcNow, emailQuota.LastReminderUtc);
 
         if (!isSameMonth)
         {
@@ -132,12 +132,12 @@ public class QuotaService : IQuotaService
 
     public void ResetQuota(EmailQuota emailQuota)
     {
-        emailQuota.CurrentEmailQuotaCount = 0;
+        emailQuota.CurrentEmailUsageCount = 0;
         _session.Save(emailQuota);
     }
 
     public int CurrentUsagePercentage(EmailQuota emailQuota) =>
-        Convert.ToInt32(Math.Round((double)emailQuota.CurrentEmailQuotaCount / _emailQuotaOptions.EmailQuotaPerMonth * 100, 0));
+        Convert.ToInt32(Math.Round((double)emailQuota.CurrentEmailUsageCount / _emailQuotaOptions.EmailQuotaPerMonth * 100, 0));
 
     private static bool IsSameMonth(DateTime date1, DateTime date2) =>
         date1.Month == date2.Month && date1.Year == date2.Year;

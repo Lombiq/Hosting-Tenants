@@ -6,8 +6,8 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
 
 public class EmailQuotaIndex : MapIndex
 {
-    public int CurrentEmailQuotaCount { get; set; }
-    public DateTime LastReminder { get; set; }
+    public int CurrentEmailUsageCount { get; set; }
+    public DateTime LastReminderUtc { get; set; }
     public int LastReminderPercentage { get; set; }
 }
 
@@ -17,8 +17,8 @@ public class EmailQuotaIndexProvider : IndexProvider<EmailQuota>
         context.For<EmailQuotaIndex>()
             .Map(emailQuota => new EmailQuotaIndex
             {
-                CurrentEmailQuotaCount = emailQuota.CurrentEmailQuotaCount,
-                LastReminder = emailQuota.LastReminder,
+                CurrentEmailUsageCount = emailQuota.CurrentEmailUsageCount,
+                LastReminderUtc = emailQuota.LastReminderUtc,
                 LastReminderPercentage = emailQuota.LastReminderPercentage,
             });
 }

@@ -7,7 +7,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 /// <summary>
 /// A service that is responsible for managing the quota of sent emails.
 /// </summary>
-public interface IQuotaService
+public interface IEmailQuotaService
 {
     Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync();
 

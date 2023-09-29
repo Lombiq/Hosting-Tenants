@@ -33,13 +33,13 @@ public class Startup : StartupBase
             options.EmailQuotaPerMonth = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuotaPerMonth")
                 ?? DefaultEmailQuota);
 
-        services.AddScoped<IQuotaService, QuotaService>();
+        services.AddScoped<IEmailQuotaService, EmailQuotaService>();
         services.Decorate<ISmtpService, QuotaManagingSmtpServiceDecorator>();
         services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
         services.Configure<MvcOptions>(options =>
             {
-                options.Filters.Add(typeof(EmailQuotaErrorFilter));
+                options.Filters.Add(typeof(DashboardQuotaFilter));
                 options.Filters.Add(typeof(EmailSettingsQuotaFilter));
             }
         );

@@ -13,7 +13,7 @@ public class EmailQuotaResetBackgroundTask : IBackgroundTask
 {
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var quotaService = serviceProvider.GetRequiredService<IQuotaService>();
+        var quotaService = serviceProvider.GetRequiredService<IEmailQuotaService>();
         var currentQuota = await quotaService.GetCurrentQuotaAsync();
         quotaService.ResetQuota(currentQuota);
     }
