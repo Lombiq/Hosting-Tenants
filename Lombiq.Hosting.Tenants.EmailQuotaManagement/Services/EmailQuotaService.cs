@@ -97,13 +97,13 @@ public class EmailQuotaService : IEmailQuotaService
         return currentQuota;
     }
 
-    public void IncreaseQuota(EmailQuota emailQuota)
+    public void IncreaseEmailUsage(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailUsageCount++;
         _session.Save(emailQuota);
     }
 
-    public void SaveQuotaReminder(EmailQuota emailQuota)
+    public void SetQuotaOnEmailReminder(EmailQuota emailQuota)
     {
         emailQuota.LastReminderUtc = _clock.UtcNow;
         emailQuota.LastReminderPercentage = emailQuota.CurrentUsagePercentage(GetEmailQuotaPerMonth());

@@ -1,8 +1,6 @@
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
@@ -16,18 +14,15 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;
     private readonly IEmailQuotaService _emailQuotaService;
-    private readonly EmailQuotaOptions _emailQuotaOptions;
 
     public EmailSettingsQuotaFilter(
         IShapeFactory shapeFactory,
         ILayoutAccessor layoutAccessor,
-        IEmailQuotaService emailQuotaService,
-        IOptions<EmailQuotaOptions> emailQuotaOptions)
+        IEmailQuotaService emailQuotaService)
     {
         _shapeFactory = shapeFactory;
         _layoutAccessor = layoutAccessor;
         _emailQuotaService = emailQuotaService;
-        _emailQuotaOptions = emailQuotaOptions.Value;
     }
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
@@ -57,8 +52,8 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             await contentZone.AddAsync(
                 await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
                 {
-                    CurrentEmailCount = quota.CurrentEmailUsageCount,
-                    EmailQuota = _emailQuotaOptions.EmailQuotaPerMonth,
+                    quota.CurrentEmailUsageCount,
+                    EmailQuotaPerMonth = _emailQuotaService.GetEmailQuotaPerMonth(),
                 }),
                 "0");
         }
