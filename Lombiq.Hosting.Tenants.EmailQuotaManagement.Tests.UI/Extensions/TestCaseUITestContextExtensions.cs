@@ -13,7 +13,7 @@ public static class TestCaseUITestContextExtensions
 {
     private const string SuccessfulSubject = "Successful test message";
     private const string UnSuccessfulSubject = "Unsuccessful test message";
-    private const string WarningSubject = "[Warning] Your DotNest site has used";
+    private const string WarningSubject = "[Warning] Your site has used";
     private const string DashboardExceededMessage =
         "//p[contains(@class,'alert-danger')][contains(.,'It seems that your site sent out more e-mails')]";
 
@@ -62,7 +62,7 @@ public static class TestCaseUITestContextExtensions
         await context.GoToSmtpWebUIAsync();
         context.CheckExistence(ByHelper.SmtpInboxRow(SuccessfulSubject), exists: true);
         context.CheckExistence(
-            ByHelper.SmtpInboxRow("[Action Required] Your DotNest site has run over its e-mail quota"),
+            ByHelper.SmtpInboxRow("[Action Required] Your site has run over its e-mail quota"),
             exists: moduleShouldInterfere);
         var warningMessageExists = context.CheckExistence(
             ByHelper.SmtpInboxRow(WarningSubject),
