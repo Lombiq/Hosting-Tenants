@@ -53,7 +53,7 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
 
-            var quota = await _emailQuotaService.GetCurrentQuotaAsync();
+            var quota = await _emailQuotaService.GetOrCreateCurrentQuotaAsync();
             await contentZone.AddAsync(
                 await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
                 {

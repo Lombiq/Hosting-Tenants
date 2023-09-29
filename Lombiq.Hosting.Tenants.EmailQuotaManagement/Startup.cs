@@ -29,13 +29,11 @@ public class Startup : StartupBase
     {
         services.AddDataMigration<EmailQuotaMigrations>();
         services.AddSingleton<IIndexProvider, EmailQuotaIndexProvider>();
+        services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
+
         services.Configure<EmailQuotaOptions>(options =>
             options.EmailQuotaPerMonth = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuotaPerMonth")
                 ?? DefaultEmailQuota);
-
-        services.AddScoped<IEmailQuotaService, EmailQuotaService>();
-        services.Decorate<ISmtpService, QuotaManagingSmtpServiceDecorator>();
-        services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
         services.Configure<MvcOptions>(options =>
             {
@@ -43,6 +41,10 @@ public class Startup : StartupBase
                 options.Filters.Add(typeof(EmailSettingsQuotaFilter));
             }
         );
+
+        services.AddScoped<IEmailQuotaService, EmailQuotaService>();
         services.AddScoped<IEmailQuotaSubjectService, EmailQuotaSubjectService>();
+
+        services.Decorate<ISmtpService, QuotaManagingSmtpServiceDecorator>();
     }
 }

@@ -48,7 +48,7 @@ public class EmailQuotaService : IEmailQuotaService
         _userManager = userManager;
     }
 
-    public async Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync()
+    public async Task<IEnumerable<string>> CollectUserEmailsForEmailReminderAsync()
     {
         // Get users with site owner permission.
         var roles = await _roleService.GetRolesAsync();
@@ -73,7 +73,7 @@ public class EmailQuotaService : IEmailQuotaService
 
     public async Task<QuotaResult> IsQuotaOverTheLimitAsync()
     {
-        var currentQuota = await GetCurrentQuotaAsync();
+        var currentQuota = await GetOrCreateCurrentQuotaAsync();
         return new QuotaResult
         {
             IsOverQuota = _emailQuotaOptions.EmailQuotaPerMonth <= currentQuota.CurrentEmailUsageCount,
@@ -81,7 +81,7 @@ public class EmailQuotaService : IEmailQuotaService
         };
     }
 
-    public async Task<EmailQuota> GetCurrentQuotaAsync()
+    public async Task<EmailQuota> GetOrCreateCurrentQuotaAsync()
     {
         var currentQuota = await _session.Query<EmailQuota, EmailQuotaIndex>().FirstOrDefaultAsync();
 
@@ -106,14 +106,13 @@ public class EmailQuotaService : IEmailQuotaService
     public void SaveQuotaReminder(EmailQuota emailQuota)
     {
         emailQuota.LastReminderUtc = _clock.UtcNow;
-        emailQuota.LastReminderPercentage = CurrentUsagePercentage(emailQuota);
+        emailQuota.LastReminderPercentage = emailQuota.CurrentUsagePercentage(GetEmailQuotaPerMonth());
         _session.Save(emailQuota);
     }
 
-    public bool ShouldSendReminderEmail(EmailQuota emailQuota, int? currentPercentage = null)
+    public bool ShouldSendReminderEmail(EmailQuota emailQuota, int currentUsagePercentage)
     {
-        currentPercentage ??= CurrentUsagePercentage(emailQuota);
-        if (currentPercentage < 80)
+        if (currentUsagePercentage < 80)
         {
             return false;
         }
@@ -125,8 +124,8 @@ public class EmailQuotaService : IEmailQuotaService
             return true;
         }
 
-        return !((emailQuota.LastReminderPercentage >= 80 && currentPercentage < 90) ||
-            (emailQuota.LastReminderPercentage >= 90 && currentPercentage < 100) ||
+        return !((emailQuota.LastReminderPercentage >= 80 && currentUsagePercentage < 90) ||
+            (emailQuota.LastReminderPercentage >= 90 && currentUsagePercentage < 100) ||
             emailQuota.LastReminderPercentage >= 100);
     }
 
@@ -136,8 +135,8 @@ public class EmailQuotaService : IEmailQuotaService
         _session.Save(emailQuota);
     }
 
-    public int CurrentUsagePercentage(EmailQuota emailQuota) =>
-        Convert.ToInt32(Math.Round((double)emailQuota.CurrentEmailUsageCount / _emailQuotaOptions.EmailQuotaPerMonth * 100, 0));
+    public int GetEmailQuotaPerMonth() =>
+        _emailQuotaOptions.EmailQuotaPerMonth;
 
     private static bool IsSameMonth(DateTime date1, DateTime date2) =>
         date1.Month == date2.Month && date1.Year == date2.Year;

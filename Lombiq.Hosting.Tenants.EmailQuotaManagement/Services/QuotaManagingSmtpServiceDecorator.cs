@@ -17,19 +17,22 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
     private readonly IEmailQuotaService _emailQuotaService;
     private readonly ShellSettings _shellSettings;
     private readonly IEmailTemplateService _emailTemplateService;
+    private readonly IEmailQuotaSubjectService _emailQuotaSubjectService;
 
     public QuotaManagingSmtpServiceDecorator(
         ISmtpService smtpService,
         IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
         IEmailQuotaService emailQuotaService,
         ShellSettings shellSettings,
-        IEmailTemplateService emailTemplateService)
+        IEmailTemplateService emailTemplateService,
+        IEmailQuotaSubjectService emailQuotaSubjectService)
     {
         _smtpService = smtpService;
         T = stringLocalizer;
         _emailQuotaService = emailQuotaService;
         _shellSettings = shellSettings;
         _emailTemplateService = emailTemplateService;
+        _emailQuotaSubjectService = emailQuotaSubjectService;
     }
 
     public async Task<SmtpResult> SendAsync(MailMessage message)
@@ -59,38 +62,45 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
 
     private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
-        var currentUsagePercentage = _emailQuotaService.CurrentUsagePercentage(emailQuota);
+        var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
         if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        var siteOwnerEmails = (await _emailQuotaService.CollectUserEmailsForExceedingQuotaAsync()).ToList();
+        var siteOwnerEmails = (await _emailQuotaService.CollectUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
-            SendQuotaEmail(siteOwnerEmails, "EmailQuotaExhaustedError", currentUsagePercentage);
+            SendQuotaEmail(
+                siteOwnerEmails,
+                "EmailQuotaExceededError",
+                _emailQuotaSubjectService.GetExceededEmailSubject(),
+                currentUsagePercentage);
             _emailQuotaService.SaveQuotaReminder(emailQuota);
             return;
         }
 
-        SendQuotaEmail(siteOwnerEmails, $"EmailQuotaWarning", currentUsagePercentage / 10 * 10);
+        SendQuotaEmail(
+            siteOwnerEmails,
+            $"EmailQuotaWarning",
+            _emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
+            currentUsagePercentage
+            );
         _emailQuotaService.SaveQuotaReminder(emailQuota);
     }
 
     private void SendQuotaEmail(
         IEnumerable<string> siteOwnerEmails,
         string emailTemplateName,
+        string subject,
         int percentage)
     {
         var emailMessage = new MailMessage
         {
             IsHtmlBody = true,
+            Subject = subject,
         };
         foreach (var siteOwnerEmail in siteOwnerEmails)
         {
             ShellScope.AddDeferredTask(async _ =>
             {
-                emailMessage.Subject = await _emailTemplateService.RenderEmailTemplateAsync($"{emailTemplateName}_Subject", new
-                {
-                    Percentage = percentage,
-                });
                 emailMessage.To = siteOwnerEmail;
                 emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {

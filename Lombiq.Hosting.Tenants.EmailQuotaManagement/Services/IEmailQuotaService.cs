@@ -9,7 +9,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 /// </summary>
 public interface IEmailQuotaService
 {
-    Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync();
+    Task<IEnumerable<string>> CollectUserEmailsForEmailReminderAsync();
 
     /// <summary>
     /// Checks if the emails should be limited.
@@ -24,7 +24,7 @@ public interface IEmailQuotaService
     /// <summary>
     /// Gets the current quota.
     /// </summary>
-    Task<EmailQuota> GetCurrentQuotaAsync();
+    Task<EmailQuota> GetOrCreateCurrentQuotaAsync();
 
     /// <summary>
     /// Increases the given quota value.
@@ -44,10 +44,8 @@ public interface IEmailQuotaService
     /// <summary>
     /// Returns <see langword="true"/> if the reminder email should be sent.
     /// </summary>
-    bool ShouldSendReminderEmail(EmailQuota emailQuota, int? currentPercentage = null);
+    bool ShouldSendReminderEmail(EmailQuota emailQuota, int currentUsagePercentage);
 
-    /// <summary>
-    /// Returns the current quota usage percentage.
-    /// </summary>
-    int CurrentUsagePercentage(EmailQuota emailQuota);
+
+    int GetEmailQuotaPerMonth();
 }

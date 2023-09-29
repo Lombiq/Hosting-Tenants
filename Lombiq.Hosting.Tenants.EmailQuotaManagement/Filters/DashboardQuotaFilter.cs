@@ -47,15 +47,16 @@ public class DashboardQuotaFilter : IAsyncResultFilter
             var contentZone = layout.Zones["Content"];
             var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
 
-            var roundedCurrentPercentage = _emailQuotaService.CurrentUsagePercentage(currentEmailQuota.EmailQuota) / 10 * 10;
+            var currentUsagePercentage = currentEmailQuota.EmailQuota
+                .CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
 
-            if (roundedCurrentPercentage >= 80)
+            if (currentUsagePercentage >= 80)
             {
                 await contentZone.AddAsync(
                     await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
                     {
                         currentEmailQuota.IsOverQuota,
-                        UsagePercentage = roundedCurrentPercentage,
+                        UsagePercentage = currentUsagePercentage,
                     }),
                     "0");
             }
