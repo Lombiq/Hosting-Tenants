@@ -1,4 +1,5 @@
 ﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -8,6 +9,8 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 /// </summary>
 public interface IQuotaService
 {
+    Task<IEnumerable<string>> CollectUserEmailsForExceedingQuotaAsync();
+
     /// <summary>
     /// Checks if the emails should be limited.
     /// </summary>
