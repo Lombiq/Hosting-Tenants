@@ -43,5 +43,6 @@ public class Startup : StartupBase
                 options.Filters.Add(typeof(EmailSettingsQuotaFilter));
             }
         );
+        services.AddScoped<IEmailQuotaSubjectService, EmailQuotaSubjectService>();
     }
 }
