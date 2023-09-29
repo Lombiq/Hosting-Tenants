@@ -67,7 +67,7 @@ public static class TestCaseUITestContextExtensions
         var warningMessageExists = context.CheckExistence(
             ByHelper.SmtpInboxRow(WarningSubject),
             exists: moduleShouldInterfere);
-        if (warningMessageExists)
+        if (moduleShouldInterfere && warningMessageExists)
         {
             (context.GetAll(
                 ByHelper.SmtpInboxRow(WarningSubject)).Count == warningEmails.Count)
