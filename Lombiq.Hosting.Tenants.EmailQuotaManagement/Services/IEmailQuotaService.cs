@@ -12,7 +12,7 @@ public interface IEmailQuotaService
     /// <summary>
     /// Collects the emails of the users who should receive the email reminder, based on the site owner permission.
     /// </summary>
-    Task<IEnumerable<string>> CollectUserEmailsForEmailReminderAsync();
+    Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync();
 
     /// <summary>
     /// Checks if the emails should be limited, depending on the default SMTP settings.

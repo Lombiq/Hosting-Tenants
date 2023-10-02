@@ -48,7 +48,7 @@ public class EmailQuotaService : IEmailQuotaService
         _userManager = userManager;
     }
 
-    public async Task<IEnumerable<string>> CollectUserEmailsForEmailReminderAsync()
+    public async Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync()
     {
         // Get users with site owner permission.
         var roles = await _roleService.GetRolesAsync();

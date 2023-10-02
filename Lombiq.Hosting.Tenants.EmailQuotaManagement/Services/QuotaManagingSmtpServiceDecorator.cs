@@ -65,7 +65,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
         if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        var siteOwnerEmails = (await _emailQuotaService.CollectUserEmailsForEmailReminderAsync()).ToList();
+        var siteOwnerEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
             SendQuotaEmail(
