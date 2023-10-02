@@ -44,7 +44,7 @@ public interface IEmailQuotaService
 
     /// <summary>
     /// Sets the <see cref="EmailQuota.LastReminderUtc"/> to the current date and
-    /// <see cref="EmailQuota.LastReminderPercentage"/> to the current email quota usage percentage then saves to the
+    /// <see cref="EmailQuota.LastReminderPercentage"/> to the current email quota usage percentage then saves it to the
     /// database.
     /// </summary>
     void SetQuotaOnEmailReminder(EmailQuota emailQuota);
