@@ -62,26 +62,32 @@ public class EmailSenderQuotaService : ISmtpService
         return emailResult;
     }
 
-    private Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
+    private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
-        if (IsSameMonth(_clock.UtcNow, emailQuota.LastReminder)) return Task.CompletedTask;
+        if (IsSameMonth(_clock.UtcNow, emailQuota.LastReminder)) return;
 
         emailQuota.LastReminder = _clock.UtcNow;
         _quotaService.SaveQuota(emailQuota);
 
-        // Using deferred task to send the email after the current transaction is committed.
-        ShellScope.AddDeferredTask(async _ =>
+        var siteOwnerEmails = await _emailQuotaEmailService.CollectUserEmailsForExceedingQuotaAsync();
+        var emailMessage = new MailMessage
         {
-            var emailParameters = await _emailQuotaEmailService.CreateEmailForExceedingQuotaAsync();
-            emailParameters.Body = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuota", new
+            Subject = T["[Action Required] Your DotNest site has run over its e-mail quota"],
+            IsHtmlBody = true,
+        };
+
+        foreach (var siteOwnerEmail in siteOwnerEmails)
+        {
+            ShellScope.AddDeferredTask(async _ =>
             {
-                HostName = _shellSettings.Name,
+                emailMessage.To = siteOwnerEmail;
+                emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync("EmailQuota", new
+                {
+                    HostName = _shellSettings.Name,
+                });
+                await _smtpService.SendAsync(emailMessage);
             });
-
-            await _smtpService.SendAsync(emailParameters);
-        });
-
-        return Task.CompletedTask;
+        }
     }
 
     private static bool IsSameMonth(DateTime date1, DateTime date2) =>
