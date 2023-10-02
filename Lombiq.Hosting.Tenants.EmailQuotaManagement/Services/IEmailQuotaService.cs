@@ -32,7 +32,7 @@ public interface IEmailQuotaService
     Task<EmailQuota> GetOrCreateCurrentQuotaAsync();
 
     /// <summary>
-    /// Increases the usage count of the given <paramref name="emailQuota"/> and saves to the database.
+    /// Increases the usage count of the given <paramref name="emailQuota"/> and saves it to the database.
     /// </summary>
     void IncreaseEmailUsage(EmailQuota emailQuota);
 
