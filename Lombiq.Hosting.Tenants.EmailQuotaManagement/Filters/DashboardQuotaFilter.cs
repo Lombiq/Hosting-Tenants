@@ -9,20 +9,20 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
-public class EmailQuotaErrorFilter : IAsyncResultFilter
+public class DashboardQuotaFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IQuotaService _quotaService;
+    private readonly IEmailQuotaService _emailQuotaService;
 
-    public EmailQuotaErrorFilter(
+    public DashboardQuotaFilter(
         IShapeFactory shapeFactory,
         ILayoutAccessor layoutAccessor,
-        IQuotaService quotaService)
+        IEmailQuotaService emailQuotaService)
     {
         _shapeFactory = shapeFactory;
         _layoutAccessor = layoutAccessor;
-        _quotaService = quotaService;
+        _emailQuotaService = emailQuotaService;
     }
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
@@ -41,13 +41,25 @@ public class EmailQuotaErrorFilter : IAsyncResultFilter
             actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" &&
             actionRouteValue is nameof(AdminController.Index) &&
             context.Result is ViewResult &&
-            _quotaService.ShouldLimitEmails() &&
-            (await _quotaService.IsQuotaOverTheLimitAsync()).IsOverQuota)
+            _emailQuotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
+            var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
 
-            await contentZone.AddAsync(await _shapeFactory.CreateAsync("EmailQuotaError"), "0");
+            var currentUsagePercentage = currentEmailQuota.EmailQuota
+                .CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
+
+            if (currentUsagePercentage >= 80)
+            {
+                await contentZone.AddAsync(
+                    await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
+                    {
+                        currentEmailQuota.IsOverQuota,
+                        UsagePercentage = currentUsagePercentage,
+                    }),
+                    "0");
+            }
         }
 
         await next();
