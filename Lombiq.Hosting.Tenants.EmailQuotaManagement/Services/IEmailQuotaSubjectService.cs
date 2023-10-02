@@ -5,6 +5,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 /// <summary>
 /// Service for getting the subject of the email sent when the email quota is exceeded or when it's close to being exceeded.
 /// </summary>
+/// <remarks><para>Provides a way for overriding the subject texts.</para></remarks>
 public interface IEmailQuotaSubjectService
 {
     /// <summary>
