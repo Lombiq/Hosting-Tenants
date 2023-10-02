@@ -57,15 +57,16 @@ public class ShellSettingsEditorController : Controller
         var newSettings = new Dictionary<string, string>();
         foreach (var key in settingsDictionary.Keys)
         {
-            var newKey = key.Replace($"{model.TenantId}:", string.Empty, StringComparison.InvariantCulture);
-            newSettings[newKey] = settingsDictionary[key];
+            if (shellSettings[key] != settingsDictionary[key])
+            {
+                newSettings[key] = settingsDictionary[key];
+            }
         }
 
         await _tenantConfigSemaphore.WaitAsync(HttpContext.RequestAborted);
         try
         {
-            //await _settingsSources.SaveAsync(shellSettings.Name, newSettings);
-            await _tenantConfigSources.SaveAsync(shellSettings.Name, settingsDictionary);
+            await _tenantConfigSources.SaveAsync(shellSettings.Name, newSettings);
         }
         finally
         {
@@ -74,7 +75,6 @@ public class ShellSettingsEditorController : Controller
 
         await _shellHost.ReloadShellContextAsync(shellSettings);
 
-        //await _shellHost.UpdateShellSettingsAsync(shellSettings);
         return RedirectToAction(
             nameof(AdminController.Edit),
             typeof(AdminController).ControllerName(),
