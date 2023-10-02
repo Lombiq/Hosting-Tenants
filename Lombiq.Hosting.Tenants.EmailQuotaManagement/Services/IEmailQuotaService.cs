@@ -37,8 +37,8 @@ public interface IEmailQuotaService
     void IncreaseEmailUsage(EmailQuota emailQuota);
 
     /// <summary>
-    /// Resets the given <paramref name="emailQuota"/> <see cref="EmailQuota.CurrentEmailUsageCount"/> to 0 and saves to
-    /// the database.
+    /// Resets the given <paramref name="emailQuota"/> <see cref="EmailQuota.CurrentEmailUsageCount"/> to 0 and saves it
+    /// to the database.
     /// </summary>
     void ResetQuota(EmailQuota emailQuota);
 
