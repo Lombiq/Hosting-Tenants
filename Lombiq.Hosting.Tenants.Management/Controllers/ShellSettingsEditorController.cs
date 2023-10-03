@@ -1,6 +1,5 @@
 ﻿using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
-using Lombiq.Hosting.Tenants.Management.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -8,13 +7,11 @@ using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
-using OrchardCore.Mvc.ModelBinding;
 using OrchardCore.Tenants.Controllers;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using static OrchardCore.Tenants.Permissions;
 
 namespace Lombiq.Hosting.Tenants.Management.Controllers;
 
@@ -23,19 +20,16 @@ public class ShellSettingsEditorController : Controller
 {
     private readonly IAuthorizationService _authorizationService;
     private readonly IShellHost _shellHost;
-    private readonly IShellsSettingsSources _settingsSources;
     private readonly SemaphoreSlim _tenantConfigSemaphore = new(1);
     private readonly IShellConfigurationSources _tenantConfigSources;
 
     public ShellSettingsEditorController(
         IAuthorizationService authorizationService,
         IShellHost shellHost,
-        IShellsSettingsSources settingsSources,
         IShellConfigurationSources tenantConfigSources)
     {
         _authorizationService = authorizationService;
         _shellHost = shellHost;
-        _settingsSources = settingsSources;
         _tenantConfigSources = tenantConfigSources;
     }
 
@@ -43,12 +37,8 @@ public class ShellSettingsEditorController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ShellSettingsEditorViewModel model)
     {
-        if (!await _authorizationService.AuthorizeAsync(User, ShellSettingsEditPermissions.ShellSettingsEditPermission))
-        {
-            return Forbid();
-        }
-
-        if (!_shellHost.TryGetSettings(model.TenantId, out var shellSettings))
+        if (!await _authorizationService.AuthorizeAsync(User, ManageTenants) ||
+            !_shellHost.TryGetSettings(model.TenantId, out var shellSettings))
         {
             return NotFound();
         }
@@ -59,6 +49,8 @@ public class ShellSettingsEditorController : Controller
         {
             if (shellSettings[key] != settingsDictionary[key])
             {
+                var tenantSettingsPrefix = $"{model.TenantId}Prefix:{key}";
+                newSettings[tenantSettingsPrefix] = settingsDictionary[key];
                 newSettings[key] = settingsDictionary[key];
             }
         }
@@ -83,5 +75,11 @@ public class ShellSettingsEditorController : Controller
                 area = "OrchardCore.Tenants",
                 id = model.TenantId,
             });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        _tenantConfigSemaphore.Dispose();
+        base.Dispose(disposing);
     }
 }

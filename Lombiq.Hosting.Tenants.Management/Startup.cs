@@ -42,11 +42,7 @@ public class HideRecipesFromSetupStartup : StartupBase
 [Feature(FeatureNames.ShellSettingsEditor)]
 public class ShellSettingsEditorStartup : StartupBase
 {
-    public override void ConfigureServices(IServiceCollection services)
-    {
+    public override void ConfigureServices(IServiceCollection services) =>
         services.Configure<MvcOptions>(options =>
             options.Filters.Add(typeof(ShellSettingsEditorFilter)));
-
-        services.AddScoped<IPermissionProvider, ShellSettingsEditPermissions>();
-    }
 }

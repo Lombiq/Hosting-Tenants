@@ -9,7 +9,7 @@
     <div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
         <label asp-for="Json" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
         <div class="@Orchard.GetEndCssClasses()">
-            <div id="@Html.IdFor(x => x.Json)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
+            <div id="@Html.IdFor(model => model.Json)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
             <textarea asp-for="Json" hidden>@Html.Raw(Model.Json)</textarea>
         </div>
     </div>
@@ -44,8 +44,8 @@
 
             setTheme();
 
-            var editor = monaco.editor.create(document.getElementById('@Html.IdFor(id => id.Json)_editor'), settings);
-            var textArea = document.getElementById('@Html.IdFor(id => id.Json)');
+            var editor = monaco.editor.create(document.getElementById('@Html.IdFor(model => model.Json)_editor'), settings);
+            var textArea = document.getElementById('@Html.IdFor(model => model.Json)');
 
             editor.getModel().setValue(textArea.value);
 
