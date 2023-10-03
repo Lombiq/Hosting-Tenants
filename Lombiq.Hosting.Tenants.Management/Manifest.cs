@@ -30,7 +30,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 [assembly: Feature(
     Id = ShellSettingsEditor,
     Name = "Lombiq Hosting - Tenants Management - Shell Settings Editor",
-    Description = "",
+    Description = "Adds tenant related shell settings editor to the tenant editor page.",
     Category = "Hosting",
     DefaultTenantOnly = true,
     Dependencies = new[] { "OrchardCore.Tenants" }

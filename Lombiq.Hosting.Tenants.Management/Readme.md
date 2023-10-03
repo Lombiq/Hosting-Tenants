@@ -8,10 +8,11 @@ With the help of this module, you can set restrictions on tenant creation.
 
 ## Documentation
 
-This module contains two features:
+This module contains these features:
 
 - `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
 - `Lombiq.Hosting.Tenants.Management.HideRecipesFromSetup`
+- `Lombiq.Hosting.Tenants.Management.ShellSettingsEditor`
 
 ### `Lombiq.Hosting.Tenants.Management.ForbiddenTenantNames`
 
@@ -42,3 +43,23 @@ public void ConfigureServices(IServiceCollection services) =>
 ```
 
 **NOTE:** This extension method not only sets the tags you want to hide but also registers the feature as a setup feature. If you just want to use the default `HideFromSetupScreen` tag then just call the extension method without any parameter.
+
+### `Lombiq.Hosting.Tenants.Management.ShellSettingsEditor`
+
+Adds a shell settings editor to the tenant editor page where you can set values that are not already present in the current ShellSetting for the given tenant. Only those settings will be displayed here that were added from this editor. You can also prefill settings, but it is **not** recommended as it requires to add the same value twice:
+
+```json
+"OrchardCore": {
+  "TenantNamePrefix": {
+    "TestOption": {
+      "TestKey": "TestValue"
+    }
+  },
+  {
+    "TenantName": {
+      "TestOption": {
+        "TestKey": "TestValue"
+    }
+  },
+}
+```
