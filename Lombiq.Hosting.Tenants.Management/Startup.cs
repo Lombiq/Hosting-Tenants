@@ -1,6 +1,5 @@
 using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Filters;
-using Lombiq.Hosting.Tenants.Management.Permissions;
 using Lombiq.Hosting.Tenants.Management.Service;
 using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
-using OrchardCore.Security.Permissions;
 using OrchardCore.Setup.Services;
 
 namespace Lombiq.Hosting.Tenants.Management;
