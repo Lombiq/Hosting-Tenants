@@ -9,6 +9,7 @@ using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static OrchardCore.Tenants.Permissions;
@@ -21,16 +22,16 @@ public class ShellSettingsEditorController : Controller
     private readonly IAuthorizationService _authorizationService;
     private readonly IShellHost _shellHost;
     private readonly SemaphoreSlim _tenantConfigSemaphore = new(1);
-    private readonly IShellConfigurationSources _tenantConfigSources;
+    private readonly IShellConfigurationSources _shellConfigurationSources;
 
     public ShellSettingsEditorController(
         IAuthorizationService authorizationService,
         IShellHost shellHost,
-        IShellConfigurationSources tenantConfigSources)
+        IShellConfigurationSources shellConfigurationSources)
     {
         _authorizationService = authorizationService;
         _shellHost = shellHost;
-        _tenantConfigSources = tenantConfigSources;
+        _shellConfigurationSources = shellConfigurationSources;
     }
 
     [HttpPost]
@@ -64,7 +65,7 @@ public class ShellSettingsEditorController : Controller
         await _tenantConfigSemaphore.WaitAsync(HttpContext.RequestAborted);
         try
         {
-            await _tenantConfigSources.SaveAsync(shellSettings.Name, newSettings);
+            await _shellConfigurationSources.SaveAsync(shellSettings.Name, newSettings);
         }
         finally
         {
