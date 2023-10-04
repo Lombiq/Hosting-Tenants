@@ -26,11 +26,6 @@
 
 <script asp-name="monaco" depends-on="admin" at="Foot"></script>
 <script at="Foot" depends-on="monaco">
-    /* These are needed because they are coming from OC monaco editor and can't be used otherwise. */
-    /* eslint-disable no-use-before-define */
-    /* eslint-disable no-undef */
-    /* eslint-disable global-require */
-    /* eslint-disable import/no-dynamic-require */
     $(() => {
         require(['vs/editor/editor.main'], () => {
             const settings = @Html.Raw(JsonConvert.SerializeObject(
