@@ -60,10 +60,10 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         return emailResult;
     }
 
-    private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
+    private Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
         var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
-        if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
+        if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return Task.CompletedTask;
 
         if (currentUsagePercentage >= 100)
         {
@@ -73,7 +73,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
                 "EmailQuotaExceededError",
                 _emailQuotaSubjectService.GetExceededEmailSubject(),
                 currentUsagePercentage);
-            return;
+            return Task.CompletedTask;
         }
 
         SendQuotaEmail(
@@ -82,6 +82,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             $"EmailQuotaWarning",
             _emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
             currentUsagePercentage);
+        return Task.CompletedTask;
     }
 
     private void SendQuotaEmail(
