@@ -16,7 +16,7 @@ public static class MediaStorageManagementExtensions
             {
                 argumentsBuilder
                     .AddWithValue(
-                        "OrchardCore:Lombiq_Hosting_Tenants_MediaStorageManagement:MaximumStorageQuotaBytes",
+                        "OrchardCore:Default:Lombiq_Hosting_Tenants_MediaStorageManagement:MaximumStorageQuotaBytes",
                         maximumStorageQuotaBytes);
 
                 return Task.CompletedTask;
