@@ -46,20 +46,4 @@ public void ConfigureServices(IServiceCollection services) =>
 
 ### `Lombiq.Hosting.Tenants.Management.ShellSettingsEditor`
 
-Adds a shell settings editor to the tenant editor page where you can set values that are not already present in the current ShellSetting for the given tenant. Only those settings will be displayed here that were added from this editor. You can also prefill settings, but it is **not** recommended as it requires to add the same value twice:
-
-```json
-"OrchardCore": {
-  "TenantNamePrefix": {
-    "TestOption": {
-      "TestKey": "TestValue"
-    }
-  },
-  {
-    "TenantName": {
-      "TestOption": {
-        "TestKey": "TestValue"
-    }
-  },
-}
-```
+Adds a shell settings editor to the tenant editor page where you can set values that are not already present in the current ShellSetting for the given tenant. Only those settings will be displayed that were added from this editor.

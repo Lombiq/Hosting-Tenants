@@ -36,7 +36,6 @@
   <ItemGroup>
     <PackageReference Include="OrchardCore" Version="1.7.0" />
     <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
-    <PackageReference Include="OrchardCore.ContentFields" Version="1.7.0" />
     <PackageReference Include="OrchardCore.Tenants" Version="1.7.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>

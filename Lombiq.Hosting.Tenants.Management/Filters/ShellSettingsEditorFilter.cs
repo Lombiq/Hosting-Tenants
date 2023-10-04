@@ -53,7 +53,7 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
             var tenantSettingsPrefix = $"{tenantName}Prefix:";
             var editableItems = shellSettings.ShellConfiguration.AsEnumerable()
                 .Where(item => item.Value != null &&
-                    item.Key.Contains(tenantSettingsPrefix, StringComparison.InvariantCulture))
+                    item.Key.Contains(tenantSettingsPrefix))
                 .ToDictionary(key => key.Key.Replace(tenantSettingsPrefix, string.Empty), value => value.Value);
 
             await contentZone.AddAsync(
@@ -62,7 +62,7 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
                     viewModel =>
                     {
                         viewModel.Json = JsonConvert.SerializeObject(editableItems);
-                        viewModel.TenantId = context.RouteData.Values["Id"].ToString();
+                        viewModel.TenantId = tenantName;
                     }),
                 "10");
         }
