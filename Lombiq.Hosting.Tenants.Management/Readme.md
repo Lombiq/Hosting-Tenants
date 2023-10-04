@@ -46,7 +46,7 @@ public void ConfigureServices(IServiceCollection services) =>
 
 ### `Lombiq.Hosting.Tenants.Management.ShellSettingsEditor`
 
-Adds a shell settings editor to the tenant editor page where you can set values that are not already present in the current ShellSetting for the given tenant. Only those settings will be displayed here that were added from this editor. You can also prefill settings, but it is **not** recommended as it requires to add the same value twice:
+Adds a shell settings editor to the tenant editor page where you can set values that are not already present in the current ShellSetting for the given tenant. Only those settings will be displayed here that were added from this editor. You can also mark certain configuration keys (coming from e.g. an _appsettings.json_ file or from environment variables) to make them show up in this editor by default. However, this is **not** recommended as it requires you to add the same configuration twice:
 
 ```json
 "OrchardCore": {
