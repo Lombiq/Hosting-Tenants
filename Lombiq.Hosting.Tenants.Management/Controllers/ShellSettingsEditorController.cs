@@ -45,6 +45,12 @@ public class ShellSettingsEditorController : Controller
 
         var settingsDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.Json);
         var newSettings = new Dictionary<string, string>();
+
+        foreach (var key in settingsDictionary.Keys.Where(key => string.IsNullOrEmpty(settingsDictionary[key])))
+        {
+            settingsDictionary[key] = null;
+        }
+
         foreach (var key in settingsDictionary.Keys)
         {
             if (shellSettings[key] != settingsDictionary[key])
