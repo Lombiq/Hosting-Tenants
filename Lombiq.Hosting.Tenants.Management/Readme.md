@@ -60,6 +60,6 @@ Adds a shell settings editor to the tenant editor page where you can set values 
       "TestOption": {
         "TestKey": "TestValue"
     }
-  },
+  }
 }
 ```
