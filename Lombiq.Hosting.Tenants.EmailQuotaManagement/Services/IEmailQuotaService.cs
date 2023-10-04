@@ -1,5 +1,4 @@
 ﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -9,11 +8,6 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 /// </summary>
 public interface IEmailQuotaService
 {
-    /// <summary>
-    /// Collects the emails of the users who should receive the email reminder, based on the site owner permission.
-    /// </summary>
-    Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync();
-
     /// <summary>
     /// Checks if the emails should be limited, depending on the default SMTP settings.
     /// </summary>
