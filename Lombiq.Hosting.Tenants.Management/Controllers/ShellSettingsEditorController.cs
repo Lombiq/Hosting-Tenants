@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
+using OrchardCore.Locking.Distributed;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using static OrchardCore.Tenants.Permissions;
 
@@ -21,17 +22,19 @@ public class ShellSettingsEditorController : Controller
 {
     private readonly IAuthorizationService _authorizationService;
     private readonly IShellHost _shellHost;
-    private readonly SemaphoreSlim _tenantConfigSemaphore = new(1);
     private readonly IShellConfigurationSources _shellConfigurationSources;
+    private readonly IDistributedLock _distributedLock;
 
     public ShellSettingsEditorController(
         IAuthorizationService authorizationService,
         IShellHost shellHost,
-        IShellConfigurationSources shellConfigurationSources)
+        IShellConfigurationSources shellConfigurationSources,
+        IDistributedLock distributedLock)
     {
         _authorizationService = authorizationService;
         _shellHost = shellHost;
         _shellConfigurationSources = shellConfigurationSources;
+        _distributedLock = distributedLock;
     }
 
     [HttpPost]
@@ -62,16 +65,16 @@ public class ShellSettingsEditorController : Controller
             }
         }
 
-        await _tenantConfigSemaphore.WaitAsync(HttpContext.RequestAborted);
-        try
+        // Try to acquire a lock before using the scope, so that a next process gets the last committed data.
+        var (locker, locked) = await _distributedLock.TryAcquireLockAsync("SHELL_SETTINGS_EDITOR_LOCK", TimeSpan.MaxValue);
+        if (!locked)
         {
-            await _shellConfigurationSources.SaveAsync(shellSettings.Name, newSettings);
-        }
-        finally
-        {
-            _tenantConfigSemaphore.Release();
+            throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}");
         }
 
+        await using var acquiredLock = locker;
+
+        await _shellConfigurationSources.SaveAsync(shellSettings.Name, newSettings);
         await _shellHost.ReloadShellContextAsync(shellSettings);
 
         return RedirectToAction(
@@ -82,11 +85,5 @@ public class ShellSettingsEditorController : Controller
                 area = "OrchardCore.Tenants",
                 id = model.TenantId,
             });
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        _tenantConfigSemaphore.Dispose();
-        base.Dispose(disposing);
     }
 }
