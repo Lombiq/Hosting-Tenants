@@ -61,7 +61,7 @@ public class ShellSettingsEditorController : Controller
         {
             foreach (var key in settingsDictionary.Keys)
             {
-                var tenantSettingsPrefixWithKey = $"{model.TenantId}Prefix:{key}";
+                var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
                 if (shellSettings[key] != settingsDictionary[key])
                 {
                     newSettings[tenantSettingsPrefixWithKey] = settingsDictionary[key];
@@ -76,7 +76,7 @@ public class ShellSettingsEditorController : Controller
 
         foreach (var key in deletableKeys)
         {
-            var tenantSettingsPrefixWithKey = $"{model.TenantId}Prefix:{key}";
+            var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
             newSettings[key] = null;
             newSettings[tenantSettingsPrefixWithKey] = null;
         }
