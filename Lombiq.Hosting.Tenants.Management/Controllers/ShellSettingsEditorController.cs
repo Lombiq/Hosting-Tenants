@@ -114,7 +114,7 @@ public class ShellSettingsEditorController : Controller
         await using var acquiredLock = locker;
 
         await _shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
-        await _shellHost.ReloadShellContextAsync(shellSettings);
+        await _shellHost.UpdateShellSettingsAsync(shellSettings);
 
         return RedirectToAction(
             nameof(AdminController.Edit),
