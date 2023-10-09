@@ -11,7 +11,7 @@ public static class TestCaseUITestContextExtensions
 {
     public static async Task TestShellSettingsEditorFeatureAsync(this UITestContext context)
     {
-        await context.SignInDirectlyAndGoToDashboardAsync();
+        await context.SignInDirectlyAsync();
         await context.GoToAdminRelativeUrlAsync("/Tenants/Edit/Default");
         await context.FillInEditorThenCheckValueAsync(
             "{\"TestKey:TestSubKey:TestSubOptions:Test\":\"TestValue\"}",
