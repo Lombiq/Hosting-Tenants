@@ -17,7 +17,7 @@ public static class TestCaseUITestContextExtensions
         // Expected JSON string
 #pragma warning disable JSON002 // Probable JSON string detected
         await context.FillInEditorThenCheckValueAsync(
-            "{\"TestKey:TestSubKey:TestSubOptions:Test\":\"TestValue\"}",
+            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"Test\": \"TestValue\"}}}}",
             "TestValue");
 #pragma warning restore JSON002 // Probable JSON string detected
         await context.FillInEditorThenCheckValueAsync(
@@ -29,7 +29,16 @@ public static class TestCaseUITestContextExtensions
     {
         context.FillInMonacoEditor("Json_editor", text);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Save settings')]"));
-        var editorValue = JObject.Parse(context.GetMonacoEditorText("Json_editor"));
-        editorValue.Value<string>("TestKey:TestSubKey:TestSubOptions:Test").ShouldBeAsString(expectedValue);
+        var editorText = context.GetMonacoEditorText("Json_editor");
+
+        if (string.IsNullOrEmpty(text))
+        {
+            editorText.ShouldBeAsString(text);
+        }
+        else
+        {
+            var editorValue = JObject.Parse(context.GetMonacoEditorText("Json_editor"));
+            editorValue.SelectToken("TestKey.TestSubKey.TestSubOptions.Test")?.ToString().ShouldBeAsString(expectedValue);
+        }
     }
 }
