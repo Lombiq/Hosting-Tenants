@@ -62,8 +62,8 @@ public class ShellSettingsEditorController : Controller
                 });
         }
 
-        var settingsDictionary = new JsonConfigurationParser().ParseConfiguration(model.Json);
-        var newSettings = new Dictionary<string, string>();
+        var tenantConfiguration = new JsonConfigurationParser().ParseConfiguration(model.Json);
+        var newTenantConfiguration = new Dictionary<string, string>();
 
         var tenantSettingsPrefix = $"{model.TenantId}Prefix:";
         var currentSettings = shellSettings.ShellConfiguration.AsEnumerable()
@@ -71,31 +71,32 @@ public class ShellSettingsEditorController : Controller
                 item.Key.Contains(tenantSettingsPrefix))
             .ToDictionary(key => key.Key.Replace(tenantSettingsPrefix, string.Empty), value => value.Value);
 
-        foreach (var key in settingsDictionary.Keys)
+        foreach (var key in tenantConfiguration.Keys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            if (shellSettings[key] != settingsDictionary[key])
+            if (shellSettings[key] != tenantConfiguration[key])
             {
-                newSettings[tenantSettingsPrefixWithKey] = settingsDictionary[key];
-                newSettings[key] = settingsDictionary[key];
+                newTenantConfiguration[tenantSettingsPrefixWithKey] = tenantConfiguration[key];
+                newTenantConfiguration[key] = tenantConfiguration[key];
             }
         }
 
         var deletableKeys = currentSettings
-            .Where(item => !settingsDictionary.ContainsKey(item.Key))
+            .Where(item => !tenantConfiguration.ContainsKey(item.Key))
             .Select(item => item.Key);
 
         foreach (var key in deletableKeys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            newSettings[key] = null;
-            newSettings[tenantSettingsPrefixWithKey] = null;
+            newTenantConfiguration[key] = null;
+            newTenantConfiguration[tenantSettingsPrefixWithKey] = null;
         }
 
         var (locker, locked) =
             await _distributedLock.TryAcquireLockAsync(
                 "LOMBIQ_HOSTING_TENANTS_MANAGEMENT_SHELL_SETTINGS_EDITOR_LOCK",
                 TimeSpan.FromSeconds(10));
+
         if (!locked)
         {
             throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}.");
@@ -103,7 +104,7 @@ public class ShellSettingsEditorController : Controller
 
         await using var acquiredLock = locker;
 
-        await _shellConfigurationSources.SaveAsync(shellSettings.Name, newSettings);
+        await _shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
         await _shellHost.ReloadShellContextAsync(shellSettings);
 
         return RedirectToAction(
