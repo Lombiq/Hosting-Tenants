@@ -2,6 +2,7 @@
 using Lombiq.Hosting.Tenants.Management.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
@@ -47,29 +48,43 @@ public class ShellSettingsEditorController : Controller
             return NotFound();
         }
 
-        var settingsDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.Json);
+        var settingsDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.Json ?? string.Empty);
         var newSettings = new Dictionary<string, string>();
 
-        foreach (var key in settingsDictionary.Keys.Where(key => string.IsNullOrEmpty(settingsDictionary[key])))
-        {
-            settingsDictionary[key] = null;
-        }
+        var tenantSettingsPrefix = $"{model.TenantId}Prefix:";
+        var currentSettings = shellSettings.ShellConfiguration.AsEnumerable()
+            .Where(item => item.Value != null &&
+                item.Key.Contains(tenantSettingsPrefix))
+            .ToDictionary(key => key.Key.Replace(tenantSettingsPrefix, string.Empty), value => value.Value);
 
-        foreach (var key in settingsDictionary.Keys)
+        if (settingsDictionary?.Keys != null)
         {
-            if (shellSettings[key] != settingsDictionary[key])
+            foreach (var key in settingsDictionary.Keys)
             {
-                var tenantSettingsPrefix = $"{model.TenantId}Prefix:{key}";
-                newSettings[tenantSettingsPrefix] = settingsDictionary[key];
-                newSettings[key] = settingsDictionary[key];
+                var tenantSettingsPrefixWithKey = $"{model.TenantId}Prefix:{key}";
+                if (shellSettings[key] != settingsDictionary[key])
+                {
+                    newSettings[tenantSettingsPrefixWithKey] = settingsDictionary[key];
+                    newSettings[key] = settingsDictionary[key];
+                }
             }
         }
 
-        // Try to acquire a lock before using the scope, so that a next process gets the last committed data.
-        var (locker, locked) = await _distributedLock.TryAcquireLockAsync("SHELL_SETTINGS_EDITOR_LOCK", TimeSpan.MaxValue);
+        var deletableKeys = currentSettings
+            .Where(item => settingsDictionary == null || !settingsDictionary.ContainsKey(item.Key))
+            .Select(item => item.Key);
+
+        foreach (var key in deletableKeys)
+        {
+            var tenantSettingsPrefixWithKey = $"{model.TenantId}Prefix:{key}";
+            newSettings[key] = null;
+            newSettings[tenantSettingsPrefixWithKey] = null;
+        }
+
+        var (locker, locked) = await _distributedLock.TryAcquireLockAsync("SHELL_SETTINGS_EDITOR_LOCK", TimeSpan.FromSeconds(10));
         if (!locked)
         {
-            throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}");
+            throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}.");
         }
 
         await using var acquiredLock = locker;
