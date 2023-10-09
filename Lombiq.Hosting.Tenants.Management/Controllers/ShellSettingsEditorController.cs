@@ -71,21 +71,18 @@ public class ShellSettingsEditorController : Controller
                 item.Key.Contains(tenantSettingsPrefix))
             .ToDictionary(key => key.Key.Replace(tenantSettingsPrefix, string.Empty), value => value.Value);
 
-        if (settingsDictionary?.Keys != null)
+        foreach (var key in settingsDictionary.Keys)
         {
-            foreach (var key in settingsDictionary.Keys)
+            var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
+            if (shellSettings[key] != settingsDictionary[key])
             {
-                var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-                if (shellSettings[key] != settingsDictionary[key])
-                {
-                    newSettings[tenantSettingsPrefixWithKey] = settingsDictionary[key];
-                    newSettings[key] = settingsDictionary[key];
-                }
+                newSettings[tenantSettingsPrefixWithKey] = settingsDictionary[key];
+                newSettings[key] = settingsDictionary[key];
             }
         }
 
         var deletableKeys = currentSettings
-            .Where(item => settingsDictionary == null || !settingsDictionary.ContainsKey(item.Key))
+            .Where(item => !settingsDictionary.ContainsKey(item.Key))
             .Select(item => item.Key);
 
         foreach (var key in deletableKeys)
