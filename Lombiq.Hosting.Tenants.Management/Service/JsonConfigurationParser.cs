@@ -47,7 +47,7 @@ public class JsonConfigurationParser
 
     private void VisitArrayElement(JsonElement element)
     {
-        int index = 0;
+        var index = 0;
 
         foreach (var arrayElement in element.EnumerateArray())
         {
@@ -85,7 +85,7 @@ public class JsonConfigurationParser
             case JsonValueKind.True:
             case JsonValueKind.False:
             case JsonValueKind.Null:
-                string key = _paths.Peek();
+                var key = _paths.Peek();
                 if (_configurationData.ContainsKey(key))
                 {
                     throw new FormatException($"A duplicate key '{key}' was found.");
