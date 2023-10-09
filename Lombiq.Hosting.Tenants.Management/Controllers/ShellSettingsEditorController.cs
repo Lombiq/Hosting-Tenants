@@ -95,7 +95,7 @@ public class ShellSettingsEditorController : Controller
             newSettings[tenantSettingsPrefixWithKey] = null;
         }
 
-        var (locker, locked) = await _distributedLock.TryAcquireLockAsync("SHELL_SETTINGS_EDITOR_LOCK", TimeSpan.FromSeconds(10));
+        var (locker, locked) = await _distributedLock.TryAcquireLockAsync("LOMBIQ_HOSTING_TENANTS_MANAGEMENT_SHELL_SETTINGS_EDITOR_LOCK", TimeSpan.FromSeconds(10));
         if (!locked)
         {
             throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}.");
