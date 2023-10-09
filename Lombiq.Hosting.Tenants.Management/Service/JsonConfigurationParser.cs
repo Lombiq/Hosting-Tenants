@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text.Json;
 
 namespace Lombiq.Hosting.Tenants.Management.Service;
 
 public class JsonConfigurationParser
 {
-    private readonly Dictionary<string, string> Data = new(StringComparer.OrdinalIgnoreCase);
-    private readonly Stack<string> Paths = new();
+    private readonly Dictionary<string, string> _data = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Stack<string> _paths = new();
 
     public IDictionary<string, string> ParseConfiguration(string inputJson)
     {
@@ -22,12 +21,13 @@ public class JsonConfigurationParser
         using var doc = JsonDocument.Parse(inputJson, jsonDocumentOptions);
         if (doc.RootElement.ValueKind != JsonValueKind.Object)
         {
-            throw new FormatException("Format Exception:" + doc.RootElement.ValueKind);
+            throw new FormatException(
+                $"Top-level JSON element must be an object. Instead, '{doc.RootElement.ValueKind}' was found.");
         }
 
         VisitObjectElement(doc.RootElement);
 
-        return Data;
+        return _data;
     }
 
     private void VisitObjectElement(JsonElement element)
@@ -51,7 +51,7 @@ public class JsonConfigurationParser
 
         foreach (var arrayElement in element.EnumerateArray())
         {
-            EnterContext(index.ToString(CultureInfo.InvariantCulture));
+            EnterContext(index.ToTechnicalString());
             VisitValue(arrayElement);
             ExitContext();
             index++;
@@ -62,9 +62,9 @@ public class JsonConfigurationParser
 
     private void SetNullIfElementIsEmpty(bool isEmpty)
     {
-        if (isEmpty && Paths.Count > 0)
+        if (isEmpty && _paths.Count > 0)
         {
-            Data[Paths.Peek()] = null;
+            _data[_paths.Peek()] = null;
         }
     }
 
@@ -85,25 +85,25 @@ public class JsonConfigurationParser
             case JsonValueKind.True:
             case JsonValueKind.False:
             case JsonValueKind.Null:
-                string key = Paths.Peek();
-                if (Data.ContainsKey(key))
+                string key = _paths.Peek();
+                if (_data.ContainsKey(key))
                 {
-                    throw new FormatException("Key Is Duplicated:" + key);
+                    throw new FormatException($"A duplicate key '{key}' was found.");
                 }
 
-                Data[key] = value.ToString();
+                _data[key] = value.ToString();
                 break;
 
             case JsonValueKind.Undefined:
             default:
-                throw new FormatException("Unsupported JSON Token:" + value.ValueKind);
+                throw new FormatException($"Unsupported JSON token '{value.ValueKind}' was found.");
         }
     }
 
     private void EnterContext(string context) =>
-        Paths.Push(Paths.Count > 0 ?
-            Paths.Peek() + ConfigurationPath.KeyDelimiter + context :
+        _paths.Push(_paths.Count > 0 ?
+            _paths.Peek() + ConfigurationPath.KeyDelimiter + context :
             context);
 
-    private void ExitContext() => Paths.Pop();
+    private void ExitContext() => _paths.Pop();
 }
