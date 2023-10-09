@@ -7,7 +7,7 @@ namespace Lombiq.Hosting.Tenants.Management.Service;
 
 public class JsonConfigurationParser
 {
-    private readonly Dictionary<string, string> _data = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _configurationData = new(StringComparer.OrdinalIgnoreCase);
     private readonly Stack<string> _paths = new();
 
     public IDictionary<string, string> ParseConfiguration(string inputJson)
@@ -27,7 +27,7 @@ public class JsonConfigurationParser
 
         VisitObjectElement(doc.RootElement);
 
-        return _data;
+        return _configurationData;
     }
 
     private void VisitObjectElement(JsonElement element)
@@ -64,7 +64,7 @@ public class JsonConfigurationParser
     {
         if (isEmpty && _paths.Count > 0)
         {
-            _data[_paths.Peek()] = null;
+            _configurationData[_paths.Peek()] = null;
         }
     }
 
@@ -86,12 +86,12 @@ public class JsonConfigurationParser
             case JsonValueKind.False:
             case JsonValueKind.Null:
                 string key = _paths.Peek();
-                if (_data.ContainsKey(key))
+                if (_configurationData.ContainsKey(key))
                 {
                     throw new FormatException($"A duplicate key '{key}' was found.");
                 }
 
-                _data[key] = value.ToString();
+                _configurationData[key] = value.ToString();
                 break;
 
             case JsonValueKind.Undefined:
