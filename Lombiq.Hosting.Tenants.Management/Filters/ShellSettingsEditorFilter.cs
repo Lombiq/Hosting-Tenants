@@ -1,14 +1,12 @@
 using Lombiq.Hosting.Tenants.Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Filters;
@@ -49,18 +47,15 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
 
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
-            var tenantSettingsPrefix = $"{tenantName}Prefix:";
-            var editableItems = shellSettings.ShellConfiguration.AsEnumerable()
-                .Where(item => item.Value != null &&
-                    item.Key.Contains(tenantSettingsPrefix))
-                .ToDictionary(key => key.Key.Replace(tenantSettingsPrefix, string.Empty), value => value.Value);
+            var tenantSettingsPrefix = $"{tenantName}Prefix";
+            var editableItems = shellSettings.ShellConfiguration.AsJsonNode();
 
             await contentZone.AddAsync(
                 await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
                     "ShellSettingsEditor",
                     viewModel =>
                     {
-                        viewModel.Json = JsonConvert.SerializeObject(editableItems);
+                        viewModel.Json = editableItems[tenantSettingsPrefix]?.ToJsonString();
                         viewModel.TenantId = tenantName;
                     }),
                 "10");

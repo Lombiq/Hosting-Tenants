@@ -1,9 +1,9 @@
 ﻿using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
+using Lombiq.Hosting.Tenants.Management.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Locking.Distributed;
@@ -13,6 +13,7 @@ using OrchardCore.Tenants.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static OrchardCore.Tenants.Permissions;
 
@@ -48,7 +49,20 @@ public class ShellSettingsEditorController : Controller
             return NotFound();
         }
 
-        var settingsDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(model.Json ?? string.Empty);
+        model.Json ??= "{}";
+        if (!IsValidJson(model.Json))
+        {
+            return RedirectToAction(
+                nameof(AdminController.Edit),
+                typeof(AdminController).ControllerName(),
+                new
+                {
+                    area = "OrchardCore.Tenants",
+                    id = model.TenantId,
+                });
+        }
+
+        var settingsDictionary = new JsonConfigurationParser().ParseConfiguration(model.Json);
         var newSettings = new Dictionary<string, string>();
 
         var tenantSettingsPrefix = $"{model.TenantId}Prefix:";
@@ -100,5 +114,18 @@ public class ShellSettingsEditorController : Controller
                 area = "OrchardCore.Tenants",
                 id = model.TenantId,
             });
+    }
+
+    private static bool IsValidJson(string json)
+    {
+        try
+        {
+            JsonDocument.Parse(json);
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 }
