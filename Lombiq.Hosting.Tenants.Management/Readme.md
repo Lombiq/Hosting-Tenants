@@ -4,7 +4,7 @@
 
 ## About
 
-With the help of this module, you can set restrictions on tenant creation.
+With the help of this module, you can set restrictions on tenant creation and set tenant level shell settings in the tenant editor.
 
 ## Documentation
 
