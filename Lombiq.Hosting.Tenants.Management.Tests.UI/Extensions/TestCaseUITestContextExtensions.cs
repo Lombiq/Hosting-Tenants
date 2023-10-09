@@ -13,9 +13,19 @@ public static class TestCaseUITestContextExtensions
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
         await context.GoToAdminRelativeUrlAsync("/Tenants/Edit/Default");
-        context.FillInMonacoEditor("Json_editor", "{\"TestKey:TestSubKey:TestSubOptions:Test\":\"TestValue\"}");
+        await context.FillInEditorThenCheckValueAsync(
+            "{\"TestKey:TestSubKey:TestSubOptions:Test\":\"TestValue\"}",
+            "TestValue");
+        await context.FillInEditorThenCheckValueAsync(
+            string.Empty,
+            expectedValue: null);
+    }
+
+    private static async Task FillInEditorThenCheckValueAsync(this UITestContext context, string text, string expectedValue)
+    {
+        context.FillInMonacoEditor("Json_editor", text);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Save settings')]"));
         var editorValue = JObject.Parse(context.GetMonacoEditorText("Json_editor"));
-        editorValue.Value<string>("TestKey:TestSubKey:TestSubOptions:Test").ShouldBeAsString("TestValue");
+        editorValue.Value<string>("TestKey:TestSubKey:TestSubOptions:Test").ShouldBeAsString(expectedValue);
     }
 }
