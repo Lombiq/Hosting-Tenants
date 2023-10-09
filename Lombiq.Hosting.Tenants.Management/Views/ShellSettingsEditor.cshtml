@@ -14,7 +14,9 @@
     <div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
         <label asp-for="Json" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
         <div class="@Orchard.GetEndCssClasses()">
-            <span class="hint">@T["Key-value pairs should be set here. Save empty string value to delete setting."]</span>
+            <span class="hint">
+                @T["JSON key-value pairs should be set here."]
+            </span>
             <div id="@Html.IdFor(model => model.Json)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
             <textarea asp-for="Json" hidden>@Html.Raw(Model.Json)</textarea>
         </div>
