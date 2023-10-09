@@ -3,7 +3,9 @@ using Lombiq.Hosting.Tenants.Management.Models;
 using Lombiq.Hosting.Tenants.Management.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.Configuration;
+using OrchardCore.DisplayManagement.Notify;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Locking.Distributed;
@@ -26,17 +28,23 @@ public class ShellSettingsEditorController : Controller
     private readonly IShellHost _shellHost;
     private readonly IShellConfigurationSources _shellConfigurationSources;
     private readonly IDistributedLock _distributedLock;
+    private readonly INotifier _notifier;
+    private readonly IHtmlLocalizer<ShellSettingsEditorController> H;
 
     public ShellSettingsEditorController(
         IAuthorizationService authorizationService,
         IShellHost shellHost,
         IShellConfigurationSources shellConfigurationSources,
-        IDistributedLock distributedLock)
+        IDistributedLock distributedLock,
+        INotifier notifier,
+        IHtmlLocalizer<ShellSettingsEditorController> htmlLocalizer)
     {
         _authorizationService = authorizationService;
         _shellHost = shellHost;
         _shellConfigurationSources = shellConfigurationSources;
         _distributedLock = distributedLock;
+        _notifier = notifier;
+        H = htmlLocalizer;
     }
 
     [HttpPost]
@@ -52,6 +60,7 @@ public class ShellSettingsEditorController : Controller
         model.Json ??= "{}";
         if (!IsValidJson(model.Json))
         {
+            await _notifier.ErrorAsync(H["Please provide valid JSON input for shell settings."]);
             return RedirectToAction(
                 nameof(AdminController.Edit),
                 typeof(AdminController).ControllerName(),
