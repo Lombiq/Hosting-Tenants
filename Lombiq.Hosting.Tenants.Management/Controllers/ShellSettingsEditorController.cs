@@ -113,6 +113,9 @@ public class ShellSettingsEditorController : Controller
 
         await using var acquiredLock = locker;
 
+        // We are using the shell configuration sources directly because using IShellHost.UpdateShellSettingsAsync would
+        // not save settings that has a key with multiple sections.
+        // See https://github.com/OrchardCMS/OrchardCore/issues/14481.
         await _shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
         await _shellHost.UpdateShellSettingsAsync(shellSettings);
 
