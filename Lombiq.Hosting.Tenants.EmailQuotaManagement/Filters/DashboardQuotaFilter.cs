@@ -2,6 +2,7 @@ using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.Admin.Controllers;
+using OrchardCore.AdminDashboard.Controllers;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
@@ -37,9 +38,12 @@ public class DashboardQuotaFilter : IAsyncResultFilter
         var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
         var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
 
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" &&
-            actionRouteValue is nameof(AdminController.Index) &&
+        if ((actionRouteController == typeof(AdminController).ControllerName() ||
+                actionRouteController == typeof(DashboardController).ControllerName()) &&
+            actionRouteArea is $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" or
+                $"{nameof(OrchardCore)}.{nameof(OrchardCore.AdminDashboard)}" &&
+            actionRouteValue is nameof(AdminController.Index) or
+                nameof(DashboardController.Index) &&
             context.Result is ViewResult &&
             _emailQuotaService.ShouldLimitEmails())
         {
