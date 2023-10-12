@@ -34,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17688" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17688" />
-    <PackageReference Include="OrchardCore.Tenants" Version="1.8.0-preview-17688" />
-    <PackageReference Include="OrchardCore.Users" Version="1.8.0-preview-17688" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17696" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17696" />
+    <PackageReference Include="OrchardCore.Tenants" Version="1.8.0-preview-17696" />
+    <PackageReference Include="OrchardCore.Users" Version="1.8.0-preview-17696" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">

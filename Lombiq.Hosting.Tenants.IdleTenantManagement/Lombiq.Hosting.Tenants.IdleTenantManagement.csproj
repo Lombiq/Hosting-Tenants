@@ -24,9 +24,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
-    <PackageReference Include="OrchardCore.Abstractions" Version="1.8.0-preview-17688" />
-    <PackageReference Include="OrchardCore" Version="1.8.0-preview-17688" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17688" />
+    <PackageReference Include="OrchardCore.Abstractions" Version="1.8.0-preview-17696" />
+    <PackageReference Include="OrchardCore" Version="1.8.0-preview-17696" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17696" />
   </ItemGroup>
 
   <ItemGroup>
