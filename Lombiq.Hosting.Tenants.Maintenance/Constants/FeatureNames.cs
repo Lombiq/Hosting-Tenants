@@ -8,4 +8,5 @@ public static class FeatureNames
     public const string UpdateShellRequestUrls = Maintenance + "." + nameof(UpdateShellRequestUrls);
     public const string AddSiteOwnerPermissionToRole = Maintenance + "." + nameof(AddSiteOwnerPermissionToRole);
     public const string RemoveUsers = Maintenance + "." + nameof(RemoveUsers);
+    public const string ChangeUserSensitiveContent = Maintenance + "." + nameof(ChangeUserSensitiveContent);
 }

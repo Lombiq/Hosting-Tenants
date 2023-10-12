@@ -51,3 +51,12 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = new[] { Maintenance }
 )]
+
+[assembly: Feature(
+    Id = ChangeUserSensitiveContent,
+    Name = "Lombiq Hosting - Tenants Maintenance - Change User Sensitive Content",
+    Description = "Replaces the users' username, email and password with realistic but random values.",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = new[] { Maintenance }
+)]
