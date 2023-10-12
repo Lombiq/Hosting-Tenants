@@ -61,6 +61,8 @@ public class ShellSettingsEditorController : Controller
         if (!IsValidJson(model.Json))
         {
             await _notifier.ErrorAsync(H["Please provide valid JSON input for shell settings."]);
+            TempData["ValidationErrorJson"] = model.Json;
+
             return RedirectToAction(
                 nameof(AdminController.Edit),
                 typeof(AdminController).ControllerName(),

@@ -47,15 +47,24 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
 
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
-            var tenantSettingsPrefix = $"{tenantName}Prefix";
+
+            (context.Controller as Controller)
+                !.TempData
+                .TryGetValue(
+                    "ValidationErrorJson",
+                    out var validationErrorJson);
+
             var editableItems = shellSettings.ShellConfiguration.AsJsonNode();
+            var editorJson = string.IsNullOrEmpty(validationErrorJson?.ToString())
+                ? editableItems[$"{tenantName}Prefix"]?.ToJsonString()
+                : validationErrorJson.ToString();
 
             await contentZone.AddAsync(
                 await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
                     "ShellSettingsEditor",
                     viewModel =>
                     {
-                        viewModel.Json = editableItems[tenantSettingsPrefix]?.ToJsonString();
+                        viewModel.Json = editorJson;
                         viewModel.TenantId = tenantName;
                     }),
                 "10");
