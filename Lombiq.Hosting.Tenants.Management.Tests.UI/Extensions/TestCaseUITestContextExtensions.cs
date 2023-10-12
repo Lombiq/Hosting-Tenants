@@ -17,36 +17,47 @@ public static class TestCaseUITestContextExtensions
         // Expected JSON string.
 #pragma warning disable JSON002 // Probable JSON string detected
         await context.FillInEditorThenCheckValueAsync(
-            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"Test\": \"TestValue\"}}}}",
-            "TestValue");
+            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"FirstTestKey\": \"FirstTestValue\",\"SecondTestKey\": \"SecondTestValue\"}}}}",
+            "FirstTestKey",
+            "FirstTestValue");
 
         await context.FillInEditorThenCheckValueAsync(
-            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"NewKey\": \"NewValue\"}}}}",
+            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"NewKey\": \"NewValue\",\"SecondTestKey\": \"SecondTestValue\"}}}}",
+            "NewKey",
             "NewValue");
 
         await context.FillInEditorThenCheckValueAsync(
+            "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{\"SecondTestKey\": \"SecondTestValue\"}}}}",
+            "NewKey",
+            string.Empty);
+
+        CheckEditorValue(context, "SecondTestKey", "SecondTestValue");
+
+        await context.FillInEditorThenCheckValueAsync(
             "{\"TestKey\":{\"TestSubKey\":{\"TestSubOptions\":{}}}}",
+            "SecondTestKey",
             string.Empty);
 #pragma warning restore JSON002 // Probable JSON string detected
+
         await context.FillInEditorThenCheckValueAsync(
             string.Empty,
+            "SecondTestKey",
             string.Empty);
     }
 
-    private static async Task FillInEditorThenCheckValueAsync(this UITestContext context, string text, string expectedValue)
+    private static async Task FillInEditorThenCheckValueAsync(this UITestContext context, string text, string keyToCheck, string expectedValue)
     {
         context.FillInMonacoEditor("Json_editor", text);
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Save settings')]"));
-        var editorText = context.GetMonacoEditorText("Json_editor");
+        CheckEditorValue(context, keyToCheck, expectedValue);
+    }
 
-        if (string.IsNullOrEmpty(expectedValue))
-        {
-            editorText.ShouldBeAsString(expectedValue);
-        }
-        else
-        {
-            var editorValue = JObject.Parse(editorText);
-            editorValue.SelectToken("TestKey.TestSubKey.TestSubOptions.Test")?.ToString().ShouldBeAsString(expectedValue);
-        }
+    private static void CheckEditorValue(this UITestContext context, string keyToCheck, string expectedValue)
+    {
+        var editorText = context.GetMonacoEditorText("Json_editor");
+        var editorJson = string.IsNullOrEmpty(editorText) ? "{}" : editorText;
+
+        var editorValue = JObject.Parse(editorJson);
+        editorValue.SelectToken($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?.ToString().ShouldBeAsString(expectedValue);
     }
 }
