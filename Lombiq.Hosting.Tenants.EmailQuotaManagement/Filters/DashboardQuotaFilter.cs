@@ -1,21 +1,22 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OrchardCore.Admin.Controllers;
+using OrchardCore.AdminDashboard.Controllers;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
-using OrchardCore.Queries.Controllers;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
-public class EmailSettingsQuotaFilter : IAsyncResultFilter
+public class DashboardQuotaFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;
     private readonly IEmailQuotaService _emailQuotaService;
 
-    public EmailSettingsQuotaFilter(
+    public DashboardQuotaFilter(
         IShapeFactory shapeFactory,
         ILayoutAccessor layoutAccessor,
         IEmailQuotaService emailQuotaService)
@@ -37,25 +38,32 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
         var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
         var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
 
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Settings)}" &&
-            actionRouteValue is nameof(AdminController.Index) &&
+        if ((actionRouteController == typeof(AdminController).ControllerName() ||
+                actionRouteController == typeof(DashboardController).ControllerName()) &&
+            actionRouteArea is $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" or
+                $"{nameof(OrchardCore)}.{nameof(OrchardCore.AdminDashboard)}" &&
+            actionRouteValue is nameof(AdminController.Index) or
+                nameof(DashboardController.Index) &&
             context.Result is ViewResult &&
-            context.RouteData.Values.TryGetValue("GroupId", out var groupId) &&
-            (string)groupId == "email" &&
             _emailQuotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
+            var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
 
-            var quota = await _emailQuotaService.GetOrCreateCurrentQuotaAsync();
-            await contentZone.AddAsync(
-                await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
-                {
-                    quota.CurrentEmailUsageCount,
-                    EmailQuotaPerMonth = _emailQuotaService.GetEmailQuotaPerMonth(),
-                }),
-                "0");
+            var currentUsagePercentage = currentEmailQuota.EmailQuota
+                .CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
+
+            if (currentUsagePercentage >= 80)
+            {
+                await contentZone.AddAsync(
+                    await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
+                    {
+                        currentEmailQuota.IsOverQuota,
+                        UsagePercentage = currentUsagePercentage,
+                    }),
+                    "0");
+            }
         }
 
         await next();

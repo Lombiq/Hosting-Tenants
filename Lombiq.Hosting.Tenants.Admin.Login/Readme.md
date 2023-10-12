@@ -38,9 +38,3 @@ public void ConfigureServices(IServiceCollection services) =>
 ```
 
 **NOTE:** This way the feature will also be enabled on the Default tenant. Therefore, for greater security, the controller does not perform anything on the Default tenant.
-
-## Dependencies
-
-This module has the following dependencies:
-
-- [Lombiq Helpful Libraries for Orchard Core](https://github.com/Lombiq/Helpful-Libraries)

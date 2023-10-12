@@ -16,7 +16,7 @@ This module currently contains one feature:
 
 ### `Lombiq.Hosting.Tenants.MediaStorageManagement`
 
-With this module, you can specify how much space would you like to limit each tenant's storage space. The default is 1GB. If you want to set it to 2GB e.g. you can do it in bytes as an environment variable or in `appsettings.json` as follows:
+With this module, you can specify how much space would you like to limit each tenant's storage space. The default is 1GB. If you want to set it to 2GB e.g. you can do it in bytes as an environment variable or in _appsettings.json_ as follows:
 
 ```json
 "OrchardCore": {
@@ -37,15 +37,3 @@ Tenant based configuration can be defined as the following, for more details rea
   }
 }
 ```
-
-## Dependencies
-
-This module has the following dependencies:
-
-- [Lombiq Helpful Libraries for Orchard Core](https://github.com/Lombiq/Helpful-Libraries)
-
-## Contributing and support
-
-Bug reports, feature requests, comments, questions, code contributions and love letters are warmly welcome. You can send them to us via GitHub issues and pull requests. Please adhere to our [open-source guidelines](https://lombiq.com/open-source-guidelines) while doing so.
-
-This project is developed by [Lombiq Technologies](https://lombiq.com/). Commercial-grade support is available through Lombiq.
