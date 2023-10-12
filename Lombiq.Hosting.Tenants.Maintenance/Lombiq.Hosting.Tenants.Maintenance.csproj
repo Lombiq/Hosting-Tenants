@@ -23,13 +23,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.Module.Targets" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.Settings" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.Users.Abstractions" Version="420.69.0" />
-        <PackageReference Include="OrchardCore.Users.Core" Version="420.69.0" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.Settings" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.Users.Abstractions" Version="1.8.0-preview-17692" />
+        <PackageReference Include="OrchardCore.Users.Core" Version="1.8.0-preview-17692" />
     </ItemGroup>
 
     <ItemGroup>

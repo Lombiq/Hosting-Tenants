@@ -34,11 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="420.69.0" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="420.69.0" />
-    <PackageReference Include="OrchardCore.ContentManagement" Version="420.69.0" />
-    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="420.69.0" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="420.69.0" />
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.8.0-preview-17692" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17692" />
+    <PackageReference Include="OrchardCore.ContentManagement" Version="1.8.0-preview-17692" />
+    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.8.0-preview-17692" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17692" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
