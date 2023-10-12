@@ -34,10 +34,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17692" />
-    <PackageReference Include="OrchardCore.Media" Version="1.8.0-preview-17692" />
-    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.8.0-preview-17692" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17692" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0-preview-17688" />
+    <PackageReference Include="OrchardCore.Media" Version="1.8.0-preview-17688" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.8.0-preview-17688" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0-preview-17688" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
