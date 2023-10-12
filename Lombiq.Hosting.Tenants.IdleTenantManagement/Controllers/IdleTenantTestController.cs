@@ -66,7 +66,7 @@ public class IdleTenantTestController : Controller
         return "OK";
     }
 
-    private void Wait(int shouldWait)
+    private static void Wait(int shouldWait)
     {
         if (shouldWait > 0)
         {
