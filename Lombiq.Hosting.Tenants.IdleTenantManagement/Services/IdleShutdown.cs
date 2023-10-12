@@ -36,9 +36,7 @@ public class IdleShutdown : IIdleShutdown
     {
         var maxIdleMinutes = _options.Value.MaxIdleMinutes;
 
-#pragma warning disable S125 // Commenting out until testing is done.
-        // if (maxIdleMinutes <= 0 || _shellSettings.IsDefaultShell()) return;
-#pragma warning restore S125
+        if (maxIdleMinutes <= 0 || _shellSettings.IsDefaultShell()) return;
 
         var lastActiveDateTimeUtc = _lastActiveTimeAccessor.LastActiveDateTimeUtc;
 
