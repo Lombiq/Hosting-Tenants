@@ -1,6 +1,6 @@
 ﻿// This file is a copy and slight modification of Microsoft.Extensions.Configuration.Json.JsonConfigurationFileParser
 // https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.Extensions.Configuration.Json/src/JsonConfigurationFileParser.cs.
-// Their recommended way of using this class is to copy it. https://github.com/dotnet/runtime/issues/73946
+// Their recommended way of using this class is to copy it: https://github.com/dotnet/runtime/issues/73946.
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
