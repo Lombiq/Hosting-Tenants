@@ -132,3 +132,22 @@ The following configuration should be used to allow the maintenance to run:
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.ChangeUserSensitiveContent`
+
+It's a maintenance task that depersonalizes the usernames, e-mail addresses, passwords, so they are changed to realistic but random values. The maintenance task runs only on the tenants that are added to the `TenantNames` property.
+
+The following configuration should be used to allow the maintenance to run:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "ChangeUserSensitiveContent": {
+        "IsEnabled": true,
+        "TenantNames": "Default, Tenant1, Tenant2"
+      }
+    }
+  }
+}
+```
