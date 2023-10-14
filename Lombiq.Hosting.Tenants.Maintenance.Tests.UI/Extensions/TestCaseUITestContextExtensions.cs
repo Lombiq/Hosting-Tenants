@@ -1,4 +1,5 @@
 using Atata;
+using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
@@ -21,5 +22,15 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAsync();
         await context.GoToAdminRelativeUrlAsync("/Roles/Edit/Editor");
         context.Get(By.Id("Checkbox.SiteOwner")).GetDomProperty("checked").ShouldBe(bool.TrueString);
+    }
+
+    public static async Task ChangeUserSensitiveContentMaintenanceExecutionAsync(this UITestContext context)
+    {
+        var loginPage = await context.GoToLoginPageAsync();
+        (await loginPage.LogInWithAsync(context, DefaultUser.UserName, DefaultUser.Password))
+            .ShouldStayOnLoginPage()
+            .ValidationSummaryErrors.Should.Not.BeEmpty();
+
+        (await context.GetCurrentUserNameAsync()).ShouldBeEmpty();
     }
 }
