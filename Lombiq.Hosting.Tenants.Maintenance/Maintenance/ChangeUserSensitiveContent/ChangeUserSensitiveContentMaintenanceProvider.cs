@@ -8,11 +8,10 @@ using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using YesSql;
+using static Lombiq.HelpfulLibraries.OrchardCore.Users.PasswordHelper;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 
@@ -54,11 +53,13 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
         {
             var firstName = randomNameGenerator.GenerateRandomFirstName();
             var lastName = randomNameGenerator.GenerateRandomLastName();
+            var formattedFullName = GetFormattedFullName(firstName, lastName);
+            var formattedEmail = GetFormattedEmail(firstName, lastName);
 
-            user.UserName = GetFormattedFullName(firstName, lastName);
-            user.NormalizedUserName = GetFormattedFullName(firstName, lastName).ToUpperInvariant();
-            user.Email = GetFormattedEmail(firstName, lastName);
-            user.NormalizedEmail = GetFormattedEmail(firstName, lastName).ToUpperInvariant();
+            user.UserName = formattedFullName;
+            user.NormalizedUserName = formattedFullName.ToUpperInvariant();
+            user.Email = formattedEmail;
+            user.NormalizedEmail = formattedEmail.ToUpperInvariant();
             user.PasswordHash = _passwordHasher.HashPassword(user, GenerateRandomPassword(32));
 
             await _userManager.UpdateAsync(user);
@@ -69,33 +70,4 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
     private static string GetFormattedEmail(string firstName, string lastName) =>
         $"{firstName}.{lastName}@test.com";
-
-    private static string GenerateRandomPassword(int minLength)
-    {
-        const string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-="; // #spell-check-ignore-line
-
-        using var rng = RandomNumberGenerator.Create();
-        const string digits = "0123456789";
-        const string lowerChars = "abcdefghijklmnopqrstuvwxyz"; // #spell-check-ignore-line
-        const string upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // #spell-check-ignore-line
-        const string specialChars = "!@#$%^&*()_+-=";
-
-        var passwordChars = new List<char>
-            {
-                digits[rng.Next(0, digits.Length)],
-                lowerChars[rng.Next(0, lowerChars.Length)],
-                upperChars[rng.Next(0, upperChars.Length)],
-                specialChars[rng.Next(0, specialChars.Length)],
-            };
-
-        while (passwordChars.Count < minLength)
-        {
-            passwordChars.Add(validChars[rng.Next(0, validChars.Length)]);
-        }
-
-        passwordChars = passwordChars.OrderBy(c => rng.Next(0, int.MaxValue)).ToList();
-        string password = new(passwordChars.ToArray());
-
-        return password;
-    }
 }
