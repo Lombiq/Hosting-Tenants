@@ -50,7 +50,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
         var users = await _session.Query<User>().ListAsync();
         foreach (var user in users.Where(user =>
-            !user.Email.EndsWith($"@lombiq.com", StringComparison.InvariantCulture)))
+            !user.Email.Trim().EndsWith($"@lombiq.com", StringComparison.InvariantCulture)))
         {
             var firstName = randomNameGenerator.GenerateRandomFirstName();
             var lastName = randomNameGenerator.GenerateRandomLastName();
