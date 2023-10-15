@@ -26,11 +26,20 @@ public static class TestCaseUITestContextExtensions
 
     public static async Task ChangeUserSensitiveContentMaintenanceExecutionAsync(this UITestContext context)
     {
-        var loginPage = await context.GoToLoginPageAsync();
-        (await loginPage.LogInWithAsync(context, DefaultUser.UserName, DefaultUser.Password))
-            .ShouldStayOnLoginPage()
-            .ValidationSummaryErrors.Should.Not.BeEmpty();
+        const string username = "TestUser";
+        const string lombiqUserCreatorRecipe = "Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users";
+        await context.ExecuteRecipeDirectlyAsync(lombiqUserCreatorRecipe);
 
-        (await context.GetCurrentUserNameAsync()).ShouldBeEmpty();
+        var loginPage = await context.GoToLoginPageAsync();
+        (await loginPage.LogInWithAsync(context, username, DefaultUser.Password))
+            .ShouldLeaveLoginPage();
+
+        await context.GoToDashboardAsync();
+        await context.GoToUsersAsync();
+
+        context.Exists(By.XPath($"//h5[contains(text(), '{username}')]"));
+        context.Exists(By.XPath($"//span[contains(text(), 'TestUser@lombiq.com')]"));
+        context.Missing(By.XPath($"//h5[contains(text(), '{DefaultUser.UserName}')]"));
+        context.Missing(By.XPath($"//span[contains(text(), '{DefaultUser.Email}')]"));
     }
 }

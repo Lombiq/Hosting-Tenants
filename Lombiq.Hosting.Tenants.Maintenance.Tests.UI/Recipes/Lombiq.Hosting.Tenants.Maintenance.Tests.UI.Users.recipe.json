@@ -1,0 +1,19 @@
+{
+  "name": "Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users",
+  "displayName": "Lombiq Hosting Tenants Maintenance - UI Test Extensions - Users",
+  "description": "Creates a user with lombiq email.",
+  "author": "Lombiq Technologies",
+  "website": "https://github.com/Lombiq/Hosting-Tenants",
+  "version": "1.0",
+  "issetuprecipe": false,
+  "categories": [ "test" ],
+  "tags": [ "test" ],
+  "steps": [
+    {
+      "name": "command",
+      "commands": [
+        "createUser /UserName:TestUser /Password:Password1! /Email:TestUser@lombiq.com /Roles:Administrator"
+      ]
+    }
+  ]
+}

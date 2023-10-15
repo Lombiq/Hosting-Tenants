@@ -1,33 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core - UI Test Extensions</Title>
-        <Authors>Lombiq Technologies</Authors>
-        <Copyright>Copyright © 2021, Lombiq Technologies Ltd.</Copyright>
-        <Description>Lombiq Hosting - Tenants Maintenance for Orchard Core - UI Test Extensions: Extension methods that test tenants maintenance for Orchard Core.</Description>
-        <PackageIcon>NuGetIcon.png</PackageIcon>
-        <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
-        <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Maintenance.Tests.UI/Readme.md</PackageProjectUrl>
-        <PackageLicenseFile>License.md</PackageLicenseFile>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core - UI Test Extensions</Title>
+    <Authors>Lombiq Technologies</Authors>
+    <Copyright>Copyright © 2021, Lombiq Technologies Ltd.</Copyright>
+    <Description>Lombiq Hosting - Tenants Maintenance for Orchard Core - UI Test Extensions: Extension methods that test tenants maintenance for Orchard Core.</Description>
+    <PackageIcon>NuGetIcon.png</PackageIcon>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Maintenance.Tests.UI/Readme.md</PackageProjectUrl>
+    <PackageLicenseFile>License.md</PackageLicenseFile>
+  </PropertyGroup>
 
-    <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-        <ProjectReference Include="..\..\..\..\test\Lombiq.UITestingToolbox\Lombiq.Tests.UI\Lombiq.Tests.UI.csproj" />
-    </ItemGroup>
+  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
+    <ProjectReference Include="..\..\..\..\test\Lombiq.UITestingToolbox\Lombiq.Tests.UI\Lombiq.Tests.UI.csproj" />
+  </ItemGroup>
 
-    <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-        <PackageReference Include="Lombiq.Tests.UI" Version="8.0.2" />
-    </ItemGroup>
+  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
+    <PackageReference Include="Lombiq.Tests.UI" Version="8.0.2" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Include="License.md" Pack="true" PackagePath="" />
-        <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
-        <None Include="Readme.md" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Remove="Recipes\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users.recipe.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="License.md" Pack="true" PackagePath="" />
+    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
+    <None Include="Readme.md" />
+    <Content Include="Recipes\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users.recipe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </Content>
+  </ItemGroup>
 
 </Project>
