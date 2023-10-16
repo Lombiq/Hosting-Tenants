@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.Emai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI", "Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI\Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.csproj", "{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lombiq.Hosting.Tenants.Management.Tests.UI", "Lombiq.Hosting.Tenants.Management.Tests.UI\Lombiq.Hosting.Tenants.Management.Tests.UI.csproj", "{4BCB85E4-A12F-4AB0-B445-68D7AFE9722D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8E20AF1-4D5D-464D-9BA8-AA237871C8DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BCB85E4-A12F-4AB0-B445-68D7AFE9722D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCB85E4-A12F-4AB0-B445-68D7AFE9722D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCB85E4-A12F-4AB0-B445-68D7AFE9722D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCB85E4-A12F-4AB0-B445-68D7AFE9722D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

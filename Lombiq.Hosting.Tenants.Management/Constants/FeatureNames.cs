@@ -6,4 +6,5 @@ public static class FeatureNames
 
     public const string ForbiddenTenantNames = Module + "." + nameof(ForbiddenTenantNames);
     public const string HideRecipesFromSetup = Module + "." + nameof(HideRecipesFromSetup);
+    public const string ShellSettingsEditor = Module + "." + nameof(ShellSettingsEditor);
 }
