@@ -83,7 +83,7 @@ public class EmailQuotaService : IEmailQuotaService
 
     public async Task<EmailQuota> GetOrCreateCurrentQuotaAsync()
     {
-        var currentQuota = await _session.Query<EmailQuota, EmailQuotaIndex>().FirstOrDefaultAsync();
+        var currentQuota = await _session.Query<EmailQuota>().FirstOrDefaultAsync();
 
         if (currentQuota != null) return currentQuota;
 
