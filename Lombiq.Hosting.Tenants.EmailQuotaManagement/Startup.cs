@@ -28,7 +28,6 @@ public class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddDataMigration<EmailQuotaMigrations>();
-        services.AddSingleton<IIndexProvider, EmailQuotaIndexProvider>();
         services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
         services.Configure<EmailQuotaOptions>(options =>
