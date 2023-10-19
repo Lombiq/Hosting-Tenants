@@ -1,5 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
