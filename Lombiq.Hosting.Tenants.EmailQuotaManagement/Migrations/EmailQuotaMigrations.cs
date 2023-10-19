@@ -4,6 +4,8 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 
 public class EmailQuotaMigrations : DataMigration
 {
+    public int Create() => 3;
+
     public int UpdateFrom1()
     {
         SchemaBuilder.AlterTable("EmailQuotaIndex", table => table
