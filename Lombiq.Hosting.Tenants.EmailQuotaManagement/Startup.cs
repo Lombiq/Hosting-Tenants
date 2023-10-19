@@ -1,6 +1,5 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Constants;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -12,7 +11,6 @@ using OrchardCore.Data.Migration;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
-using YesSql.Indexes;
 using static Lombiq.Hosting.Tenants.EmailQuotaManagement.Constants.EmailQuotaOptionsConstants;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement;
