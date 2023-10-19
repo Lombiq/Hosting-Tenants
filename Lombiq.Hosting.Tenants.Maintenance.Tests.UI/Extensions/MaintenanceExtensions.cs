@@ -34,4 +34,19 @@ public static class MaintenanceExtensions
 
                 return Task.CompletedTask;
             };
+
+    public static void ChangeUserSensitiveContentMaintenanceConfiguration(
+    this OrchardCoreUITestExecutorConfiguration configuration) => configuration.OrchardCoreConfiguration.BeforeAppStart +=
+        (_, argumentsBuilder) =>
+        {
+            argumentsBuilder
+                .AddWithValue(
+                    "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:ChangeUserSensitiveContent:IsEnabled",
+                    value: true)
+                .AddWithValue(
+                    "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:ChangeUserSensitiveContent:TenantNames",
+                    value: "Default");
+
+            return Task.CompletedTask;
+        };
 }
