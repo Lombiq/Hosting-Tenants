@@ -1,28 +1,28 @@
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
 using OrchardCore.Data.Migration;
-using System;
-using YesSql.Sql;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 
 public class EmailQuotaMigrations : DataMigration
 {
-    public int Create()
+    // This is actually needed like this, otherwise it won't work.
+#pragma warning disable S3400
+    public int Create() => 3;
+#pragma warning restore S3400
+
+    public int UpdateFrom1()
     {
-        SchemaBuilder.CreateMapIndexTable<EmailQuotaIndex>(
-            table => table.Column<int>(nameof(EmailQuotaIndex.CurrentEmailUsageCount))
-                .Column<DateTime>(nameof(EmailQuotaIndex.LastReminderUtc))
-                .Column<int>(nameof(EmailQuotaIndex.LastReminderPercentage)));
+        SchemaBuilder.AlterTable("EmailQuotaIndex", table => table
+            .AddColumn<int>("LastReminderPercentage")
+        );
 
         return 2;
     }
 
-    public int UpdateFrom1()
+    public int UpdateFrom2()
     {
-        SchemaBuilder.AlterTable(nameof(EmailQuotaIndex), table => table
-            .AddColumn<int>(nameof(EmailQuotaIndex.LastReminderPercentage))
-        );
+        // Deleting index because it is not needed.
+        SchemaBuilder.DropTable("EmailQuotaIndex");
 
-        return 2;
+        return 3;
     }
 }
