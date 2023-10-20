@@ -1,5 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Indexes;
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -83,7 +82,7 @@ public class EmailQuotaService : IEmailQuotaService
 
     public async Task<EmailQuota> GetOrCreateCurrentQuotaAsync()
     {
-        var currentQuota = await _session.Query<EmailQuota, EmailQuotaIndex>().FirstOrDefaultAsync();
+        var currentQuota = await _session.Query<EmailQuota>().FirstOrDefaultAsync();
 
         if (currentQuota != null) return currentQuota;
 
