@@ -13,15 +13,18 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
     private readonly ShellSettings _shellSettings;
     private readonly IOptions<UpdateShellRequestUrlMaintenanceOptions> _options;
     private readonly IShellSettingsManager _shellSettingsManager;
+    private readonly IShellHost _shellHost;
 
     public UpdateShellRequestUrlsMaintenanceProvider(
         ShellSettings shellSettings,
         IOptions<UpdateShellRequestUrlMaintenanceOptions> options,
-        IShellSettingsManager shellSettingsManager)
+        IShellSettingsManager shellSettingsManager,
+        IShellHost shellHost)
     {
         _shellSettings = shellSettings;
         _options = options;
         _shellSettingsManager = shellSettingsManager;
+        _shellHost = shellHost;
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
@@ -43,7 +46,7 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
                 _options.Value.RequestUrlPrefix,
                 shellSettings);
 
-            await _shellSettingsManager.SaveSettingsAsync(shellSettings);
+            await _shellHost.UpdateShellSettingsAsync(shellSettings);
         }
 
         context.ReloadShellAfterMaintenanceCompletion = true;
