@@ -18,7 +18,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = UpdateSiteUrl,
-    Name = "Lombiq Hosting - Tenants Maintenance - Update Site URL",
+    Name = "Lombiq Hosting - Tenants Maintenance Update Site URL",
     Description = "Updates the URL of the site in the site settings (e.g., when the production database is copied to staging).",
     Category = "Maintenance",
     Dependencies = new[] { Maintenance }
@@ -26,7 +26,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = UpdateShellRequestUrls,
-    Name = "Lombiq Hosting - Tenants Maintenance - Update Shell Request URLs",
+    Name = "Lombiq Hosting - Tenants Maintenance Update Shell Request URLs",
     Description = "Updates the shell request URLs of each tenant (e.g., when the production database is copied to staging)." +
         " It's executed only on the default tenant.",
     Category = "Maintenance",
@@ -36,7 +36,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = AddSiteOwnerPermissionToRole,
-    Name = "Lombiq Hosting - Tenants Maintenance - Add Site Owner Permission To Role",
+    Name = "Lombiq Hosting - Tenants Maintenance Add Site Owner Permission To Role",
     Description = "Adds the Site Owner permission to a role (e.g., when the production database is copied to staging).",
     Category = "Maintenance",
     DefaultTenantOnly = true,
@@ -45,7 +45,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = RemoveUsers,
-    Name = "Lombiq Hosting - Tenants Maintenance - Remove Users",
+    Name = "Lombiq Hosting - Tenants Maintenance Remove Users",
     Description = "Removes users with the configured email domain.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
@@ -54,7 +54,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = ChangeUserSensitiveContent,
-    Name = "Lombiq Hosting - Tenants Maintenance - Change User Sensitive Content",
+    Name = "Lombiq Hosting - Tenants Maintenance Change User Sensitive Content",
     Description = "Replaces the users' username, email and password with realistic but random values.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
