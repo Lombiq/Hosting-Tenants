@@ -6,7 +6,11 @@
 
 Various modules that help you build a multi-tenant web application with [Orchard Core](https://orchardcore.net/). You can watch a demo video of some of the functionality [here](https://www.youtube.com/watch?v=c9hemoYcjIM&lc=Ugy5jqNChriMx9mLBFN4AaABAg).
 
-We at [Lombiq](https://lombiq.com/) also used these modules for the new [Lombiq website](https://lombiq.com/) when migrating it from Orchard 1 to Orchard Core ([see case study](https://lombiq.com/blog/how-we-renewed-and-migrated-lombiq-com-from-orchard-1-to-orchard-core)), and for the new [Git-hg Mirror website](https://githgmirror.com/) upon migrating from Orchard 1 to Orchard Core ([see case study](https://lombiq.com/blog/git-hg-mirror-is-running-on-orchard-core)). They also make [DotNest, the Orchard SaaS](https://dotnest.com/) better.
+We at [Lombiq](https://lombiq.com/) also used these modules for the following projects:
+
+- The new [Lombiq website](https://lombiq.com/) when migrating it from Orchard 1 to Orchard Core ([see case study](https://lombiq.com/blog/how-we-renewed-and-migrated-lombiq-com-from-orchard-1-to-orchard-core)).
+- The new [Git-hg Mirror website](https://githgmirror.com/) when migrating it from Orchard 1 to Orchard Core ([see case study](https://lombiq.com/blog/git-hg-mirror-is-running-on-orchard-core)).<!-- #spell-check-ignore-line -->
+- They also make [DotNest, the Orchard SaaS](https://dotnest.com/) better.
 
 Do you want to quickly try out this project and see it in action? Check it out in our [Open-Source Orchard Core Extensions](https://github.com/Lombiq/Open-Source-Orchard-Core-Extensions) full Orchard Core solution and also see our other useful Orchard Core-related open-source projects!
 
