@@ -11,7 +11,7 @@ using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.FeatureName
 
 [assembly: Feature(
     Id = MediaStorageManagement,
-    Name = "Lombiq Hosting - Tenants Media Storage Management - Quota Management",
+    Name = "Lombiq Hosting - Tenants Media Storage Management Quota Management",
     Description = "Ability to configure storage quota for tenants.",
     Category = "Hosting",
     IsAlwaysEnabled = true,

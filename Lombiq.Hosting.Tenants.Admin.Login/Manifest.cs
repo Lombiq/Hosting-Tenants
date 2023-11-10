@@ -19,7 +19,7 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = SubTenant,
-    Name = "Lombiq Hosting - Tenants Admin Login - Sub-tenant",
+    Name = "Lombiq Hosting - Tenants Admin Login Sub-tenant",
     Description = "Adds the ability to log in to the tenant from the Default tenant.",
     Category = "Hosting",
     IsAlwaysEnabled = true

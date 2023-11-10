@@ -11,7 +11,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = ForbiddenTenantNames,
-    Name = "Lombiq Hosting - Tenants Management - Forbidden Tenant Names",
+    Name = "Lombiq Hosting - Tenants Management Forbidden Tenant Names",
     Description = "Ability to configure hostnames that aren't allowed during tenant creation.",
     Category = "Hosting",
     DefaultTenantOnly = true,
@@ -20,7 +20,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = HideRecipesFromSetup,
-    Name = "Lombiq Hosting - Tenants Management - Hide Recipes From Setup",
+    Name = "Lombiq Hosting - Tenants Management Hide Recipes From Setup",
     Description = "Adds the ability to hide recipes from the setup screen based on configurable tags.",
     Category = "Hosting",
     DefaultTenantOnly = true,
@@ -29,7 +29,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 
 [assembly: Feature(
     Id = ShellSettingsEditor,
-    Name = "Lombiq Hosting - Tenants Management - Shell Settings Editor",
+    Name = "Lombiq Hosting - Tenants Management Shell Settings Editor",
     Description = "Adds a shell settings editor to the tenant editor page.",
     Category = "Hosting",
     DefaultTenantOnly = true,
