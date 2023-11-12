@@ -42,7 +42,7 @@ public class IdleShutdown : IIdleShutdown
 
         if (lastActiveDateTimeUtc.AddMinutes(maxIdleMinutes) <= _clock?.UtcNow)
         {
-            _logger?.LogWarning("Shutting down tenant \"{ShellName}\" because of idle timeout.", _shellSettings.Name);
+            _logger?.LogInformation("Shutting down tenant \"{ShellName}\" because of idle timeout.", _shellSettings.Name);
 
             await _shellHost.ReleaseShellContextAsync(_shellSettings, eventSource: false);
         }

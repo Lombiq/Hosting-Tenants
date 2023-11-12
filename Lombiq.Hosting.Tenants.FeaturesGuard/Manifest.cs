@@ -2,7 +2,7 @@ using Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
 using OrchardCore.Modules.Manifest;
 
 [assembly: Module(
-    Name = "Lombiq Hosting - Tenants - Features Guard",
+    Name = "Lombiq Hosting - Tenants Features Guard",
     Author = "Lombiq Technologies",
     Website = "https://github.com/Lombiq/Hosting-Tenants",
     Version = "0.0.1",
@@ -12,7 +12,7 @@ using OrchardCore.Modules.Manifest;
 
 [assembly: Feature(
     Id = FeatureNames.FeaturesGuard,
-    Name = "Lombiq Hosting - Tenants - Features Guard",
+    Name = "Lombiq Hosting - Tenants Features Guard",
     Category = "Hosting",
     IsAlwaysEnabled = true
 )]
