@@ -30,6 +30,7 @@ public class ShutDownIdleTenantsStartup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<ILastActiveTimeAccessor, LastActiveTimeAccessor>();
+        services.AddScoped<IIdleShutdown, IdleShutdown>();
         services.AddSingleton<IBackgroundTask, IdleShutdownTask>();
 
         // Idle Minutes Settings
