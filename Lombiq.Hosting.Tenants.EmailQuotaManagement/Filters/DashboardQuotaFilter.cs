@@ -34,21 +34,9 @@ public class DashboardQuotaFilter : IAsyncResultFilter
             return;
         }
 
-        var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
-        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
-        var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
-
-        if ((actionRouteController == typeof(AdminController).ControllerName() ||
-                actionRouteController == typeof(DashboardController).ControllerName()) &&
-            actionRouteArea is $"{nameof(OrchardCore)}.{nameof(OrchardCore.Admin)}" or
-                $"{nameof(OrchardCore)}.{nameof(OrchardCore.AdminDashboard)}" &&
-            actionRouteValue is nameof(AdminController.Index) or
-                nameof(DashboardController.Index) &&
-            context.Result is ViewResult &&
+        if (context.Result is ViewResult &&
             _emailQuotaService.ShouldLimitEmails())
         {
-            var layout = await _layoutAccessor.GetLayoutAsync();
-            var contentZone = layout.Zones["Content"];
             var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
 
             var currentUsagePercentage = currentEmailQuota.EmailQuota
@@ -56,6 +44,8 @@ public class DashboardQuotaFilter : IAsyncResultFilter
 
             if (currentUsagePercentage >= 80)
             {
+                var layout = await _layoutAccessor.GetLayoutAsync();
+                var contentZone = layout.Zones["Messages"];
                 await contentZone.AddAsync(
                     await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
                     {
