@@ -81,7 +81,7 @@ public static class TestCaseUITestContextExtensions
     private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount) =>
         context.CheckExistence(
             By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'{currentEmailCount.ToTechnicalString()} emails" +
-                $" from the total of {maximumEmailQuota.ToTechnicalString()}.')]"),
+                $" from the total of {maximumEmailQuota.ToTechnicalString()} this month.')]"),
             exists);
 
     private static async Task SendTestEmailAsync(UITestContext context, string subject)
