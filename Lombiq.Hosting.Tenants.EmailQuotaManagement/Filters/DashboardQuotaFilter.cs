@@ -1,11 +1,8 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using OrchardCore.Admin.Controllers;
-using OrchardCore.AdminDashboard.Controllers;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
-using OrchardCore.Mvc.Core.Utilities;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
