@@ -48,10 +48,14 @@ public static class TestCaseUITestContextExtensions
             else if (warningLevel >= 80)
             {
                 await context.GoToDashboardAsync();
-                context.CheckExistence(
-                    By.XPath($"//p[contains(@class,'alert-warning')]" +
-                        $"[contains(.,'It seems that your site sent out {warningLevel.ToTechnicalString()}% of e-mail')]"),
-                    exists: true);
+                CheckMessageExistence(context, warningLevel.ToTechnicalString());
+
+                await context.GoToContentItemsPageAsync();
+                CheckMessageExistence(context, warningLevel.ToTechnicalString());
+
+                await context.GoToFeaturesPageAsync();
+                CheckMessageExistence(context, warningLevel.ToTechnicalString());
+
                 if (!warningEmails.Contains(warningLevel))
                 {
                     warningEmails.Add(warningLevel);
@@ -77,6 +81,12 @@ public static class TestCaseUITestContextExtensions
 
         context.CheckExistence(ByHelper.SmtpInboxRow(UnSuccessfulSubject), exists: !moduleShouldInterfere);
     }
+
+    private static void CheckMessageExistence(UITestContext context, string warningLevel) =>
+        context.CheckExistence(
+            By.XPath($"//p[contains(@class,'alert-warning')]" +
+                $"[contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
+            exists: true);
 
     private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount) =>
         context.CheckExistence(
