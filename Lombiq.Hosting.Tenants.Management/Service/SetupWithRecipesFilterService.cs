@@ -1,6 +1,7 @@
 using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Modules;
 using OrchardCore.Recipes.Models;
 using OrchardCore.Setup.Services;
 using System;

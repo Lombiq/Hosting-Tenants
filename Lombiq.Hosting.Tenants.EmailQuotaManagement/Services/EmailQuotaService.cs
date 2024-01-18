@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -91,22 +91,22 @@ public class EmailQuotaService : IEmailQuotaService
             // Need to set default value otherwise the database might complain about being 01/01/0001 out of range.
             LastReminderUtc = _clock.UtcNow.AddMonths(-1),
         };
-        _session.Save(currentQuota);
+        await _session.SaveAsync(currentQuota);
 
         return currentQuota;
     }
 
-    public void IncreaseEmailUsage(EmailQuota emailQuota)
+    public Task IncreaseEmailUsageAsync(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailUsageCount++;
-        _session.Save(emailQuota);
+        return _session.SaveAsync(emailQuota);
     }
 
-    public void SetQuotaOnEmailReminder(EmailQuota emailQuota)
+    public Task SetQuotaOnEmailReminderAsync(EmailQuota emailQuota)
     {
         emailQuota.LastReminderUtc = _clock.UtcNow;
         emailQuota.LastReminderPercentage = emailQuota.CurrentUsagePercentage(GetEmailQuotaPerMonth());
-        _session.Save(emailQuota);
+        return _session.SaveAsync(emailQuota);
     }
 
     public bool ShouldSendReminderEmail(EmailQuota emailQuota, int currentUsagePercentage)
@@ -128,10 +128,10 @@ public class EmailQuotaService : IEmailQuotaService
             emailQuota.LastReminderPercentage >= 100);
     }
 
-    public void ResetQuota(EmailQuota emailQuota)
+    public Task ResetQuotaAsync(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailUsageCount = 0;
-        _session.Save(emailQuota);
+        return _session.SaveAsync(emailQuota);
     }
 
     public int GetEmailQuotaPerMonth() =>

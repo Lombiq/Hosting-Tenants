@@ -1,4 +1,4 @@
-﻿@using Lombiq.Hosting.Tenants.Management.Controllers
+@using Lombiq.Hosting.Tenants.Management.Controllers
 @using Newtonsoft.Json
 @using OrchardCore
 @using OrchardCore.Mvc.Core.Utilities
@@ -11,9 +11,9 @@
       asp-area="@Module"
       method="post"
       class="no-multisubmit">
-    <div class="@Orchard.GetWrapperCssClasses("field-wrapper")" id="FieldWrapper">
-        <label asp-for="Json" class="@Orchard.GetLabelCssClasses()">@T["Shell Settings editor"]</label>
-        <div class="@Orchard.GetEndCssClasses()">
+    <div class="@Orchard.GetWrapperClasses("field-wrapper")" id="FieldWrapper">
+        <label asp-for="Json" class="@Orchard.GetLabelClasses()">@T["Shell Settings editor"]</label>
+        <div class="@Orchard.GetEndClasses()">
             <span class="hint">
                 @T["JSON key-value pairs should be set here, in the same way you'd configure the tenant-specific section in an appsettings.json file."]
             </span>

@@ -1,4 +1,5 @@
 using OrchardCore.Data.Migration;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 
@@ -14,19 +15,19 @@ public class EmailQuotaMigrations : DataMigration
 #pragma warning restore CA1822 // Mark members as static
 #pragma warning restore IDE0079 // Remove unnecessary suppression
 
-    public int UpdateFrom1()
+    public async Task<int> UpdateFrom1Async()
     {
-        SchemaBuilder.AlterTable("EmailQuotaIndex", table => table
+        await SchemaBuilder.AlterTableAsync("EmailQuotaIndex", table => table
             .AddColumn<int>("LastReminderPercentage")
         );
 
         return 2;
     }
 
-    public int UpdateFrom2()
+    public async Task<int> UpdateFrom2Async()
     {
         // Deleting index because it is not needed.
-        SchemaBuilder.DropTable("EmailQuotaIndex");
+        await SchemaBuilder.DropTableAsync("EmailQuotaIndex");
 
         return 3;
     }
