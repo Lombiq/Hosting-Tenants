@@ -14,7 +14,7 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.FeatureNames;
     Description = "Ability to log in as a tenant’s admin user.",
     Category = "Hosting",
     DefaultTenantOnly = true,
-    Dependencies = new[] { "OrchardCore.Tenants" }
+    Dependencies = ["OrchardCore.Tenants"]
 )]
 
 [assembly: Feature(

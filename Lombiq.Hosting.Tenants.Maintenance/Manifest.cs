@@ -13,7 +13,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance",
     Description = "Provides maintenance operations for tenants.",
     Category = "Hosting",
-    Dependencies = new[] { "OrchardCore.Tenants" }
+    Dependencies = ["OrchardCore.Tenants"]
 )]
 
 [assembly: Feature(
@@ -21,7 +21,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Update Site URL",
     Description = "Updates the URL of the site in the site settings (e.g., when the production database is copied to staging).",
     Category = "Maintenance",
-    Dependencies = new[] { Maintenance }
+    Dependencies = [Maintenance]
 )]
 
 [assembly: Feature(
@@ -31,7 +31,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
         " It's executed only on the default tenant.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
-    Dependencies = new[] { Maintenance }
+    Dependencies = [Maintenance]
 )]
 
 [assembly: Feature(
@@ -40,7 +40,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Adds the Site Owner permission to a role (e.g., when the production database is copied to staging).",
     Category = "Maintenance",
     DefaultTenantOnly = true,
-    Dependencies = new[] { Maintenance }
+    Dependencies = [Maintenance]
 )]
 
 [assembly: Feature(
@@ -49,7 +49,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Removes users with the configured email domain.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
-    Dependencies = new[] { Maintenance }
+    Dependencies = [Maintenance]
 )]
 
 [assembly: Feature(
@@ -58,5 +58,5 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Replaces the users' username, email and password with realistic but random values.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
-    Dependencies = new[] { Maintenance }
+    Dependencies = [Maintenance]
 )]
