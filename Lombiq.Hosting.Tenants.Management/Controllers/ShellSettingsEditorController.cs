@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.Management.Constants;
+using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
 using Lombiq.Hosting.Tenants.Management.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -22,37 +22,20 @@ using static OrchardCore.Tenants.Permissions;
 namespace Lombiq.Hosting.Tenants.Management.Controllers;
 
 [Feature(FeatureNames.ShellSettingsEditor)]
-public class ShellSettingsEditorController : Controller
+public class ShellSettingsEditorController(
+    IAuthorizationService authorizationService,
+    IShellHost shellHost,
+    IShellConfigurationSources shellConfigurationSources,
+    IDistributedLock distributedLock,
+    INotifier notifier,
+    IHtmlLocalizer<ShellSettingsEditorController> htmlLocalizer) : Controller
 {
-    private readonly IAuthorizationService _authorizationService;
-    private readonly IShellHost _shellHost;
-    private readonly IShellConfigurationSources _shellConfigurationSources;
-    private readonly IDistributedLock _distributedLock;
-    private readonly INotifier _notifier;
-    private readonly IHtmlLocalizer<ShellSettingsEditorController> H;
-
-    public ShellSettingsEditorController(
-        IAuthorizationService authorizationService,
-        IShellHost shellHost,
-        IShellConfigurationSources shellConfigurationSources,
-        IDistributedLock distributedLock,
-        INotifier notifier,
-        IHtmlLocalizer<ShellSettingsEditorController> htmlLocalizer)
-    {
-        _authorizationService = authorizationService;
-        _shellHost = shellHost;
-        _shellConfigurationSources = shellConfigurationSources;
-        _distributedLock = distributedLock;
-        _notifier = notifier;
-        H = htmlLocalizer;
-    }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ShellSettingsEditorViewModel model)
     {
-        if (!await _authorizationService.AuthorizeAsync(User, ManageTenants) ||
-            !_shellHost.TryGetSettings(model.TenantId, out var shellSettings))
+        if (!await authorizationService.AuthorizeAsync(User, ManageTenants) ||
+            !shellHost.TryGetSettings(model.TenantId, out var shellSettings))
         {
             return NotFound();
         }
@@ -60,7 +43,7 @@ public class ShellSettingsEditorController : Controller
         model.Json ??= "{}";
         if (!IsValidJson(model.Json))
         {
-            await _notifier.ErrorAsync(H["Please provide valid JSON input for shell settings."]);
+            await notifier.ErrorAsync(htmlLocalizer["Please provide valid JSON input for shell settings."]);
             TempData["ValidationErrorJson"] = model.Json;
 
             return RedirectToAction(
@@ -104,7 +87,7 @@ public class ShellSettingsEditorController : Controller
         }
 
         var (locker, locked) =
-            await _distributedLock.TryAcquireLockAsync(
+            await distributedLock.TryAcquireLockAsync(
                 "LOMBIQ_HOSTING_TENANTS_MANAGEMENT_SHELL_SETTINGS_EDITOR_LOCK",
                 TimeSpan.FromSeconds(10));
 
@@ -119,8 +102,8 @@ public class ShellSettingsEditorController : Controller
         // not save settings that has a key with multiple sections, see
         // https://github.com/OrchardCMS/OrchardCore/issues/14481. Once this is fixed, we can get rid of the locking and
         // retrieve and save the shell settings settings with IShellHost.
-        await _shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
-        await _shellHost.UpdateShellSettingsAsync(shellSettings);
+        await shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
+        await shellHost.UpdateShellSettingsAsync(shellSettings);
 
         return RedirectToAction(
             nameof(AdminController.Edit),

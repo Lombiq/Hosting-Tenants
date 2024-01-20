@@ -9,22 +9,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
-public class EmailSettingsQuotaFilter : IAsyncResultFilter
+public class EmailSettingsQuotaFilter(
+    IShapeFactory shapeFactory,
+    ILayoutAccessor layoutAccessor,
+    IEmailQuotaService emailQuotaService) : IAsyncResultFilter
 {
-    private readonly IShapeFactory _shapeFactory;
-    private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IEmailQuotaService _emailQuotaService;
-
-    public EmailSettingsQuotaFilter(
-        IShapeFactory shapeFactory,
-        ILayoutAccessor layoutAccessor,
-        IEmailQuotaService emailQuotaService)
-    {
-        _shapeFactory = shapeFactory;
-        _layoutAccessor = layoutAccessor;
-        _emailQuotaService = emailQuotaService;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         if (!context.IsAdmin())
@@ -43,17 +32,17 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             context.Result is ViewResult &&
             context.RouteData.Values.TryGetValue("GroupId", out var groupId) &&
             (string)groupId == "email" &&
-            _emailQuotaService.ShouldLimitEmails())
+            emailQuotaService.ShouldLimitEmails())
         {
-            var layout = await _layoutAccessor.GetLayoutAsync();
+            var layout = await layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
 
-            var quota = await _emailQuotaService.GetOrCreateCurrentQuotaAsync();
+            var quota = await emailQuotaService.GetOrCreateCurrentQuotaAsync();
             await contentZone.AddAsync(
-                await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
+                await shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
                 {
                     quota.CurrentEmailUsageCount,
-                    EmailQuotaPerMonth = _emailQuotaService.GetEmailQuotaPerMonth(),
+                    EmailQuotaPerMonth = emailQuotaService.GetEmailQuotaPerMonth(),
                 }),
                 "0");
         }

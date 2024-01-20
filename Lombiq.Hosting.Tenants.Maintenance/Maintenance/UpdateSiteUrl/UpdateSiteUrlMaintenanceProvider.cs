@@ -9,34 +9,23 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateSiteUrl;
 
-public class UpdateSiteUrlMaintenanceProvider : MaintenanceProviderBase
+public class UpdateSiteUrlMaintenanceProvider(
+    ISiteService siteService,
+    ShellSettings shellSettings,
+    IOptions<UpdateSiteUrlMaintenanceOptions> options) : MaintenanceProviderBase
 {
-    private readonly ISiteService _siteService;
-    private readonly ShellSettings _shellSettings;
-    private readonly IOptions<UpdateSiteUrlMaintenanceOptions> _options;
-
-    public UpdateSiteUrlMaintenanceProvider(
-        ISiteService siteService,
-        ShellSettings shellSettings,
-        IOptions<UpdateSiteUrlMaintenanceOptions> options)
-    {
-        _siteService = siteService;
-        _shellSettings = shellSettings;
-        _options = options;
-    }
-
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_options.Value.IsEnabled && !context.WasLatestExecutionSuccessful());
+        Task.FromResult(options.Value.IsEnabled && !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
-        var siteSettings = await _siteService.LoadSiteSettingsAsync();
+        var siteSettings = await siteService.LoadSiteSettingsAsync();
         siteSettings.BaseUrl = TenantUrlHelpers.GetEvaluatedValueForTenant(
-            _options.Value.DefaultTenantSiteUrl,
-            _options.Value.SiteUrl,
-            _shellSettings,
-            _options.Value.SiteUrlFromTenantName);
+            options.Value.DefaultTenantSiteUrl,
+            options.Value.SiteUrl,
+            shellSettings,
+            options.Value.SiteUrlFromTenantName);
 
-        await _siteService.UpdateSiteSettingsAsync(siteSettings);
+        await siteService.UpdateSiteSettingsAsync(siteSettings);
     }
 }

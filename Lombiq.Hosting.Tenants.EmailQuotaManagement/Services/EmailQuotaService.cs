@@ -19,38 +19,22 @@ using static OrchardCore.Security.StandardPermissions;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class EmailQuotaService : IEmailQuotaService
+public class EmailQuotaService(
+    ISession session,
+    IOptions<EmailQuotaOptions> emailQuotaOptions,
+    IShellConfiguration shellConfiguration,
+    IOptions<SmtpSettings> smtpOptions,
+    IClock clock,
+    IRoleService roleService,
+    UserManager<IUser> userManager) : IEmailQuotaService
 {
-    private readonly ISession _session;
-    private readonly EmailQuotaOptions _emailQuotaOptions;
-    private readonly IShellConfiguration _shellConfiguration;
-    private readonly SmtpSettings _smtpOptions;
-    private readonly IClock _clock;
-    private readonly IRoleService _roleService;
-    private readonly UserManager<IUser> _userManager;
-
-    public EmailQuotaService(
-        ISession session,
-        IOptions<EmailQuotaOptions> emailQuotaOptions,
-        IShellConfiguration shellConfiguration,
-        IOptions<SmtpSettings> smtpOptions,
-        IClock clock,
-        IRoleService roleService,
-        UserManager<IUser> userManager)
-    {
-        _session = session;
-        _emailQuotaOptions = emailQuotaOptions.Value;
-        _shellConfiguration = shellConfiguration;
-        _smtpOptions = smtpOptions.Value;
-        _clock = clock;
-        _roleService = roleService;
-        _userManager = userManager;
-    }
+    private readonly EmailQuotaOptions _emailQuotaOptions = emailQuotaOptions.Value;
+    private readonly SmtpSettings _smtpOptions = smtpOptions.Value;
 
     public async Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync()
     {
         // Get users with site owner permission.
-        var roles = await _roleService.GetRolesAsync();
+        var roles = await roleService.GetRolesAsync();
         var siteOwnerRoles = roles.Where(role =>
             (role as Role)?.RoleClaims.Exists(claim =>
                 claim.ClaimType == ClaimType && claim.ClaimValue == SiteOwner.Name) == true);
@@ -58,7 +42,7 @@ public class EmailQuotaService : IEmailQuotaService
         var siteOwners = new List<IUser>();
         foreach (var role in siteOwnerRoles)
         {
-            siteOwners.AddRange(await _userManager.GetUsersInRoleAsync(role.RoleName));
+            siteOwners.AddRange(await userManager.GetUsersInRoleAsync(role.RoleName));
         }
 
         return siteOwners.Select(user => (user as User)?.Email);
@@ -66,7 +50,7 @@ public class EmailQuotaService : IEmailQuotaService
 
     public bool ShouldLimitEmails()
     {
-        var originalHost = _shellConfiguration.GetValue<string>("SmtpSettings:Host");
+        var originalHost = shellConfiguration.GetValue<string>("SmtpSettings:Host");
         return originalHost == _smtpOptions.Host;
     }
 
@@ -82,16 +66,16 @@ public class EmailQuotaService : IEmailQuotaService
 
     public async Task<EmailQuota> GetOrCreateCurrentQuotaAsync()
     {
-        var currentQuota = await _session.Query<EmailQuota>().FirstOrDefaultAsync();
+        var currentQuota = await session.Query<EmailQuota>().FirstOrDefaultAsync();
 
         if (currentQuota != null) return currentQuota;
 
         currentQuota = new EmailQuota
         {
             // Need to set default value otherwise the database might complain about being 01/01/0001 out of range.
-            LastReminderUtc = _clock.UtcNow.AddMonths(-1),
+            LastReminderUtc = clock.UtcNow.AddMonths(-1),
         };
-        await _session.SaveAsync(currentQuota);
+        await session.SaveAsync(currentQuota);
 
         return currentQuota;
     }
@@ -99,14 +83,14 @@ public class EmailQuotaService : IEmailQuotaService
     public Task IncreaseEmailUsageAsync(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailUsageCount++;
-        return _session.SaveAsync(emailQuota);
+        return session.SaveAsync(emailQuota);
     }
 
     public Task SetQuotaOnEmailReminderAsync(EmailQuota emailQuota)
     {
-        emailQuota.LastReminderUtc = _clock.UtcNow;
+        emailQuota.LastReminderUtc = clock.UtcNow;
         emailQuota.LastReminderPercentage = emailQuota.CurrentUsagePercentage(GetEmailQuotaPerMonth());
-        return _session.SaveAsync(emailQuota);
+        return session.SaveAsync(emailQuota);
     }
 
     public bool ShouldSendReminderEmail(EmailQuota emailQuota, int currentUsagePercentage)
@@ -116,7 +100,7 @@ public class EmailQuotaService : IEmailQuotaService
             return false;
         }
 
-        var isSameMonth = IsSameMonth(_clock.UtcNow, emailQuota.LastReminderUtc);
+        var isSameMonth = IsSameMonth(clock.UtcNow, emailQuota.LastReminderUtc);
 
         if (!isSameMonth)
         {
@@ -131,7 +115,7 @@ public class EmailQuotaService : IEmailQuotaService
     public Task ResetQuotaAsync(EmailQuota emailQuota)
     {
         emailQuota.CurrentEmailUsageCount = 0;
-        return _session.SaveAsync(emailQuota);
+        return session.SaveAsync(emailQuota);
     }
 
     public int GetEmailQuotaPerMonth() =>

@@ -14,18 +14,11 @@ using static System.Net.WebRequestMethods;
 
 namespace Lombiq.Hosting.Tenants.Management.Filters;
 
-public class ForbiddenTenantsFilter : IAsyncActionFilter
+public class ForbiddenTenantsFilter(
+    IStringLocalizer<ForbiddenTenantsFilter> stringLocalizer,
+    IOptions<ForbiddenTenantsOptions> forbiddenTenantsOptions) : IAsyncActionFilter
 {
-    private readonly IStringLocalizer T;
-    private readonly IOptions<ForbiddenTenantsOptions> _forbiddenTenantsOptions;
-
-    public ForbiddenTenantsFilter(
-        IStringLocalizer<ForbiddenTenantsFilter> stringLocalizer,
-        IOptions<ForbiddenTenantsOptions> forbiddenTenantsOptions)
-    {
-        _forbiddenTenantsOptions = forbiddenTenantsOptions;
-        T = stringLocalizer;
-    }
+    private readonly IStringLocalizer T = stringLocalizer;
 
     public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -44,18 +37,16 @@ public class ForbiddenTenantsFilter : IAsyncActionFilter
             return next();
         }
 
-        var forbiddenRequestUrlHosts = _forbiddenTenantsOptions.Value.RequestUrlHosts;
+        var forbiddenRequestUrlHosts = forbiddenTenantsOptions.Value.RequestUrlHosts;
 
         if (forbiddenRequestUrlHosts != null && forbiddenRequestUrlHosts.Any())
         {
             var requestUrlHost = context.HttpContext.Request.Form[nameof(CreateApiViewModel.RequestUrlHost)].ToString();
             var hosts = requestUrlHost.Split(',').Select(host => host.Trim());
 
-            List<string> unacceptableHostnames = new();
+            List<string> unacceptableHostnames = [.. hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname))];
 
-            unacceptableHostnames.AddRange(hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname)));
-
-            if (unacceptableHostnames.Any())
+            if (unacceptableHostnames.Count != 0)
             {
                 var unacceptableHostnamesString = string.Join(", ", unacceptableHostnames);
                 context.ModelState.AddModelError(

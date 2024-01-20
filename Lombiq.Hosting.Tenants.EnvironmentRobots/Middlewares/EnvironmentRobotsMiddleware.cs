@@ -9,25 +9,14 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Middlewares;
 
-public class EnvironmentRobotsMiddleware
+public class EnvironmentRobotsMiddleware(
+    RequestDelegate next,
+    IHostEnvironment hostEnvironment,
+    IOptions<EnvironmentRobotsOptions> options)
 {
-    private readonly RequestDelegate _next;
-    private readonly IHostEnvironment _hostEnvironment;
-    private readonly IOptions<EnvironmentRobotsOptions> _options;
-
-    public EnvironmentRobotsMiddleware(
-        RequestDelegate next,
-        IHostEnvironment hostEnvironment,
-        IOptions<EnvironmentRobotsOptions> options)
-    {
-        _next = next;
-        _hostEnvironment = hostEnvironment;
-        _options = options;
-    }
-
     public Task InvokeAsync(HttpContext context)
     {
-        if (!_hostEnvironment.IsProductionWithConfiguration(_options))
+        if (!hostEnvironment.IsProductionWithConfiguration(options))
         {
             var headerValue = context.Response.Headers["X-Robots-Tag"].FirstOrDefault() ?? string.Empty;
 
@@ -57,6 +46,6 @@ public class EnvironmentRobotsMiddleware
             }
         }
 
-        return _next(context);
+        return next(context);
     }
 }

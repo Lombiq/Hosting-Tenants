@@ -6,22 +6,15 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 
-public class MediaStorageQuotaService : IMediaStorageQuotaService
+public class MediaStorageQuotaService(
+    IOptions<MediaStorageManagementOptions> mediaStorageManagementOptions,
+    IMediaFileStore mediaFileStore) : IMediaStorageQuotaService
 {
-    private readonly MediaStorageManagementOptions _mediaStorageManagementOptions;
-    private readonly IMediaFileStore _mediaFileStore;
-
-    public MediaStorageQuotaService(
-        IOptions<MediaStorageManagementOptions> mediaStorageManagementOptions,
-        IMediaFileStore mediaFileStore)
-    {
-        _mediaStorageManagementOptions = mediaStorageManagementOptions.Value;
-        _mediaFileStore = mediaFileStore;
-    }
+    private readonly MediaStorageManagementOptions _mediaStorageManagementOptions = mediaStorageManagementOptions.Value;
 
     public async Task<long> GetRemainingMediaStorageQuotaBytesAsync()
     {
-        var directoryContent = _mediaFileStore.GetDirectoryContentAsync(includeSubDirectories: true);
+        var directoryContent = mediaFileStore.GetDirectoryContentAsync(includeSubDirectories: true);
 
         var listed = await directoryContent.ToListAsync();
         var sumBytes = listed.Where(item => item.Length > 0).Sum(item => item.Length);

@@ -8,17 +8,12 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.RemoveUsers;
 
 [Feature(FeatureNames.RemoveUsers)]
-public class Startup : StartupBase
+public class Startup(IShellConfiguration shellConfiguration) : StartupBase
 {
-    private readonly IShellConfiguration _shellConfiguration;
-
-    public Startup(IShellConfiguration shellConfiguration) =>
-        _shellConfiguration = shellConfiguration;
-
     public override void ConfigureServices(IServiceCollection services)
     {
         var options = new RemoveUsersMaintenanceOptions();
-        var configSection = _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:RemoveUsers");
+        var configSection = shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:RemoveUsers");
         configSection.Bind(options);
         services.Configure<RemoveUsersMaintenanceOptions>(configSection);
 

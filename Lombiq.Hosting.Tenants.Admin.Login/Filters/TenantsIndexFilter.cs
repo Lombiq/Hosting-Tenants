@@ -14,28 +14,13 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Admin.Login.Filters;
 
-public class TenantsIndexFilter : IAsyncResultFilter
+public class TenantsIndexFilter(
+    ILayoutAccessor layoutAccessor,
+    IShapeFactory shapeFactory,
+    IShellHost shellHost,
+    IHttpContextAccessor hca,
+    IAuthorizationService authorizationService) : IAsyncResultFilter
 {
-    private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IShapeFactory _shapeFactory;
-    private readonly IShellHost _shellHost;
-    private readonly IHttpContextAccessor _hca;
-    private readonly IAuthorizationService _authorizationService;
-
-    public TenantsIndexFilter(
-        ILayoutAccessor layoutAccessor,
-        IShapeFactory shapeFactory,
-        IShellHost shellHost,
-        IHttpContextAccessor hca,
-        IAuthorizationService authorizationService)
-    {
-        _layoutAccessor = layoutAccessor;
-        _shapeFactory = shapeFactory;
-        _shellHost = shellHost;
-        _hca = hca;
-        _authorizationService = authorizationService;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
@@ -46,20 +31,20 @@ public class TenantsIndexFilter : IAsyncResultFilter
             actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
             actionRouteValue is nameof(AdminController.Edit) &&
             context.Result is ViewResult &&
-            await _authorizationService.AuthorizeAsync(
-                _hca.HttpContext.User,
+            await authorizationService.AuthorizeAsync(
+                hca.HttpContext.User,
                 TenantAdminPermissions.LoginAsAdmin)
             )
         {
-            var shellSettings = _shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
+            var shellSettings = shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
             if (shellSettings != null &&
                 shellSettings.State == TenantState.Running &&
                 !shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
             {
-                var layout = await _layoutAccessor.GetLayoutAsync();
+                var layout = await layoutAccessor.GetLayoutAsync();
                 var contentZone = layout.Zones["Content"];
                 await contentZone.AddAsync(
-                    await _shapeFactory.CreateAsync("TenantAdminShape", new
+                    await shapeFactory.CreateAsync("TenantAdminShape", new
                     {
                         shellSettings.RequestUrlHost,
                         shellSettings.RequestUrlPrefix,

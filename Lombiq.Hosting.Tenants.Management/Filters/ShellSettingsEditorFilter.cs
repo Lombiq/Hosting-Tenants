@@ -11,22 +11,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Filters;
 
-public class ShellSettingsEditorFilter : IAsyncResultFilter
+public class ShellSettingsEditorFilter(
+    ILayoutAccessor layoutAccessor,
+    IShapeFactory shapeFactory,
+    IShellHost shellHost) : IAsyncResultFilter
 {
-    private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IShapeFactory _shapeFactory;
-    private readonly IShellHost _shellHost;
-
-    public ShellSettingsEditorFilter(
-        ILayoutAccessor layoutAccessor,
-        IShapeFactory shapeFactory,
-        IShellHost shellHost)
-    {
-        _layoutAccessor = layoutAccessor;
-        _shapeFactory = shapeFactory;
-        _shellHost = shellHost;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
@@ -39,13 +28,13 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
             context.Result is ViewResult)
         {
             var tenantName = context.RouteData.Values["Id"].ToString();
-            if (!_shellHost.TryGetSettings(tenantName, out var shellSettings))
+            if (!shellHost.TryGetSettings(tenantName, out var shellSettings))
             {
                 await next();
                 return;
             }
 
-            var layout = await _layoutAccessor.GetLayoutAsync();
+            var layout = await layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
 
             (context.Controller as Controller)
@@ -60,7 +49,7 @@ public class ShellSettingsEditorFilter : IAsyncResultFilter
                 : validationErrorJson.ToString();
 
             await contentZone.AddAsync(
-                await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
+                await shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
                     "ShellSettingsEditor",
                     viewModel =>
                     {

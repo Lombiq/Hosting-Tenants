@@ -17,45 +17,29 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.Roles;
 namespace Lombiq.Hosting.Tenants.Admin.Login.Controllers;
 
 [Feature(SubTenant)]
-public class TenantLoginController : Controller
+public class TenantLoginController(
+    ISiteService siteService,
+    SignInManager<IUser> userSignInManager,
+    IShellHost shellHost,
+    ShellSettings shellSettings,
+    ILogger<TenantLoginController> logger,
+    INotifier notifier,
+    IHtmlLocalizer<TenantLoginController> htmlLocalizer) : Controller
 {
-    private readonly ISiteService _siteService;
-    private readonly SignInManager<IUser> _userSignInManager;
-    private readonly IShellHost _shellHost;
-    private readonly ShellSettings _shellSettings;
-    private readonly ILogger _logger;
-    private readonly INotifier _notifier;
-    private readonly IHtmlLocalizer H;
-
-    public TenantLoginController(
-        ISiteService siteService,
-        SignInManager<IUser> userSignInManager,
-        IShellHost shellHost,
-        ShellSettings shellSettings,
-        ILogger<TenantLoginController> logger,
-        INotifier notifier,
-        IHtmlLocalizer<TenantLoginController> htmlLocalizer)
-    {
-        _siteService = siteService;
-        _userSignInManager = userSignInManager;
-        _shellHost = shellHost;
-        _shellSettings = shellSettings;
-        _logger = logger;
-        _notifier = notifier;
-        H = htmlLocalizer;
-    }
+    private readonly ILogger _logger = logger;
+    private readonly IHtmlLocalizer H = htmlLocalizer;
 
     [HttpPost]
     // This is necessary because requests for this action will come from the Default tenant.
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Index(string password)
     {
-        if (_shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
+        if (shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
         {
             return NotFound();
         }
 
-        var defaultShell = await _shellHost.GetScopeAsync(ShellSettings.DefaultShellName);
+        var defaultShell = await shellHost.GetScopeAsync(ShellSettings.DefaultShellName);
         var tenantLoginPasswordValidator = defaultShell?.ServiceProvider.GetService<ITenantLoginPasswordValidator>();
 
         if (defaultShell == null ||
@@ -65,17 +49,17 @@ public class TenantLoginController : Controller
             return NotFound();
         }
 
-        var sitesettings = await _siteService.LoadSiteSettingsAsync();
-        var adminUser = await _userSignInManager.UserManager.FindByIdAsync(sitesettings.SuperUser);
-        adminUser ??= (await _userSignInManager.UserManager.GetUsersInRoleAsync(Administrator)).FirstOrDefault();
+        var sitesettings = await siteService.LoadSiteSettingsAsync();
+        var adminUser = await userSignInManager.UserManager.FindByIdAsync(sitesettings.SuperUser);
+        adminUser ??= (await userSignInManager.UserManager.GetUsersInRoleAsync(Administrator)).FirstOrDefault();
 
         if (adminUser == null)
         {
-            await _notifier.ErrorAsync(H["No user with administrator role in this tenant."]);
+            await notifier.ErrorAsync(H["No user with administrator role in this tenant."]);
             return Redirect("~/");
         }
 
-        await _userSignInManager.SignInAsync(adminUser, isPersistent: false);
+        await userSignInManager.SignInAsync(adminUser, isPersistent: false);
         _logger.LogInformation(1, "An admin user logged in from the Default tenant.");
 
         return RedirectToAction("Index", "Admin", new { area = "OrchardCore.Admin" });

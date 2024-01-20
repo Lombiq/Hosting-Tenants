@@ -7,22 +7,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
-public class DashboardQuotaFilter : IAsyncResultFilter
+public class DashboardQuotaFilter(
+    IShapeFactory shapeFactory,
+    ILayoutAccessor layoutAccessor,
+    IEmailQuotaService emailQuotaService) : IAsyncResultFilter
 {
-    private readonly IShapeFactory _shapeFactory;
-    private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IEmailQuotaService _emailQuotaService;
-
-    public DashboardQuotaFilter(
-        IShapeFactory shapeFactory,
-        ILayoutAccessor layoutAccessor,
-        IEmailQuotaService emailQuotaService)
-    {
-        _shapeFactory = shapeFactory;
-        _layoutAccessor = layoutAccessor;
-        _emailQuotaService = emailQuotaService;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         if (!context.IsAdmin())
@@ -32,19 +21,19 @@ public class DashboardQuotaFilter : IAsyncResultFilter
         }
 
         if (context.Result is ViewResult &&
-            _emailQuotaService.ShouldLimitEmails())
+            emailQuotaService.ShouldLimitEmails())
         {
-            var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
+            var currentEmailQuota = await emailQuotaService.IsQuotaOverTheLimitAsync();
 
             var currentUsagePercentage = currentEmailQuota.EmailQuota
-                .CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
+                .CurrentUsagePercentage(emailQuotaService.GetEmailQuotaPerMonth());
 
             if (currentUsagePercentage >= 80)
             {
-                var layout = await _layoutAccessor.GetLayoutAsync();
+                var layout = await layoutAccessor.GetLayoutAsync();
                 var contentZone = layout.Zones["Messages"];
                 await contentZone.AddAsync(
-                    await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
+                    await shapeFactory.CreateAsync("DashboardQuotaMessage", new
                     {
                         currentEmailQuota.IsOverQuota,
                         UsagePercentage = currentUsagePercentage,

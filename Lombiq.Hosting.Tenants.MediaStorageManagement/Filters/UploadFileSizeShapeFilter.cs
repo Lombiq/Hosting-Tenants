@@ -10,22 +10,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
-public class UploadFileSizeShapeFilter : IAsyncResultFilter
+public class UploadFileSizeShapeFilter(
+    IShapeFactory shapeFactory,
+    ILayoutAccessor layoutAccessor,
+    IMediaStorageQuotaService mediaStorageQuotaService) : IAsyncResultFilter
 {
-    private readonly IShapeFactory _shapeFactory;
-    private readonly ILayoutAccessor _layoutAccessor;
-    private readonly IMediaStorageQuotaService _mediaStorageQuotaService;
-
-    public UploadFileSizeShapeFilter(
-        IShapeFactory shapeFactory,
-        ILayoutAccessor layoutAccessor,
-        IMediaStorageQuotaService mediaStorageQuotaService)
-    {
-        _shapeFactory = shapeFactory;
-        _layoutAccessor = layoutAccessor;
-        _mediaStorageQuotaService = mediaStorageQuotaService;
-    }
-
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
         if (!context.IsAdmin())
@@ -43,10 +32,10 @@ public class UploadFileSizeShapeFilter : IAsyncResultFilter
             actionRouteValue is nameof(AdminController.Index) &&
             context.Result is ViewResult)
         {
-            var layout = await _layoutAccessor.GetLayoutAsync();
+            var layout = await layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Footer"];
-            var maximumStorageQuotaMegabytes = _mediaStorageQuotaService.GetMaxStorageQuotaMegabytes();
-            await contentZone.AddAsync(await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
+            var maximumStorageQuotaMegabytes = mediaStorageQuotaService.GetMaxStorageQuotaMegabytes();
+            await contentZone.AddAsync(await shapeFactory.CreateAsync<UploadFileSizeViewModel>(
                 "UploadFileSize",
                 viewModel => viewModel.MaximumStorageQuotaMegabytes = maximumStorageQuotaMegabytes));
         }

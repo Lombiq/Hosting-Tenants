@@ -8,17 +8,12 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateShellRequestUrl;
 
 [Feature(FeatureNames.UpdateShellRequestUrls)]
-public class Startup : StartupBase
+public class Startup(IShellConfiguration shellConfiguration) : StartupBase
 {
-    private readonly IShellConfiguration _shellConfiguration;
-
-    public Startup(IShellConfiguration shellConfiguration) =>
-        _shellConfiguration = shellConfiguration;
-
     public override void ConfigureServices(IServiceCollection services)
     {
         var options = new UpdateShellRequestUrlMaintenanceOptions();
-        var configSection = _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:UpdateShellRequestUrl");
+        var configSection = shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:UpdateShellRequestUrl");
         configSection.Bind(options);
         services.Configure<UpdateShellRequestUrlMaintenanceOptions>(configSection);
 

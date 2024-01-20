@@ -10,12 +10,9 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 
 [Feature(FeatureNames.FeaturesGuard)]
-public class Startup : StartupBase
+public class Startup(IShellConfiguration shellConfiguration) : StartupBase
 {
-    private readonly IShellConfiguration _shellConfiguration;
-
-    public Startup(IConfiguration configuration, IShellConfiguration shellConfiguration) =>
-        _shellConfiguration = shellConfiguration;
+    private readonly IShellConfiguration _shellConfiguration = shellConfiguration;
 
     public override void ConfigureServices(IServiceCollection services)
     {

@@ -10,51 +10,34 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class QuotaManagingSmtpServiceDecorator : ISmtpService
+public class QuotaManagingSmtpServiceDecorator(
+    ISmtpService smtpService,
+    IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
+    IEmailQuotaService emailQuotaService,
+    ShellSettings shellSettings,
+    IEmailTemplateService emailTemplateService,
+    IEmailQuotaSubjectService emailQuotaSubjectService) : ISmtpService
 {
-    private readonly IStringLocalizer<QuotaManagingSmtpServiceDecorator> T;
-    private readonly ISmtpService _smtpService;
-    private readonly IEmailQuotaService _emailQuotaService;
-    private readonly ShellSettings _shellSettings;
-    private readonly IEmailTemplateService _emailTemplateService;
-    private readonly IEmailQuotaSubjectService _emailQuotaSubjectService;
-
-    public QuotaManagingSmtpServiceDecorator(
-        ISmtpService smtpService,
-        IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
-        IEmailQuotaService emailQuotaService,
-        ShellSettings shellSettings,
-        IEmailTemplateService emailTemplateService,
-        IEmailQuotaSubjectService emailQuotaSubjectService)
-    {
-        _smtpService = smtpService;
-        T = stringLocalizer;
-        _emailQuotaService = emailQuotaService;
-        _shellSettings = shellSettings;
-        _emailTemplateService = emailTemplateService;
-        _emailQuotaSubjectService = emailQuotaSubjectService;
-    }
-
     public async Task<SmtpResult> SendAsync(MailMessage message)
     {
-        if (!_emailQuotaService.ShouldLimitEmails())
+        if (!emailQuotaService.ShouldLimitEmails())
         {
-            return await _smtpService.SendAsync(message);
+            return await smtpService.SendAsync(message);
         }
 
-        var isQuotaOverResult = await _emailQuotaService.IsQuotaOverTheLimitAsync();
+        var isQuotaOverResult = await emailQuotaService.IsQuotaOverTheLimitAsync();
         await SendAlertEmailIfNecessaryAsync(isQuotaOverResult.EmailQuota);
 
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
+            return SmtpResult.Failed(stringLocalizer["The email quota for the site has been exceeded."]);
         }
 
-        var emailResult = await _smtpService.SendAsync(message);
+        var emailResult = await smtpService.SendAsync(message);
         if (emailResult == SmtpResult.Success)
         {
-            await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
+            await emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
         }
 
         return emailResult;
@@ -62,17 +45,17 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
 
     private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
-        var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
-        if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
+        var currentUsagePercentage = emailQuota.CurrentUsagePercentage(emailQuotaService.GetEmailQuotaPerMonth());
+        if (!emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        var siteOwnerEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
+        var siteOwnerEmails = (await emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
             await SendQuotaEmailAsync(
                 emailQuota,
                 siteOwnerEmails,
                 "EmailQuotaExceededError",
-                _emailQuotaSubjectService.GetExceededEmailSubject(),
+                emailQuotaSubjectService.GetExceededEmailSubject(),
                 currentUsagePercentage);
             return;
         }
@@ -81,7 +64,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             emailQuota,
             siteOwnerEmails,
             $"EmailQuotaWarning",
-            _emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
+            emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
             currentUsagePercentage);
     }
 
@@ -102,17 +85,17 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             ShellScope.AddDeferredTask(async _ =>
             {
                 emailMessage.To = siteOwnerEmail;
-                emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
+                emailMessage.Body = await emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {
-                    HostName = _shellSettings.Name,
+                    HostName = shellSettings.Name,
                     Percentage = percentage,
                 });
                 // ISmtpService must be used within this class otherwise it won't call the original ISmtpService
                 // implementation, but loop back to here.
-                await _smtpService.SendAsync(emailMessage);
+                await smtpService.SendAsync(emailMessage);
             });
         }
 
-        return _emailQuotaService.SetQuotaOnEmailReminderAsync(emailQuota);
+        return emailQuotaService.SetQuotaOnEmailReminderAsync(emailQuota);
     }
 }

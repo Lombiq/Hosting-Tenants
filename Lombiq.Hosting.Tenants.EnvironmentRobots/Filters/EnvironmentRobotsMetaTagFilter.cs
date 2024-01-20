@@ -7,21 +7,14 @@ using OrchardCore.ResourceManagement;
 
 namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Filters;
 
-public class EnvironmentRobotsMetaTagFilter : IResultFilter
+public class EnvironmentRobotsMetaTagFilter(
+    IHostEnvironment hostEnvironment,
+    IOptions<EnvironmentRobotsOptions> options,
+    IResourceManager resourceManager) : IResultFilter
 {
-    private readonly IHostEnvironment _hostEnvironment;
-    private readonly IOptions<EnvironmentRobotsOptions> _options;
-    private readonly IResourceManager _resourceManager;
-
-    public EnvironmentRobotsMetaTagFilter(
-        IHostEnvironment hostEnvironment,
-        IOptions<EnvironmentRobotsOptions> options,
-        IResourceManager resourceManager)
-    {
-        _hostEnvironment = hostEnvironment;
-        _options = options;
-        _resourceManager = resourceManager;
-    }
+    private readonly IHostEnvironment _hostEnvironment = hostEnvironment;
+    private readonly IOptions<EnvironmentRobotsOptions> _options = options;
+    private readonly IResourceManager _resourceManager = resourceManager;
 
     public void OnResultExecuting(ResultExecutingContext context)
     {
