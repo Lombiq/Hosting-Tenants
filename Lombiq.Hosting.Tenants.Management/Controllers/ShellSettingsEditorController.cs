@@ -82,8 +82,8 @@ public class ShellSettingsEditorController(
         foreach (var key in deletableKeys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            newTenantConfiguration[key] = null;
-            newTenantConfiguration[tenantSettingsPrefixWithKey] = null;
+            shellSettings[key] = null;
+            shellSettings[tenantSettingsPrefixWithKey] = null;
         }
 
         var (locker, locked) =
