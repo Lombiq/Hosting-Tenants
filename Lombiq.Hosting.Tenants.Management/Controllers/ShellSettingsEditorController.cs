@@ -30,6 +30,8 @@ public class ShellSettingsEditorController(
     INotifier notifier,
     IHtmlLocalizer<ShellSettingsEditorController> htmlLocalizer) : Controller
 {
+    private readonly IHtmlLocalizer H = htmlLocalizer;
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ShellSettingsEditorViewModel model)
@@ -43,7 +45,7 @@ public class ShellSettingsEditorController(
         model.Json ??= "{}";
         if (!IsValidJson(model.Json))
         {
-            await notifier.ErrorAsync(htmlLocalizer["Please provide valid JSON input for shell settings."]);
+            await notifier.ErrorAsync(H["Please provide valid JSON input for shell settings."]);
             TempData["ValidationErrorJson"] = model.Json;
 
             return RedirectToAction(
