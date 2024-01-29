@@ -84,8 +84,8 @@ public class ShellSettingsEditorController(
         foreach (var key in deletableKeys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            // We are using the shellSettings[key] directly because using SaveAsnyc(tenant, newConfig)
-            // is not saving the new value. https://github.com/OrchardCMS/OrchardCore/issues/15184
+            // We are using the shellSettings[key] directly because when we try to save it at line 109
+            // it is not saving the new value. https://github.com/OrchardCMS/OrchardCore/issues/15184
             shellSettings[key] = null;
             shellSettings[tenantSettingsPrefixWithKey] = null;
         }
