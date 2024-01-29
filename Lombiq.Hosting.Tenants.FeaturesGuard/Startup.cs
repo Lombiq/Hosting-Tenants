@@ -12,14 +12,12 @@ namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 [Feature(FeatureNames.FeaturesGuard)]
 public class Startup(IShellConfiguration shellConfiguration) : StartupBase
 {
-    private readonly IShellConfiguration _shellConfiguration = shellConfiguration;
-
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
         services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
-            _shellConfiguration
+            shellConfiguration
                 .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:ConditionallyEnabledFeaturesOptions:ConditionallyEnabledFeatures")
                 .Bind(options));
     }

@@ -12,15 +12,11 @@ public class EnvironmentRobotsMetaTagFilter(
     IOptions<EnvironmentRobotsOptions> options,
     IResourceManager resourceManager) : IResultFilter
 {
-    private readonly IHostEnvironment _hostEnvironment = hostEnvironment;
-    private readonly IOptions<EnvironmentRobotsOptions> _options = options;
-    private readonly IResourceManager _resourceManager = resourceManager;
-
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (!_hostEnvironment.IsProductionWithConfiguration(_options))
+        if (!hostEnvironment.IsProductionWithConfiguration(options))
         {
-            _resourceManager.RegisterMeta(new MetaEntry
+            resourceManager.RegisterMeta(new MetaEntry
             {
                 Name = "robots",
                 Content = "noindex, nofollow",
