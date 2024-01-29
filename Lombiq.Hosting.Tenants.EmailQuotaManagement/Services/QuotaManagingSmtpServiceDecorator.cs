@@ -18,6 +18,8 @@ public class QuotaManagingSmtpServiceDecorator(
     IEmailTemplateService emailTemplateService,
     IEmailQuotaSubjectService emailQuotaSubjectService) : ISmtpService
 {
+    private readonly IStringLocalizer T = stringLocalizer;
+
     public async Task<SmtpResult> SendAsync(MailMessage message)
     {
         if (!emailQuotaService.ShouldLimitEmails())
@@ -31,7 +33,7 @@ public class QuotaManagingSmtpServiceDecorator(
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return SmtpResult.Failed(stringLocalizer["The email quota for the site has been exceeded."]);
+            return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
         }
 
         var emailResult = await smtpService.SendAsync(message);
