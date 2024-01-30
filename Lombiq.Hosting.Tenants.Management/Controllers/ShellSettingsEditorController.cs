@@ -12,7 +12,6 @@ using OrchardCore.Locking.Distributed;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -26,8 +25,6 @@ public class ShellSettingsEditorController : Controller
 {
     private readonly IAuthorizationService _authorizationService;
     private readonly IShellHost _shellHost;
-    private readonly IShellConfigurationSources _shellConfigurationSources;
-    private readonly IDistributedLock _distributedLock;
     private readonly INotifier _notifier;
     private readonly IHtmlLocalizer<ShellSettingsEditorController> H;
 
@@ -41,8 +38,6 @@ public class ShellSettingsEditorController : Controller
     {
         _authorizationService = authorizationService;
         _shellHost = shellHost;
-        _shellConfigurationSources = shellConfigurationSources;
-        _distributedLock = distributedLock;
         _notifier = notifier;
         H = htmlLocalizer;
     }
@@ -74,7 +69,6 @@ public class ShellSettingsEditorController : Controller
         }
 
         var tenantConfiguration = new JsonConfigurationParser().ParseConfiguration(model.Json);
-        var newTenantConfiguration = new Dictionary<string, string>();
 
         var tenantSettingsPrefix = $"{model.TenantId}Prefix:";
         var currentSettings = shellSettings.ShellConfiguration.AsEnumerable()
@@ -87,8 +81,8 @@ public class ShellSettingsEditorController : Controller
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
             if (shellSettings[key] != tenantConfiguration[key])
             {
-                newTenantConfiguration[tenantSettingsPrefixWithKey] = tenantConfiguration[key];
-                newTenantConfiguration[key] = tenantConfiguration[key];
+                shellSettings[tenantSettingsPrefixWithKey] = tenantConfiguration[key];
+                shellSettings[key] = tenantConfiguration[key];
             }
         }
 
@@ -99,29 +93,10 @@ public class ShellSettingsEditorController : Controller
         foreach (var key in deletableKeys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            // We are using the shellSettings[key] directly because when we try to save it at line 109
-            // it is not saving the new value. https://github.com/OrchardCMS/OrchardCore/issues/15184
             shellSettings[key] = null;
             shellSettings[tenantSettingsPrefixWithKey] = null;
         }
 
-        var (locker, locked) =
-            await _distributedLock.TryAcquireLockAsync(
-                "LOMBIQ_HOSTING_TENANTS_MANAGEMENT_SHELL_SETTINGS_EDITOR_LOCK",
-                TimeSpan.FromSeconds(10));
-
-        if (!locked)
-        {
-            throw new TimeoutException($"Failed to acquire a lock before saving settings to the tenant: {model.TenantId}.");
-        }
-
-        await using var acquiredLock = locker;
-
-        // We are using the shell configuration sources directly because using IShellHost.UpdateShellSettingsAsync would
-        // not save settings that has a key with multiple sections, see
-        // https://github.com/OrchardCMS/OrchardCore/issues/14481. Once this is fixed, we can get rid of the locking and
-        // retrieve and save the shell settings settings with IShellHost.
-        await _shellConfigurationSources.SaveAsync(shellSettings.Name, newTenantConfiguration);
         await _shellHost.UpdateShellSettingsAsync(shellSettings);
 
         return RedirectToAction(
