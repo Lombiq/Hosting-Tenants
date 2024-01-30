@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.Management.Constants;
+using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
 using Lombiq.Hosting.Tenants.Management.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -99,8 +99,10 @@ public class ShellSettingsEditorController : Controller
         foreach (var key in deletableKeys)
         {
             var tenantSettingsPrefixWithKey = $"{tenantSettingsPrefix}{key}";
-            newTenantConfiguration[key] = null;
-            newTenantConfiguration[tenantSettingsPrefixWithKey] = null;
+            // We are using the shellSettings[key] directly because when we try to save it at line 109
+            // it is not saving the new value. https://github.com/OrchardCMS/OrchardCore/issues/15184
+            shellSettings[key] = null;
+            shellSettings[tenantSettingsPrefixWithKey] = null;
         }
 
         var (locker, locked) =
