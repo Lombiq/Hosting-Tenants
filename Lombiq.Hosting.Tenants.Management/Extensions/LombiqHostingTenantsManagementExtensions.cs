@@ -1,5 +1,6 @@
 using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
 
 namespace Lombiq.Hosting.Tenants.Management.Extensions;
@@ -20,7 +21,7 @@ public static class LombiqHostingTenantsManagementExtensions
             .ConfigureServices(services =>
                 services.Configure<HideRecipesFromSetupOptions>(options =>
                 {
-                    if (tags.Length != 0)
+                    if (tags.Any())
                     {
                         options.HiddenTags = tags;
                     }

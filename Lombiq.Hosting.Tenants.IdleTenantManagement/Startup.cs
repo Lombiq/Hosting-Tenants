@@ -14,8 +14,13 @@ using System;
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement;
 
 [Feature(FeatureNames.ShutDownIdleTenants)]
-public class ShutDownIdleTenantsStartup(IShellConfiguration shellConfiguration) : StartupBase
+public class ShutDownIdleTenantsStartup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public ShutDownIdleTenantsStartup(IShellConfiguration shellConfiguration) =>
+        _shellConfiguration = shellConfiguration;
+
     public override void Configure(
         IApplicationBuilder app,
         IEndpointRouteBuilder routes,
@@ -30,7 +35,7 @@ public class ShutDownIdleTenantsStartup(IShellConfiguration shellConfiguration) 
 
         // Idle Minutes Settings
         services.Configure<IdleShutdownOptions>(options =>
-            shellConfiguration
+            _shellConfiguration
                 .GetSection("Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions")
                 .Bind(options));
     }

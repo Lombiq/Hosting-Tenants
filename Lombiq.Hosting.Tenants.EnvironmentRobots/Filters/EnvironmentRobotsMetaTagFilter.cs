@@ -7,16 +7,27 @@ using OrchardCore.ResourceManagement;
 
 namespace Lombiq.Hosting.Tenants.EnvironmentRobots.Filters;
 
-public class EnvironmentRobotsMetaTagFilter(
-    IHostEnvironment hostEnvironment,
-    IOptions<EnvironmentRobotsOptions> options,
-    IResourceManager resourceManager) : IResultFilter
+public class EnvironmentRobotsMetaTagFilter : IResultFilter
 {
+    private readonly IHostEnvironment _hostEnvironment;
+    private readonly IOptions<EnvironmentRobotsOptions> _options;
+    private readonly IResourceManager _resourceManager;
+
+    public EnvironmentRobotsMetaTagFilter(
+        IHostEnvironment hostEnvironment,
+        IOptions<EnvironmentRobotsOptions> options,
+        IResourceManager resourceManager)
+    {
+        _hostEnvironment = hostEnvironment;
+        _options = options;
+        _resourceManager = resourceManager;
+    }
+
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (!hostEnvironment.IsProductionWithConfiguration(options))
+        if (!_hostEnvironment.IsProductionWithConfiguration(_options))
         {
-            resourceManager.RegisterMeta(new MetaEntry
+            _resourceManager.RegisterMeta(new MetaEntry
             {
                 Name = "robots",
                 Content = "noindex, nofollow",

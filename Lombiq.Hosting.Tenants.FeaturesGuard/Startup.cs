@@ -10,14 +10,19 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 
 [Feature(FeatureNames.FeaturesGuard)]
-public class Startup(IShellConfiguration shellConfiguration) : StartupBase
+public class Startup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public Startup(IConfiguration configuration, IShellConfiguration shellConfiguration) =>
+        _shellConfiguration = shellConfiguration;
+
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
 
         services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
-            shellConfiguration
+            _shellConfiguration
                 .GetSection("Lombiq_Hosting_Tenants_FeaturesGuard:ConditionallyEnabledFeaturesOptions:ConditionallyEnabledFeatures")
                 .Bind(options));
     }

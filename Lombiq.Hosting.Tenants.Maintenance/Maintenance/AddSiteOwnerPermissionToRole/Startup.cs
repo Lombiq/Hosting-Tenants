@@ -8,12 +8,17 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.AddSiteOwnerPermissionToRole;
 
 [Feature(FeatureNames.AddSiteOwnerPermissionToRole)]
-public class Startup(IShellConfiguration shellConfiguration) : StartupBase
+public class Startup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public Startup(IShellConfiguration shellConfiguration) =>
+        _shellConfiguration = shellConfiguration;
+
     public override void ConfigureServices(IServiceCollection services)
     {
         var options = new AddSiteOwnerPermissionToRoleMaintenanceOptions();
-        var configSection = shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole");
+        var configSection = _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole");
         configSection.Bind(options);
         services.Configure<AddSiteOwnerPermissionToRoleMaintenanceOptions>(configSection);
 

@@ -12,12 +12,16 @@ using OrchardCore.Setup.Services;
 namespace Lombiq.Hosting.Tenants.Management;
 
 [Feature(FeatureNames.ForbiddenTenantNames)]
-public class ForbiddenTenantNamesStartup(IShellConfiguration shellConfiguration) : StartupBase
+public class ForbiddenTenantNamesStartup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public ForbiddenTenantNamesStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
+
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Configure<ForbiddenTenantsOptions>(options =>
-            shellConfiguration
+            _shellConfiguration
                 .GetSection("Lombiq_Hosting_Tenants_Management:Forbidden_Tenants_Options")
                 .Bind(options));
 

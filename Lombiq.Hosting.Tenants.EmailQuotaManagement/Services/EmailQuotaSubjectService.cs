@@ -1,10 +1,13 @@
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class EmailQuotaSubjectService(IStringLocalizer<EmailQuotaSubjectService> stringLocalizer) : IEmailQuotaSubjectService
+public class EmailQuotaSubjectService : IEmailQuotaSubjectService
 {
-    private readonly IStringLocalizer T = stringLocalizer;
+    private readonly IStringLocalizer<EmailQuotaSubjectService> T;
+
+    public EmailQuotaSubjectService(IStringLocalizer<EmailQuotaSubjectService> stringLocalizer) =>
+        T = stringLocalizer;
 
     public LocalizedString GetWarningEmailSubject(int percentage) =>
         T["[Warning] Your site has used {0}% of its e-mail quota", percentage];

@@ -97,7 +97,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
                 throw new InvalidOperationException("'IsAlwaysEnabled' feature can't be disabled by FeaturesGuard.");
             }
 
-            if (featuresToEnable.Count == 0 && featuresToDisable.Count == 0)
+            if (!featuresToEnable.Any() && !featuresToDisable.Any())
             {
                 return;
             }
@@ -119,7 +119,7 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
     /// </returns>
     private static bool TryGetFeaturesToBeEnabledAndDisabled(
         IDictionary<string, IEnumerable<string>> conditionallyEnabledFeatures,
-        HashSet<string> enabledFeatureIds,
+        IReadOnlySet<string> enabledFeatureIds,
         out HashSet<string> featuresToEnable,
         out HashSet<string> featuresToDisable)
     {
@@ -152,6 +152,6 @@ public sealed class FeaturesEventHandler : IFeatureEventHandler
         featuresToEnable = featuresToEnableIds;
         featuresToDisable = featuresToDisableIds;
 
-        return featuresToEnableIds.Count != 0 || featuresToDisableIds.Count != 0;
+        return featuresToEnableIds.Any() || featuresToDisableIds.Any();
     }
 }

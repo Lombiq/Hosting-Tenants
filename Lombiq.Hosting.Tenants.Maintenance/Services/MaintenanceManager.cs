@@ -12,29 +12,46 @@ using IOrchardClock = OrchardCore.Modules.IClock;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Services;
 
-public class MaintenanceManager(
-    IOrchardClock clock,
-    ILogger<MaintenanceManager> logger,
-    IEnumerable<IMaintenanceProvider> maintenanceProviders,
-    ISession session,
-    IShellHost shellHost,
-    ShellSettings shellSettings) : IMaintenanceManager
+public class MaintenanceManager : IMaintenanceManager
 {
+    private readonly IOrchardClock _clock;
+    private readonly ILogger<MaintenanceManager> _logger;
+    private readonly IEnumerable<IMaintenanceProvider> _maintenanceProviders;
+    private readonly ISession _session;
+    private readonly IShellHost _shellHost;
+    private readonly ShellSettings _shellSettings;
+
+    public MaintenanceManager(
+        IOrchardClock clock,
+        ILogger<MaintenanceManager> logger,
+        IEnumerable<IMaintenanceProvider> maintenanceProviders,
+        ISession session,
+        IShellHost shellHost,
+        ShellSettings shellSettings)
+    {
+        _clock = clock;
+        _logger = logger;
+        _maintenanceProviders = maintenanceProviders;
+        _session = session;
+        _shellHost = shellHost;
+        _shellSettings = shellSettings;
+    }
+
     public Task<MaintenanceTaskExecutionData> GetLatestExecutionByMaintenanceIdAsync(string maintenanceId) =>
-        session.Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
+        _session.Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
             .Where(execution => execution.MaintenanceId == maintenanceId)
             .OrderByDescending(execution => execution.ExecutionTimeUtc)
             .FirstOrDefaultAsync();
 
     public async Task ExecuteMaintenanceTasksAsync()
     {
-        var orderedProviders = maintenanceProviders.OrderBy(provider => provider.Order);
+        var orderedProviders = _maintenanceProviders.OrderBy(provider => provider.Order);
         foreach (var provider in orderedProviders)
         {
             var currentExecution = new MaintenanceTaskExecutionData
             {
                 MaintenanceId = provider.Id,
-                ExecutionTimeUtc = clock.UtcNow,
+                ExecutionTimeUtc = _clock.UtcNow,
             };
             var context = new MaintenanceTaskExecutionContext
             {
@@ -51,7 +68,7 @@ public class MaintenanceManager(
         MaintenanceTaskExecutionContext context,
         MaintenanceTaskExecutionData execution)
     {
-        logger.LogDebug("Executing maintenance task {MaintenanceId}, if needed.", provider.Id);
+        _logger.LogDebug("Executing maintenance task {MaintenanceId}, if needed.", provider.Id);
 
         if (await provider.ShouldExecuteAsync(context))
         {
@@ -61,11 +78,11 @@ public class MaintenanceManager(
                 execution.IsSuccess = string.IsNullOrEmpty(execution.Error);
                 if (execution.IsSuccess)
                 {
-                    logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
+                    _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
                 }
                 else
                 {
-                    logger.LogError(
+                    _logger.LogError(
                         "Maintenance task {MaintenanceId} executed with error: {Error}",
                         provider.Id,
                         execution.Error);
@@ -76,20 +93,20 @@ public class MaintenanceManager(
                 execution.IsSuccess = false;
                 execution.Error = exception.ToString();
 
-                logger.LogError(
+                _logger.LogError(
                     exception,
                     "Maintenance task {MaintenanceId} failed to execute due to an exception.",
                     provider.Id);
             }
 
-            await session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await session.SaveChangesAsync();
+            await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
+            await _session.SaveChangesAsync();
 
-            if (context.ReloadShellAfterMaintenanceCompletion) await shellHost.ReloadShellContextAsync(shellSettings);
+            if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
         else
         {
-            logger.LogDebug("Maintenance task {MaintenanceId} is not needed.", provider.Id);
+            _logger.LogDebug("Maintenance task {MaintenanceId} is not needed.", provider.Id);
         }
     }
 }

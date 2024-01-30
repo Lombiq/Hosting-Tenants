@@ -16,15 +16,20 @@ using static Lombiq.Hosting.Tenants.EmailQuotaManagement.Constants.EmailQuotaOpt
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement;
 
 [Feature(FeatureNames.EmailQuotaManagement)]
-public class Startup(IShellConfiguration shellConfiguration) : StartupBase
+public class Startup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public Startup(IShellConfiguration shellConfiguration) =>
+        _shellConfiguration = shellConfiguration;
+
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddDataMigration<EmailQuotaMigrations>();
         services.AddSingleton<IBackgroundTask, EmailQuotaResetBackgroundTask>();
 
         services.Configure<EmailQuotaOptions>(options =>
-            options.EmailQuotaPerMonth = shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuotaPerMonth")
+            options.EmailQuotaPerMonth = _shellConfiguration.GetValue<int?>("Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuotaPerMonth")
                 ?? DefaultEmailQuota);
 
         services.Configure<MvcOptions>(options =>

@@ -14,11 +14,18 @@ using static System.Net.WebRequestMethods;
 
 namespace Lombiq.Hosting.Tenants.Management.Filters;
 
-public class ForbiddenTenantsFilter(
-    IStringLocalizer<ForbiddenTenantsFilter> stringLocalizer,
-    IOptions<ForbiddenTenantsOptions> forbiddenTenantsOptions) : IAsyncActionFilter
+public class ForbiddenTenantsFilter : IAsyncActionFilter
 {
-    private readonly IStringLocalizer T = stringLocalizer;
+    private readonly IStringLocalizer T;
+    private readonly IOptions<ForbiddenTenantsOptions> _forbiddenTenantsOptions;
+
+    public ForbiddenTenantsFilter(
+        IStringLocalizer<ForbiddenTenantsFilter> stringLocalizer,
+        IOptions<ForbiddenTenantsOptions> forbiddenTenantsOptions)
+    {
+        _forbiddenTenantsOptions = forbiddenTenantsOptions;
+        T = stringLocalizer;
+    }
 
     public Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
@@ -37,16 +44,18 @@ public class ForbiddenTenantsFilter(
             return next();
         }
 
-        var forbiddenRequestUrlHosts = forbiddenTenantsOptions.Value.RequestUrlHosts;
+        var forbiddenRequestUrlHosts = _forbiddenTenantsOptions.Value.RequestUrlHosts;
 
         if (forbiddenRequestUrlHosts != null && forbiddenRequestUrlHosts.Any())
         {
             var requestUrlHost = context.HttpContext.Request.Form[nameof(CreateApiViewModel.RequestUrlHost)].ToString();
             var hosts = requestUrlHost.Split(',').Select(host => host.Trim());
 
-            List<string> unacceptableHostnames = [.. hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname))];
+            List<string> unacceptableHostnames = new();
 
-            if (unacceptableHostnames.Count != 0)
+            unacceptableHostnames.AddRange(hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname)));
+
+            if (unacceptableHostnames.Any())
             {
                 var unacceptableHostnamesString = string.Join(", ", unacceptableHostnames);
                 context.ModelState.AddModelError(

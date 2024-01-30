@@ -13,12 +13,17 @@ using System;
 namespace Lombiq.Hosting.Tenants.EnvironmentRobots;
 
 [Feature(FeatureNames.EnvironmentRobots)]
-public class Startup(IShellConfiguration shellConfiguration) : StartupBase
+public class Startup : StartupBase
 {
+    private readonly IShellConfiguration _shellConfiguration;
+
+    public Startup(IShellConfiguration shellConfiguration) =>
+        _shellConfiguration = shellConfiguration;
+
     public override void ConfigureServices(IServiceCollection services)
     {
         var options = new EnvironmentRobotsOptions();
-        var configSection = shellConfiguration
+        var configSection = _shellConfiguration
             .GetSection("Lombiq_Hosting_Tenants_EnvironmentRobots:EnvironmentRobotsOptions");
         configSection.Bind(options);
         services.Configure<EnvironmentRobotsOptions>(configSection);
