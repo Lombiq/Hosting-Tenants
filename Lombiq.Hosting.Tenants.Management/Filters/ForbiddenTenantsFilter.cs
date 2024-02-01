@@ -2,7 +2,6 @@ using Lombiq.Hosting.Tenants.Management.Settings;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
 using OrchardCore.Tenants.ViewModels;
