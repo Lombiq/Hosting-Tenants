@@ -1,4 +1,4 @@
-# Lombiq Hosting - Tenants Media Storage Management for Orchard Core
+# Lombiq Hosting - Tenants Email Quota Management for Orchard Core
 
 [![Lombiq.Hosting.Tenants.EmailQuotaManagement NuGet](https://img.shields.io/nuget/v/Lombiq.Hosting.Tenants.EmailQuotaManagement?label=Lombiq.Hosting.Tenants.EmailQuotaManagement)](https://www.nuget.org/packages/Lombiq.Hosting.Tenants.EmailQuotaManagement/)
 
