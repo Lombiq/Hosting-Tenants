@@ -15,7 +15,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     Description = "Ability to configure hostnames that aren't allowed during tenant creation.",
     Category = "Hosting",
     DefaultTenantOnly = true,
-    Dependencies = new[] { "OrchardCore.Tenants" }
+    Dependencies = ["OrchardCore.Tenants"]
 )]
 
 [assembly: Feature(
@@ -24,7 +24,7 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     Description = "Adds the ability to hide recipes from the setup screen based on configurable tags.",
     Category = "Hosting",
     DefaultTenantOnly = true,
-    Dependencies = new[] { "OrchardCore.Setup" }
+    Dependencies = ["OrchardCore.Setup"]
 )]
 
 [assembly: Feature(
@@ -33,5 +33,5 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     Description = "Adds a shell settings editor to the tenant editor page.",
     Category = "Hosting",
     DefaultTenantOnly = true,
-    Dependencies = new[] { "OrchardCore.Tenants" }
+    Dependencies = ["OrchardCore.Tenants"]
 )]

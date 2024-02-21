@@ -50,11 +50,9 @@ public class ForbiddenTenantsFilter : IAsyncActionFilter
             var requestUrlHost = context.HttpContext.Request.Form[nameof(CreateApiViewModel.RequestUrlHost)].ToString();
             var hosts = requestUrlHost.Split(',').Select(host => host.Trim());
 
-            List<string> unacceptableHostnames = new();
+            var unacceptableHostnames = hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname)).ToList();
 
-            unacceptableHostnames.AddRange(hosts.Where(hostname => forbiddenRequestUrlHosts.Contains(hostname)));
-
-            if (unacceptableHostnames.Any())
+            if (unacceptableHostnames.Count != 0)
             {
                 var unacceptableHostnamesString = string.Join(", ", unacceptableHostnames);
                 context.ModelState.AddModelError(

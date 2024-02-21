@@ -1,4 +1,4 @@
-﻿using Lombiq.HelpfulExtensions.Extensions.Emails.Services;
+using Lombiq.HelpfulExtensions.Extensions.Emails.Services;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.Extensions.Localization;
 using OrchardCore.Email;
@@ -54,7 +54,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         var emailResult = await _smtpService.SendAsync(message);
         if (emailResult == SmtpResult.Success)
         {
-            _emailQuotaService.IncreaseEmailUsage(isQuotaOverResult.EmailQuota);
+            await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
         }
 
         return emailResult;
@@ -68,7 +68,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         var siteOwnerEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
-            SendQuotaEmail(
+            await SendQuotaEmailAsync(
                 emailQuota,
                 siteOwnerEmails,
                 "EmailQuotaExceededError",
@@ -77,7 +77,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             return;
         }
 
-        SendQuotaEmail(
+        await SendQuotaEmailAsync(
             emailQuota,
             siteOwnerEmails,
             $"EmailQuotaWarning",
@@ -85,7 +85,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             currentUsagePercentage);
     }
 
-    private void SendQuotaEmail(
+    private Task SendQuotaEmailAsync(
         EmailQuota emailQuota,
         IEnumerable<string> siteOwnerEmails,
         string emailTemplateName,
@@ -113,6 +113,6 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
             });
         }
 
-        _emailQuotaService.SetQuotaOnEmailReminder(emailQuota);
+        return _emailQuotaService.SetQuotaOnEmailReminderAsync(emailQuota);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
+using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -34,20 +34,20 @@ public interface IEmailQuotaService
     /// <summary>
     /// Increases the usage count of the given <paramref name="emailQuota"/> and saves it to the database.
     /// </summary>
-    void IncreaseEmailUsage(EmailQuota emailQuota);
+    Task IncreaseEmailUsageAsync(EmailQuota emailQuota);
 
     /// <summary>
     /// Resets the given <paramref name="emailQuota"/> <see cref="EmailQuota.CurrentEmailUsageCount"/> to 0 and saves it
     /// to the database.
     /// </summary>
-    void ResetQuota(EmailQuota emailQuota);
+    Task ResetQuotaAsync(EmailQuota emailQuota);
 
     /// <summary>
     /// Sets the <see cref="EmailQuota.LastReminderUtc"/> to the current date and
     /// <see cref="EmailQuota.LastReminderPercentage"/> to the current email quota usage percentage then saves it to the
     /// database.
     /// </summary>
-    void SetQuotaOnEmailReminder(EmailQuota emailQuota);
+    Task SetQuotaOnEmailReminderAsync(EmailQuota emailQuota);
 
     /// <summary>
     /// Returns <see langword="true"/>, if the reminder email should be sent.

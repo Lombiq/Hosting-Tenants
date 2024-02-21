@@ -15,10 +15,10 @@ using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.FeatureName
     Description = "Ability to configure storage quota for tenants.",
     Category = "Hosting",
     IsAlwaysEnabled = true,
-    Dependencies = new[]
-    {
+    Dependencies =
+    [
         "OrchardCore.Media",
         "OrchardCore.DisplayManagement",
         "OrchardCore.ResourceManagement",
-    }
+    ]
 )]

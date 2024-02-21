@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.BackgroundTasks;
 using System;
 using System.Threading;
@@ -15,6 +15,6 @@ public class EmailQuotaResetBackgroundTask : IBackgroundTask
     {
         var emailQuotaService = serviceProvider.GetRequiredService<IEmailQuotaService>();
         var currentQuota = await emailQuotaService.GetOrCreateCurrentQuotaAsync();
-        emailQuotaService.ResetQuota(currentQuota);
+        await emailQuotaService.ResetQuotaAsync(currentQuota);
     }
 }
