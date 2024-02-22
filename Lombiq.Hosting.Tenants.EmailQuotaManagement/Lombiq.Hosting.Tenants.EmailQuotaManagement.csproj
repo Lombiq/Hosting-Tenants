@@ -34,14 +34,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Admin" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Email.Core" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.AdminDashboard" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Email.Abstractions" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.8.2" />
+    <PackageReference Include="OrchardCore.Admin" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.Email.Core" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.AdminDashboard" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.Email.Abstractions" Version="1.9.0-preview-18056" />
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="1.9.0-preview-18056" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
     <PackageReference Include="YesSql.Abstractions" Version="4.0.0" />
   </ItemGroup>
