@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.Common.Utilities;
 using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
 using Lombiq.Hosting.Tenants.Management.Service;
@@ -12,9 +13,7 @@ using OrchardCore.Locking.Distributed;
 using OrchardCore.Modules;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Tenants.Controllers;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using static OrchardCore.Tenants.Permissions;
 
@@ -53,7 +52,7 @@ public class ShellSettingsEditorController : Controller
         }
 
         model.Json ??= "{}";
-        if (!IsValidJson(model.Json))
+        if (JsonHelpers.ValidateJsonIfNotNull(model.Json) == false)
         {
             await _notifier.ErrorAsync(H["Please provide valid JSON input for shell settings."]);
             TempData["ValidationErrorJson"] = model.Json;
@@ -107,18 +106,5 @@ public class ShellSettingsEditorController : Controller
                 area = "OrchardCore.Tenants",
                 id = model.TenantId,
             });
-    }
-
-    private static bool IsValidJson(string json)
-    {
-        try
-        {
-            JsonDocument.Parse(json);
-            return true;
-        }
-        catch (JsonException)
-        {
-            return false;
-        }
     }
 }
