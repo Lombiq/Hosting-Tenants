@@ -48,11 +48,11 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
+            return EmailResult.FailedResult(T["The email quota for the site has been exceeded."]);
         }
 
         var emailResult = await _emailService.SendAsync(message, providerName);
-        if (emailResult == SmtpResult.Success)
+        if (emailResult == EmailResult.SuccessResult)
         {
             await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
         }
