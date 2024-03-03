@@ -60,8 +60,7 @@ public static class TestCaseUITestContextExtensions
         var editorValue = JsonNode
             .Parse(editorJson)
             .SelectNode($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?
-            .ToString();
-        editorValue.ShouldNotBeNull();
+            .ToString() ?? string.Empty;
         editorValue.ShouldBeAsString(expectedValue);
     }
 }
