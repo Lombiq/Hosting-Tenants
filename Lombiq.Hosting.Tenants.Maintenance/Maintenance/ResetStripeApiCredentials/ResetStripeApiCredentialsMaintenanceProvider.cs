@@ -36,7 +36,8 @@ public class ResetStripeApiCredentialsMaintenanceProvider : MaintenanceProviderB
     public override async Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         _options.Value.IsEnabled &&
         !context.WasLatestExecutionSuccessful() &&
-        (await _shellFeaturesManager.GetEnabledFeaturesAsync()).Any(feature => feature.Id == "OrchardCore.Commerce.Payment.Stripe");
+        (await _shellFeaturesManager.GetEnabledFeaturesAsync()).Any(feature =>
+            feature.Id == "OrchardCore.Commerce.Payment.Stripe");
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
