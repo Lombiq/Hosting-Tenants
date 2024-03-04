@@ -2,6 +2,7 @@ using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
+using OrchardCore.Email;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,13 @@ public static class TestCaseUITestContextExtensions
     public static async Task TestEmailQuotaManagementBehaviorAsync(
         this UITestContext context,
         int maximumEmailQuota,
+        SmtpSettings settings,
         bool moduleShouldInterfere = true)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
-
         context.Missing(By.XPath(DashboardExceededMessage));
+
+        await context.ExecuteJsonRecipeSiteSettingAsync(settings);
 
         await context.GoToAdminRelativeUrlAsync("/Settings/email");
 
@@ -96,7 +99,7 @@ public static class TestCaseUITestContextExtensions
 
     private static async Task SendTestEmailAsync(UITestContext context, string subject)
     {
-        await context.GoToAdminRelativeUrlAsync("/Email/Index");
+        await context.GoToAdminRelativeUrlAsync("/Email/Test");
         await context.FillInWithRetriesAsync(By.Id("To"), "recipient@example.com");
         await context.FillInWithRetriesAsync(By.Id("Subject"), subject);
         await context.FillInWithRetriesAsync(By.Id("Body"), "Hi, this is a test.");
