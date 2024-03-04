@@ -43,7 +43,9 @@ public class ResetStripeApiCredentialsMaintenanceProvider : MaintenanceProviderB
         var siteSettings = await _siteService.GetSiteSettingsAsync();
         var settings = siteSettings.As<StripeApiSettings>();
 
-        if (settings.SecretKey.IsNullOrEmpty() && settings.PublishableKey.IsNullOrEmpty())
+        if (!settings.SecretKey.IsNullOrEmpty() ||
+            !settings.PublishableKey.IsNullOrEmpty() ||
+            !settings.WebhookSigningSecret.IsNullOrEmpty())
         {
             siteSettings.Alter<StripeApiSettings>(nameof(StripeApiSettings), settings =>
             {
@@ -54,6 +56,8 @@ public class ResetStripeApiCredentialsMaintenanceProvider : MaintenanceProviderB
                 var protector = _dataProtectionProvider.CreateProtector(nameof(StripeApiSettingsConfiguration));
                 settings.SecretKey = protector
                     .Protect("sk_test_51H59owJmQoVhz82aOUNOuCVbK0u1zjyRFKkFp9EfrqzWaUWqQni3oSxljsdTIu2YZ9XvlbeGjZRU7B7ye2EjJQE000Dm2DtMWD");
+
+                settings.WebhookSigningSecret = string.Empty;
             });
         }
     }
