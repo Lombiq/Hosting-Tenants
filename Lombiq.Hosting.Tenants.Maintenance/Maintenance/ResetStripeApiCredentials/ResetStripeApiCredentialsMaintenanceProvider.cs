@@ -52,11 +52,13 @@ public class ResetStripeApiCredentialsMaintenanceProvider : MaintenanceProviderB
             {
                 // These are publicly available test keys.
                 settings.PublishableKey =
-                    "pk_test_51H59owJmQoVhz82aWAoi9M5s8PC6sSAqFI7KfAD2NRKun5riDIOM0dvu2caM25a5f5JbYLMc5Umxw8Dl7dBIDNwM00yVbSX8uS";
+                    "pk_test_51H59owJmQoVhz82aWAoi9M5s8PC6sSAqFI7KfAD2NRKun5riDIOM0dvu2caM25a5f5JbYLMc5Umxw8Dl7dBIDN" + // #spell-check-ignore-line
+                        "wM00yVbSX8uS"; // #spell-check-ignore-line
 
                 var protector = _dataProtectionProvider.CreateProtector(nameof(StripeApiSettingsConfiguration));
                 settings.SecretKey = protector
-                    .Protect("sk_test_51H59owJmQoVhz82aOUNOuCVbK0u1zjyRFKkFp9EfrqzWaUWqQni3oSxljsdTIu2YZ9XvlbeGjZRU7B7ye2EjJQE000Dm2DtMWD");
+                    .Protect("sk_test_51H59owJmQoVhz82aOUNOuCVbK0u1zjyRFKkFp9EfrqzWaUWqQni3oSxljsdTIu2YZ9XvlbeGjZRU7" + // #spell-check-ignore-line
+                        "B7ye2EjJQE000Dm2DtMWD"); // #spell-check-ignore-line
 
                 settings.WebhookSigningSecret = string.Empty;
             });
