@@ -54,4 +54,8 @@
         <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="9.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\OrchardCore.Commerce\src\Modules\OrchardCore.Commerce.Payment.Stripe\OrchardCore.Commerce.Payment.Stripe.csproj" />
+    </ItemGroup>
+
 </Project>
