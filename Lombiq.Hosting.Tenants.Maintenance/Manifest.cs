@@ -64,7 +64,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 [assembly: Feature(
     Id = ResetStripeApiCredentials,
     Name = "Lombiq Hosting - Tenants Maintenance Reset Stripe API Credentials",
-    Description = "Replaces the Stripe Publishable Key and Secret Key to the publicly available test keys, if they are empty.",
+    Description = "Replaces the Stripe Publishable Key and Secret Key to the publicly available test keys, if they are not empty.",
     Category = "Maintenance",
     Dependencies = new[] { Maintenance }
 )]
