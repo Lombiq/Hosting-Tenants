@@ -55,4 +55,15 @@
         <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="8.0.3-alpha.0.lmbq-249" />
     </ItemGroup>
 
+  <PropertyGroup>
+    <OrchardCoreCommercePaymentStripe>..\..\OrchardCore.Commerce\src\Modules\OrchardCore.Commerce.Payment.Stripe\OrchardCore.Commerce.Payment.Stripe.csproj</OrchardCoreCommercePaymentStripe>
+  </PropertyGroup>
+
+  <ItemGroup Condition="Exists($(OrchardCoreCommercePaymentStripe))">
+    <ProjectReference Include="$(OrchardCoreCommercePaymentStripe)" />
+  </ItemGroup>
+  <ItemGroup Condition="!Exists($(OrchardCoreCommercePaymentStripe))">
+    <PackageReference Include="OrchardCore.Commerce.Payment.Stripe" Version="1.3.2-alpha.1.occ-208" />
+  </ItemGroup>
+
 </Project>
