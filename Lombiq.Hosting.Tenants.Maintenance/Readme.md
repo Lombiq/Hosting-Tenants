@@ -151,3 +151,21 @@ The following configuration should be used to allow the maintenance to run:
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.ResetStripeApiCredentials`
+
+It's a maintenance task that replaces the Stripe Publishable Key and Secret Key to the publicly available test keys, if they are not empty.
+
+The following configuration should be used to allow the maintenance to run:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "ResetStripeApiCredentials": {
+        "IsEnabled": true
+      }
+    }
+  }
+}
+```
