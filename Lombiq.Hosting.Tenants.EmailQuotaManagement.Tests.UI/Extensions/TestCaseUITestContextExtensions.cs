@@ -27,10 +27,12 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAndGoToDashboardAsync();
         context.Missing(By.XPath(DashboardExceededMessage));
 
+        settings.IsEnabled = true;
+        settings.Port = context.Configuration.SmtpServiceConfiguration.Context.Port;
+        if (string.IsNullOrEmpty(settings.Host)) settings.Host = "localhost";
         await context.ExecuteJsonRecipeSiteSettingAsync(settings);
 
         await context.GoToAdminRelativeUrlAsync("/Settings/email");
-
         CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, 0);
 
         var warningEmails = new List<int>();
