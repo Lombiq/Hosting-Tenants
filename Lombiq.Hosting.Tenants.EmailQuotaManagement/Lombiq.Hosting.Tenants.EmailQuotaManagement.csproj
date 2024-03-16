@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="OrchardCore.Admin" Version="1.9.0-preview-18096" />
-    <PackageReference Include="OrchardCore.Email.Core" Version="1.9.0-preview-18096" />
+    <PackageReference Include="OrchardCore.Email" Version="1.9.0-preview-18096" />
     <PackageReference Include="OrchardCore.Module.Targets" Version="1.9.0-preview-18096" />
     <PackageReference Include="OrchardCore.AdminDashboard" Version="1.9.0-preview-18096" />
     <PackageReference Include="OrchardCore.DisplayManagement" Version="1.9.0-preview-18096" />
