@@ -10,24 +10,24 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class QuotaManagingSmtpServiceDecorator : ISmtpService
+public class QuotaManagingSmtpServiceDecorator : IEmailService
 {
     private readonly IStringLocalizer<QuotaManagingSmtpServiceDecorator> T;
-    private readonly ISmtpService _smtpService;
+    private readonly IEmailService _emailService;
     private readonly IEmailQuotaService _emailQuotaService;
     private readonly ShellSettings _shellSettings;
     private readonly IEmailTemplateService _emailTemplateService;
     private readonly IEmailQuotaSubjectService _emailQuotaSubjectService;
 
     public QuotaManagingSmtpServiceDecorator(
-        ISmtpService smtpService,
+        IEmailService emailService,
         IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
         IEmailQuotaService emailQuotaService,
         ShellSettings shellSettings,
         IEmailTemplateService emailTemplateService,
         IEmailQuotaSubjectService emailQuotaSubjectService)
     {
-        _smtpService = smtpService;
+        _emailService = emailService;
         T = stringLocalizer;
         _emailQuotaService = emailQuotaService;
         _shellSettings = shellSettings;
@@ -35,11 +35,11 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         _emailQuotaSubjectService = emailQuotaSubjectService;
     }
 
-    public async Task<SmtpResult> SendAsync(MailMessage message)
+    public async Task<EmailResult> SendAsync(MailMessage message, string providerName = null)
     {
         if (!_emailQuotaService.ShouldLimitEmails())
         {
-            return await _smtpService.SendAsync(message);
+            return await _emailService.SendAsync(message, providerName);
         }
 
         var isQuotaOverResult = await _emailQuotaService.IsQuotaOverTheLimitAsync();
@@ -48,11 +48,11 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return SmtpResult.Failed(T["The email quota for the site has been exceeded."]);
+            return EmailResult.FailedResult(T["The email quota for the site has been exceeded."]);
         }
 
-        var emailResult = await _smtpService.SendAsync(message);
-        if (emailResult == SmtpResult.Success)
+        var emailResult = await _emailService.SendAsync(message, providerName);
+        if (emailResult == EmailResult.SuccessResult)
         {
             await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
         }
@@ -109,7 +109,7 @@ public class QuotaManagingSmtpServiceDecorator : ISmtpService
                 });
                 // ISmtpService must be used within this class otherwise it won't call the original ISmtpService
                 // implementation, but loop back to here.
-                await _smtpService.SendAsync(emailMessage);
+                await _emailService.SendAsync(emailMessage);
             });
         }
 
