@@ -34,9 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.2" />
-    <PackageReference Include="OrchardCore.Tenants" Version="1.8.2" />
+    <PackageReference Include="OrchardCore" Version="1.9.0-preview-18096" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="1.9.0-preview-18096" />
+    <PackageReference Include="OrchardCore.Tenants" Version="1.9.0-preview-18096" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>
 
