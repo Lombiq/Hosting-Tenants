@@ -96,23 +96,7 @@ public static class TestCaseUITestContextExtensions
 
     private static async Task SendTestEmailAsync(UITestContext context, string subject)
     {
-        await context.GoToAdminRelativeUrlAsync("/Email/Index");
-        await context.FillInWithRetriesAsync(By.Id("To"), "recipient@example.com");
-        await context.FillInWithRetriesAsync(By.Id("Subject"), subject);
-        await context.FillInWithRetriesAsync(By.Id("Body"), "Hi, this is a test.");
-
-        await ReliabilityHelper.DoWithRetriesOrFailAsync(
-            async () =>
-            {
-                try
-                {
-                    await context.ClickReliablyOnAsync(By.Id("emailtestsend")); // #spell-check-ignore-line
-                    return true;
-                }
-                catch (WebDriverException ex) when (ex.Message.Contains("move target out of bounds"))
-                {
-                    return false;
-                }
-            });
+        await context.GoToEmailTestAsync();
+        await context.FillEmailTestFormAsync(subject);
     }
 }
