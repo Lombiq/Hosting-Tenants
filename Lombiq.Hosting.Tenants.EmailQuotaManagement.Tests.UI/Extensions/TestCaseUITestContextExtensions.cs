@@ -23,18 +23,18 @@ public static class TestCaseUITestContextExtensions
         bool moduleShouldInterfere = true)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
-
         context.Missing(By.XPath(DashboardExceededMessage));
 
         await context.GoToAdminRelativeUrlAsync("/Settings/email");
-
         CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, 0);
 
         var warningEmails = new List<int>();
         for (int i = 0; i < maximumEmailQuota; i++)
         {
-            await SendTestEmailAsync(context, SuccessfulSubject);
+            await context.GoToEmailTestAsync();
+            await context.FillEmailTestFormAsync(SuccessfulSubject);
             context.SuccessMessageExists();
+
             CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, i + 1);
             var warningLevel = Convert.ToInt32(Math.Round((double)(i + 1) / maximumEmailQuota * 100, 0));
 
@@ -63,7 +63,8 @@ public static class TestCaseUITestContextExtensions
             }
         }
 
-        await SendTestEmailAsync(context, UnSuccessfulSubject);
+        await context.GoToEmailTestAsync();
+        await context.FillEmailTestFormAsync(UnSuccessfulSubject);
         await context.GoToSmtpWebUIAsync();
         context.CheckExistence(ByHelper.SmtpInboxRow(SuccessfulSubject), exists: true);
         context.CheckExistence(
@@ -93,10 +94,5 @@ public static class TestCaseUITestContextExtensions
             By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'{currentEmailCount.ToTechnicalString()} emails" +
                 $" from the total of {maximumEmailQuota.ToTechnicalString()} this month.')]"),
             exists);
-
-    private static async Task SendTestEmailAsync(UITestContext context, string subject)
-    {
-        await context.GoToEmailTestAsync();
-        await context.FillEmailTestFormAsync(subject);
     }
 }
