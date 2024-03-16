@@ -7,7 +7,8 @@ public static class EmailQuotaManagementExtensions
 {
     public static void SetEmailQuotaManagementOptionsForUITest(
         this OrchardCoreUITestExecutorConfiguration configuration,
-        long maximumEmails)
+        long maximumEmails,
+        string emailHost = "localhost")
     {
         configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
@@ -16,6 +17,11 @@ public static class EmailQuotaManagementExtensions
                     .AddWithValue(
                         "OrchardCore:Lombiq_Hosting_Tenants_EmailQuotaManagement:EmailQuotaPerMonth",
                         maximumEmails);
+
+                argumentsBuilder
+                    .AddWithValue(
+                        "OrchardCore:SmtpSettings:Host",
+                        emailHost);
 
                 return Task.CompletedTask;
             };
