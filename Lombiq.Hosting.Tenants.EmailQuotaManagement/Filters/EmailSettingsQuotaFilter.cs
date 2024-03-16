@@ -5,6 +5,7 @@ using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
 using OrchardCore.Queries.Controllers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
@@ -37,12 +38,11 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
         var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
         var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
 
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Settings)}" &&
-            actionRouteValue is nameof(AdminController.Index) &&
+        if (actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Settings)}" &&
+            actionRouteController == typeof(AdminController).ControllerName() &&
+            actionRouteValue == nameof(AdminController.Index) &&
             context.Result is ViewResult &&
-            context.RouteData.Values.TryGetValue("GroupId", out var groupId) &&
-            (string)groupId == "email" &&
+            context.RouteData.Values.GetMaybe("GroupId")?.ToString() == "email" &&
             _emailQuotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
