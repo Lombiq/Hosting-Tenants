@@ -52,10 +52,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
         }
 
         var emailResult = await _emailService.SendAsync(message, providerName);
-        if (emailResult == EmailResult.SuccessResult)
-        {
-            await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
-        }
+        if (emailResult.Succeeded) await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
 
         return emailResult;
     }
