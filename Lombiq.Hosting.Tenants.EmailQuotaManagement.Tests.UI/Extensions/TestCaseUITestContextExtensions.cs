@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.Extensions;
@@ -89,9 +90,21 @@ public static class TestCaseUITestContextExtensions
                 $"[contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
             exists: true);
 
-    private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount) =>
-        context.CheckExistence(
-            By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'{currentEmailCount.ToTechnicalString()} emails" +
-                $" from the total of {maximumEmailQuota.ToTechnicalString()} this month.')]"),
-            exists);
+    private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount)
+    {
+        var by = By.CssSelector(".alert-warning[data-smtp-quota-max][data-smtp-quota-used]");
+
+        if (!exists)
+        {
+            context.Missing(by);
+            return;
+        }
+
+        var element = context.Get(by);
+        var max = int.Parse(element.GetAttribute("data-smtp-quota-max"), CultureInfo.InvariantCulture);
+        var used = int.Parse(element.GetAttribute("data-smtp-quota-used"), CultureInfo.InvariantCulture);
+
+        max.ShouldBe(maximumEmailQuota);
+        used.ShouldBe(currentEmailCount);
+    }
 }
