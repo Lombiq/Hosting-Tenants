@@ -94,5 +94,4 @@ public static class TestCaseUITestContextExtensions
             By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'{currentEmailCount.ToTechnicalString()} emails" +
                 $" from the total of {maximumEmailQuota.ToTechnicalString()} this month.')]"),
             exists);
-    }
 }
