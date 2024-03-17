@@ -26,8 +26,9 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAndGoToDashboardAsync();
         context.Missing(By.XPath(DashboardExceededMessage));
 
-        await context.GoToAdminRelativeUrlAsync("/Settings/email");
+        await context.ConfigureSmtpPortAsync(publish: false);
         CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, 0);
+        await context.ClickReliablyOnAsync(By.ClassName("save"));
 
         var warningEmails = new List<int>();
         for (int i = 0; i < maximumEmailQuota; i++)
