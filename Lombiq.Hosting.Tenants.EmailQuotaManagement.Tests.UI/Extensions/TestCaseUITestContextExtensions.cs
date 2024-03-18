@@ -5,6 +5,7 @@ using OpenQA.Selenium;
 using Shouldly;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.Extensions;
@@ -23,18 +24,19 @@ public static class TestCaseUITestContextExtensions
         bool moduleShouldInterfere = true)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
-
         context.Missing(By.XPath(DashboardExceededMessage));
 
-        await context.GoToAdminRelativeUrlAsync("/Settings/email");
-
+        await context.ConfigureSmtpPortAsync(publish: false);
         CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, 0);
+        await context.ClickReliablyOnAsync(By.ClassName("save"));
 
         var warningEmails = new List<int>();
         for (int i = 0; i < maximumEmailQuota; i++)
         {
-            await SendTestEmailAsync(context, SuccessfulSubject);
+            await context.GoToEmailTestAsync();
+            await context.FillEmailTestFormAsync(SuccessfulSubject);
             context.SuccessMessageExists();
+
             CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, i + 1);
             var warningLevel = Convert.ToInt32(Math.Round((double)(i + 1) / maximumEmailQuota * 100, 0));
 
@@ -63,7 +65,8 @@ public static class TestCaseUITestContextExtensions
             }
         }
 
-        await SendTestEmailAsync(context, UnSuccessfulSubject);
+        await context.GoToEmailTestAsync();
+        await context.FillEmailTestFormAsync(UnSuccessfulSubject);
         await context.GoToSmtpWebUIAsync();
         context.CheckExistence(ByHelper.SmtpInboxRow(SuccessfulSubject), exists: true);
         context.CheckExistence(
@@ -88,31 +91,21 @@ public static class TestCaseUITestContextExtensions
                 $"[contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
             exists: true);
 
-    private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount) =>
-        context.CheckExistence(
-            By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'{currentEmailCount.ToTechnicalString()} emails" +
-                $" from the total of {maximumEmailQuota.ToTechnicalString()} this month.')]"),
-            exists);
-
-    private static async Task SendTestEmailAsync(UITestContext context, string subject)
+    private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount)
     {
-        await context.GoToAdminRelativeUrlAsync("/Email/Index");
-        await context.FillInWithRetriesAsync(By.Id("To"), "recipient@example.com");
-        await context.FillInWithRetriesAsync(By.Id("Subject"), subject);
-        await context.FillInWithRetriesAsync(By.Id("Body"), "Hi, this is a test.");
+        var by = By.CssSelector(".alert-warning[data-smtp-quota-max][data-smtp-quota-used]");
 
-        await ReliabilityHelper.DoWithRetriesOrFailAsync(
-            async () =>
-            {
-                try
-                {
-                    await context.ClickReliablyOnAsync(By.Id("emailtestsend")); // #spell-check-ignore-line
-                    return true;
-                }
-                catch (WebDriverException ex) when (ex.Message.Contains("move target out of bounds"))
-                {
-                    return false;
-                }
-            });
+        if (!exists)
+        {
+            context.Missing(by);
+            return;
+        }
+
+        var element = context.Get(by);
+        var max = int.Parse(element.GetAttribute("data-smtp-quota-max"), CultureInfo.InvariantCulture);
+        var used = int.Parse(element.GetAttribute("data-smtp-quota-used"), CultureInfo.InvariantCulture);
+
+        max.ShouldBe(maximumEmailQuota);
+        used.ShouldBe(currentEmailCount);
     }
 }

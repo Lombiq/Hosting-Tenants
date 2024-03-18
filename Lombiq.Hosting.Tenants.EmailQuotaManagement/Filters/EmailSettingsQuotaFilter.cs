@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Mvc.Core.Utilities;
-using OrchardCore.Queries.Controllers;
 using System.Threading.Tasks;
+using EmailAdminController = OrchardCore.Email.Controllers.AdminController;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
@@ -33,17 +33,12 @@ public class EmailSettingsQuotaFilter : IAsyncResultFilter
             return;
         }
 
-        var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
-        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
-        var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
+        var isEmailTestPage = context.IsMvcRoute(
+            nameof(EmailAdminController.Test),
+            typeof(EmailAdminController).ControllerName(),
+            $"{nameof(OrchardCore)}.{nameof(OrchardCore.Email)}");
 
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Settings)}" &&
-            actionRouteValue is nameof(AdminController.Index) &&
-            context.Result is ViewResult &&
-            context.RouteData.Values.TryGetValue("GroupId", out var groupId) &&
-            (string)groupId == "email" &&
-            _emailQuotaService.ShouldLimitEmails())
+        if ((isEmailTestPage || context.IsSiteSettingsPage("email")) && _emailQuotaService.ShouldLimitEmails())
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];

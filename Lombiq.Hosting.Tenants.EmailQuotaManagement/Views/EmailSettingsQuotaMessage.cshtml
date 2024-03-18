@@ -1,6 +1,11 @@
-<p class="alert alert-warning">
-    @T["Unless you use your own SMTP server you have limited e-mails to send. " +
-            "You've sent {0} emails from the total of {1} this month.",
-        Model.CurrentEmailUsageCount,
-        Model.EmailQuotaPerMonth]
+@{
+    int currentEmailUsageCount = Model.CurrentEmailUsageCount;
+    int emailQuotaPerMonth = Model.EmailQuotaPerMonth;
+}
+
+<p class="alert alert-warning"
+   data-smtp-quota-used="@currentEmailUsageCount.ToTechnicalString()"
+   data-smtp-quota-max=@emailQuotaPerMonth.ToTechnicalString()>
+    @T["Unless you use your own SMTP server you have limited e-mails to send."]
+    @T["You've sent {0} emails from the total of {1} this month.", currentEmailUsageCount, emailQuotaPerMonth]
 </p>
