@@ -1,5 +1,4 @@
 @using Lombiq.Hosting.Tenants.Management.Controllers
-@using Newtonsoft.Json
 @using OrchardCore
 @using OrchardCore.Mvc.Core.Utilities
 @using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames
@@ -31,11 +30,11 @@
 <script at="Foot" depends-on="monaco">
     $(() => {
         require(['vs/editor/editor.main'], () => {
-            const settings = @Html.Raw(JsonConvert.SerializeObject(
+            const settings = @Json.Serialize(
                 new {
-                    automaticLayout = true,
-                    language = "json",
-                }));
+                    AutomaticLayout = true,
+                    Language = "json",
+                });
 
             const html = document.getElementsByTagName('html')[0];
             const mutationObserver = new MutationObserver(setTheme);

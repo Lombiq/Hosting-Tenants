@@ -42,6 +42,6 @@ public class Startup : StartupBase
         services.AddScoped<IEmailQuotaService, EmailQuotaService>();
         services.AddScoped<IEmailQuotaSubjectService, EmailQuotaSubjectService>();
 
-        services.Decorate<ISmtpService, QuotaManagingSmtpServiceDecorator>();
+        services.Decorate<IEmailService, QuotaManagingSmtpServiceDecorator>();
     }
 }
