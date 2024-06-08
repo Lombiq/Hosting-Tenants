@@ -50,6 +50,8 @@ public class TenantLoginController : Controller
     [IgnoreAntiforgeryToken]
     public async Task<IActionResult> Index(string password)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         if (_shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
         {
             return NotFound();
