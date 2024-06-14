@@ -15,7 +15,7 @@
         <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;Maintenance</PackageTags>
         <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
         <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Maintenance/Readme.md</PackageProjectUrl>
-        <PackageLicenseFile>License.md</PackageLicenseFile>
+        <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
@@ -34,7 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="License.md" Pack="true" PackagePath="" />
         <None Include="Readme.md" />
         <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
     </ItemGroup>

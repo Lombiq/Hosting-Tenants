@@ -5,5 +5,5 @@ namespace Lombiq.Hosting.Tenants.Management.Settings;
 
 public class HideRecipesFromSetupOptions
 {
-    public IEnumerable<string> HiddenTags { get; set; } = new[] { HideFromSetupScreen };
+    public IEnumerable<string> HiddenTags { get; set; } = [HideFromSetupScreen];
 }
