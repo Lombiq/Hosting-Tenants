@@ -14,7 +14,7 @@ public static class OrchardCoreBuilderExtensions
         builder.ConfigureFeaturesGuardWithoutOverriding(
             new Dictionary<string, IEnumerable<string>>
             {
-                ["OrchardCore.Media.Azure.Storage"] = new List<string> { "OrchardCore.Media" },
+                ["OrchardCore.Media.Azure.Storage"] = ["OrchardCore.Media"],
             });
 
     /// <summary>
@@ -26,7 +26,7 @@ public static class OrchardCoreBuilderExtensions
             new Dictionary<string, IEnumerable<string>>
             {
                 ["OrchardCore.Search.Elasticsearch"] =
-                    new List<string> { "OrchardCore.Search", "OrchardCore.Indexing" },
+                    ["OrchardCore.Search", "OrchardCore.Indexing"],
             });
 
     /// <summary>
@@ -37,7 +37,7 @@ public static class OrchardCoreBuilderExtensions
         builder.ConfigureFeaturesGuardWithoutOverriding(
             new Dictionary<string, IEnumerable<string>>
             {
-                ["Lombiq.Hosting.Tenants.EmailQuotaManagement"] = new List<string> { "OrchardCore.Email" },
+                ["Lombiq.Hosting.Tenants.EmailQuotaManagement"] = ["OrchardCore.Email"],
             });
 
     /// <summary>

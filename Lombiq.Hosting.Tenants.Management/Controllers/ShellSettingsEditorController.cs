@@ -46,6 +46,8 @@ public class ShellSettingsEditorController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(ShellSettingsEditorViewModel model)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         if (!await _authorizationService.AuthorizeAsync(User, ManageTenants) ||
             !_shellHost.TryGetSettings(model.TenantId, out var shellSettings))
         {
