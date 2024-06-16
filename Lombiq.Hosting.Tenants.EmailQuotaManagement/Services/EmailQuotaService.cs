@@ -19,6 +19,8 @@ using static OrchardCore.Security.StandardPermissions;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
+// As noted under github issue https://github.com/OrchardCMS/OrchardCore/issues/15290#issuecomment-2093363619
+// SaveAsync calls should be removed due to redundancy, however removing them breaks functionality.
 public class EmailQuotaService : IEmailQuotaService
 {
     private readonly ISession _session;
