@@ -145,9 +145,12 @@ The following configuration should be used to allow the maintenance to run:
     "Lombiq_Hosting_Tenants_Maintenance": {
       "ChangeUserSensitiveContent": {
         "IsEnabled": true,
-        "TenantNames": "Default, Tenant1, Tenant2"
+        "TenantNames": "Default, Tenant1, Tenant2",
+        "EmailExcludePattern": ".+@(lombiq.com|example.com)$"
       }
     }
   }
 }
 ```
+
+Any user accounts with an e-mail matching the `EmailExcludePattern` regex will not be depersonalized.
