@@ -9,6 +9,7 @@ using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using YesSql;
 using static Lombiq.HelpfulLibraries.OrchardCore.Users.PasswordHelper;
@@ -49,7 +50,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
         var users = await _session.Query<User>().ListAsync();
         foreach (var user in users.Where(user =>
-            !user.Email.Trim().EndsWith($"@lombiq.com", StringComparison.InvariantCulture)))
+            !Regex.IsMatch(user.Email.Trim(), _options.Value.EmailExcludePattern, RegexOptions.None, TimeSpan.FromMilliseconds(400))))
         {
             var firstName = randomNameGenerator.GenerateRandomFirstName();
             var lastName = randomNameGenerator.GenerateRandomLastName();
