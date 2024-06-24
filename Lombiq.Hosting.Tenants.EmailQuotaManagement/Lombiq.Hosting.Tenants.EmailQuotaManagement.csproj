@@ -33,14 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Admin" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.Email" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.AdminDashboard" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.ResourceManagement" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.Email.Abstractions" Version="2.0.0-preview-18248" />
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="2.0.0-preview-18248" />
+    <PackageReference Include="OrchardCore.Admin" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.Email" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.AdminDashboard" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.ResourceManagement" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.Email.Abstractions" Version="2.0.0-preview-18250" />
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="2.0.0-preview-18250" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>
 
