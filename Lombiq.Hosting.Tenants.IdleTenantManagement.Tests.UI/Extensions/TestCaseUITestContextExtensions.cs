@@ -36,5 +36,8 @@ public static class TestCaseUITestContextExtensions
         // working as intended.
         await context.SignInDirectlyAsync();
         await context.GoToDashboardAsync();
+
+        // Make sure the shutdown message is in the logs.
+        await context.Application.AssertAppLogsWithIdleCheckAsync();
     }
 }
