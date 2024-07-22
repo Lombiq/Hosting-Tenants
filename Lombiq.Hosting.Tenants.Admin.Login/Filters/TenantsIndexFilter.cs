@@ -38,18 +38,11 @@ public class TenantsIndexFilter : IAsyncResultFilter
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
-        var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
-        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
-        var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
-
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
-            actionRouteValue is nameof(AdminController.Edit) &&
+        if (IsTenantsEditAction(context) &&
             context.Result is ViewResult &&
             await _authorizationService.AuthorizeAsync(
                 _hca.HttpContext.User,
-                TenantAdminPermissions.LoginAsAdmin)
-            )
+                TenantAdminPermissions.LoginAsAdmin))
         {
             var shellSettings = _shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
             if (shellSettings != null &&
@@ -70,4 +63,9 @@ public class TenantsIndexFilter : IAsyncResultFilter
 
         await next();
     }
+
+    public static bool IsTenantsEditAction(ActionContext context) =>
+        context.ActionDescriptor.RouteValues["Controller"] == typeof(AdminController).ControllerName() &&
+        context.ActionDescriptor.RouteValues["Area"] == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
+        context.ActionDescriptor.RouteValues["Action"] is nameof(AdminController.Edit);
 }
