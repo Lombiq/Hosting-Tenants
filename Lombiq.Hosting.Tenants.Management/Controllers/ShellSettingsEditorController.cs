@@ -1,6 +1,6 @@
 using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Models;
-using Lombiq.Hosting.Tenants.Management.Service;
+using Lombiq.Hosting.Tenants.Management.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
