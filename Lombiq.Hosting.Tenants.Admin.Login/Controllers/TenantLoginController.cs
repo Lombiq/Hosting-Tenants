@@ -67,8 +67,8 @@ public class TenantLoginController : Controller
             return NotFound();
         }
 
-        var sitesettings = await _siteService.LoadSiteSettingsAsync();
-        var adminUser = await _userSignInManager.UserManager.FindByIdAsync(sitesettings.SuperUser);
+        var siteSettings = await _siteService.LoadSiteSettingsAsync();
+        var adminUser = await _userSignInManager.UserManager.FindByIdAsync(siteSettings.SuperUser);
         adminUser ??= (await _userSignInManager.UserManager.GetUsersInRoleAsync(Administrator)).FirstOrDefault();
 
         if (adminUser == null)
