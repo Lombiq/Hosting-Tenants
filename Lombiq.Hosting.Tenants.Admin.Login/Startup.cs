@@ -17,5 +17,6 @@ public class Startup : StartupBase
         services.Configure<MvcOptions>(options => options.Filters.Add(typeof(TenantsIndexFilter)));
         services.AddScoped<IPermissionProvider, TenantAdminPermissions>();
         services.AddSingleton<ITenantLoginPasswordValidator, TenantLoginKeyValidator>();
+        services.AddContentSecurityPolicyProvider<TenantLoginSecurityPolicyProvider>();
     }
 }
