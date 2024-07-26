@@ -32,7 +32,6 @@ public class ForbiddenTenantsFilter : IAsyncActionFilter
         var routeValues = context.ActionDescriptor.RouteValues;
 
         if (!context.HttpContext.Request.Method.EqualsOrdinalIgnoreCase(Http.Post) ||
-
             !routeValues["Area"].EqualsOrdinalIgnoreCase($"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}") ||
 
             !(context.IsMvcRoute(nameof(AdminController.Create), typeof(AdminController).ControllerName()) ||
