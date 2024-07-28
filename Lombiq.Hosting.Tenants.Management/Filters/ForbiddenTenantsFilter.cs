@@ -1,4 +1,5 @@
 using Lombiq.Hosting.Tenants.Management.Settings;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
@@ -33,12 +34,10 @@ public class ForbiddenTenantsFilter : IAsyncActionFilter
         if (!context.HttpContext.Request.Method.EqualsOrdinalIgnoreCase(Http.Post) ||
             !routeValues["Area"].EqualsOrdinalIgnoreCase($"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}") ||
 
-            !((routeValues["Controller"].EqualsOrdinalIgnoreCase(typeof(AdminController).ControllerName()) &&
-            (routeValues["Action"].EqualsOrdinalIgnoreCase(nameof(AdminController.Create)) ||
-            routeValues["Action"].EqualsOrdinalIgnoreCase(nameof(AdminController.Edit)))) ||
+            !(context.IsMvcRoute(nameof(AdminController.Create), typeof(AdminController).ControllerName()) ||
+              context.IsMvcRoute(nameof(AdminController.Edit), typeof(AdminController).ControllerName())) ||
 
-            (routeValues["Controller"].EqualsOrdinalIgnoreCase(typeof(ApiController).ControllerName()) &&
-            routeValues["Action"].EqualsOrdinalIgnoreCase(nameof(ApiController.Create)))))
+            context.IsMvcRoute(nameof(TenantApiController.Create), typeof(TenantApiController).ControllerName()))
         {
             return next();
         }
