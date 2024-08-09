@@ -1,6 +1,5 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell.Configuration;
@@ -26,23 +25,29 @@ public class EmailQuotaService : IEmailQuotaService
     private readonly ISession _session;
     private readonly EmailQuotaOptions _emailQuotaOptions;
     private readonly IShellConfiguration _shellConfiguration;
-    private readonly SmtpSettings _smtpOptions;
+    private readonly DefaultSmtpOptions _defaultSmtpOptions;
+    private readonly SmtpOptions _smtpOptions;
     private readonly IClock _clock;
     private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
+    // This is needed for injecting every necessary service.
+#pragma warning disable S107 // Methods should not have too many parameters
     public EmailQuotaService(
         ISession session,
         IOptions<EmailQuotaOptions> emailQuotaOptions,
         IShellConfiguration shellConfiguration,
-        IOptions<SmtpSettings> smtpOptions,
+        IOptions<DefaultSmtpOptions> defaultSmtpOptions,
+        IOptions<SmtpOptions> smtpOptions,
         IClock clock,
         IRoleService roleService,
         UserManager<IUser> userManager)
+#pragma warning restore S107 // Methods should not have too many parameters
     {
         _session = session;
         _emailQuotaOptions = emailQuotaOptions.Value;
         _shellConfiguration = shellConfiguration;
+        _defaultSmtpOptions = defaultSmtpOptions.Value;
         _smtpOptions = smtpOptions.Value;
         _clock = clock;
         _roleService = roleService;
@@ -66,11 +71,8 @@ public class EmailQuotaService : IEmailQuotaService
         return siteOwners.Select(user => (user as User)?.Email);
     }
 
-    public bool ShouldLimitEmails()
-    {
-        var originalHost = _shellConfiguration.GetValue<string>("SmtpSettings:Host");
-        return originalHost == _smtpOptions.Host;
-    }
+    public bool ShouldLimitEmails() =>
+        _defaultSmtpOptions.Host == _smtpOptions.Host || (_defaultSmtpOptions.Host != null && _smtpOptions.Host == null);
 
     public async Task<QuotaResult> IsQuotaOverTheLimitAsync()
     {
