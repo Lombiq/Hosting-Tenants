@@ -2,7 +2,6 @@ using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using OrchardCore.Email;
-using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Security;
 using OrchardCore.Security.Services;
@@ -24,29 +23,23 @@ public class EmailQuotaService : IEmailQuotaService
 {
     private readonly ISession _session;
     private readonly EmailQuotaOptions _emailQuotaOptions;
-    private readonly IShellConfiguration _shellConfiguration;
     private readonly DefaultSmtpOptions _defaultSmtpOptions;
     private readonly SmtpOptions _smtpOptions;
     private readonly IClock _clock;
     private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
-    // This is needed for injecting every necessary service.
-#pragma warning disable S107 // Methods should not have too many parameters
     public EmailQuotaService(
         ISession session,
         IOptions<EmailQuotaOptions> emailQuotaOptions,
-        IShellConfiguration shellConfiguration,
         IOptions<DefaultSmtpOptions> defaultSmtpOptions,
         IOptions<SmtpOptions> smtpOptions,
         IClock clock,
         IRoleService roleService,
         UserManager<IUser> userManager)
-#pragma warning restore S107 // Methods should not have too many parameters
     {
         _session = session;
         _emailQuotaOptions = emailQuotaOptions.Value;
-        _shellConfiguration = shellConfiguration;
         _defaultSmtpOptions = defaultSmtpOptions.Value;
         _smtpOptions = smtpOptions.Value;
         _clock = clock;
