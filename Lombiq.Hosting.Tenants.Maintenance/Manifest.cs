@@ -62,7 +62,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = DeleteElasticsearchIndexes,
+    Id = DeleteElasticsearchIndices,
     Name = "Lombiq Hosting - Tenants Maintenance Delete Elasticsearch Indexes",
     Description = "Deletes Elasticsearch indexes.",
     Category = "Maintenance",

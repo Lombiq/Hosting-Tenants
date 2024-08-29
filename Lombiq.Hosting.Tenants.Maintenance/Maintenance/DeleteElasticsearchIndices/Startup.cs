@@ -10,9 +10,9 @@ using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using System;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndexes;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
 
-[Feature(FeatureNames.DeleteElasticsearchIndexes)]
+[Feature(FeatureNames.DeleteElasticsearchIndices)]
 public class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -26,21 +26,21 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.BindAndConfigureSection<DeleteElasticsearchIndexesMaintenanceOptions>(
+        services.BindAndConfigureSection<DeleteElasticsearchIndicesMaintenanceOptions>(
             _shellConfiguration,
-            "Lombiq_Hosting_Tenants_Maintenance:DeleteElasticsearchIndexes");
+            "Lombiq_Hosting_Tenants_Maintenance:DeleteElasticsearchIndices");
 
-        services.AddScoped<IMaintenanceProvider, DeleteElasticsearchIndexesMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, DeleteElasticsearchIndicesMaintenanceProvider>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
     {
         if (!_shellSettings.IsUninitialized()) return;
 
-        var options = serviceProvider.GetRequiredService<IOptions<DeleteElasticsearchIndexesMaintenanceOptions>>().Value;
+        var options = serviceProvider.GetRequiredService<IOptions<DeleteElasticsearchIndicesMaintenanceOptions>>().Value;
         if (options.IsEnabled)
         {
-            app.UseMiddleware<DeleteElasticsearchIndexesMiddleware>();
+            app.UseMiddleware<DeleteElasticsearchIndicesMiddleware>();
         }
     }
 }

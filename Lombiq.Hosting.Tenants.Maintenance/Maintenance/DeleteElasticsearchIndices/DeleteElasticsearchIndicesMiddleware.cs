@@ -6,13 +6,11 @@ using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndexes;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
 
-public class DeleteElasticsearchIndexesMiddleware
+public class DeleteElasticsearchIndicesMiddleware
 {
     private readonly RequestDelegate _next;
-
-    private readonly IShellHost _shellHost;
 
     private readonly ShellSettings _shellSettings;
 
@@ -20,15 +18,13 @@ public class DeleteElasticsearchIndexesMiddleware
 
     private readonly IDistributedLock _distributedLock;
 
-    public DeleteElasticsearchIndexesMiddleware(
+    public DeleteElasticsearchIndicesMiddleware(
         RequestDelegate next,
-        IShellHost shellHost,
         ShellSettings shellSettings,
         IShellSettingsManager shellSettingsManager,
         IDistributedLock distributedLock)
     {
         _next = next;
-        _shellHost = shellHost;
         _shellSettings = shellSettings;
         _shellSettingsManager = shellSettingsManager;
         _distributedLock = distributedLock;
@@ -36,11 +32,7 @@ public class DeleteElasticsearchIndexesMiddleware
 
     public async Task InvokeAsync(HttpContext httpContext)
     {
-        if (!_shellSettings.IsUninitialized())
-        {
-            await _next.Invoke(httpContext);
-            return;
-        }
+        if (await InvokeNextIfUninitializedAsync(_shellSettings, httpContext)) return;
 
         // Try to acquire a lock before starting installation
         var (locker, locked) = await _distributedLock.TryAcquireLockAsync(
@@ -56,34 +48,29 @@ public class DeleteElasticsearchIndexesMiddleware
         await using var acquiredLock = locker;
 
         // Check if the tenant was installed by another instance.
-        if (!_shellSettings.IsUninitialized())
-        {
-            await _next.Invoke(httpContext);
-            return;
-        }
+        if (await InvokeNextIfUninitializedAsync(_shellSettings, httpContext)) return;
 
-        var pathBase = httpContext.Request.PathBase;
-        if (!pathBase.HasValue)
-        {
-            pathBase = "/";
-        }
+        using var settings = (await _shellSettingsManager.LoadSettingsAsync(_shellSettings.Name)).AsDisposable();
 
-        using var settings = (await _shellSettingsManager
-                .LoadSettingsAsync(_shellSettings.Name))
-            .AsDisposable();
-
-        // If the tenant was initialized by another instance, reload the shell context and redirect to the path base.
-        if (!settings.IsUninitialized())
-        {
-            await _shellHost.ReloadShellContextAsync(_shellSettings, eventSource: false);
-            httpContext.Response.Redirect(pathBase);
-
-            return;
-        }
+        // If the tenant was initialized by another instance, then skip again.
+        if (await InvokeNextIfUninitializedAsync(settings, httpContext)) return;
 
         var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticIndexManager>();
+
+        // Delete all tenant specific indexes in Elasticsearch.
         await elasticIndexManager.DeleteIndex("*");
 
         await _next.Invoke(httpContext);
+    }
+
+    private async Task<bool> InvokeNextIfUninitializedAsync(ShellSettings shellSettings, HttpContext httpContext)
+    {
+        if (shellSettings.IsUninitialized())
+        {
+            return false;
+        }
+
+        await _next.Invoke(httpContext);
+        return true;
     }
 }
