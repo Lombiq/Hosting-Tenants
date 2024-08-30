@@ -155,7 +155,7 @@ The following configuration should be used to allow the maintenance to run:
 
 Any user accounts with an e-mail matching the `EmailExcludePattern` regex will not be depersonalized.
 
-### `Lombiq.Hosting.Tenants.Maintenance.DeleteElasitcsearchIndices`
+### `Lombiq.Hosting.Tenants.Maintenance.DeleteElasticsearchIndices`
 
 This contains a maintenance task that deletes all Elasticsearch indices related to the tenant that is being activated.
 
