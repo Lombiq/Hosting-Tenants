@@ -22,7 +22,7 @@ public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProvider
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         Task.FromResult(
-            _options.Value.IsEnabled &&
+            _options.Value.MaintenanceIsEnabled &&
             !context.WasLatestExecutionSuccessful());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>

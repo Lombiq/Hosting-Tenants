@@ -38,7 +38,7 @@ public class Startup : StartupBase
         if (!_shellSettings.IsUninitialized()) return;
 
         var options = serviceProvider.GetRequiredService<IOptions<DeleteElasticsearchIndicesMaintenanceOptions>>().Value;
-        if (options.IsEnabled)
+        if (options.MiddlewareIsEnabled)
         {
             app.UseMiddleware<DeleteElasticsearchIndicesMiddleware>();
         }

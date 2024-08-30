@@ -36,7 +36,7 @@ public class DeleteElasticsearchIndicesMiddleware
 
         // Try to acquire a lock before starting installation
         var (locker, locked) = await _distributedLock.TryAcquireLockAsync(
-            "ELASTICSERACH_INDICES_DELETION_LOCK",
+            "ELASTICSEARCH_INDICES_DELETION",
             TimeSpan.FromMinutes(1),
             TimeSpan.FromMinutes(1));
 
