@@ -154,3 +154,24 @@ The following configuration should be used to allow the maintenance to run:
 ```
 
 Any user accounts with an e-mail matching the `EmailExcludePattern` regex will not be depersonalized.
+
+### `Lombiq.Hosting.Tenants.Maintenance.DeleteElasitcsearchIndices`
+
+This contains a maintenance task that deletes all Elasticsearch indices related to the tenant that is being activated.
+
+It also contains a middleware that deletes all Elasticsearch indices related to the tenant, but it does that before the tenant setup. This is useful when you want to delete the indices before the tenant setup, so you can create indices from a recipe during setup. To be able to use the middleware before setup this feature must be added as a setup feature. You can do this with `OrchardCoreBuilder.AddSetupFeatures(Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames.DeleteElasticsearchIndices);`
+
+The following configuration should be used to allow the maintenance to run and for the middleware to be added:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "DeleteElasticsearchIndices": {
+          "MaintenanceIsEnabled": true,
+          "MiddlewareIsEnabled": true
+      }
+    }
+  }
+}
+```
