@@ -167,9 +167,10 @@ The following configuration should be used to allow the maintenance to run and f
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
-      "DeleteElasticsearchIndices": {
-          "MaintenanceIsEnabled": true,
-          "MiddlewareIsEnabled": true
+      "ElasticsearchIndicesOptions": {
+          "DeleteMaintenanceIsEnabled": true,
+          "RebuildMaintenanceIsEnabled": true,
+          "BeforeSetupMiddlewareIsEnabled": true
       }
     }
   }

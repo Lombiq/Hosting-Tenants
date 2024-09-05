@@ -9,11 +9,11 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndi
 
 public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
-    private readonly IOptions<DeleteElasticsearchIndicesMaintenanceOptions> _options;
+    private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
     private readonly ElasticIndexManager _elasticIndexManager;
 
     public DeleteElasticsearchIndicesMaintenanceProvider(
-        IOptions<DeleteElasticsearchIndicesMaintenanceOptions> options,
+        IOptions<ElasticsearchIndicesMaintenanceOptions> options,
         ElasticIndexManager elasticIndexManager)
     {
         _options = options;
@@ -22,7 +22,7 @@ public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProvider
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         Task.FromResult(
-            _options.Value.MaintenanceIsEnabled &&
+            _options.Value.DeleteMaintenanceIsEnabled &&
             !context.WasLatestExecutionSuccessful());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>

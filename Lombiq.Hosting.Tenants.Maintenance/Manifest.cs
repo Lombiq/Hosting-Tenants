@@ -62,10 +62,17 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = DeleteElasticsearchIndices,
+    Id = DeleteOrRebuildElasticsearchIndices,
     Name = "Lombiq Hosting - Tenants Maintenance Delete Elasticsearch Indexes",
     Description = "Deletes Elasticsearch indexes.",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
-    Dependencies = [Maintenance, "OrchardCore.Search.Elasticsearch"]
+    Dependencies = [Maintenance]
+)]
+
+[assembly: Feature(
+    Id = DeleteElasticsearchIndicesBeforeSetup,
+    Name = "Lombiq Hosting - Tenants Maintenance Delete Elasticsearch Indexes Before Setup",
+    Description = "Deletes Elasticsearch indexes before setup.",
+    Category = "Maintenance",
+    Dependencies = []
 )]
