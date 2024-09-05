@@ -1,13 +1,9 @@
-using Elasticsearch.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Nest;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Locking.Distributed;
-using OrchardCore.Search.Elasticsearch.Core.Models;
 using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -83,78 +79,5 @@ public class DeleteElasticsearchIndicesMiddleware
 
         await _next.Invoke(httpContext);
         return true;
-    }
-
-    private static ConnectionSettings GetConnectionSettings(ElasticConnectionOptions elasticConfiguration)
-    {
-        // This is a copy of the OC Elasticsearch module's OrchardCore.Search.Elasticsearch.Startup.GetConnectionSettings method.
-#pragma warning disable CA2000 // Call System. IDisposable. Dispose on object created by
-        // 'GetConnectionPool(elasticConfiguration)' before all references to it are out of scope
-        var pool = GetConnectionPool(elasticConfiguration);
-#pragma warning restore CA2000
-
-        var settings = new ConnectionSettings(pool);
-
-        if (elasticConfiguration.ConnectionType != "CloudConnectionPool" &&
-            !string.IsNullOrWhiteSpace(elasticConfiguration.Username) &&
-            !string.IsNullOrWhiteSpace(elasticConfiguration.Password))
-        {
-            settings.BasicAuthentication(elasticConfiguration.Username, elasticConfiguration.Password);
-        }
-
-        if (!string.IsNullOrWhiteSpace(elasticConfiguration.CertificateFingerprint))
-        {
-            settings.CertificateFingerprint(elasticConfiguration.CertificateFingerprint);
-        }
-
-        if (elasticConfiguration.EnableApiVersioningHeader)
-        {
-            settings.EnableApiVersioningHeader();
-        }
-
-        return settings;
-    }
-
-    private static IConnectionPool GetConnectionPool(ElasticConnectionOptions elasticConfiguration)
-    {
-        var uris = elasticConfiguration.Ports.Select(port => new Uri($"{elasticConfiguration.Url}:{port.ToTechnicalString()}")).Distinct();
-        IConnectionPool pool = null;
-        switch (elasticConfiguration.ConnectionType)
-        {
-            case "SingleNodeConnectionPool":
-                pool = new SingleNodeConnectionPool(uris.First());
-                break;
-
-            case "CloudConnectionPool":
-                if (!string.IsNullOrWhiteSpace(elasticConfiguration.Username) &&
-                    !string.IsNullOrWhiteSpace(elasticConfiguration.Password) &&
-                    !string.IsNullOrWhiteSpace(elasticConfiguration.CloudId))
-                {
-                    using var credentials = new BasicAuthenticationCredentials(
-                        elasticConfiguration.Username,
-                        elasticConfiguration.Password);
-                    pool = new CloudConnectionPool(elasticConfiguration.CloudId, credentials);
-                }
-
-                break;
-
-            case "StaticConnectionPool":
-                pool = new StaticConnectionPool(uris);
-                break;
-
-            case "SniffingConnectionPool":
-                pool = new SniffingConnectionPool(uris);
-                break;
-
-            case "StickyConnectionPool":
-                pool = new StickyConnectionPool(uris);
-                break;
-
-            default:
-                pool = new SingleNodeConnectionPool(uris.First());
-                break;
-        }
-
-        return pool;
     }
 }
