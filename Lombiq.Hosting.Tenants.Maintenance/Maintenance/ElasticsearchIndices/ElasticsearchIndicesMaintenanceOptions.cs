@@ -1,4 +1,4 @@
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 public class ElasticsearchIndicesMaintenanceOptions
 {

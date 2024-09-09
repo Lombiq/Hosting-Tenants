@@ -7,7 +7,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 public class DeleteElasticsearchIndicesMiddleware
 {

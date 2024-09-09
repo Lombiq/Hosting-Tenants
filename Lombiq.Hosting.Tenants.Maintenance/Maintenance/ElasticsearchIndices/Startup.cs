@@ -16,14 +16,12 @@ using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 using System.Linq;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 [Feature(FeatureNames.DeleteOrRebuildElasticsearchIndices)]
 public class DeleteElasticsearchIndicesStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
-
-    public override int Order => int.MaxValue;
 
     public DeleteElasticsearchIndicesStartup(IShellConfiguration shellConfiguration) => _shellConfiguration = shellConfiguration;
 
@@ -43,8 +41,6 @@ public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
     private readonly ShellSettings _shellSettings;
-
-    public override int Order => int.MaxValue;
 
     public DeleteElasticsearchIndicesBeforeSetupStartup(IShellConfiguration shellConfiguration, ShellSettings shellSettings)
     {

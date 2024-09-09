@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using OrchardCore.Search.Elasticsearch.Core.Services;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteElasticsearchIndices;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
