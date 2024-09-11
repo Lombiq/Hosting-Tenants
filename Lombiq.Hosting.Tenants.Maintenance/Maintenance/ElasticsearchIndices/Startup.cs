@@ -128,9 +128,13 @@ public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
                     !string.IsNullOrWhiteSpace(elasticConfiguration.Password) &&
                     !string.IsNullOrWhiteSpace(elasticConfiguration.CloudId))
                 {
-                    using var credentials = new BasicAuthenticationCredentials(
+                    // This is a copy of the OC Elasticsearch module's OrchardCore.Search.Elasticsearch.Startup.GetConnectionPool method.
+#pragma warning disable CA2000 // CA2000: Call System. IDisposable. Dispose on object created by
+                    // 'new BasicAuthenticationCredentials(' before all references to it are out of scope
+                    var credentials = new BasicAuthenticationCredentials(
                         elasticConfiguration.Username,
                         elasticConfiguration.Password);
+#pragma warning restore CA2000
                     pool = new CloudConnectionPool(elasticConfiguration.CloudId, credentials);
                 }
 
