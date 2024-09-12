@@ -37,7 +37,7 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
 
             if (setting.QueryAnalyzerName != setting.AnalyzerName)
             {
-                // Query Analyzer may be different until the index in rebuilt.
+                // Query Analyzer may be different until the index is rebuilt.
                 // Since the index is rebuilt, lets make sure we query using the same analyzer.
                 setting.QueryAnalyzerName = setting.AnalyzerName;
 
