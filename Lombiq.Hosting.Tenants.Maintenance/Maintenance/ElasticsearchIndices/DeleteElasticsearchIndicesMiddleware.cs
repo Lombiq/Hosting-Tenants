@@ -49,7 +49,7 @@ public class DeleteElasticsearchIndicesMiddleware
 
         if (!locked)
         {
-            throw new TimeoutException($"Fails to acquire an elasticsearch indices deletion lock for the tenant: {_shellSettings.Name}");
+            throw new TimeoutException($"Failed to acquire an Elasticsearch indices deletion lock for the tenant: {_shellSettings.Name}");
         }
 
         await using var acquiredLock = locker;
