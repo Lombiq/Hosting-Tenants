@@ -57,9 +57,9 @@ public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         // After the setup, the Elasticsearch module can be loaded the regular way.
         if (!_shellSettings.IsUninitialized()) return;
 
-        // This is necessary because the Elasticsearch module can't be enabled the regular way if this module is added
-        // as a setup feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard. For
-        // more info see:
+        // This is necessary to initialize Elasticsearch here like this, instead of using the Elasticsearch module from
+        // OC. Because the Elasticsearch module can't be enabled the regular way if this module is added
+        // as a setup feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard.
         var configuration = _shellConfiguration.GetSection("OrchardCore_Elasticsearch");
         var elasticConfiguration = configuration.Get<ElasticConnectionOptions>();
         services.Configure<ElasticConnectionOptions>(o => o.ConfigurationExists = true);
