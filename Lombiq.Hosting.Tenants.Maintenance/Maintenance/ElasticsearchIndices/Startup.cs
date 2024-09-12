@@ -63,13 +63,13 @@ public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         var configuration = _shellConfiguration.GetSection("OrchardCore_Elasticsearch");
         var elasticConfiguration = configuration.Get<ElasticConnectionOptions>();
         services.Configure<ElasticConnectionOptions>(o => o.ConfigurationExists = true);
-        
+
         // Otherwise the ElasticClient won't work. Copied all this from the OC Elasticsearch module.
 #pragma warning disable CA2000 // Call System. IDisposable. Dispose on object created by
         // 'GetConnectionSettings(elasticConfiguration)' before all references to it are out of scope
         var settings = GetConnectionSettings(elasticConfiguration);
 #pragma warning restore CA2000
-        
+
         services.AddSingleton<IElasticClient>(new ElasticClient(settings));
         services.AddSingleton<ElasticIndexManager>();
     }
