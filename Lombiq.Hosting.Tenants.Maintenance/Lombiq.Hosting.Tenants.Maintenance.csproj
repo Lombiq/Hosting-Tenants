@@ -28,6 +28,7 @@
         <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.0.0-preview-18315" />
         <PackageReference Include="OrchardCore.DisplayManagement" Version="2.0.0-preview-18315" />
         <PackageReference Include="OrchardCore.Settings" Version="2.0.0-preview-18315" />
+        <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.0.0-preview-18315" />
         <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.0.0-preview-18315" />
         <PackageReference Include="OrchardCore.Users.Core" Version="2.0.0-preview-18315" />
         <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />

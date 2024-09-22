@@ -1,6 +1,6 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
@@ -17,10 +17,9 @@ public class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        var options = new AddSiteOwnerPermissionToRoleMaintenanceOptions();
-        var configSection = _shellConfiguration.GetSection("Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole");
-        configSection.Bind(options);
-        services.Configure<AddSiteOwnerPermissionToRoleMaintenanceOptions>(configSection);
+        services.BindAndConfigureSection<AddSiteOwnerPermissionToRoleMaintenanceOptions>(
+            _shellConfiguration,
+            "Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole");
 
         services.AddScoped<IMaintenanceProvider, AddSiteOwnerPermissionToRoleMaintenanceProvider>();
     }
