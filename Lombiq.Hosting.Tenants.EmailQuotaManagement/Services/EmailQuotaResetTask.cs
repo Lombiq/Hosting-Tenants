@@ -9,7 +9,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 [BackgroundTask(
     Schedule = "0 0 1 * *",
     Description = "Resets the email quota every new month.")]
-public class EmailQuotaResetBackgroundTask : IBackgroundTask
+public sealed class EmailQuotaResetBackgroundTask : IBackgroundTask
 {
     public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
