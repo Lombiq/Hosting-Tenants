@@ -9,7 +9,7 @@ using EmailAdminController = OrchardCore.Email.Controllers.AdminController;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Filters;
 
-public class EmailSettingsQuotaFilter : IAsyncResultFilter
+public sealed class EmailSettingsQuotaFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;

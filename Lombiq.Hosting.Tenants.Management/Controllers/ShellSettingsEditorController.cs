@@ -21,7 +21,7 @@ using static OrchardCore.Tenants.Permissions;
 namespace Lombiq.Hosting.Tenants.Management.Controllers;
 
 [Feature(FeatureNames.ShellSettingsEditor)]
-public class ShellSettingsEditorController : Controller
+public sealed class ShellSettingsEditorController : Controller
 {
     private readonly IAuthorizationService _authorizationService;
     private readonly IShellHost _shellHost;

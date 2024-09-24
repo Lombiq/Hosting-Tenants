@@ -16,7 +16,7 @@ using static Lombiq.Hosting.Tenants.EmailQuotaManagement.Constants.EmailQuotaOpt
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement;
 
 [Feature(FeatureNames.EmailQuotaManagement)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

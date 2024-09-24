@@ -8,7 +8,7 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.RemoveUsers;
 
 [Feature(FeatureNames.RemoveUsers)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

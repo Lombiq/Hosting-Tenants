@@ -10,7 +10,7 @@ using OrchardCore.Security.Permissions;
 namespace Lombiq.Hosting.Tenants.Admin.Login;
 
 [Feature(FeatureNames.Module)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {

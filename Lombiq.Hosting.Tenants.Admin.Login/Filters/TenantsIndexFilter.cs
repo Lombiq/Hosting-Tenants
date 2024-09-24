@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Admin.Login.Filters;
 
-public class TenantsIndexFilter : IAsyncResultFilter
+public sealed class TenantsIndexFilter : IAsyncResultFilter
 {
     private readonly ILayoutAccessor _layoutAccessor;
     private readonly IShapeFactory _shapeFactory;

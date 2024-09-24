@@ -19,7 +19,7 @@ using System.Linq;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 [Feature(FeatureNames.DeleteOrRebuildElasticsearchIndices)]
-public class DeleteElasticsearchIndicesStartup : StartupBase
+public sealed class DeleteElasticsearchIndicesStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
@@ -37,7 +37,7 @@ public class DeleteElasticsearchIndicesStartup : StartupBase
 }
 
 [Feature(FeatureNames.DeleteElasticsearchIndicesBeforeSetup)]
-public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
+public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
     private readonly ShellSettings _shellSettings;

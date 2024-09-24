@@ -8,7 +8,7 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 
 [Feature(FeatureNames.ChangeUserSensitiveContent)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

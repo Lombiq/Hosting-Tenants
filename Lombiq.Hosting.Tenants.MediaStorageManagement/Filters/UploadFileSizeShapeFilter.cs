@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
-public class UploadFileSizeShapeFilter : IAsyncResultFilter
+public sealed class UploadFileSizeShapeFilter : IAsyncResultFilter
 {
     private readonly IShapeFactory _shapeFactory;
     private readonly ILayoutAccessor _layoutAccessor;

@@ -17,7 +17,7 @@ using static Lombiq.Hosting.Tenants.Admin.Login.Constants.Roles;
 namespace Lombiq.Hosting.Tenants.Admin.Login.Controllers;
 
 [Feature(SubTenant)]
-public class TenantLoginController : Controller
+public sealed class TenantLoginController : Controller
 {
     private readonly ISiteService _siteService;
     private readonly SignInManager<IUser> _userSignInManager;

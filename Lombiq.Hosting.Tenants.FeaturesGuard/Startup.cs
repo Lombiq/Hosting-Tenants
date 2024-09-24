@@ -10,7 +10,7 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.FeaturesGuard;
 
 [Feature(FeatureNames.FeaturesGuard)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
