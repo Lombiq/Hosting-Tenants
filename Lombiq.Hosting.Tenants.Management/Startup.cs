@@ -12,7 +12,7 @@ using OrchardCore.Setup.Services;
 namespace Lombiq.Hosting.Tenants.Management;
 
 [Feature(FeatureNames.ForbiddenTenantNames)]
-public class ForbiddenTenantNamesStartup : StartupBase
+public sealed class ForbiddenTenantNamesStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
@@ -31,14 +31,14 @@ public class ForbiddenTenantNamesStartup : StartupBase
 }
 
 [Feature(FeatureNames.HideRecipesFromSetup)]
-public class HideRecipesFromSetupStartup : StartupBase
+public sealed class HideRecipesFromSetupStartup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services) =>
         services.Decorate<ISetupService, SetupWithRecipesFilterService>();
 }
 
 [Feature(FeatureNames.ShellSettingsEditor)]
-public class ShellSettingsEditorStartup : StartupBase
+public sealed class ShellSettingsEditorStartup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services) =>
         services.Configure<MvcOptions>(options =>

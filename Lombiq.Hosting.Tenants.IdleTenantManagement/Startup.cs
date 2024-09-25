@@ -14,7 +14,7 @@ using System;
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement;
 
 [Feature(FeatureNames.ShutDownIdleTenants)]
-public class ShutDownIdleTenantsStartup : StartupBase
+public sealed class ShutDownIdleTenantsStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

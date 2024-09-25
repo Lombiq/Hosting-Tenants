@@ -8,7 +8,7 @@ using OrchardCore.Modules;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.UpdateShellRequestUrl;
 
 [Feature(FeatureNames.UpdateShellRequestUrls)]
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

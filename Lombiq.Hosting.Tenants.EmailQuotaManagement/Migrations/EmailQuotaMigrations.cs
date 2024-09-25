@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 
-public class EmailQuotaMigrations : DataMigration
+public sealed class EmailQuotaMigrations : DataMigration
 {
     // This is actually needed like this, otherwise it won't work. CA1822 will only be violated during CI builds for
     // some reason.

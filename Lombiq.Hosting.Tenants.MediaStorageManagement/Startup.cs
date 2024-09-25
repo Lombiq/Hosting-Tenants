@@ -10,7 +10,7 @@ using static Lombiq.Hosting.Tenants.MediaStorageManagement.Constants.MediaStorag
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement;
 
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 

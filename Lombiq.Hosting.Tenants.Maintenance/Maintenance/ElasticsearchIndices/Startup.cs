@@ -19,7 +19,7 @@ using System.Linq;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 [Feature(FeatureNames.DeleteOrRebuildElasticsearchIndices)]
-public class DeleteElasticsearchIndicesStartup : StartupBase
+public sealed class DeleteElasticsearchIndicesStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
 
@@ -37,7 +37,7 @@ public class DeleteElasticsearchIndicesStartup : StartupBase
 }
 
 [Feature(FeatureNames.DeleteElasticsearchIndicesBeforeSetup)]
-public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
+public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
     private readonly ShellSettings _shellSettings;
@@ -62,7 +62,8 @@ public class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         // as a setup feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard.
         var configuration = _shellConfiguration.GetSection("OrchardCore_Elasticsearch");
         var elasticConfiguration = configuration.Get<ElasticConnectionOptions>();
-        services.Configure<ElasticConnectionOptions>(o => o.ConfigurationExists = true);
+        services.Configure<ElasticConnectionOptions>(options =>
+            options.SetFileConfigurationExists(fileConfigurationExists: true));
 
         // Otherwise the ElasticClient won't work. Copied all this from the OC Elasticsearch module.
 #pragma warning disable CA2000 // Call System. IDisposable. Dispose on object created by

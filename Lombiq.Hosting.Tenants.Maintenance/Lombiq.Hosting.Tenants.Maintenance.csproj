@@ -23,14 +23,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.Settings" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.Users.Abstractions" Version="1.8.0" />
-        <PackageReference Include="OrchardCore.Users.Core" Version="1.8.0" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.ContentManagement" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.Settings" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.0.0" />
+        <PackageReference Include="OrchardCore.Users.Core" Version="2.0.0" />
         <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
     </ItemGroup>
 
@@ -50,8 +50,8 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="10.0.0" />
-        <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="10.0.0" />
+        <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="11.0.0" />
+        <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="11.0.0" />
     </ItemGroup>
 
 </Project>

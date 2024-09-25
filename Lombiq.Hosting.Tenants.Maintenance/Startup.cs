@@ -10,7 +10,7 @@ using YesSql.Indexes;
 
 namespace Lombiq.Hosting.Tenants.Maintenance;
 
-public class Startup : StartupBase
+public sealed class Startup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {

@@ -1,8 +1,8 @@
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
-using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using Shouldly;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Tests.UI.Extensions;
@@ -58,6 +58,6 @@ public static class TestCaseUITestContextExtensions
         var editorJson = string.IsNullOrEmpty(editorText) ? "{}" : editorText;
 
         var editorValue = JObject.Parse(editorJson);
-        editorValue.SelectToken($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?.ToString().ShouldBeAsString(expectedValue);
+        editorValue.SelectNode($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?.ToString().ShouldBeAsString(expectedValue);
     }
 }

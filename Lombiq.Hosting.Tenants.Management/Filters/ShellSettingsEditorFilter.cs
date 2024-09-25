@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Management.Filters;
 
-public class ShellSettingsEditorFilter : IAsyncResultFilter
+public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
 {
     private readonly ILayoutAccessor _layoutAccessor;
     private readonly IShapeFactory _shapeFactory;
