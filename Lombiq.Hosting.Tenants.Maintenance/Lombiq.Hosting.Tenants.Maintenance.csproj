@@ -32,6 +32,8 @@
         <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.0.0" />
         <PackageReference Include="OrchardCore.Users.Core" Version="2.0.0" />
         <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
+        <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
+        <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     </ItemGroup>
 
     <ItemGroup>
