@@ -11,8 +11,8 @@ public sealed class IdleShutdownTask : IBackgroundTask
 {
     public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        var idleShutdown = serviceProvider.GetRequiredService<IIdleShutdown>();
+        var idleShutdownService = serviceProvider.GetRequiredService<IIdleShutdownService>();
 
-        return idleShutdown.ShutDownIdleTenantsAsync();
+        return idleShutdownService.ShutDownTenantIfIdleAsync();
     }
 }

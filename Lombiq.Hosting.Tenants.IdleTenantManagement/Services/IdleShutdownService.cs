@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
+using Lombiq.Hosting.Tenants.IdleTenantManagement.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell;
@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
-public class IdleShutdown : IIdleShutdown
+public class IdleShutdownService : IIdleShutdownService
 {
     private readonly IOptions<IdleShutdownOptions> _options;
     private readonly ShellSettings _shellSettings;
     private readonly IClock _clock;
     private readonly ILastActiveTimeAccessor _lastActiveTimeAccessor;
-    private readonly ILogger<IdleShutdown> _logger;
+    private readonly ILogger<IdleShutdownService> _logger;
     private readonly IShellHost _shellHost;
 
-    public IdleShutdown(
+    public IdleShutdownService(
         IOptions<IdleShutdownOptions> options,
         ShellSettings shellSettings,
         IClock clock,
         ILastActiveTimeAccessor lastActiveTimeAccessor,
-        ILogger<IdleShutdown> logger,
+        ILogger<IdleShutdownService> logger,
         IShellHost shellHost)
     {
         _options = options;
@@ -32,7 +32,7 @@ public class IdleShutdown : IIdleShutdown
         _shellHost = shellHost;
     }
 
-    public async Task ShutDownIdleTenantsAsync()
+    public async Task ShutDownTenantIfIdleAsync()
     {
         var maxIdleMinutes = _options.Value.MaxIdleMinutes;
 
