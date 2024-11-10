@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.IdleTenantManagement.Services;
 
-public class IdleShutdownService : IIdleShutdownService
+internal class IdleShutdownService : IIdleShutdownService
 {
     private readonly IOptions<IdleShutdownOptions> _options;
     private readonly ShellSettings _shellSettings;
