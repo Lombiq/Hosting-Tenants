@@ -16,18 +16,16 @@ public static class IdleTenantManagementExtensions
                 argumentsBuilder
                     .AddWithValue(
                         "OrchardCore:Lombiq_Hosting_Tenants_IdleTenantManagement:IdleShutdownOptions:MaxIdleMinutes",
-                        "1");
+                        "1")
+                    .AddWithValue(
+                        "Logging:LogLevel:Lombiq.Hosting.Tenants.IdleTenantManagement.Services.IdleShutdownService",
+                        "Information");
 
                 return Task.CompletedTask;
             };
 
         configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration =
-            (_, fakeLogCollectorOptions) =>
-            {
-                fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
-                // No need to pipe all the info log entries to the test output.
-                fakeLogCollectorOptions.OutputSink = (_) => { };
-            };
+            (_, fakeLogCollectorOptions) => fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
 
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(logEntry =>
