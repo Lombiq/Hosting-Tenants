@@ -26,9 +26,7 @@ public static class TestCaseUITestContextExtensions
                 RunSetupOnCurrentPage = true,
             });
 
-        await context.SignInDirectlyAsync();
-
-        // We are letting the site to sit idle for more than two minutes so that the tenant could be shut down by the
+        // We are letting the site to sit idle for more than two minutes so that the tenant can be shut down by the
         // background task.
         await Task.Delay(129420);
 
@@ -38,6 +36,7 @@ public static class TestCaseUITestContextExtensions
         await context.GoToDashboardAsync();
 
         // Make sure the shutdown message is in the logs.
-        await context.Application.AssertAppLogsWithIdleCheckAsync();
+        await context.Application.LogsShouldContainAsync(logEntry =>
+            logEntry.Message == $"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
     }
 }
