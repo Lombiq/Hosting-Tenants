@@ -1,3 +1,5 @@
+using Lombiq.Tests.UI.Extensions;
+using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -26,5 +28,9 @@ public static class IdleTenantManagementExtensions
                 // No need to pipe all the info log entries to the test output.
                 fakeLogCollectorOptions.OutputSink = (_) => { };
             };
+
+        configuration.AssertAppLogsAsync = app =>
+            app.LogsShouldNotContainAsync(logEntry =>
+                AppLogAssertionHelper.NotMediaCacheEntries(logEntry) && logEntry.Level != LogLevel.Information);
     }
 }
