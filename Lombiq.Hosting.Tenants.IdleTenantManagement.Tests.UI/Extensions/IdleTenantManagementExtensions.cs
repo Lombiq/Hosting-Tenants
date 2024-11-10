@@ -20,6 +20,11 @@ public static class IdleTenantManagementExtensions
             };
 
         configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration +=
-            (_, fakeLogCollectorOptions) => fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
+            (_, fakeLogCollectorOptions) =>
+            {
+                fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
+                // No need to pipe all the info log entries to the test output.
+                fakeLogCollectorOptions.OutputSink = (_) => { };
+            };
     }
 }
