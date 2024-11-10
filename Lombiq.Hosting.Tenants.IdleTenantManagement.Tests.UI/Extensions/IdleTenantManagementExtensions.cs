@@ -21,7 +21,7 @@ public static class IdleTenantManagementExtensions
                 return Task.CompletedTask;
             };
 
-        configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration +=
+        configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration =
             (_, fakeLogCollectorOptions) =>
             {
                 fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
