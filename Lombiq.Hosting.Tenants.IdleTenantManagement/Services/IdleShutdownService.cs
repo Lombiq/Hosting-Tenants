@@ -34,6 +34,8 @@ internal sealed class IdleShutdownService : IIdleShutdownService
 
     public async Task ShutDownTenantIfIdleAsync()
     {
+        _logger.LogError("This is a deliberate error.");
+
         var maxIdleMinutes = _options.Value.MaxIdleMinutes;
 
         if (maxIdleMinutes <= 0 || _shellSettings.IsDefaultShell()) return;
