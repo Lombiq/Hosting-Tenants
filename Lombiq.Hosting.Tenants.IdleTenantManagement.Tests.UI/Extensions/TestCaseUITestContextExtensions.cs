@@ -28,6 +28,8 @@ public static class TestCaseUITestContextExtensions
 
         // We are letting the site to sit idle for more than two minutes so that the tenant can be shut down by the
         // background task.
+        // Once https://github.com/OrchardCMS/OrchardCore/issues/17031 is fixed, we can configure a short background
+        // task polling and idle time instead.
         await Task.Delay(129420);
 
         // If we can access the admin menu after the tenant shut down that means the new shell was created and it is
