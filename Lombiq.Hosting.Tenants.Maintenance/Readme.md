@@ -22,9 +22,9 @@ public void ConfigureServices(IServiceCollection services) =>
 
 To add new maintenance tasks, you need to implement the `IMaintenanceProvider` interface and register it as a service.
 
-### `Lombiq.Hosting.Tenants.Maintenance.AddSiteOwnerPermissionToRole`
+### `Lombiq.Hosting.Tenants.Maintenance.AddAdministratorRoleToUsersWithRole`
 
-It's a maintenance task that adds the `SiteOwner` permission to a role set in the app configuration. It is available on any tenant.
+A maintenance task that adds the `Administrator` role to users who have a role set in the app configuration. It is available on any tenant.
 
 The following configuration options are available to set the role:
 
@@ -32,7 +32,7 @@ The following configuration options are available to set the role:
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
-      "AddSiteOwnerPermissionToRole": {
+      "AddAdministratorRoleToUsersWithRole": {
         "IsEnabled": true,
         "RoleName": "NameOfTheRole"
       }

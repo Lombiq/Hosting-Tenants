@@ -6,7 +6,7 @@ public static class FeatureNames
     public const string Maintenance = Module;
     public const string UpdateSiteUrl = Maintenance + "." + nameof(UpdateSiteUrl);
     public const string UpdateShellRequestUrls = Maintenance + "." + nameof(UpdateShellRequestUrls);
-    public const string AddSiteOwnerPermissionToRole = Maintenance + "." + nameof(AddSiteOwnerPermissionToRole);
+    public const string AddAdministratorRoleToUsersWithRole = Maintenance + "." + nameof(AddAdministratorRoleToUsersWithRole);
     public const string RemoveUsers = Maintenance + "." + nameof(RemoveUsers);
     public const string ChangeUserSensitiveContent = Maintenance + "." + nameof(ChangeUserSensitiveContent);
     public const string DeleteOrRebuildElasticsearchIndices = Maintenance + "." + nameof(DeleteOrRebuildElasticsearchIndices);

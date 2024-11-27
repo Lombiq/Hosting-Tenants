@@ -63,6 +63,19 @@ public class MaintenanceManager : IMaintenanceManager
         }
     }
 
+    public async Task DeleteMaintenanceExecutionsByIdAsync(string maintenanceId)
+    {
+        var executions = await _session
+            .Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
+            .Where(execution => execution.MaintenanceId == maintenanceId)
+            .ListAsync();
+
+        foreach (var execution in executions)
+        {
+            _session.Delete(execution, collection: DocumentCollections.Maintenance);
+        }
+    }
+
     private async Task ExecuteMaintenanceTaskIfNeededAsync(
         IMaintenanceProvider provider,
         MaintenanceTaskExecutionContext context,
