@@ -1,6 +1,9 @@
 using Lombiq.Tests.UI.Extensions;
+using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Pages;
 using Lombiq.Tests.UI.Services;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using static Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.Constants.IdleTenantData;
 
@@ -26,19 +29,23 @@ public static class TestCaseUITestContextExtensions
                 RunSetupOnCurrentPage = true,
             });
 
-        // We are letting the site to sit idle for more than two minutes so that the tenant can be shut down by the
-        // background task.
-        // Once https://github.com/OrchardCMS/OrchardCore/issues/17031 is fixed, we can configure a short background
-        // task polling and idle time instead.
-        await Task.Delay(129420);
+        // Due to the background ask scheduling configuration in ConfigureIdleTenantManagementTestSettings(), the
+        // background task should run within not much more than a minute (background tasks are run with a frequency of
+        // at least a minute, due to the limitation of cron expressions). Polling for it here.
+        await Task.Delay(TimeSpan.FromMinutes(1));
+        await ReliabilityHelper.DoWithRetriesOrFailAsync(
+            async () =>
+            {
+                var logEntries = await context.Application.GetLogEntriesFromAllLogsAsync();
+                return logEntries.Any(logEntry =>
+                    logEntry.Message == $"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
+            },
+            TimeSpan.FromSeconds(30),
+            TimeSpan.FromSeconds(1));
 
         // If we can access the admin menu after the tenant shut down that means the new shell was created and it is
         // working as intended.
         await context.SignInDirectlyAsync();
         await context.GoToDashboardAsync();
-
-        // Make sure the shutdown message is in the logs.
-        await context.Application.LogsShouldContainAsync(logEntry =>
-            logEntry.Message == $"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
     }
 }
