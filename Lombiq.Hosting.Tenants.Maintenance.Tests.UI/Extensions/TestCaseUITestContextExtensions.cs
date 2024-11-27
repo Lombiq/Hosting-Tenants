@@ -11,7 +11,6 @@ using OpenQA.Selenium;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using Shouldly;
-using System;
 using System.Threading.Tasks;
 using static OrchardCore.OrchardCoreConstants.Roles;
 
@@ -50,13 +49,16 @@ public static class TestCaseUITestContextExtensions
 
         await ResetMaintenanceAsync(context, nameof(ChangeUserSensitiveContentMaintenanceProvider));
 
-        await context.SignInDirectlyAsync(TestUser.UserName);
-        await context.GoToUsersAsync();
+        await context.Application.UsingScopeAsync(async serviceProvider =>
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
-        context.Exists(By.XPath($"//h5[contains(text(), '{TestUser.UserName}')]"));
-        context.Exists(By.XPath($"//span[contains(text(), '{TestUser.Email}')]"));
-        context.Missing(By.XPath($"//h5[contains(text(), '{DefaultUser.UserName}')]"));
-        context.Missing(By.XPath($"//span[contains(text(), '{DefaultUser.Email}')]"));
+            var testUser = (User)await userManager.FindByNameAsync(TestUser.UserName);
+            testUser.UserName.ShouldBe(TestUser.UserName);
+            testUser.Email.ShouldBe(TestUser.Email);
+
+            (await userManager.FindByNameAsync(DefaultUser.UserName)).ShouldBeNull();
+        });
     }
 
     private static async Task ResetMaintenanceAsync(UITestContext context, string maintenanceId)
