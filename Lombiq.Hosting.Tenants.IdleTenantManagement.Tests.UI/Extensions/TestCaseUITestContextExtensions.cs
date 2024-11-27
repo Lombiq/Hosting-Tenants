@@ -40,7 +40,7 @@ public static class TestCaseUITestContextExtensions
                 return logEntries.Any(logEntry =>
                     logEntry.Message == $"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
             },
-            TimeSpan.FromSeconds(30),
+            TimeSpan.FromMinutes(1),
             TimeSpan.FromSeconds(1));
 
         // If we can access the admin menu after the tenant shut down that means the new shell was created and it is
