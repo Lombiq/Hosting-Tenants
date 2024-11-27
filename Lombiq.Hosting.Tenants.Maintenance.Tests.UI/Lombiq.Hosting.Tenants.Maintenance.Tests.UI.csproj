@@ -25,16 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Recipes\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users.recipe.json" />
+    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
+    <None Include="Readme.md" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
-    <None Include="Readme.md" />
-    <Content Include="Recipes\Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users.recipe.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <PackageCopyToOutput>true</PackageCopyToOutput>
-    </Content>
+    <ProjectReference Include="..\Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj" />
   </ItemGroup>
 
 </Project>

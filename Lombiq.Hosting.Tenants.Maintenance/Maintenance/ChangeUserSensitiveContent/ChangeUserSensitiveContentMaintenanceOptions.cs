@@ -4,5 +4,5 @@ public class ChangeUserSensitiveContentMaintenanceOptions
 {
     public bool IsEnabled { get; set; }
     public string TenantNames { get; set; }
-    public string EmailExcludePattern { get; set; } = ".+@lombiq.com$";
+    public string EmailExcludePattern { get; set; } = ".+@(lombiq.com|example.com)$";
 }

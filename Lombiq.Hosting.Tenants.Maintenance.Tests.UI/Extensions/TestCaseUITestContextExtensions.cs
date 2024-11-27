@@ -1,5 +1,6 @@
 using Atata;
 using Lombiq.Hosting.Tenants.Maintenance.Maintenance.AddAdministratorRoleToUsersWithRole;
+using Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
@@ -7,12 +8,12 @@ using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium;
-using OrchardCore;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
+using static OrchardCore.OrchardCoreConstants.Roles;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Extensions;
 
@@ -29,44 +30,43 @@ public static class TestCaseUITestContextExtensions
     {
         // Preparing a user account with the Editor role. The user should get the Administrator role once the
         // maintenance runs.
-        const string userName = "TestUser";
-        await context.CreateUserAsync(userName, DefaultUser.Password, "testuser@example.com");
-        await context.AddUserToRoleAsync(userName, "Editor");
+        await context.CreateUserAsync();
+        await context.AddUserToRoleAsync(TestUser.UserName, Editor);
 
-        // Resetting the maintenance and restarting the app to let the it run.
-        await context.Application.UsingScopeAsync(async serviceProvider =>
-        {
-            var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
-            await maintenanceManager
-                .DeleteMaintenanceExecutionsByIdAsync(nameof(AddAdministratorRoleToUsersWithRoleMaintenanceProvider));
-        });
-
-        await context.RestartAndWarmUpApplicationAsync();
+        await ResetMaintenanceAsync(context, nameof(AddAdministratorRoleToUsersWithRoleMaintenanceProvider));
 
         await context.Application.UsingScopeAsync(async serviceProvider =>
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
-            var user = (User)await userManager.FindByNameAsync(userName);
-            user.RoleNames.ShouldContain(OrchardCoreConstants.Roles.Administrator);
+            var user = (User)await userManager.FindByNameAsync(TestUser.UserName);
+            user.RoleNames.ShouldContain(Administrator);
         });
     }
 
     public static async Task ChangeUserSensitiveContentMaintenanceExecutionAsync(this UITestContext context)
     {
-        const string username = "TestUser";
-        const string lombiqUserCreatorRecipe = "Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Users";
-        await context.ExecuteRecipeDirectlyAsync(lombiqUserCreatorRecipe);
+        await context.CreateUserAsync();
+        await context.AddUserToRoleAsync(TestUser.UserName, Administrator);
 
-        var loginPage = await context.GoToLoginPageAsync();
-        (await loginPage.LogInWithAsync(context, username, DefaultUser.Password))
-            .ShouldLeaveLoginPage();
+        await ResetMaintenanceAsync(context, nameof(ChangeUserSensitiveContentMaintenanceProvider));
 
-        await context.GoToDashboardAsync();
+        await context.SignInDirectlyAsync(TestUser.UserName);
         await context.GoToUsersAsync();
 
-        context.Exists(By.XPath($"//h5[contains(text(), '{username}')]"));
-        context.Exists(By.XPath($"//span[contains(text(), 'TestUser@lombiq.com')]"));
+        context.Exists(By.XPath($"//h5[contains(text(), '{TestUser.UserName}')]"));
+        context.Exists(By.XPath($"//span[contains(text(), '{TestUser.Email}')]"));
         context.Missing(By.XPath($"//h5[contains(text(), '{DefaultUser.UserName}')]"));
         context.Missing(By.XPath($"//span[contains(text(), '{DefaultUser.Email}')]"));
+    }
+
+    private static async Task ResetMaintenanceAsync(UITestContext context, string maintenanceId)
+    {
+        await context.Application.UsingScopeAsync(async serviceProvider =>
+        {
+            var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
+            await maintenanceManager.DeleteMaintenanceExecutionsByIdAsync(maintenanceId);
+        });
+
+        await context.RestartAndWarmUpApplicationAsync();
     }
 }

@@ -33,6 +33,7 @@ public class AddAdministratorRoleToUsersWithRoleMaintenanceProvider : Maintenanc
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         Task.FromResult(
             _options.Value.IsEnabled &&
+            !string.IsNullOrEmpty(_options.Value.Role) &&
             !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
