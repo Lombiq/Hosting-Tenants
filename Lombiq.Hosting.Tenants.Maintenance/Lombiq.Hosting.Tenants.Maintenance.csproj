@@ -23,14 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.ContentManagement" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.Settings" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.0.0" />
-    <PackageReference Include="OrchardCore.Users.Core" Version="2.0.0" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.ContentManagement" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Settings" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Users.Core" Version="2.1.0" />
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
     <!-- Only needed because RandomNameGeneratorLibrary indirectly referenced a vulnerable version. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
