@@ -62,12 +62,12 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
         var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
         if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
 
-        var siteOwnerEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
+        var administratorEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
             await SendQuotaEmailAsync(
                 emailQuota,
-                siteOwnerEmails,
+                administratorEmails,
                 "EmailQuotaExceededError",
                 _emailQuotaSubjectService.GetExceededEmailSubject(),
                 currentUsagePercentage);
@@ -76,7 +76,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
 
         await SendQuotaEmailAsync(
             emailQuota,
-            siteOwnerEmails,
+            administratorEmails,
             $"EmailQuotaWarning",
             _emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
             currentUsagePercentage);
@@ -84,7 +84,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
 
     private Task SendQuotaEmailAsync(
         EmailQuota emailQuota,
-        IEnumerable<string> siteOwnerEmails,
+        IEnumerable<string> administratorEmails,
         string emailTemplateName,
         string subject,
         int percentage)
@@ -94,11 +94,11 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
             IsHtmlBody = true,
             Subject = subject,
         };
-        foreach (var siteOwnerEmail in siteOwnerEmails)
+        foreach (var administratorEmail in administratorEmails)
         {
             ShellScope.AddDeferredTask(async _ =>
             {
-                emailMessage.To = siteOwnerEmail;
+                emailMessage.To = administratorEmail;
                 emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {
                     HostName = _shellSettings.Name,
