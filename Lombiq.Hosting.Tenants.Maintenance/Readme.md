@@ -146,7 +146,7 @@ The following configuration should be used to allow the maintenance to run:
       "ChangeUserSensitiveContent": {
         "IsEnabled": true,
         "TenantNames": "Default, Tenant1, Tenant2",
-        "EmailExcludePattern": ".+@(lombiq.com|example.com|mydomain.com)$"
+        "EmailExcludePattern": ".+@(lombiq.com|example.com|foo.com)$"
       }
     }
   }
