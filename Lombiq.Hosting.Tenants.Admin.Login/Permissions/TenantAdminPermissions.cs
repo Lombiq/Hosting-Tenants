@@ -7,7 +7,7 @@ namespace Lombiq.Hosting.Tenants.Admin.Login.Permissions;
 public sealed class TenantAdminPermissions : AdminPermissionBase
 {
     public static readonly Permission LoginAsAdmin =
-        new(nameof(LoginAsAdmin), "Able to login as an admin to any tenant from the Default tenant.");
+        new(nameof(LoginAsAdmin), "Able to login as an admin to any tenant from the Default tenant.", isSecurityCritical: true);
 
     protected override IEnumerable<Permission> AdminPermissions => [LoginAsAdmin];
 }

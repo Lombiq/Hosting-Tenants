@@ -19,4 +19,10 @@ public interface IMaintenanceManager
     /// Executes all maintenance tasks if needed.
     /// </summary>
     public Task ExecuteMaintenanceTasksAsync();
+
+    /// <summary>
+    /// Deletes all the executions of a maintenance task by its ID.
+    /// </summary>
+    /// <param name="maintenanceId">The ID of the maintenance task.</param>
+    public Task DeleteMaintenanceExecutionsByIdAsync(string maintenanceId);
 }

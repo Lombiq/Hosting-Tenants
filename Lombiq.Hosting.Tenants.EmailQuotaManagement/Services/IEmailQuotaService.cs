@@ -10,7 +10,7 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 public interface IEmailQuotaService
 {
     /// <summary>
-    /// Collects the emails of the users who should receive the email reminder, based on the site owner permission.
+    /// Collects the emails of the users who should receive the email reminder, based on the Administrator role.
     /// </summary>
     Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync();
 

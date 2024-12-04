@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Extensions;
 
-public static class MaintenanceExtensions
+public static class MaintenanceOrchardCoreUITestExecutorConfigurationExtensions
 {
     public static void SetUpdateSiteUrlMaintenanceConfiguration(
         this OrchardCoreUITestExecutorConfiguration configuration) => configuration.OrchardCoreConfiguration.BeforeAppStart +=
@@ -20,16 +20,16 @@ public static class MaintenanceExtensions
                 return Task.CompletedTask;
             };
 
-    public static void SetAddSiteOwnerPermissionToRoleMaintenanceConfiguration(
+    public static void SetAddAdministratorRoleToUsersWithRoleConfiguration(
         this OrchardCoreUITestExecutorConfiguration configuration) => configuration.OrchardCoreConfiguration.BeforeAppStart +=
             (_, argumentsBuilder) =>
             {
                 argumentsBuilder
                     .AddWithValue(
-                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole:IsEnabled",
+                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddAdministratorRoleToUsersWithRole:IsEnabled",
                         value: true)
                     .AddWithValue(
-                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole:Role",
+                        "OrchardCore:Lombiq_Hosting_Tenants_Maintenance:AddAdministratorRoleToUsersWithRole:Role",
                         value: "Editor");
 
                 return Task.CompletedTask;
