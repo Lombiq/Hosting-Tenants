@@ -38,9 +38,7 @@ public class CustomMaintenanceProvider : MaintenanceProviderBase
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_options.IsEnabled
-                         // && !context.WasLatestExecutionSuccessful()
-                        );
+        Task.FromResult(_options.IsEnabled && !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {

@@ -29,15 +29,13 @@ public class UpdateEnabledFeaturesMaintenanceProvider : MaintenanceProviderBase
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_options.IsEnabled
-                         && !context.WasLatestExecutionSuccessful()
-                        );
+        Task.FromResult(_options.IsEnabled && !context.WasLatestExecutionSuccessful());
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var availableFeatures = (await _shellFeaturesManager.GetAvailableFeaturesAsync()).ToList();
 
-        if (_options.EnableFeatures?.Replace(" ", string.Empty).SplitByCommas() is { } enableFeaturesOption)
+        if (ReplaceAndSplitByCommas(_options.EnableFeatures) is { } enableFeaturesOption)
         {
             var enableFeatures = availableFeatures.Where(feature =>
                 enableFeaturesOption.Contains(feature.Id)).ToList();
@@ -45,7 +43,7 @@ public class UpdateEnabledFeaturesMaintenanceProvider : MaintenanceProviderBase
             await NotifyAsync(enableFeatures);
         }
 
-        if (_options.DisableFeatures?.Replace(" ", string.Empty).SplitByCommas() is { } disableFeaturesOption)
+        if (ReplaceAndSplitByCommas(_options.DisableFeatures) is { } disableFeaturesOption)
         {
             var disableFeatures = availableFeatures.Where(feature =>
                 disableFeaturesOption.Contains(feature.Id)).ToList();
@@ -63,4 +61,7 @@ public class UpdateEnabledFeaturesMaintenanceProvider : MaintenanceProviderBase
 
         return ValueTask.CompletedTask;
     }
+
+    private static string[] ReplaceAndSplitByCommas(string input) =>
+        input?.Replace(" ", string.Empty).SplitByCommas();
 }
