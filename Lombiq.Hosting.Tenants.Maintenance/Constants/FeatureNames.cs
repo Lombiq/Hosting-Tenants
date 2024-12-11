@@ -11,4 +11,6 @@ public static class FeatureNames
     public const string ChangeUserSensitiveContent = Maintenance + "." + nameof(ChangeUserSensitiveContent);
     public const string DeleteOrRebuildElasticsearchIndices = Maintenance + "." + nameof(DeleteOrRebuildElasticsearchIndices);
     public const string DeleteElasticsearchIndicesBeforeSetup = Maintenance + "." + nameof(DeleteElasticsearchIndicesBeforeSetup);
+    public const string UpdateEnabledFeatures = Maintenance + "." + nameof(UpdateEnabledFeatures);
+    public const string CustomMaintenance = Maintenance + "." + nameof(CustomMaintenance);
 }

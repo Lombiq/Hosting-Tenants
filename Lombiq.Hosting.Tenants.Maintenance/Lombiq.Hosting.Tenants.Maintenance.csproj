@@ -31,6 +31,7 @@
     <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.0.0" />
     <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.0.0" />
     <PackageReference Include="OrchardCore.Users.Core" Version="2.0.0" />
+    <PackageReference Include="OrchardCore.Features.Core" Version="2.0.0" />
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
     <!-- Only needed because RandomNameGeneratorLibrary indirectly referenced a vulnerable version. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
@@ -54,6 +55,10 @@
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
     <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="11.0.0" />
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\OfficeFreund.OpenId\OfficeFreund.OpenId.csproj" />
   </ItemGroup>
 
 </Project>
