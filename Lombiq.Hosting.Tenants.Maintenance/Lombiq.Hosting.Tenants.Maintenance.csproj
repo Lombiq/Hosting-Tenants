@@ -57,8 +57,4 @@
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="11.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\OfficeFreund.OpenId\OfficeFreund.OpenId.csproj" />
-  </ItemGroup>
-
 </Project>
