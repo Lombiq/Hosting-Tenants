@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.AddSiteOwnerPermissionToRole;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.AddAdministratorRoleToUsersWithRole;
 
-[Feature(FeatureNames.AddSiteOwnerPermissionToRole)]
+[Feature(FeatureNames.AddAdministratorRoleToUsersWithRole)]
 public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -17,10 +17,10 @@ public sealed class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.BindAndConfigureSection<AddSiteOwnerPermissionToRoleMaintenanceOptions>(
+        services.BindAndConfigureSection<AddAdministratorRoleToUsersWithRoleMaintenanceOptions>(
             _shellConfiguration,
-            "Lombiq_Hosting_Tenants_Maintenance:AddSiteOwnerPermissionToRole");
+            "Lombiq_Hosting_Tenants_Maintenance:AddAdministratorRoleToUsersWithRole");
 
-        services.AddScoped<IMaintenanceProvider, AddSiteOwnerPermissionToRoleMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, AddAdministratorRoleToUsersWithRoleMaintenanceProvider>();
     }
 }

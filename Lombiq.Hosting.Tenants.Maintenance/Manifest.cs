@@ -35,9 +35,10 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
-    Id = AddSiteOwnerPermissionToRole,
-    Name = "Lombiq Hosting - Tenants Maintenance Add Site Owner Permission To Role",
-    Description = "Adds the Site Owner permission to a role (e.g., when the production database is copied to staging).",
+    Id = AddAdministratorRoleToUsersWithRole,
+    Name = "Lombiq Hosting - Tenants Maintenance Add Administrator Role to Users With Role",
+    Description = "Adds the Administrator role to users with the configured role (e.g., when the production database " +
+        "is copied to staging).",
     Category = "Maintenance",
     DefaultTenantOnly = true,
     Dependencies = [Maintenance]

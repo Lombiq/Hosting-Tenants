@@ -1,10 +1,9 @@
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using OrchardCore;
 using OrchardCore.Email;
 using OrchardCore.Modules;
-using OrchardCore.Security;
-using OrchardCore.Security.Services;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using System;
@@ -12,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using YesSql;
-using static OrchardCore.Security.Permissions.Permission;
-using static OrchardCore.Security.StandardPermissions;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
@@ -26,7 +23,6 @@ public class EmailQuotaService : IEmailQuotaService
     private readonly DefaultSmtpOptions _defaultSmtpOptions;
     private readonly SmtpOptions _smtpOptions;
     private readonly IClock _clock;
-    private readonly IRoleService _roleService;
     private readonly UserManager<IUser> _userManager;
 
     public EmailQuotaService(
@@ -35,7 +31,6 @@ public class EmailQuotaService : IEmailQuotaService
         IOptions<DefaultSmtpOptions> defaultSmtpOptions,
         IOptions<SmtpOptions> smtpOptions,
         IClock clock,
-        IRoleService roleService,
         UserManager<IUser> userManager)
     {
         _session = session;
@@ -43,25 +38,13 @@ public class EmailQuotaService : IEmailQuotaService
         _defaultSmtpOptions = defaultSmtpOptions.Value;
         _smtpOptions = smtpOptions.Value;
         _clock = clock;
-        _roleService = roleService;
         _userManager = userManager;
     }
 
     public async Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync()
     {
-        // Get users with site owner permission.
-        var roles = await _roleService.GetRolesAsync();
-        var siteOwnerRoles = roles.Where(role =>
-            (role as Role)?.RoleClaims.Exists(claim =>
-                claim.ClaimType == ClaimType && claim.ClaimValue == SiteOwner.Name) == true);
-
-        var siteOwners = new List<IUser>();
-        foreach (var role in siteOwnerRoles)
-        {
-            siteOwners.AddRange(await _userManager.GetUsersInRoleAsync(role.RoleName));
-        }
-
-        return siteOwners.Select(user => (user as User)?.Email);
+        var administratorUsers = await _userManager.GetUsersInRoleAsync(OrchardCoreConstants.Roles.Administrator);
+        return administratorUsers.Select(user => (user as User)?.Email);
     }
 
     public bool ShouldLimitEmails() =>

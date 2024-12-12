@@ -19,7 +19,13 @@ public static class IdleTenantManagementExtensions
                         "1")
                     .AddWithValue(
                         "Logging:LogLevel:Lombiq.Hosting.Tenants.IdleTenantManagement.Services.IdleShutdownService",
-                        "Information");
+                        "Information")
+                    .AddWithValue(
+                        "OrchardCore:OrchardCore_BackgroundService:PollingTime",
+                        "00:00:05")
+                    .AddWithValue(
+                        "OrchardCore:OrchardCore_BackgroundService:MinimumIdleTime",
+                        "00:00:01");
 
                 return Task.CompletedTask;
             };
