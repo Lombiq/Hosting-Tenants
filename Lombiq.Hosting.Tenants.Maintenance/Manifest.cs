@@ -76,3 +76,11 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Category = "Maintenance",
     Dependencies = []
 )]
+
+[assembly: Feature(
+    Id = UpdateEnabledFeatures,
+    Name = "Lombiq Hosting - Tenants Maintenance Update Enabled Features",
+    Description = "Updates the enabled features of tenants.",
+    Category = "Maintenance",
+    Dependencies = []
+)]

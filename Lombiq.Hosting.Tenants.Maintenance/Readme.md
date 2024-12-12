@@ -176,3 +176,23 @@ The following configuration should be used to allow the maintenance to run and f
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.UpdateEnabledFeatures`
+
+It's a maintenance task that updates the enabled features of a tenant based on the app configuration. It is available on any tenant.
+
+The following configuration options are available to set the enabled features:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "UpdateEnabledFeatures": {
+        "IsEnabled": true,
+        "EnableFeatures": "OrchardCore.Admin, OrchardCore.Alias, OrchardCore.AuditTrail",
+        "DisableFeatures": "OrchardCore.BackgroundTasks, OrchardCore.ContentFields"
+      }
+    }
+  }
+}
+```
