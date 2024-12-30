@@ -29,7 +29,7 @@ public static class MediaStorageManagementExtensions
                 // Media Storage Quota feature causes a 400 on upload if the file is over the limit, so we need to make
                 // sure not to fail on that.
                 var messagesWithoutToggle = logEntries.Where(logEntry =>
-                    !logEntry.Message.ContainsOrdinalIgnoreCase(
+                    !logEntry.Text.ContainsOrdinalIgnoreCase(
                         @"/Admin/Media/Upload - Failed to load resource: the server responded with a status of 400"));
                 OrchardCoreUITestExecutorConfiguration.AssertBrowserLogIsEmpty(messagesWithoutToggle);
             };
