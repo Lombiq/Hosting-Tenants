@@ -1,6 +1,5 @@
+using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI.Extensions;
@@ -22,16 +21,11 @@ public static class MediaStorageManagementExtensions
                 return Task.CompletedTask;
             };
 
-        configuration.AssertBrowserLog =
-            logEntries =>
-            {
-                // By default, apart from some commonly known exceptions, the browser log should be empty. However,
-                // Media Storage Quota feature causes a 400 on upload if the file is over the limit, so we need to make
-                // sure not to fail on that.
-                var messagesWithoutToggle = logEntries.Where(logEntry =>
-                    !logEntry.Text.ContainsOrdinalIgnoreCase(
-                        @"/Admin/Media/Upload - Failed to load resource: the server responded with a status of 400"));
-                OrchardCoreUITestExecutorConfiguration.AssertBrowserLogIsEmpty(messagesWithoutToggle);
-            };
+        // By default, apart from some commonly known false positives, the response log should be empty. However, Media
+        // Storage Quota feature causes a 400 on upload if the file is over the limit, so we need to make sure not to
+        // fail on that.
+        configuration.ResponseLogFilter = e =>
+            e.IsNonSuccessResponse() &&
+            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/Admin/Media/Upload", 400);
     }
 }
