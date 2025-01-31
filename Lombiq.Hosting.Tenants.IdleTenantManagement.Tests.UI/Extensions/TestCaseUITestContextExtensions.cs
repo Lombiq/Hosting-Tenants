@@ -1,5 +1,4 @@
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Pages;
 using Lombiq.Tests.UI.Services;
 using System;
@@ -33,7 +32,7 @@ public static class TestCaseUITestContextExtensions
         // background task should run within not much more than a minute (background tasks are run with a frequency of
         // at least a minute, due to the limitation of cron expressions). Polling for it here.
         await Task.Delay(TimeSpan.FromMinutes(1), context.Configuration.TestCancellationToken);
-        await ReliabilityHelper.DoWithRetriesOrFailAsync(
+        await context.DoWithRetriesOrFailAsync(
             async () =>
             {
                 var logEntries = await context.Application.GetLogEntriesFromAllLogsAsync(context.Configuration.TestCancellationToken);
