@@ -9,7 +9,7 @@
 
     var hostString = host != null ? new HostString(host) : Context.Request.Host;
 
-    var actionPath = "/Lombiq.Hosting.Tenants.Admin.Login/TenantLogin/Index";
+    const string actionPath = "/Lombiq.Hosting.Tenants.Admin.Login/TenantLogin/Index";
     var actionPathWithPrefix = string.IsNullOrEmpty(Model.RequestUrlPrefix)
         ? actionPath
         : '/' + Model.RequestUrlPrefix + actionPath;
