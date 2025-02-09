@@ -28,12 +28,17 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
             _options.Value.RebuildMaintenanceIsEnabled &&
             !context.WasLatestExecutionSuccessful());
 
-    public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
+    public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
+        MigrateAsync(_elasticIndexingService, _elasticIndexSettingsService);
+
+    public static async Task MigrateAsync(
+        ElasticIndexingService elasticIndexingService,
+        ElasticIndexSettingsService elasticIndexSettingsService)
     {
-        var settings = await _elasticIndexSettingsService.GetSettingsAsync();
+        var settings = await elasticIndexSettingsService.GetSettingsAsync();
         foreach (var setting in settings)
         {
-            await _elasticIndexingService.RebuildIndexAsync(setting);
+            await elasticIndexingService.RebuildIndexAsync(setting);
 
             if (setting.QueryAnalyzerName != setting.AnalyzerName)
             {
@@ -41,10 +46,10 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
                 // Since the index is rebuilt, lets make sure we query using the same analyzer.
                 setting.QueryAnalyzerName = setting.AnalyzerName;
 
-                await _elasticIndexSettingsService.UpdateIndexAsync(setting);
+                await elasticIndexSettingsService.UpdateIndexAsync(setting);
             }
 
-            await _elasticIndexingService.ProcessContentItemsAsync(setting.IndexName);
+            await elasticIndexingService.ProcessContentItemsAsync(setting.IndexName);
         }
     }
 }
