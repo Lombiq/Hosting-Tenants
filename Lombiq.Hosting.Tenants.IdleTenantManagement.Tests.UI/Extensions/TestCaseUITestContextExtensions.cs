@@ -1,5 +1,4 @@
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Pages;
 using Lombiq.Tests.UI.Services;
 using System;
@@ -32,11 +31,11 @@ public static class TestCaseUITestContextExtensions
         // Due to the background ask scheduling configuration in ConfigureIdleTenantManagementTestSettings(), the
         // background task should run within not much more than a minute (background tasks are run with a frequency of
         // at least a minute, due to the limitation of cron expressions). Polling for it here.
-        await Task.Delay(TimeSpan.FromMinutes(1));
-        await ReliabilityHelper.DoWithRetriesOrFailAsync(
+        await Task.Delay(TimeSpan.FromMinutes(1), context.Configuration.TestCancellationToken);
+        await context.DoWithRetriesOrFailAsync(
             async () =>
             {
-                var logEntries = await context.Application.GetLogEntriesFromAllLogsAsync();
+                var logEntries = await context.Application.GetLogEntriesFromAllLogsAsync(context.Configuration.TestCancellationToken);
                 return logEntries.Any(logEntry =>
                     logEntry.Message == $"Shutting down tenant \"{IdleTenantName}\" because of idle timeout.");
             },
