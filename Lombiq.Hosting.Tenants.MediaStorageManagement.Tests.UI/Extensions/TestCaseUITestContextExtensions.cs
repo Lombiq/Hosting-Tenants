@@ -14,7 +14,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.GoToAdminRelativeUrlAsync("/Media");
 
-        context.UploadSamplePngByIdOfAnyVisibility("fileupload"); // #spell-check-ignore-line
+        context.UploadSamplePngByIdOfAnyVisibility("fileupload");
 
         // Workaround for pending uploads, until you make an action the page is stuck on "Uploads Pending".
         context.WaitForPageLoad();
