@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Extensions.Features;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Scope;
+using OrchardCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,16 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.FeaturesGuard.Handlers;
 
-public sealed class FeaturesEventHandler : IFeatureEventHandler
+public sealed class FeaturesEventHandler : ModularTenantEvents, IFeatureEventHandler
 {
+    private readonly ShellSettings _shellSettings;
     private bool _deferredTaskTriggered;
+
+    public FeaturesEventHandler(ShellSettings shellSettings) => _shellSettings = shellSettings;
+
+    // Ensuring that feature guards are applied when the shell starts, not just when a feature is enabled/disabled.
+    public override Task ActivatedAsync() =>
+        _shellSettings.IsUninitialized() ? Task.CompletedTask : HandleConditionallyEnabledFeaturesAsync();
 
     public Task InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
