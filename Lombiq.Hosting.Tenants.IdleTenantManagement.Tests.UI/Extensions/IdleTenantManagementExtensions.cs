@@ -34,7 +34,8 @@ public static class IdleTenantManagementExtensions
             (_, fakeLogCollectorOptions) => fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
 
         configuration.AssertAppLogsAsync = app =>
-            app.LogsShouldNotContainAsync(logEntry =>
-                AppLogAssertionHelper.NotMediaCacheEntries(logEntry) && logEntry.Level != LogLevel.Information);
+            app.LogsShouldNotContainAsync(
+                logEntry => AppLogAssertionHelper.NotMediaCacheEntries(logEntry) && logEntry.Level != LogLevel.Information,
+                cancellationToken: configuration.TestCancellationToken);
     }
 }
