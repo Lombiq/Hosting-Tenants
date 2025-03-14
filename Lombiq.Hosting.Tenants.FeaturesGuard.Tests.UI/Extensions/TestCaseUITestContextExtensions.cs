@@ -88,21 +88,21 @@ public static class TestCaseUITestContextExtensions
     {
         // When ChartJs gets disabled but UIKit is enabled, Twitter should remain enabled.
         await disableFeature("Lombiq.ChartJs");
-        context.Exists(By.XPath("//a[@id='btn-disable-Lombiq_UIKit']"));
+        context.ExistsWithStaleRetries(By.XPath("//a[@id='btn-disable-Lombiq_UIKit']"));
         context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
         // When either UIKit or ChartJs is enabled, it should not be possible to disable Twitter.
         await disableFeature("OrchardCore.Twitter");
-        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+        context.ExistsWithStaleRetries(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
 
         // When UIKit gets disabled and ChartJs is also disabled, Twitter should get disabled.
         await disableFeature("Lombiq.UIKit");
-        context.Exists(By.XPath("//a[@id='btn-enable-Lombiq_ChartJs']"));
+        context.ExistsWithStaleRetries(By.XPath("//a[@id='btn-enable-Lombiq_ChartJs']"));
         context.Exists(By.XPath("//a[@id='btn-enable-OrchardCore_Twitter']"));
 
         // When UIKit is enabled, Twitter should get enabled.
         await enableFeature("Lombiq.UIKit");
-        context.Exists(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
+        context.ExistsWithStaleRetries(By.XPath("//a[@id='btn-disable-OrchardCore_Twitter']"));
     }
 
     private static Task EnableFeatureViaJsonImportAndGoToFeaturesListAsync(UITestContext context, string featureId) =>
