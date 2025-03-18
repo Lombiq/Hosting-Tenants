@@ -21,7 +21,7 @@ public sealed class FeaturesEventHandler : ModularTenantEvents, IFeatureEventHan
 
     // Ensuring that feature guards are applied when the shell starts, not just when a feature is enabled/disabled.
     public override Task ActivatedAsync() =>
-        !_shellSettings.IsUninitialized() ? HandleConditionallyEnabledFeaturesAsync() : Task.CompletedTask;
+        _shellSettings.IsRunning() ? HandleConditionallyEnabledFeaturesAsync() : Task.CompletedTask;
 
     public Task InstallingAsync(IFeatureInfo feature) => Task.CompletedTask;
 
