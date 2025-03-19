@@ -20,6 +20,7 @@ public sealed class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IFeatureEventHandler, FeaturesEventHandler>();
+        services.AddScoped<IModularTenantEvents, FeaturesEventHandler>();
 
         services.Configure<ConditionallyEnabledFeaturesOptions>(options =>
             _shellConfiguration
