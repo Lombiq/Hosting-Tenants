@@ -121,6 +121,7 @@ public static class TestCaseUITestContextExtensions
             @"{ ""steps"": [ { ""name"": ""Feature"", """ + command + @""": [ """ + featureId + @""" ] } ] }");
 
         await context.ClickReliablyOnSubmitAsync();
+        context.SuccessMessageExists("Recipe imported successfully!");
         await context.GoToAdminRelativeUrlAsync("/Features");
     }
 }
