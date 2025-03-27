@@ -1,8 +1,8 @@
+using Lombiq.HelpfulLibraries.OrchardCore.DependencyInjection;
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
-using OrchardCore.Search.Elasticsearch.Core.Services;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
@@ -10,11 +10,11 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
-    private readonly ElasticIndexManager _elasticIndexManager;
+    private readonly IElasticsearchIndexManager _elasticIndexManager;
 
     public DeleteElasticsearchIndicesMaintenanceProvider(
         IOptions<ElasticsearchIndicesMaintenanceOptions> options,
-        ElasticIndexManager elasticIndexManager)
+        IElasticsearchIndexManager elasticIndexManager)
     {
         _options = options;
         _elasticIndexManager = elasticIndexManager;

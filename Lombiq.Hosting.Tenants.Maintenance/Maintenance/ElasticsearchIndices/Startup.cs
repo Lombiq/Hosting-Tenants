@@ -1,4 +1,5 @@
 using Elasticsearch.Net;
+using Lombiq.HelpfulLibraries.OrchardCore.DependencyInjection;
 using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -72,7 +73,7 @@ public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
 #pragma warning restore CA2000
 
         services.AddSingleton<IElasticClient>(new ElasticClient(settings));
-        services.AddSingleton<ElasticIndexManager>();
+        DefaultElasticsearchIndexManager.Add(services);
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)

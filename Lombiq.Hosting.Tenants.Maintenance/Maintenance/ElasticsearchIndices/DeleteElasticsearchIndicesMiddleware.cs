@@ -1,8 +1,8 @@
+using Lombiq.HelpfulLibraries.OrchardCore.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Locking.Distributed;
-using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -62,7 +62,7 @@ public class DeleteElasticsearchIndicesMiddleware
         // If the tenant was initialized by another instance, then skip again.
         if (await InvokeNextIfUninitializedAsync(settings, httpContext)) return;
 
-        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticIndexManager>();
+        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<IElasticsearchIndexManager>();
 
         // Delete all tenant specific indexes in Elasticsearch.
         await elasticIndexManager.DeleteIndex("*");
