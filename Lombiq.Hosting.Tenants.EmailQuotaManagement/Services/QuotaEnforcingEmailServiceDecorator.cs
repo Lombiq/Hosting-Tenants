@@ -37,7 +37,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
 
     public async Task<EmailResult> SendAsync(MailMessage message, string providerName = null)
     {
-        if (!await _emailQuotaService.ShouldEnforceEmailQuotaAsync())
+        if (!await _emailQuotaService.ShouldEnforceEmailQuotaAsync(providerName))
         {
             return await _emailService.SendAsync(message, providerName);
         }
