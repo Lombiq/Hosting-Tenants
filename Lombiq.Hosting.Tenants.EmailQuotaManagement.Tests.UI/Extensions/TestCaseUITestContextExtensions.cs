@@ -93,7 +93,7 @@ public static class TestCaseUITestContextExtensions
 
     private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount)
     {
-        var by = By.CssSelector(".alert-warning[data-smtp-quota-max][data-smtp-quota-used]");
+        var by = By.CssSelector(".alert-warning[data-email-quota-max][data-email-quota-used]");
 
         if (!exists)
         {
@@ -102,8 +102,8 @@ public static class TestCaseUITestContextExtensions
         }
 
         var element = context.Get(by);
-        var max = int.Parse(element.GetAttribute("data-smtp-quota-max"), CultureInfo.InvariantCulture);
-        var used = int.Parse(element.GetAttribute("data-smtp-quota-used"), CultureInfo.InvariantCulture);
+        var max = int.Parse(element.GetAttribute("data-email-quota-max"), CultureInfo.InvariantCulture);
+        var used = int.Parse(element.GetAttribute("data-email-quota-used"), CultureInfo.InvariantCulture);
 
         max.ShouldBe(maximumEmailQuota);
         used.ShouldBe(currentEmailCount);

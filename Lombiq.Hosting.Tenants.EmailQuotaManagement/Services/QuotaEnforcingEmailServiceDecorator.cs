@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 
-public class QuotaManagingSmtpServiceDecorator : IEmailService
+public class QuotaEnforcingEmailServiceDecorator : IEmailService
 {
-    private readonly IStringLocalizer<QuotaManagingSmtpServiceDecorator> T;
+    private readonly IStringLocalizer<QuotaEnforcingEmailServiceDecorator> T;
     private readonly IEmailService _emailService;
     private readonly IEmailQuotaService _emailQuotaService;
     private readonly ShellSettings _shellSettings;
     private readonly IEmailTemplateService _emailTemplateService;
     private readonly IEmailQuotaSubjectService _emailQuotaSubjectService;
 
-    public QuotaManagingSmtpServiceDecorator(
-        IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
+    public QuotaEnforcingEmailServiceDecorator(
+        IStringLocalizer<QuotaEnforcingEmailServiceDecorator> stringLocalizer,
         IEmailService emailService,
         IEmailQuotaService emailQuotaService,
         ShellSettings shellSettings,
@@ -37,7 +37,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
 
     public async Task<EmailResult> SendAsync(MailMessage message, string providerName = null)
     {
-        if (!await _emailQuotaService.ShouldLimitEmailsAsync())
+        if (!await _emailQuotaService.ShouldEnforceEmailQuotaAsync())
         {
             return await _emailService.SendAsync(message, providerName);
         }
@@ -65,7 +65,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
         var administratorEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
         {
-            await SendQuotaEmailAsync(
+            await SendEmailQuotaReminderAsync(
                 emailQuota,
                 administratorEmails,
                 "EmailQuotaExceededError",
@@ -74,7 +74,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
             return;
         }
 
-        await SendQuotaEmailAsync(
+        await SendEmailQuotaReminderAsync(
             emailQuota,
             administratorEmails,
             $"EmailQuotaWarning",
@@ -82,7 +82,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
             currentUsagePercentage);
     }
 
-    private Task SendQuotaEmailAsync(
+    private Task SendEmailQuotaReminderAsync(
         EmailQuota emailQuota,
         IEnumerable<string> administratorEmails,
         string emailTemplateName,

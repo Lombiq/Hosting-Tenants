@@ -46,7 +46,7 @@ public class EmailQuotaService : IEmailQuotaService
         return administratorUsers.Select(user => (user as User)?.Email);
     }
 
-    public async Task<bool> ShouldLimitEmailsAsync(string providerName = null) =>
+    public async Task<bool> ShouldEnforceEmailQuotaAsync(string providerName = null) =>
         await _emailProviderResolver.GetAsync(providerName) switch
         {
             DefaultSmtpEmailProvider => true,
