@@ -17,7 +17,7 @@ public interface IEmailQuotaService
     /// <summary>
     /// Checks if the emails should be limited, depending on the default SMTP settings.
     /// </summary>
-    bool ShouldLimitEmails();
+    Task<bool> ShouldLimitEmailsAsync(string providerName = null);
 
     /// <summary>
     /// Checks if the current email usage is over monthly limit, returns a <see cref="QuotaResult"/> object that

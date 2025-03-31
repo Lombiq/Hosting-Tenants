@@ -31,8 +31,7 @@ public sealed class DashboardQuotaFilter : IAsyncResultFilter
             return;
         }
 
-        if (context.Result is ViewResult &&
-            _emailQuotaService.ShouldLimitEmails())
+        if (context.Result is ViewResult && (await _emailQuotaService.ShouldLimitEmailsAsync()))
         {
             var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
 

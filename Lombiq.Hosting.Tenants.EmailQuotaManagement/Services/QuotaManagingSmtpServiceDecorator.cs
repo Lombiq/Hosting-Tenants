@@ -20,15 +20,15 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
     private readonly IEmailQuotaSubjectService _emailQuotaSubjectService;
 
     public QuotaManagingSmtpServiceDecorator(
-        IEmailService emailService,
         IStringLocalizer<QuotaManagingSmtpServiceDecorator> stringLocalizer,
+        IEmailService emailService,
         IEmailQuotaService emailQuotaService,
         ShellSettings shellSettings,
         IEmailTemplateService emailTemplateService,
         IEmailQuotaSubjectService emailQuotaSubjectService)
     {
-        _emailService = emailService;
         T = stringLocalizer;
+        _emailService = emailService;
         _emailQuotaService = emailQuotaService;
         _shellSettings = shellSettings;
         _emailTemplateService = emailTemplateService;
@@ -37,7 +37,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
 
     public async Task<EmailResult> SendAsync(MailMessage message, string providerName = null)
     {
-        if (!_emailQuotaService.ShouldLimitEmails())
+        if (!await _emailQuotaService.ShouldLimitEmailsAsync())
         {
             return await _emailService.SendAsync(message, providerName);
         }
@@ -104,8 +104,7 @@ public class QuotaManagingSmtpServiceDecorator : IEmailService
                     HostName = _shellSettings.Name,
                     Percentage = percentage,
                 });
-                // ISmtpService must be used within this class otherwise it won't call the original ISmtpService
-                // implementation, but loop back to here.
+
                 await _emailService.SendAsync(emailMessage);
             });
         }
