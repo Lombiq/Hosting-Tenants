@@ -65,7 +65,7 @@ public class DeleteElasticsearchIndicesMiddleware
         var elasticIndexManager = httpContext.RequestServices.GetRequiredService<IElasticsearchIndexManager>();
 
         // Delete all tenant specific indexes in Elasticsearch.
-        await elasticIndexManager.DeleteIndex("*");
+        await elasticIndexManager.DeleteAllIndexesAsync();
 
         await _next.Invoke(httpContext);
     }
