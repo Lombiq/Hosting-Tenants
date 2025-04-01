@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.DependencyInjection;
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -13,13 +14,13 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
 {
     private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
     private readonly IDocumentManager<ElasticIndexSettingsDocument> _documentManager;
-    private readonly ElasticIndexingService _elasticIndexingService;
+    private readonly IElasticsearchIndexingService _elasticIndexingService;
     private readonly ElasticIndexSettingsService _elasticIndexSettingsService;
 
     public RebuildElasticsearchIndicesMaintenanceProvider(
         IOptions<ElasticsearchIndicesMaintenanceOptions> options,
         IDocumentManager<ElasticIndexSettingsDocument> documentManager,
-        ElasticIndexingService elasticIndexingService,
+        IElasticsearchIndexingService elasticIndexingService,
         ElasticIndexSettingsService elasticIndexSettingsService)
     {
         _options = options;
@@ -38,7 +39,7 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
 
     public static async Task MigrateAsync(
         IDocumentManager<ElasticIndexSettingsDocument> documentManager,
-        ElasticIndexingService elasticIndexingService,
+        IElasticsearchIndexingService elasticIndexingService,
         ElasticIndexSettingsService elasticIndexSettingsService)
     {
         var settings = await elasticIndexSettingsService.GetSettingsAsync();

@@ -71,8 +71,7 @@ public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         var settings = GetConnectionSettings(elasticConfiguration);
 #pragma warning restore CA2000
 
-        services.AddSingleton<IElasticClient>(new ElasticClient(settings));
-        DefaultElasticsearchIndexManager.AddDefaultServices(services);
+        services.AddDefaultElasticsearchWrapperServices(settings);
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)
