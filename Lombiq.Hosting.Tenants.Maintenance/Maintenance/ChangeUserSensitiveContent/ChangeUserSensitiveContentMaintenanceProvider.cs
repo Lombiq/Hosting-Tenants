@@ -20,20 +20,17 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 {
     private readonly IOptions<ChangeUserSensitiveContentMaintenanceOptions> _options;
     private readonly ISession _session;
-    private readonly UserManager<IUser> _userManager;
     private readonly IPasswordHasher<IUser> _passwordHasher;
     private readonly ShellSettings _shellSettings;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
         ISession session,
-        UserManager<IUser> userManager,
         IPasswordHasher<IUser> passwordHasher,
         ShellSettings shellSettings)
     {
         _options = options;
         _session = session;
-        _userManager = userManager;
         _passwordHasher = passwordHasher;
         _shellSettings = shellSettings;
     }
@@ -68,8 +65,10 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             user.NormalizedEmail = formattedEmail.ToUpperInvariant();
             user.PasswordHash = _passwordHasher.HashPassword(user, GenerateRandomPassword(32));
 
-            await _userManager.UpdateAsync(user);
+            await _session.SaveAsync(user);
         }
+
+        await _session.SaveChangesAsync();
     }
 
     private static string GetFormattedFullName(string firstName, string lastName) => $"{firstName}.{lastName}";
