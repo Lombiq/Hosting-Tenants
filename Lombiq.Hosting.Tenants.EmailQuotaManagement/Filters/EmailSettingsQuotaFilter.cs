@@ -38,7 +38,7 @@ public sealed class EmailSettingsQuotaFilter : IAsyncResultFilter
             typeof(EmailAdminController).ControllerName(),
             $"{nameof(OrchardCore)}.{nameof(OrchardCore.Email)}");
 
-        if ((isEmailTestPage || context.IsSiteSettingsPage("email")) && (await _emailQuotaService.ShouldEnforceEmailQuotaAsync()))
+        if (isEmailTestPage || (context.IsSiteSettingsPage("email") && (await _emailQuotaService.ShouldEnforceEmailQuotaAsync())))
         {
             var layout = await _layoutAccessor.GetLayoutAsync();
             var contentZone = layout.Zones["Content"];
