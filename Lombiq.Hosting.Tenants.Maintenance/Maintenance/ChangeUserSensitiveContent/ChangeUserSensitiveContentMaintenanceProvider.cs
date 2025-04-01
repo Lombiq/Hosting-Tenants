@@ -47,10 +47,15 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var randomNameGenerator = new PersonNameGenerator();
+        var emailExcludeRegex = new Regex(
+            _options.Value.EmailExcludePattern,
+            RegexOptions.None,
+            TimeSpan.FromMilliseconds(400));
 
         var users = await _session.Query<User>().ListAsync();
-        foreach (var user in users.Where(user =>
-            !Regex.IsMatch(user.Email.Trim(), _options.Value.EmailExcludePattern, RegexOptions.None, TimeSpan.FromMilliseconds(400))))
+        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim()));
+
+        foreach (var user in filteredUsers)
         {
             var firstName = randomNameGenerator.GenerateRandomFirstName();
             var lastName = randomNameGenerator.GenerateRandomLastName();
