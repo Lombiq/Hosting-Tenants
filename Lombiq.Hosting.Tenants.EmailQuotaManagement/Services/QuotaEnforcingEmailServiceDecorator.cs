@@ -48,7 +48,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return EmailResult.FailedResult(T["The email quota for the site has been exceeded."]);
+            return EmailResult.FailedResult(T["Your site has run out of the email quota for this month."]);
         }
 
         var emailResult = await _emailService.SendAsync(message, providerName);
@@ -60,7 +60,10 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
     private async Task SendAlertEmailIfNecessaryAsync(EmailQuota emailQuota)
     {
         var currentUsagePercentage = emailQuota.CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
-        if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage)) return;
+        if (!_emailQuotaService.ShouldSendReminderEmail(emailQuota, currentUsagePercentage))
+        {
+            return;
+        }
 
         var administratorEmails = (await _emailQuotaService.GetUserEmailsForEmailReminderAsync()).ToList();
         if (currentUsagePercentage >= 100)
@@ -71,6 +74,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
                 "EmailQuotaExceededError",
                 _emailQuotaSubjectService.GetExceededEmailSubject(),
                 currentUsagePercentage);
+
             return;
         }
 
