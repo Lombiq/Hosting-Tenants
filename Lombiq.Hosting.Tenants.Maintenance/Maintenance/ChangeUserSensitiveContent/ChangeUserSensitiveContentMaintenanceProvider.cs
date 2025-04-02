@@ -64,8 +64,6 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             user.Email = formattedEmail;
             user.NormalizedEmail = formattedEmail.ToUpperInvariant();
             user.PasswordHash = _passwordHasher.HashPassword(user, GenerateRandomPassword(32));
-
-            await _session.SaveAsync(user);
         }
 
         await _session.SaveChangesAsync();
