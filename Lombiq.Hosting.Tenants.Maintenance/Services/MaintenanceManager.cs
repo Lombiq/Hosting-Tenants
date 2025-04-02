@@ -121,14 +121,7 @@ public class MaintenanceManager : IMaintenanceManager
             }
 
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            if (execution.MaintenanceId == maintenanceId)
-            {
-                stopwatch.Stop();
-                _logger.LogError("SaveAsync completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
-                stopwatch.Restart();
-            }
-
-            await _session.SaveChangesAsync();
+            await _session.FlushAsync();
 
             if (execution.MaintenanceId == maintenanceId)
             {
