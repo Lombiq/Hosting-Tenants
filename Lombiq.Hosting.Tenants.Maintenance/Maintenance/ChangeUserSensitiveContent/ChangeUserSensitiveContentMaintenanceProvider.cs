@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Users;
+using OrchardCore.Users.Indexes;
 using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
 using System;
@@ -49,8 +50,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             RegexOptions.None,
             TimeSpan.FromMilliseconds(400));
 
-        var users = await _session.Query<User>().ListAsync();
-        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim()));
+        var filteredUsers = await _session.Query<User>().With<UserIndex>(userIndex =>
+            !emailExcludeRegex.IsMatch(userIndex.NormalizedEmail.Trim())).ListAsync();
 
         foreach (var user in filteredUsers)
         {
@@ -68,7 +69,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             await _session.SaveAsync(user);
         }
 
-        await _session.SaveChangesAsync();
+        context.ReloadShellAfterMaintenanceCompletion = true;
     }
 
     private static string GetFormattedFullName(string firstName, string lastName) => $"{firstName}.{lastName}";
