@@ -2,13 +2,14 @@ using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Users;
-using OrchardCore.Users.Indexes;
 using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,17 +24,20 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
     private readonly ISession _session;
     private readonly IPasswordHasher<IUser> _passwordHasher;
     private readonly ShellSettings _shellSettings;
+    private readonly ILogger _logger;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
         ISession session,
         IPasswordHasher<IUser> passwordHasher,
-        ShellSettings shellSettings)
+        ShellSettings shellSettings,
+        ILogger<ChangeUserSensitiveContentMaintenanceProvider> logger)
     {
         _options = options;
         _session = session;
         _passwordHasher = passwordHasher;
         _shellSettings = shellSettings;
+        _logger = logger;
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
@@ -50,9 +54,15 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             RegexOptions.None,
             TimeSpan.FromMilliseconds(400));
 
-        var filteredUsers = await _session.Query<User>().With<UserIndex>(userIndex =>
-            !emailExcludeRegex.IsMatch(userIndex.NormalizedEmail.Trim())).ListAsync();
+        var stopwatch = Stopwatch.StartNew();
+        stopwatch.Restart();
+        var users = await _session.Query<User>().ListAsync();
+        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim()));
+        stopwatch.Stop();
 
+        _logger.LogError("Query and filtering completed in {ElapsedMilliseconds} ms.", stopwatch.ElapsedMilliseconds);
+
+        stopwatch.Restart();
         foreach (var user in filteredUsers)
         {
             var firstName = randomNameGenerator.GenerateRandomFirstName();
@@ -69,7 +79,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             await _session.SaveAsync(user);
         }
 
-        context.ReloadShellAfterMaintenanceCompletion = true;
+        stopwatch.Stop();
+        _logger.LogError("User processing loop completed in {ElapsedMilliseconds} ms.", stopwatch.ElapsedMilliseconds);
     }
 
     private static string GetFormattedFullName(string firstName, string lastName) => $"{firstName}.{lastName}";
