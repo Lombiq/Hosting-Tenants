@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using OrchardCore.Environment.Shell;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using YesSql;
@@ -114,11 +113,7 @@ public class MaintenanceManager : IMaintenanceManager
             }
 
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            var stopwatch = Stopwatch.StartNew();
-            stopwatch.Restart();
             await _session.SaveChangesAsync();
-            stopwatch.Stop();
-            _logger.LogError("SaveChangesAsync completed in {ElapsedMilliseconds} ms.", stopwatch.ElapsedMilliseconds);
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
