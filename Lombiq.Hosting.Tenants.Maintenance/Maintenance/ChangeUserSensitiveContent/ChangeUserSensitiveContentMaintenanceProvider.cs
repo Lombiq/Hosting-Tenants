@@ -1,4 +1,3 @@
-using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Identity;
@@ -91,6 +90,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             }
 
             await _session.SaveChangesAsync();
+            await _session.ResetAsync();
 
             skip += batchSize;
         }
