@@ -56,6 +56,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
         var users = await _session.Query<User>().ListAsync();
         var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())).ToList();
 
+        // We don't want to login with these accounts, so we are generating the same password hash for each user, to
+        // make the process faster.
         var passwordHash = _passwordHasher.HashPassword(user: null, GenerateRandomPassword(32));
 
         var skip = 0;
