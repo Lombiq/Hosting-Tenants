@@ -56,7 +56,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             TimeSpan.FromMilliseconds(400));
 
         // To have the best performance, we are processing users in batches and then saving them.
-        const int batchSize = 15;
+        const int batchSize = 50;
         var skip = 0;
 
         var users = await _session.Query<User>().ListAsync();
@@ -67,7 +67,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
         stopwatch.Restart();
         _logger.LogError("Entering while loop.");
-        var counter = 0;
+
         while (skip < filteredUsers.Count)
         {
             var filteredUsersBatch = filteredUsers
@@ -95,8 +95,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             await _session.SaveChangesAsync();
 
             skip += batchSize;
-            counter++;
-            _logger.LogError("In the while loop, run count: {Counter}, skip count {Skip}, {Users}.", counter, skip, filteredUsers.Count);
+
+            _logger.LogError("In the while loop, run count: skip count {Skip}.", skip);
         }
 
         stopwatch.Stop();
