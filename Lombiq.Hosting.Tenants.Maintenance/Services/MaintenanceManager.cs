@@ -113,21 +113,8 @@ public class MaintenanceManager : IMaintenanceManager
                     provider.Id);
             }
 
-            var stopwatch = Stopwatch.StartNew();
-            const string maintenanceId = "ChangeUserSensitiveContentMaintenanceProvider";
-            if (execution.MaintenanceId == maintenanceId)
-            {
-                stopwatch.Restart();
-            }
-
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
             await _session.SaveChangesAsync();
-
-            if (execution.MaintenanceId == maintenanceId)
-            {
-                stopwatch.Stop();
-                _logger.LogError("SaveChangesAsync completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
-            }
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
