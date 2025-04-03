@@ -66,7 +66,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
         var stopwatch = Stopwatch.StartNew();
 
         stopwatch.Restart();
-
+        _logger.LogError("Entering while loop.");
+        var counter = 0;
         while (skip < filteredUsers.Count)
         {
             var filteredUsersBatch = filteredUsers
@@ -94,6 +95,8 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             await _session.SaveChangesAsync();
 
             skip += batchSize;
+            counter++;
+            _logger.LogError("In the while loop, run count: {Counter}, skip count {Skip}, {Users}.", counter, skip, filteredUsers.Count);
         }
 
         stopwatch.Stop();
