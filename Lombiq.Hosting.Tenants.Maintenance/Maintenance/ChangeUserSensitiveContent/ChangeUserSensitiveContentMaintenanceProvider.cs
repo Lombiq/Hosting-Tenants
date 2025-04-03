@@ -48,46 +48,55 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
-        var stopwatch = Stopwatch.StartNew();
-
         var randomNameGenerator = new PersonNameGenerator();
         var emailExcludeRegex = new Regex(
             _options.Value.EmailExcludePattern,
             RegexOptions.None,
             TimeSpan.FromMilliseconds(400));
-        stopwatch.Restart();
+
+        // To have the best performance, we are processing users in batches and then saving them.
+        const int batchSize = 15;
+        var skip = 0;
+
         var users = await _session.Query<User>().ListAsync();
-        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim()));
-        stopwatch.Stop();
+        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())).ToList();
 
-        _logger.LogError("Query and filtering completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
-
-        stopwatch.Restart();
         var passwordHash = _passwordHasher.HashPassword(user: null, GenerateRandomPassword(32));
-        stopwatch.Stop();
-        _logger.LogError("HashPassword completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
+        var stopwatch = Stopwatch.StartNew();
+
         stopwatch.Restart();
 
-        foreach (var user in filteredUsers)
+        while (skip < filteredUsers.Count)
         {
-            var firstName = randomNameGenerator.GenerateRandomFirstName();
-            var lastName = randomNameGenerator.GenerateRandomLastName();
+            var filteredUsersBatch = filteredUsers
+                .Skip(skip)
+                .Take(batchSize);
 
-            var formattedFullName = GetFormattedFullName(firstName, lastName);
-            var formattedEmail = GetFormattedEmail(firstName, lastName);
+            foreach (var user in filteredUsersBatch)
+            {
+                var firstName = randomNameGenerator.GenerateRandomFirstName();
+                var lastName = randomNameGenerator.GenerateRandomLastName();
 
-            user.UserName = formattedFullName;
-            user.NormalizedUserName = formattedFullName.ToUpperInvariant();
-            user.Email = formattedEmail;
-            user.NormalizedEmail = formattedEmail.ToUpperInvariant();
+                var formattedFullName = GetFormattedFullName(firstName, lastName);
+                var formattedEmail = GetFormattedEmail(firstName, lastName);
 
-            user.PasswordHash = passwordHash;
+                user.UserName = formattedFullName;
+                user.NormalizedUserName = formattedFullName.ToUpperInvariant();
+                user.Email = formattedEmail;
+                user.NormalizedEmail = formattedEmail.ToUpperInvariant();
 
-            await _session.SaveAsync(user);
+                user.PasswordHash = passwordHash;
+
+                await _session.SaveAsync(user);
+            }
+
+            await _session.SaveChangesAsync();
+
+            skip += batchSize;
         }
 
         stopwatch.Stop();
-        _logger.LogError("Users completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
+        _logger.LogError("SaveChangesAsync user loop completed in {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
     }
 
     private static string GetFormattedFullName(string firstName, string lastName) => $"{firstName}.{lastName}";

@@ -121,7 +121,7 @@ public class MaintenanceManager : IMaintenanceManager
             }
 
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await _session.FlushAsync();
+            await _session.SaveChangesAsync();
 
             if (execution.MaintenanceId == maintenanceId)
             {
