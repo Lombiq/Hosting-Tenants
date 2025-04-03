@@ -63,7 +63,7 @@
 
             editor.getModel().onDidChangeContent(() => {
                 textArea.value = editor.getValue();
-                $(document).trigger('contentpreview:render');@* #spell-check-ignore-line *@
+                $(document).trigger('contentpreview:render');
             });
 
             function formatDocument() {
