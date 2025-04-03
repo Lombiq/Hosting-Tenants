@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
     private readonly ISession _session;
     private readonly IPasswordHasher<IUser> _passwordHasher;
     private readonly ShellSettings _shellSettings;
-    private readonly ILogger _logger;
+    private readonly ILogger<ChangeUserSensitiveContentMaintenanceProvider> _logger;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
