@@ -48,6 +48,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
+        _logger.LogError("Starting maintenance ChangeUserSensitiveContent.");
         var randomNameGenerator = new PersonNameGenerator();
         var emailExcludeRegex = new Regex(
             _options.Value.EmailExcludePattern,
@@ -91,7 +92,6 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             }
 
             await _session.SaveChangesAsync();
-            await _session.ResetAsync();
 
             skip += batchSize;
         }
