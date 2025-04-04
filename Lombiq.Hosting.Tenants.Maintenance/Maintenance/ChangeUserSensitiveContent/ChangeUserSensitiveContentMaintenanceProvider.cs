@@ -20,20 +20,17 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
 {
     private readonly IOptions<ChangeUserSensitiveContentMaintenanceOptions> _options;
     private readonly ISession _session;
-    private readonly UserManager<IUser> _userManager;
     private readonly IPasswordHasher<IUser> _passwordHasher;
     private readonly ShellSettings _shellSettings;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
         ISession session,
-        UserManager<IUser> userManager,
         IPasswordHasher<IUser> passwordHasher,
         ShellSettings shellSettings)
     {
         _options = options;
         _session = session;
-        _userManager = userManager;
         _passwordHasher = passwordHasher;
         _shellSettings = shellSettings;
     }
@@ -47,23 +44,51 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         var randomNameGenerator = new PersonNameGenerator();
+        var emailExcludeRegex = new Regex(
+            _options.Value.EmailExcludePattern,
+            RegexOptions.None,
+            TimeSpan.FromMilliseconds(400));
+
+        // To have the best performance, we are processing users in batches of 15 and then saving them. Multiple batch
+        // sizes were tried but 15 seems to have grant the best performance.
+        const int batchSize = 15;
 
         var users = await _session.Query<User>().ListAsync();
-        foreach (var user in users.Where(user =>
-            !Regex.IsMatch(user.Email.Trim(), _options.Value.EmailExcludePattern, RegexOptions.None, TimeSpan.FromMilliseconds(400))))
+        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())).ToList();
+
+        // We don't want to login with these accounts, so we are generating the same password hash for each user, to
+        // make the process faster.
+        var passwordHash = _passwordHasher.HashPassword(user: null, GenerateRandomPassword(32));
+
+        var skip = 0;
+
+        while (skip < filteredUsers.Count)
         {
-            var firstName = randomNameGenerator.GenerateRandomFirstName();
-            var lastName = randomNameGenerator.GenerateRandomLastName();
-            var formattedFullName = GetFormattedFullName(firstName, lastName);
-            var formattedEmail = GetFormattedEmail(firstName, lastName);
+            var filteredUsersBatch = filteredUsers
+                .Skip(skip)
+                .Take(batchSize);
 
-            user.UserName = formattedFullName;
-            user.NormalizedUserName = formattedFullName.ToUpperInvariant();
-            user.Email = formattedEmail;
-            user.NormalizedEmail = formattedEmail.ToUpperInvariant();
-            user.PasswordHash = _passwordHasher.HashPassword(user, GenerateRandomPassword(32));
+            foreach (var user in filteredUsersBatch)
+            {
+                var firstName = randomNameGenerator.GenerateRandomFirstName();
+                var lastName = randomNameGenerator.GenerateRandomLastName();
 
-            await _userManager.UpdateAsync(user);
+                var formattedFullName = GetFormattedFullName(firstName, lastName);
+                var formattedEmail = GetFormattedEmail(firstName, lastName);
+
+                user.UserName = formattedFullName;
+                user.NormalizedUserName = formattedFullName.ToUpperInvariant();
+                user.Email = formattedEmail;
+                user.NormalizedEmail = formattedEmail.ToUpperInvariant();
+
+                user.PasswordHash = passwordHash;
+
+                await _session.SaveAsync(user);
+            }
+
+            await _session.SaveChangesAsync();
+
+            skip += batchSize;
         }
     }
 
