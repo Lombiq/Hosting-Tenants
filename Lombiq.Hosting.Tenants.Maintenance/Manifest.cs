@@ -13,7 +13,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance",
     Description = "Provides maintenance operations for tenants.",
     Category = "Hosting",
-    Dependencies = ["OrchardCore.Tenants"]
+    Dependencies = ["OrchardCore.Tenants", "OrchardCore.Settings", "OrchardCore.CustomSettings", "OrchardCore.ContentFields"]
 )]
 
 [assembly: Feature(
