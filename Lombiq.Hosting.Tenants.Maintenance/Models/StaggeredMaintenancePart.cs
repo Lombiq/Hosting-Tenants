@@ -10,6 +10,7 @@ public class StaggeredMaintenancePart : ContentPart
     public NumericField ProgressPercentage { get; set; } = new() { Value = 0 };
     public NumericField AllTenantCount { get; set; } = new() { Value = 0 };
     public NumericField ProcessedTenantsCount { get; set; } = new() { Value = 0 };
+    public NumericField ProcessingStep { get; set; } = new() { Value = 1 };
     public NumericField CurrentVersion { get; set; } = new() { Value = 0 };
     public IList<string> ProcessedTenantIds { get; } = [];
 
