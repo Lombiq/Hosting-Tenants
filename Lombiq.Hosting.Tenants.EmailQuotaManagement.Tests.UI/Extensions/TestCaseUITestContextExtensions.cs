@@ -33,7 +33,6 @@ public static class TestCaseUITestContextExtensions
         var quotaAwareEmailCount = 0;
         for (int i = 0; i < maximumEmailQuota; i++)
         {
-
             await context.GoToEmailTestAsync();
             await context.FillEmailTestFormAsync(SuccessfulSubject);
             context.SuccessMessageExists();
