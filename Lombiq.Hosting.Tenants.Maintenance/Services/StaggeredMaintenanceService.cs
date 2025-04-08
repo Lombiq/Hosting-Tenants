@@ -34,6 +34,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
     public async Task RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
     {
+        MaintenanceJobStore.Clear(nameof(RunScheduledMaintenanceForAllTenantAsync));
         // Get or create the StaggeredMaintenance.
         var staggeredContentItem = await GetStaggeredMaintenanceAsync();
         var staggeredMaintenancePart = staggeredContentItem.As<StaggeredMaintenancePart>();
@@ -57,6 +58,8 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         while (remainingTenants.Count != 0)
         {
+            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync))) return;
+
             await RunStaggeredMaintenanceForEachTenantAsync(remainingTenants, staggeredMaintenancePart);
 
             // Calculate percentage of completed tenants.

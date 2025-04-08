@@ -1,4 +1,5 @@
-﻿using Lombiq.Hosting.Tenants.Maintenance.Services;
+﻿using Lombiq.Hosting.Tenants.Maintenance.Models;
+using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.BackgroundJobs;
@@ -27,6 +28,12 @@ public class StaggeredMaintenanceController : Controller
         await ExecuteScheduledMaintenanceAsync(reset: true);
 
         return Ok("Maintenance tasks have been scheduled.");
+    }
+
+    public IActionResult Cancel()
+    {
+        MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
+        return Ok("Cancellation requested.");
     }
 
     private Task ExecuteScheduledMaintenanceAsync(bool newVersion = false, bool reset = false) =>
