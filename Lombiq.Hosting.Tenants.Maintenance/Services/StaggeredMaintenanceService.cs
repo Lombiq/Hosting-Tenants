@@ -32,7 +32,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         _logger = logger;
     }
 
-    public async Task RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
+    public async Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
     {
         MaintenanceJobStore.Clear(nameof(RunScheduledMaintenanceForAllTenantAsync));
         // Get or create the StaggeredMaintenance.
@@ -58,7 +58,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         while (remainingTenants.Count != 0)
         {
-            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync))) return;
+            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync))) return staggeredMaintenancePart;
 
             await RunStaggeredMaintenanceForEachTenantAsync(remainingTenants, staggeredMaintenancePart);
 
@@ -72,6 +72,8 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
         }
+
+        return staggeredMaintenancePart;
     }
 
     private List<ShellSettings> GetRemainingTenants(StaggeredMaintenancePart staggeredMaintenancePart)

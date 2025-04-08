@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Lombiq.Hosting.Tenants.Maintenance.Models;
+using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Services;
 
 public interface IStaggeredMaintenanceService
 {
-    Task RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false);
+    Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false);
 }
