@@ -3,10 +3,12 @@ using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using OrchardCore.ContentFields.Fields;
+using OrchardCore.ContentFields.Settings;
 using OrchardCore.ContentManagement.Metadata;
 using OrchardCore.ContentManagement.Metadata.Settings;
 using OrchardCore.Data.Migration;
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using YesSql.Sql;
 
@@ -50,7 +52,21 @@ public sealed class Migrations : DataMigration
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.AllTenantCount))
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.CurrentVersion))
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProcessingStep))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProcessedTenantsCount)));
+            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProcessedTenantsCount))
+            .WithField<HtmlField>(nameof(StaggeredMaintenancePart.ErrorLogsHtmlField), field => field
+                .WithEditor(nameof(ContentFieldEditorEnums.HtmlFieldEditors.Monaco))
+                .WithSettings(new HtmlFieldSettings
+                {
+                    SanitizeHtml = false,
+                })
+                .WithSettings(new HtmlFieldMonacoEditorSettings
+                {
+                    // See https://microsoft.github.io/monaco-editor/typedoc/variables/editor.EditorOptions.html for the
+                    // complete list of Monaco's EditorOptions. Note that the default HtmlBodyPart-Monaco.Edit.cshtml
+                    // always overwrites the "language" option to "html" and sets automaticLayout to true if not defined
+                    // so there is no need to configure those.
+                    Options = JsonSerializer.Serialize(new { readOnly = true }),
+                })));
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenance, builder => builder
             .WithPart<StaggeredMaintenancePart>()
@@ -66,6 +82,22 @@ public sealed class Migrations : DataMigration
                 .Column<string>(nameof(StaggeredMaintenanceIndex.ProcessedTenantNames), column => column.Unlimited())
                 .Column<string>(nameof(StaggeredMaintenanceIndex.ErrorLogs), column => column.Unlimited()),
             collection: DocumentCollections.Maintenance);
+
+        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredMaintenanceTenantStatusPart), part => part
+            .WithField<HtmlField>(nameof(StaggeredMaintenanceTenantStatusPart.VersionsHtmlField), field => field
+                .WithEditor(nameof(ContentFieldEditorEnums.HtmlFieldEditors.Monaco))
+                .WithSettings(new HtmlFieldSettings
+                {
+                    SanitizeHtml = false,
+                })
+                .WithSettings(new HtmlFieldMonacoEditorSettings
+                {
+                    // See https://microsoft.github.io/monaco-editor/typedoc/variables/editor.EditorOptions.html for the
+                    // complete list of Monaco's EditorOptions. Note that the default HtmlBodyPart-Monaco.Edit.cshtml
+                    // always overwrites the "language" option to "html" and sets automaticLayout to true if not defined
+                    // so there is no need to configure those.
+                    Options = JsonSerializer.Serialize(new { readOnly = true }),
+                })));
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenanceStatus, builder => builder
             .WithPart<StaggeredMaintenanceTenantStatusPart>()
