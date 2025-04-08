@@ -74,32 +74,30 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         if (newVersion || reset)
         {
-            staggeredMaintenancePart.ProcessedTenantIds.Clear();
-            staggeredMaintenancePart.ErrorLogs.Clear();
-            staggeredMaintenancePart.AllTenantCount.Value = 0;
-            staggeredMaintenancePart.ProcessedTenantsCount.Value = 0;
-            staggeredMaintenancePart.ProgressPercentage.Value = 0;
+            staggeredMaintenancePart.Clear();
         }
 
         staggeredMaintenancePart.AllTenantCount.Value = GetAllRunningTenantSettingsExceptDefault().Count();
         var remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
-
+        var staggeredMaintenanceTenantStatusPart = (await GetStaggeredMaintenanceStatusAsync()).As<StaggeredMaintenanceTenantStatusPart>();
         while (remainingTenants.Count != 0)
         {
             if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync))) return staggeredMaintenancePart;
 
-            await RunStaggeredMaintenanceForEachTenantAsync(remainingTenants, staggeredMaintenancePart);
+            await RunStaggeredMaintenanceForEachTenantAsync(
+                remainingTenants,
+                staggeredMaintenancePart,
+                staggeredMaintenanceTenantStatusPart);
 
             // Calculate percentage of completed tenants.
             staggeredMaintenancePart.ProgressPercentage.Value =
-                staggeredMaintenancePart.ProcessedTenantsCount.Value /
-                staggeredMaintenancePart.AllTenantCount.Value * 100;
+                Math.Round(
+                    (decimal)(staggeredMaintenancePart.ProcessedTenantsCount.Value / staggeredMaintenancePart.AllTenantCount.Value * 100)!,
+                    0);
 
             await SaveSettingsAsync(staggeredContentItem, staggeredMaintenancePart);
 
-            // Commit the changes to the database.
-            await _session.SaveChangesAsync();
-
+            //await Task.Delay(TimeSpan.FromSeconds(4));
             // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
         }
@@ -127,25 +125,31 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
     private async Task RunStaggeredMaintenanceForEachTenantAsync(
         List<ShellSettings> remainingTenants,
-        StaggeredMaintenancePart staggeredMaintenancePart)
+        StaggeredMaintenancePart staggeredMaintenancePart,
+        StaggeredMaintenanceTenantStatusPart staggeredMaintenanceTenantStatusPart)
     {
         foreach (var remainingTenant in remainingTenants)
         {
             try
             {
                 await _shellHost.WithShellScopeAsync(
-                    async scope =>
+                    scope =>
                     {
                         // Only logging is necessary here, as the actual maintenance and migration tasks are already done
                         // when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
-                        await SaveMaintenanceStatusAsync(staggeredMaintenancePart, remainingTenant.TenantId);
 
                         tenantLogger.LogError(
                             "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
                             staggeredMaintenancePart.CurrentVersion.Value);
+                        return Task.CompletedTask;
                     },
                     remainingTenant.Name);
+                await Task.Delay(TimeSpan.FromSeconds(20));
+                await SaveMaintenanceStatusAsync(
+                    staggeredMaintenanceTenantStatusPart,
+                    staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString(),
+                    remainingTenant.TenantId);
 
                 _logger.LogError(
                     "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
@@ -159,7 +163,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                     "Staggered maintenance for tenant '{TenantName}' for maintenance version {Version} failed.",
                     remainingTenant.Name,
                     staggeredMaintenancePart.CurrentVersion.Value);
-                staggeredMaintenancePart.ErrorLogs.Add(remainingTenant.Name, exception.Message);
+                staggeredMaintenancePart.AddErrorLog(remainingTenant.TenantId, exception.Message);
             }
             finally
             {
@@ -189,21 +193,10 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             : staggeredMaintenanceTenantStatusContentItem;
     }
 
-    private async Task SaveMaintenanceStatusAsync(StaggeredMaintenancePart staggeredMaintenancePart, string tenantId)
+    private Task SaveMaintenanceStatusAsync(StaggeredMaintenanceTenantStatusPart maintenanceStatusPart, string version, string tenantId)
     {
-        var maintenanceStatus = await GetStaggeredMaintenanceStatusAsync();
-        var maintenanceStatusPart = maintenanceStatus.As<StaggeredMaintenanceTenantStatusPart>();
-
-        if (maintenanceStatusPart.Versions.ContainsKey(tenantId))
-        {
-            maintenanceStatusPart.Versions[tenantId] = staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString();
-        }
-        else
-        {
-            maintenanceStatusPart.Versions.Add(tenantId, staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString());
-        }
-
-        await SaveSettingsAsync(maintenanceStatus, maintenanceStatusPart);
+        maintenanceStatusPart.AddVersion(tenantId, version);
+        return SaveSettingsAsync(maintenanceStatusPart.ContentItem, maintenanceStatusPart);
     }
 
     private async Task SaveSettingsAsync(ContentItem contentItem, ContentPart part)
@@ -212,5 +205,6 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         var siteSettings = await _siteService.LoadSiteSettingsAsync();
         siteSettings.Properties[contentItem.ContentType] = JObject.FromObject(contentItem);
         await _siteService.UpdateSiteSettingsAsync(siteSettings);
+        await _session.SaveChangesAsync();
     }
 }
