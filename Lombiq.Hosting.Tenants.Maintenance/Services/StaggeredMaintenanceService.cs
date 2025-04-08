@@ -145,7 +145,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                         return Task.CompletedTask;
                     },
                     remainingTenant.Name);
-                await Task.Delay(TimeSpan.FromSeconds(20));
+                await Task.Delay(TimeSpan.FromSeconds(5));
                 await SaveMaintenanceStatusAsync(
                     staggeredMaintenanceTenantStatusPart,
                     staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString(),
