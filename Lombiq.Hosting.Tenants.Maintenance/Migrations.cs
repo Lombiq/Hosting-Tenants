@@ -67,9 +67,6 @@ public sealed class Migrations : DataMigration
                 .Column<string>(nameof(StaggeredMaintenanceIndex.ErrorLogs), column => column.Unlimited()),
             collection: DocumentCollections.Maintenance);
 
-        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredMaintenanceTenantStatusPart), part => part
-            .WithField<NumericField>(nameof(StaggeredMaintenanceTenantStatusPart.Version)));
-
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenanceStatus, builder => builder
             .WithPart<StaggeredMaintenanceTenantStatusPart>()
             .Creatable()
