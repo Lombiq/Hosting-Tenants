@@ -25,6 +25,9 @@ public sealed class Startup : StartupBase
         services.AddSingleton<IIndexProvider, MaintenanceTaskExecutionIndexProvider>();
         services.AddSingleton<IIndexProvider, StaggeredMaintenanceIndexProvider>();
 
+        services.AddContentPart<StaggeredMaintenancePart>()
+            .WithIndex<StaggeredMaintenanceIndexProvider>();
+        services.AddContentPart<StaggeredMaintenanceTenantStatusPart>();
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
         services.AddScoped<IStaggeredMaintenanceService, StaggeredMaintenanceService>();
