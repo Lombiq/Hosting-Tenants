@@ -139,7 +139,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                         // Only logging is necessary here, as the actual maintenance and migration tasks are already done
                         // when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
-                        await SaveMaintenanceStatusAsync(staggeredMaintenancePart);
+                        await SaveMaintenanceStatusAsync(staggeredMaintenancePart, remainingTenant.TenantId);
 
                         tenantLogger.LogError(
                             "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
