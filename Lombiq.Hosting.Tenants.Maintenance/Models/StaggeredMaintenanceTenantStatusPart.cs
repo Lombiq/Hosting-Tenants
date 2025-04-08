@@ -1,9 +1,9 @@
-﻿using OrchardCore.ContentFields.Fields;
-using OrchardCore.ContentManagement;
+﻿using OrchardCore.ContentManagement;
+using System.Collections.Generic;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 
 public class StaggeredMaintenanceTenantStatusPart : ContentPart
 {
-    public NumericField Version { get; set; } = new();
+    public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
 }

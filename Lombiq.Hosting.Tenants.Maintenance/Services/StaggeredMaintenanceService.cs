@@ -187,12 +187,19 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             : staggeredMaintenanceTenantStatusContentItem;
     }
 
-    private async Task SaveMaintenanceStatusAsync(StaggeredMaintenancePart staggeredMaintenancePart)
+    private async Task SaveMaintenanceStatusAsync(StaggeredMaintenancePart staggeredMaintenancePart, string tenantId)
     {
         var maintenanceStatus = await GetStaggeredMaintenanceStatusAsync();
         var maintenanceStatusPart = maintenanceStatus.As<StaggeredMaintenanceTenantStatusPart>();
 
-        maintenanceStatusPart.Version.Value = staggeredMaintenancePart.CurrentVersion.Value;
+        if (maintenanceStatusPart.Versions.ContainsKey(tenantId))
+        {
+            maintenanceStatusPart.Versions[tenantId] = staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString();
+        }
+        else
+        {
+            maintenanceStatusPart.Versions.Add(tenantId, staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString());
+        }
 
         await SaveSettingsAsync(maintenanceStatus, maintenanceStatusPart);
     }
