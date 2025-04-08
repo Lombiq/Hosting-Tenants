@@ -11,9 +11,7 @@ public class StaggeredMaintenancePart : ContentPart
     public NumericField AllTenantCount { get; set; } = new() { Value = 0 };
     public NumericField ProcessedTenantsCount { get; set; } = new() { Value = 0 };
     public NumericField CurrentVersion { get; set; } = new() { Value = 0 };
-
-    [JsonIgnore]
-    public IList<string> ProcessedTenantNames { get; } = [];
+    public IList<string> ProcessedTenantIds { get; } = [];
 
     [JsonIgnore]
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();

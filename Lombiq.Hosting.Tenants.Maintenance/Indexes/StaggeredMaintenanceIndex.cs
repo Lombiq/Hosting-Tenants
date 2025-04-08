@@ -28,7 +28,7 @@ public class StaggeredMaintenanceIndexProvider : IndexProvider<StaggeredMaintena
                 AllTenantCount = part.AllTenantCount.Value ?? 0,
                 ProcessedTenantsCount = part.ProcessedTenantsCount.Value ?? 0,
                 CurrentVersion = part.CurrentVersion.Value ?? 0,
-                ProcessedTenantNames = JsonSerializer.Serialize(part.ProcessedTenantNames),
+                ProcessedTenantNames = JsonSerializer.Serialize(part.ProcessedTenantIds),
                 ErrorLogs = JsonSerializer.Serialize(part.ErrorLogs),
             });
 }
