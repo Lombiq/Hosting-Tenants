@@ -10,15 +10,29 @@ public class StaggeredMaintenanceController : Controller
 {
     public async Task<IActionResult> Index()
     {
-        await HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(StaggeredMaintenanceController), scope =>
-        {
-            var staggeredMaintenanceService = scope.ServiceProvider.GetService<IStaggeredMaintenanceService>();
-
-            // This method fetches the next batch of emails from the IMAP server. When it syncs an email it calls the
-            // EmailSyncedAsync method of the registered email sync event handlers.
-            return staggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync();
-        });
+        await ExecuteScheduledMaintenanceAsync();
 
         return Ok("Maintenance tasks have been scheduled.");
     }
+
+    public async Task<IActionResult> NewVersion()
+    {
+        await ExecuteScheduledMaintenanceAsync(newVersion: true);
+
+        return Ok("Maintenance tasks have been scheduled.");
+    }
+
+    public async Task<IActionResult> Reset()
+    {
+        await ExecuteScheduledMaintenanceAsync(reset: true);
+
+        return Ok("Maintenance tasks have been scheduled.");
+    }
+
+    private Task ExecuteScheduledMaintenanceAsync(bool newVersion = false, bool reset = false) =>
+        HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(StaggeredMaintenanceController), scope =>
+        {
+            var staggeredMaintenanceService = scope.ServiceProvider.GetRequiredService<IStaggeredMaintenanceService>();
+            return staggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);
+        });
 }
