@@ -9,12 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Services;
 
 public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 {
+    private static readonly SemaphoreSlim _lock = new(1, 1);
+
     private readonly IShellHost _shellHost;
     private readonly IContentManager _contentManager;
     private readonly ISiteService _siteService;
@@ -33,6 +36,27 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     }
 
     public async Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
+    {
+        // Only one thread can run the maintenance at a time, we don't want to run it in parallel. Also, we don't want
+        // to run after each other, so we use a SemaphoreSlim to limit the number of concurrent threads to 1 and check
+        // if the current count is 0 before running the maintenance.
+        if (_lock.CurrentCount == 0)
+        {
+            return null;
+        }
+
+        await _lock.WaitAsync();
+        try
+        {
+            return await StaggeredMaintenanceAsync(newVersion, reset);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    private async Task<StaggeredMaintenancePart> StaggeredMaintenanceAsync(bool newVersion, bool reset)
     {
         MaintenanceJobStore.Clear(nameof(RunScheduledMaintenanceForAllTenantAsync));
         // Get or create the StaggeredMaintenance.
