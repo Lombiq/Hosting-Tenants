@@ -97,6 +97,9 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
             await SaveSettingsAsync(staggeredContentItem, staggeredMaintenancePart);
 
+            // Commit the changes to the database.
+            await _session.SaveChangesAsync();
+
             // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
         }
@@ -210,6 +213,5 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         var siteSettings = await _siteService.LoadSiteSettingsAsync();
         siteSettings.Properties[contentItem.ContentType] = JObject.FromObject(contentItem);
         await _siteService.UpdateSiteSettingsAsync(siteSettings);
-        await _session.SaveChangesAsync();
     }
 }
