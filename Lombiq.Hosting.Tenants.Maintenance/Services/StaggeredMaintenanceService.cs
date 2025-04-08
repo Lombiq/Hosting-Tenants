@@ -39,7 +39,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         var staggeredContentItem = await GetStaggeredMaintenanceAsync();
         var staggeredMaintenancePart = staggeredContentItem.As<StaggeredMaintenancePart>();
 
-        if (newVersion)
+        if (newVersion || staggeredMaintenancePart.CurrentVersion.Value == 0)
         {
             staggeredMaintenancePart.CurrentVersion.Value++;
         }
