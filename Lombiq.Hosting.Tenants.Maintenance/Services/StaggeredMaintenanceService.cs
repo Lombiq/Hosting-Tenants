@@ -142,8 +142,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                         await SaveMaintenanceStatusAsync(staggeredMaintenancePart, remainingTenant.TenantId);
 
                         tenantLogger.LogError(
-                            "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
-                            remainingTenant.Name,
+                            "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
                             staggeredMaintenancePart.CurrentVersion.Value);
                     },
                     remainingTenant.Name);
@@ -164,7 +163,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             }
             finally
             {
-                // Save the changes to the database in StaggeredMaintenance and StaggeredMaintenanceStatus.
+                // We should always add the tenant to the processed list, even if it failed.
                 staggeredMaintenancePart.ProcessedTenantIds.Add(remainingTenant.TenantId);
                 staggeredMaintenancePart.ProcessedTenantsCount.Value++;
             }
