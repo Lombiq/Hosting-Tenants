@@ -1,41 +1,82 @@
 ﻿using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentManagement;
+using OrchardCore.Modules;
+using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 
 public class StaggeredMaintenancePart : ContentPart
 {
-    public NumericField ProgressPercentage { get; set; } = new() { Value = 0 };
-    public NumericField AllTenantCount { get; set; } = new() { Value = 0 };
-    public NumericField ProcessedTenantsCount { get; set; } = new() { Value = 0 };
-    public NumericField ProcessingStep { get; set; } = new() { Value = 1 };
-    public NumericField CurrentVersion { get; set; } = new() { Value = 0 };
+    public NumericField ProgressPercentage { get; } = new() { Value = 0 };
+    public NumericField AllTenantCount { get; } = new() { Value = 0 };
+    public NumericField ProcessedTenantsCount { get; } = new() { Value = 0 };
+    public NumericField ProcessingStep { get; } = new() { Value = 1 };
+    public NumericField CurrentVersion { get; } = new() { Value = 0 };
+
+    public BooleanField Canceled { get; } = new();
+    public BooleanField Running { get; } = new();
+
+    public DateTimeField Started { get; set; } = new();
+    public DateTimeField Finished { get; set; } = new();
     public IList<string> ProcessedTenantIds { get; } = [];
-
-    public HtmlField ErrorLogsHtmlField { get; set; } = new()
-    {
-        Html = JsonSerializer.Serialize(new Dictionary<string, string>(), JOptions.CamelCaseIndented),
-    };
-
-    [JsonIgnore]
+    public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
 
-    public void AddErrorLog(string tenantId, string error)
+    public void AddErrorLog(string tenantName, string error) => ErrorLogs.Add(tenantName, error);
+
+    public void AddVersion(string tenantName, string version) => Versions[tenantName] = version;
+
+    public void CalculatePercentage() =>
+        ProgressPercentage.Value = Math.Round((decimal)(ProcessedTenantsCount.Value / AllTenantCount.Value * 100)!, 0);
+
+    public void SetVersion(bool newVersion)
     {
-        ErrorLogs.Add(tenantId, error);
-        ErrorLogsHtmlField.Html = JsonSerializer.Serialize(ErrorLogs, JOptions.CamelCaseIndented);
+        if (newVersion || CurrentVersion.Value == 0)
+        {
+            CurrentVersion.Value++;
+        }
     }
 
-    public void Clear()
+    public void ProcessTenant(string tenantId)
     {
-        ProcessedTenantIds.Clear();
-        AllTenantCount.Value = 0;
-        ProcessedTenantsCount.Value = 0;
-        ProgressPercentage.Value = 0;
-        ErrorLogs.Clear();
-        ErrorLogsHtmlField.Html = JsonSerializer.Serialize(ErrorLogs, JOptions.CamelCaseIndented);
+        ProcessedTenantIds.Add(tenantId);
+        ProcessedTenantsCount.Value++;
     }
+
+    public void Clear(bool newVersion, bool reset)
+    {
+        if (newVersion || reset)
+        {
+            ProcessedTenantIds.Clear();
+            AllTenantCount.Value = 0;
+            ProcessedTenantsCount.Value = 0;
+            ProgressPercentage.Value = 0;
+            ErrorLogs.Clear();
+        }
+    }
+
+    public void Cancel()
+    {
+        Canceled.Value = true;
+        Running.Value = false;
+    }
+
+    public void Start(IClock clock, string maintenanceJobName, bool newVersion, bool reset)
+    {
+        MaintenanceJobStore.Clear(maintenanceJobName);
+        Running.Value = true;
+        Canceled.Value = false;
+        Started.Value = clock.UtcNow;
+        SetVersion(newVersion);
+        Clear(newVersion, reset);
+    }
+
+    public void Finish(IClock clock)
+    {
+        Running.Value = false;
+        Finished.Value = clock.UtcNow;
+    }
+
+    public bool IsFinished() => !Running.Value && ProgressPercentage.Value == 100;
 }

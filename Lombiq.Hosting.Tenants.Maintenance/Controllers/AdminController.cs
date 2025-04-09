@@ -1,25 +1,48 @@
 ﻿using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using OrchardCore.Admin;
 using OrchardCore.BackgroundJobs;
+using OrchardCore.DisplayManagement.Notify;
 using System;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Controllers;
 
-public class StaggeredMaintenanceController : Controller
+[Admin("StaggeredMaintenance/{action}")]
+public class AdminController : Controller
 {
-    private readonly ILogger<StaggeredMaintenanceController> _logger;
+    private readonly ILogger<AdminController> _logger;
+    private readonly INotifier _notifier;
+    private readonly IHtmlLocalizer<AdminController> H;
+    private readonly IStaggeredMaintenanceService _staggeredMaintenanceService;
 
     public delegate Task CompletionEventHandler(StaggeredMaintenancePart part);
 
     public static CompletionEventHandler OnComplete { get; set; }
 
-    public StaggeredMaintenanceController(ILogger<StaggeredMaintenanceController> logger) => _logger = logger;
+    public AdminController(
+        ILogger<AdminController> logger,
+        INotifier notifier,
+        IHtmlLocalizer<AdminController> htmlLocalizer,
+        IStaggeredMaintenanceService staggeredMaintenanceService)
+    {
+        _logger = logger;
+        _notifier = notifier;
+        H = htmlLocalizer;
+        _staggeredMaintenanceService = staggeredMaintenanceService;
+    }
 
     public async Task<IActionResult> Index()
+    {
+        var model = await _staggeredMaintenanceService.GetStaggeredMaintenanceAsync();
+        return View(model: model);
+    }
+
+    public async Task<IActionResult> Start()
     {
         await ExecuteScheduledMaintenanceAsync();
         OnComplete += async part =>
@@ -28,31 +51,39 @@ public class StaggeredMaintenanceController : Controller
             await Task.CompletedTask;
         };
 
-        return Ok("Maintenance tasks have been scheduled.");
+        await _notifier.SuccessAsync(H["Started staggered maintenance."]);
+        return RedirectToIndex();
     }
 
     public async Task<IActionResult> NewVersion()
     {
         await ExecuteScheduledMaintenanceAsync(newVersion: true);
 
-        return Ok("Maintenance tasks have been scheduled.");
+        await _notifier.SuccessAsync(H["Started staggered maintenance for new version."]);
+        return RedirectToIndex();
     }
 
     public async Task<IActionResult> Reset()
     {
         await ExecuteScheduledMaintenanceAsync(reset: true);
 
-        return Ok("Maintenance tasks have been scheduled.");
+        await _notifier.SuccessAsync(H["Started staggered maintenance with reset."]);
+        return RedirectToIndex();
     }
 
-    public IActionResult Cancel()
+    public async Task<IActionResult> Cancel()
     {
         MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
-        return Ok("Cancellation requested.");
+
+        await _notifier.SuccessAsync(H["Cancelled staggered maintenance."]);
+        return RedirectToIndex();
     }
 
+    private RedirectToActionResult RedirectToIndex() =>
+        RedirectToAction(nameof(Index));
+
     private Task ExecuteScheduledMaintenanceAsync(bool newVersion = false, bool reset = false) =>
-        HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(StaggeredMaintenanceController), async scope =>
+        HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(AdminController), async scope =>
         {
             var staggeredMaintenanceService = scope.ServiceProvider.GetRequiredService<IStaggeredMaintenanceService>();
             var staggeredMaintenancePart = await staggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);

@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ContentManagement" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Contents" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.1.0" />
     <PackageReference Include="OrchardCore.DisplayManagement" Version="2.1.0" />
     <PackageReference Include="OrchardCore.Settings" Version="2.1.0" />

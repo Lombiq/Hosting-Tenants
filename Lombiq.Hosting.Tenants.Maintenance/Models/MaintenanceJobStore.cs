@@ -10,5 +10,5 @@ public static class MaintenanceJobStore
 
     public static bool IsCancelled(string jobId) => _cancelFlags.TryGetValue(jobId, out var cancel) && cancel;
 
-    public static void Clear(string jobId) => _cancelFlags.TryRemove(jobId, out _);
+    public static bool Clear(string jobId) => _cancelFlags.TryRemove(jobId, out _);
 }

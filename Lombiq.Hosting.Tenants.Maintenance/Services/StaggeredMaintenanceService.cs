@@ -3,12 +3,12 @@ using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OrchardCore.ContentManagement;
+using OrchardCore.ContentManagement.Records;
 using OrchardCore.Environment.Shell;
-using OrchardCore.Settings;
+using OrchardCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using YesSql;
@@ -21,22 +21,22 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
     private readonly IShellHost _shellHost;
     private readonly IContentManager _contentManager;
-    private readonly ISiteService _siteService;
     private readonly ILogger<StaggeredMaintenanceService> _logger;
     private readonly ISession _session;
+    private readonly IClock _clock;
 
     public StaggeredMaintenanceService(
         IShellHost shellHost,
         IContentManager contentManager,
-        ISiteService siteService,
         ILogger<StaggeredMaintenanceService> logger,
-        ISession session)
+        ISession session,
+        IClock clock)
     {
         _shellHost = shellHost;
         _contentManager = contentManager;
-        _siteService = siteService;
         _logger = logger;
         _session = session;
+        _clock = clock;
     }
 
     public async Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
@@ -50,67 +50,72 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         }
 
         await _lock.WaitAsync();
+
+        var staggeredMaintenancePart = (await GetStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
         try
         {
-            return await StaggeredMaintenanceAsync(newVersion, reset);
+            await StaggeredMaintenanceAsync(staggeredMaintenancePart, newVersion, reset);
         }
         finally
         {
+            staggeredMaintenancePart.Finish(_clock);
+            await SaveSettingsAsync(staggeredMaintenancePart);
             _lock.Release();
         }
+
+        return staggeredMaintenancePart;
     }
 
-    private async Task<StaggeredMaintenancePart> StaggeredMaintenanceAsync(bool newVersion, bool reset)
+    public async Task<ContentItem> GetStaggeredMaintenanceAsync()
     {
-        MaintenanceJobStore.Clear(nameof(RunScheduledMaintenanceForAllTenantAsync));
-        // Get or create the StaggeredMaintenance.
-        var staggeredContentItem = await GetStaggeredMaintenanceAsync();
-        var staggeredMaintenancePart = staggeredContentItem.As<StaggeredMaintenancePart>();
+        var staggeredContentItem =
+            await _session.Query<ContentItem, ContentItemIndex>(item => item.ContentType == ContentTypes.StaggeredMaintenance)
+                .FirstOrDefaultAsync();
 
-        if (newVersion || staggeredMaintenancePart.CurrentVersion.Value == 0)
-        {
-            staggeredMaintenancePart.CurrentVersion.Value++;
-        }
+        return string.IsNullOrEmpty(staggeredContentItem?.ContentItemId)
+            ? await _contentManager.NewAsync(ContentTypes.StaggeredMaintenance)
+            : staggeredContentItem;
+    }
 
-        if (newVersion || reset)
-        {
-            staggeredMaintenancePart.Clear();
-        }
+    private async Task StaggeredMaintenanceAsync(
+        StaggeredMaintenancePart staggeredMaintenancePart,
+        bool newVersion,
+        bool reset)
+    {
+        staggeredMaintenancePart.Start(_clock, nameof(RunScheduledMaintenanceForAllTenantAsync), newVersion, reset);
 
-        staggeredMaintenancePart.AllTenantCount.Value = GetAllRunningTenantSettingsExceptDefault().Count();
         var remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
+
         while (remainingTenants.Count != 0)
         {
-            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync))) return staggeredMaintenancePart;
+            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync)))
+            {
+                staggeredMaintenancePart.Cancel();
+                return;
+            }
 
             await RunStaggeredMaintenanceForEachTenantAsync(
                 remainingTenants,
                 staggeredMaintenancePart);
 
             // Calculate percentage of completed tenants.
-            staggeredMaintenancePart.ProgressPercentage.Value =
-                Math.Round(
-                    (decimal)(staggeredMaintenancePart.ProcessedTenantsCount.Value / staggeredMaintenancePart.AllTenantCount.Value * 100)!,
-                    0);
+            staggeredMaintenancePart.CalculatePercentage();
 
-            await SaveSettingsAsync(staggeredContentItem, staggeredMaintenancePart);
-
+            await SaveSettingsAsync(staggeredMaintenancePart);
             await _session.SaveChangesAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
 
             // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
         }
-
-        return staggeredMaintenancePart;
     }
 
     private List<ShellSettings> GetRemainingTenants(StaggeredMaintenancePart staggeredMaintenancePart)
     {
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
 
-        var take = staggeredMaintenancePart.ProcessingStep.Value != null
-            ? (int)staggeredMaintenancePart.ProcessingStep.Value
-            : 1;
+        var take = (int)staggeredMaintenancePart.ProcessingStep.Value!;
         staggeredMaintenancePart.AllTenantCount.Value = allTenants.Count;
 
         return allTenants.Where(settings => !staggeredMaintenancePart.ProcessedTenantIds.Contains(settings.TenantId))
@@ -136,14 +141,17 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                         // Only logging is necessary here, as the actual maintenance and migration tasks are already done
                         // when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
-
                         tenantLogger.LogError(
                             "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
                             staggeredMaintenancePart.CurrentVersion.Value);
                         return Task.CompletedTask;
                     },
                     remainingTenant.Name);
-                await Task.Delay(TimeSpan.FromSeconds(5));
+
+                await SaveMaintenanceVersionAsync(
+                    staggeredMaintenancePart,
+                    staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString(),
+                    remainingTenant.Name);
 
                 _logger.LogError(
                     "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
@@ -157,41 +165,28 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                     "Staggered maintenance for tenant '{TenantName}' for maintenance version {Version} failed.",
                     remainingTenant.Name,
                     staggeredMaintenancePart.CurrentVersion.Value);
-                staggeredMaintenancePart.AddErrorLog(remainingTenant.TenantId, exception.Message);
+                staggeredMaintenancePart.AddErrorLog(remainingTenant.Name, exception.Message);
             }
             finally
             {
                 // We should always add the tenant to the processed list, even if it failed.
-                staggeredMaintenancePart.ProcessedTenantIds.Add(remainingTenant.TenantId);
-                staggeredMaintenancePart.ProcessedTenantsCount.Value++;
+                staggeredMaintenancePart.ProcessTenant(remainingTenant.TenantId);
             }
         }
     }
 
-    private async Task<ContentItem> GetStaggeredMaintenanceAsync()
+    private Task SaveMaintenanceVersionAsync(
+        StaggeredMaintenancePart staggeredMaintenancePart,
+        string version,
+        string tenantName)
     {
-        var staggeredContentItem =
-            await _siteService.GetSettingsAsync<ContentItem>(ContentTypes.StaggeredMaintenance);
-
-        return string.IsNullOrEmpty(staggeredContentItem.ContentItemId)
-            ? await _contentManager.NewAsync(ContentTypes.StaggeredMaintenance)
-            : staggeredContentItem;
+        staggeredMaintenancePart.AddVersion(tenantName, version);
+        return SaveSettingsAsync(staggeredMaintenancePart);
     }
 
-    private async Task<ContentItem> GetStaggeredMaintenanceStatusAsync()
-    {
-        var staggeredMaintenanceTenantStatusContentItem =
-            await _siteService.GetSettingsAsync<ContentItem>(ContentTypes.StaggeredMaintenanceStatus);
-        return string.IsNullOrEmpty(staggeredMaintenanceTenantStatusContentItem.ContentItemId)
-            ? await _contentManager.NewAsync(ContentTypes.StaggeredMaintenanceStatus)
-            : staggeredMaintenanceTenantStatusContentItem;
-    }
-
-    private async Task SaveSettingsAsync(ContentItem contentItem, ContentPart part)
+    private Task SaveSettingsAsync(ContentPart part)
     {
         part.Apply();
-        var siteSettings = await _siteService.LoadSiteSettingsAsync();
-        siteSettings.Properties[contentItem.ContentType] = JObject.FromObject(contentItem);
-        await _siteService.UpdateSiteSettingsAsync(siteSettings);
+        return _contentManager.CreateOrUpdateAsync(part.ContentItem);
     }
 }

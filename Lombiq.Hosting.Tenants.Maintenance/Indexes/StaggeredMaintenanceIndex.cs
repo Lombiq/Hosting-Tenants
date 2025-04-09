@@ -1,6 +1,5 @@
 ﻿using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
-using System.Text.Json;
 using YesSql.Indexes;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Indexes;
@@ -11,8 +10,6 @@ public class StaggeredMaintenanceIndex : MapIndex
     public decimal AllTenantCount { get; set; }
     public decimal ProcessedTenantsCount { get; set; }
     public decimal CurrentVersion { get; set; }
-    public string ProcessedTenantNames { get; set; }
-    public string ErrorLogs { get; set; }
 }
 
 public class StaggeredMaintenanceIndexProvider : IndexProvider<StaggeredMaintenancePart>
@@ -28,7 +25,5 @@ public class StaggeredMaintenanceIndexProvider : IndexProvider<StaggeredMaintena
                 AllTenantCount = part.AllTenantCount.Value ?? 0,
                 ProcessedTenantsCount = part.ProcessedTenantsCount.Value ?? 0,
                 CurrentVersion = part.CurrentVersion.Value ?? 0,
-                ProcessedTenantNames = JsonSerializer.Serialize(part.ProcessedTenantIds),
-                ErrorLogs = part.ErrorLogsHtmlField.Html,
             });
 }

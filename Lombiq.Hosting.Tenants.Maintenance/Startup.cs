@@ -8,7 +8,7 @@ using OrchardCore.ContentManagement;
 using OrchardCore.Data;
 using OrchardCore.Data.Migration;
 using OrchardCore.Modules;
-using YesSql.Indexes;
+using OrchardCore.Navigation;
 
 namespace Lombiq.Hosting.Tenants.Maintenance;
 
@@ -18,18 +18,16 @@ public sealed class Startup : StartupBase
     {
         services.AddLazyInjectionSupport();
         services.Configure<StoreCollectionOptions>(options => options.Collections.Add(DocumentCollections.Maintenance));
-        services.AddContentPart<StaggeredMaintenancePart>();
-        services.AddContentPart<StaggeredMaintenanceTenantStatusPart>();
 
-        services.AddScoped<IDataMigration, Migrations>();
-        services.AddSingleton<IIndexProvider, MaintenanceTaskExecutionIndexProvider>();
-        services.AddSingleton<IIndexProvider, StaggeredMaintenanceIndexProvider>();
+        services.AddIndexProvider<MaintenanceTaskExecutionIndexProvider>();
+        services.AddDataMigration<Migrations>();
 
         services.AddContentPart<StaggeredMaintenancePart>()
             .WithIndex<StaggeredMaintenanceIndexProvider>();
-        services.AddContentPart<StaggeredMaintenanceTenantStatusPart>();
+
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
         services.AddScoped<IStaggeredMaintenanceService, StaggeredMaintenanceService>();
+        services.AddScoped<INavigationProvider, AdminMenu>();
     }
 }
