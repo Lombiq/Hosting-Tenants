@@ -1,0 +1,152 @@
+﻿@using Lombiq.Hosting.Tenants.Maintenance.Models
+@using OrchardCore.ContentManagement
+@model OrchardCore.ContentManagement.ContentItem
+@{
+    var part = Model.ContentItem.As<StaggeredMaintenancePart>();
+    var currentPercentage = part.ProgressPercentage.Value;
+
+}
+<zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Maintenance"])</h1></zone>
+
+<div class="buttons mt-4">
+    @await DisplayAsync(await New.StaggeredMaintenance__NewVersionButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__ContinueButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__CancelButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__ResetButton(Part: part))
+    <span tabindex="0"
+          class="ms-1"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-html="true"
+          title="@T["Maintenance Actions Info"]"
+          data-bs-content='
+        <div class="mb-2"><strong>@T["Start new"]:</strong> @T["Start staggered maintenance for all the tenants with a new version number."]</div>
+        <div class="mb-2"><strong>@T["Continue"]:</strong> @T["Continues current maintenance version run."]</div>
+        <div class="mb-2"><strong>@T["Cancel"]:</strong> @T["If there is a running maintenance, you can cancel it."]</div>
+        <div class="mb-2"><strong>@T["Reset current version"]:</strong> @T["Runs the staggered maintenance for all the tenants with the current version again."]</div>
+      '>
+        <i class="fas fa-info-circle text-info" style="cursor: pointer;"></i>
+    </span>
+</div>
+
+<div class="progress mb-3 mt-4">
+    <div class="
+            progress-bar
+            progress-bar-striped
+            @(part.Running.Value ? "progress-bar-animated" : string.Empty)
+            @(part.Canceled.Value ? "bg-danger" : string.Empty)
+            @(part.IsFinished() ? "bg-success" : string.Empty)"
+         role="progressbar"
+         aria-valuenow="@currentPercentage"
+         aria-valuemin="0"
+         aria-valuemax="100" style="width: @currentPercentage%">@currentPercentage %</div>
+</div>
+
+<div class="data">
+    <div class="row">
+        <dt class="col-sm-3">@T["Running:"]</dt>
+        <dd class="col-sm-9">@(part.Running.Value ? T["Yes"] : T["No"])</dd>
+
+        <dt class="col-sm-3">@T["Canceled:"]</dt>
+        <dd class="col-sm-9">@(part.Canceled.Value ? T["Yes"] : T["No"])</dd>
+
+        <dt class="col-sm-3">@T["Started:"]</dt>
+        <dd class="col-sm-9">@part.Started.Value</dd>
+
+        <dt class="col-sm-3">@(part.Canceled.Value ? T["Finished (canceled):"] : T["Finished:"])</dt>
+        <dd class="col-sm-9">@part.Finished.Value</dd>
+
+        <dt class="col-sm-3">@T["Current version:"]</dt>
+        <dd class="col-sm-9">@part.CurrentVersion.Value</dd>
+
+        <dt class="col-sm-3">@T["Total running tenants:"]</dt>
+        <dd class="col-sm-9">@part.AllTenantCount.Value</dd>
+
+        <dt class="col-sm-3">@T["Processed tenants:"]</dt>
+        <dd class="col-sm-9">@part.AllTenantCount.Value</dd>
+
+        <!-- Here we show the errors in a toggleable div, so it's not shown automatically. -->
+        <dt class="col-sm-3">@T["Errors ({0}):", part.ErrorLogs.Count] </dt>
+        <dd class="col-sm-9">
+            <a class="btn btn-primary @(part.ErrorLogs.Count > 0 ? string.Empty : "disabled")" type="button" data-bs-toggle="collapse" data-bs-target="#errors" aria-expanded="false" aria-controls="errors">
+                @T["Show errors"]
+            </a>
+        </dd>
+        <div class="collapse" id="errors">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>@T["Name"]</th>
+                        <th>@T["Error"]</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var error in part.ErrorLogs)
+                    {
+                        <tr>
+                            <td>@error.Key</td>
+                            <td>
+                                <a class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#error_@error.Key" aria-expanded="false" aria-controls="error_@error.Key">
+                                    @T["Show error"]
+                                </a>
+                                <div class="collapse" id="error_@error.Key">
+                                    @error.Value
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Here we show the versions in a toggleable div, so it's not shown automatically. -->
+        <dt>@T["Versions"]</dt>
+        <dd>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>@T["Name"]</th>
+                        <th>@T["Version"]</th>
+                        <th>@T["Actions"]</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var version in part.Versions)
+                    {
+                        <tr>
+                            <td>@version.Key</td>
+                            <td>@version.Value</td>
+                            <td>
+                                <a class="btn btn-sm btn-info"
+                                   asp-action="Edit"
+                                   asp-controller="Admin"
+                                   asp-route-id="@version.Key"
+                                   asp-route-area="OrchardCore.Tenants">
+                                    @T["Edit"]
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </dd>
+    </div>
+</div>
+
+<script at="Foot">
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el))
+
+    @if (part.Running?.Value == true)
+    {
+        // Reload every 10 seconds (adjust as needed)
+        <text>
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        </text>
+    }
+</script>
