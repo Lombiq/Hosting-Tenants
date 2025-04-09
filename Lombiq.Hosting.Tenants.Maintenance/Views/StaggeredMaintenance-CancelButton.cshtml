@@ -1,6 +1,6 @@
 @using Lombiq.Hosting.Tenants.Maintenance.Constants
 
-<a class="btn btn-danger mb-1 @(Model.Part.Running.Value ? string.Empty : "disabled")"
+<a class="btn btn-danger mb-1 @(Model.Part.IsFinished() || Model.Part.Canceled.Value ? "disabled" : string.Empty )"
    asp-action="Cancel"
    asp-controller="Admin"
    asp-route-area="@FeatureNames.Maintenance">@T["Cancel"]</a>

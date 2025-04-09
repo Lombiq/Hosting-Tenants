@@ -45,7 +45,7 @@
 <div class="data">
     <div class="row">
         <dt class="col-sm-3">@T["Running:"]</dt>
-        <dd class="col-sm-9">@(part.Running.Value ? T["Yes"] : T["No"])</dd>
+        <dd class="col-sm-9">@(!part.IsFinished() ? T["Yes"] : T["No"])</dd>
 
         <dt class="col-sm-3">@T["Canceled:"]</dt>
         <dd class="col-sm-9">@(part.Canceled.Value ? T["Yes"] : T["No"])</dd>
@@ -63,7 +63,7 @@
         <dd class="col-sm-9">@part.AllTenantCount.Value</dd>
 
         <dt class="col-sm-3">@T["Processed tenants:"]</dt>
-        <dd class="col-sm-9">@part.AllTenantCount.Value</dd>
+        <dd class="col-sm-9">@part.ProcessedTenantsCount.Value</dd>
 
         <!-- Here we show the errors in a toggleable div, so it's not shown automatically. -->
         <dt class="col-sm-3">@T["Errors ({0}):", part.ErrorLogs.Count] </dt>
@@ -140,7 +140,7 @@
 <script at="Foot">
     document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el))
 
-    @if (part.Running?.Value == true)
+    @if (!part.IsFinished() && !part.Canceled.Value)
     {
         // Reload every 10 seconds (adjust as needed)
         <text>

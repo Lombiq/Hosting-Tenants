@@ -78,5 +78,5 @@ public class StaggeredMaintenancePart : ContentPart
         Finished.Value = clock.UtcNow;
     }
 
-    public bool IsFinished() => !Running.Value && ProgressPercentage.Value == 100;
+    public bool IsFinished() => ProgressPercentage.Value == 100;
 }

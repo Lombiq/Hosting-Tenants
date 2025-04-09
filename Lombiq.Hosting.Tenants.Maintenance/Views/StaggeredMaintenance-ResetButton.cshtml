@@ -1,6 +1,6 @@
 @using Lombiq.Hosting.Tenants.Maintenance.Constants
 
-<a class="btn btn-secondary mb-1 @(Model.Part.Running.Value ? "disabled" : string.Empty)"
+<a class="btn btn-secondary mb-1 @(Model.Part.IsFinished() ? string.Empty : "disabled")"
    asp-action="Reset"
    asp-controller="Admin"
    asp-route-area="@FeatureNames.Maintenance">@T["Reset current version"]</a>
