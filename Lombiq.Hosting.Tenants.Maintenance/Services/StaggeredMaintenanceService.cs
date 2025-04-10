@@ -24,19 +24,22 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     private readonly ILogger<StaggeredMaintenanceService> _logger;
     private readonly ISession _session;
     private readonly IClock _clock;
+    private readonly IEnumerable<IStaggeredMaintenanceEvents> _staggeredMaintenanceEvents;
 
     public StaggeredMaintenanceService(
         IShellHost shellHost,
         IContentManager contentManager,
         ILogger<StaggeredMaintenanceService> logger,
         ISession session,
-        IClock clock)
+        IClock clock,
+        IEnumerable<IStaggeredMaintenanceEvents> staggeredMaintenanceEvents)
     {
         _shellHost = shellHost;
         _contentManager = contentManager;
         _logger = logger;
         _session = session;
         _clock = clock;
+        _staggeredMaintenanceEvents = staggeredMaintenanceEvents;
     }
 
     public async Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
@@ -52,6 +55,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         await _lock.WaitAsync();
 
         var staggeredMaintenancePart = (await GetorCreateStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
+        await _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.StartingAsync(staggeredMaintenancePart));
         try
         {
             await StaggeredMaintenanceAsync(staggeredMaintenancePart, newVersion, reset);
@@ -60,6 +64,9 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         {
             staggeredMaintenancePart.Finish(_clock);
             await SaveSettingsAsync(staggeredMaintenancePart);
+
+            await _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.FinishedAsync(staggeredMaintenancePart));
+
             _lock.Release();
         }
 
@@ -81,6 +88,12 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         return staggeredContentItem;
     }
 
+    /// <summary>
+    /// Runs the staggered maintenance for the remaining tenants. This is the main method that will be called to run the
+    /// maintenance. It will start the maintenance, process the tenants in batches, and wait for the specified time
+    /// between batches. It will also check if the maintenance was cancelled and if so, it will stop the maintenance.
+    /// If the maintenance was cancelled, it will invoke the cancelled event for all registered handlers.
+    /// </summary>
     private async Task StaggeredMaintenanceAsync(
         StaggeredMaintenancePart staggeredMaintenancePart,
         bool newVersion,
@@ -92,7 +105,11 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         while (remainingTenants.Count != 0)
         {
-            if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync))) return;
+            if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync)))
+            {
+                await InvokeCancelledEventAsync(staggeredMaintenancePart);
+                return;
+            }
 
             await RunStaggeredMaintenanceForEachTenantAsync(
                 remainingTenants,
@@ -109,10 +126,18 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
             if (remainingTenants.Count != 0 && await WaitBeforeNextAsync(staggeredMaintenancePart))
             {
+                await InvokeCancelledEventAsync(staggeredMaintenancePart);
                 return;
             }
         }
     }
+
+    /// <summary>
+    /// Invokes the cancelled event for all registered handlers. This is to notify the handlers that the maintenance was
+    /// cancelled.
+    /// </summary>
+    private Task InvokeCancelledEventAsync(StaggeredMaintenancePart staggeredMaintenancePart) =>
+        _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.CancelledAsync(staggeredMaintenancePart));
 
     /// <summary>
     /// Waits for the specified time before processing the next tenant. This is to avoid overwhelming the system with
@@ -140,6 +165,11 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         return false;
     }
 
+    /// <summary>
+    /// Gets the remaining tenants that need to be processed. This is done by getting all running tenants and
+    /// excluding the ones that have already been processed. It also takes into account the number of tenants to be
+    /// per batch, so it only returns the number of tenants that need to be processed in the current batch.
+    /// </summary>
     private List<ShellSettings> GetRemainingTenants(StaggeredMaintenancePart staggeredMaintenancePart)
     {
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
@@ -152,10 +182,17 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             .ToList();
     }
 
+    /// <summary>
+    /// Gets all tenant settings which state is running, except the default tenant. This is done to avoid processing the
+    /// default.
+    /// </summary>
     private IEnumerable<ShellSettings> GetAllRunningTenantSettingsExceptDefault() =>
         _shellHost.GetAllSettings()
             .Where(settings => settings.Name != ShellSettings.DefaultShellName && settings.IsRunning());
 
+    /// <summary>
+    /// Tenant level part of the staggered maintenance. This is where the actual tenant triggering is done.
+    /// </summary>
     private async Task RunStaggeredMaintenanceForEachTenantAsync(
         List<ShellSettings> remainingTenants,
         StaggeredMaintenancePart staggeredMaintenancePart)
@@ -170,7 +207,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                         // Only logging is necessary here, as the actual maintenance and migration tasks are already done
                         // when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
-                        tenantLogger.LogError(
+                        tenantLogger.LogInformation(
                             "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
                             staggeredMaintenancePart.CurrentVersion.Value);
                         return Task.CompletedTask;
@@ -182,7 +219,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                     staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString(),
                     remainingTenant.Name);
 
-                _logger.LogError(
+                _logger.LogInformation(
                     "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
                     remainingTenant.Name,
                     staggeredMaintenancePart.CurrentVersion.Value);
@@ -204,6 +241,9 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         }
     }
 
+    /// <summary>
+    /// Saves the current version of the staggered maintenance for the given tenant.
+    /// </summary>
     private Task SaveMaintenanceVersionAsync(
         StaggeredMaintenancePart staggeredMaintenancePart,
         string version,
