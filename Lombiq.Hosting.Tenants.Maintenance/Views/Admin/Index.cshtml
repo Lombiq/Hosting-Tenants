@@ -1,152 +1,164 @@
-﻿@using Lombiq.Hosting.Tenants.Maintenance.Models
-@using OrchardCore.ContentManagement
+﻿@using Lombiq.Hosting.Tenants.Maintenance.Constants
+@using Lombiq.Hosting.Tenants.Maintenance.Controllers
+@using OrchardCore.Mvc.Core.Utilities
 @model OrchardCore.ContentManagement.ContentItem
-@{
-    var part = Model.ContentItem.As<StaggeredMaintenancePart>();
-    var currentPercentage = part.ProgressPercentage.Value;
 
-}
 <zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Maintenance"])</h1></zone>
-
-<div class="buttons mt-4">
-    @await DisplayAsync(await New.StaggeredMaintenance__NewVersionButton(Part: part))
-    @await DisplayAsync(await New.StaggeredMaintenance__ContinueButton(Part: part))
-    @await DisplayAsync(await New.StaggeredMaintenance__CancelButton(Part: part))
-    @await DisplayAsync(await New.StaggeredMaintenance__ResetButton(Part: part))
-    <span tabindex="0"
-          class="ms-1"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-html="true"
-          title="@T["Maintenance Actions Info"]"
-          data-bs-content='
-        <div class="mb-2"><strong>@T["Start new"]:</strong> @T["Start staggered maintenance for all the tenants with a new version number."]</div>
-        <div class="mb-2"><strong>@T["Continue"]:</strong> @T["Continues current maintenance version run."]</div>
-        <div class="mb-2"><strong>@T["Cancel"]:</strong> @T["If there is a running maintenance, you can cancel it."]</div>
-        <div class="mb-2"><strong>@T["Reset current version"]:</strong> @T["Runs the staggered maintenance for all the tenants with the current version again."]</div>
-      '>
-        <i class="fas fa-info-circle text-info" style="cursor: pointer;"></i>
-    </span>
-</div>
-
-<div class="progress mb-3 mt-4">
-    <div class="
-            progress-bar
-            progress-bar-striped
-            @(part.Running.Value ? "progress-bar-animated" : string.Empty)
-            @(part.Canceled.Value ? "bg-danger" : string.Empty)
-            @(part.IsFinished() ? "bg-success" : string.Empty)"
-         role="progressbar"
-         aria-valuenow="@currentPercentage"
-         aria-valuemin="0"
-         aria-valuemax="100" style="width: @currentPercentage%">@currentPercentage %</div>
-</div>
-
-<div class="data">
-    <div class="row">
-        <dt class="col-sm-3">@T["Running:"]</dt>
-        <dd class="col-sm-9">@(!part.IsFinished() ? T["Yes"] : T["No"])</dd>
-
-        <dt class="col-sm-3">@T["Canceled:"]</dt>
-        <dd class="col-sm-9">@(part.Canceled.Value ? T["Yes"] : T["No"])</dd>
-
-        <dt class="col-sm-3">@T["Started:"]</dt>
-        <dd class="col-sm-9">@part.Started.Value</dd>
-
-        <dt class="col-sm-3">@(part.Canceled.Value ? T["Finished (canceled):"] : T["Finished:"])</dt>
-        <dd class="col-sm-9">@part.Finished.Value</dd>
-
-        <dt class="col-sm-3">@T["Current version:"]</dt>
-        <dd class="col-sm-9">@part.CurrentVersion.Value</dd>
-
-        <dt class="col-sm-3">@T["Total running tenants:"]</dt>
-        <dd class="col-sm-9">@part.AllTenantCount.Value</dd>
-
-        <dt class="col-sm-3">@T["Processed tenants:"]</dt>
-        <dd class="col-sm-9">@part.ProcessedTenantsCount.Value</dd>
-
-        <!-- Here we show the errors in a toggleable div, so it's not shown automatically. -->
-        <dt class="col-sm-3">@T["Errors ({0}):", part.ErrorLogs.Count] </dt>
-        <dd class="col-sm-9">
-            <a class="btn btn-primary @(part.ErrorLogs.Count > 0 ? string.Empty : "disabled")" type="button" data-bs-toggle="collapse" data-bs-target="#errors" aria-expanded="false" aria-controls="errors">
-                @T["Show errors"]
-            </a>
-        </dd>
-        <div class="collapse" id="errors">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm">
-                    <thead class="thead-light">
-                    <tr>
-                        <th>@T["Name"]</th>
-                        <th>@T["Error"]</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var error in part.ErrorLogs)
-                    {
-                        <tr>
-                            <td>@error.Key</td>
-                            <td>
-                                <a class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#error_@error.Key" aria-expanded="false" aria-controls="error_@error.Key">
-                                    @T["Show error"]
-                                </a>
-                                <div class="collapse" id="error_@error.Key">
-                                    @error.Value
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Here we show the versions in a toggleable div, so it's not shown automatically. -->
-        <dt>@T["Versions"]</dt>
-        <dd>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-sm">
-                    <thead class="thead-light">
-                    <tr>
-                        <th>@T["Name"]</th>
-                        <th>@T["Version"]</th>
-                        <th>@T["Actions"]</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var version in part.Versions)
-                    {
-                        <tr>
-                            <td>@version.Key</td>
-                            <td>@version.Value</td>
-                            <td>
-                                <a class="btn btn-sm btn-info"
-                                   asp-action="Edit"
-                                   asp-controller="Admin"
-                                   asp-route-id="@version.Key"
-                                   asp-route-area="OrchardCore.Tenants">
-                                    @T["Edit"]
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </dd>
+<div class="d-flex align-items-center gap-3 mb-3">
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="autoRefreshToggle">
+        <label class="form-check-label" for="autoRefreshToggle">@T["Auto Refresh"]</label>
     </div>
+
+    <div>
+        <label for="refreshRateSelect" class="form-label mb-0">@T["Refresh Rate"]</label>
+        <select class="form-select form-select-sm d-inline w-auto" id="refreshRateSelect">
+            <option value="5000">5s</option>
+            <option value="10000" selected>10s</option>
+            <option value="15000">15s</option>
+            <option value="30000">30s</option>
+        </select>
+    </div>
+    <div id="refreshCountdown" class="text-muted small mt-1"></div>
+</div>
+
+
+
+
+<div id="maintenance-status-container">
+    @await Html.PartialAsync("StaggeredMaintenanceDetails", Model)
 </div>
 
 <script at="Foot">
-    document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el))
+    let pollingInterval = null;
+    let countdownTimer = null;
+    let pollingRate = 10000;
+    let countdown = pollingRate / 1000;
 
-    @if (!part.IsFinished() && !part.Canceled.Value)
-    {
-        // Reload every 10 seconds (adjust as needed)
-        <text>
-            setTimeout(function() {
-                location.reload();
-            }, 1000);
-        </text>
+    // === Core Polling ===
+    function startPolling() {
+        stopPolling();
+
+        pollNow();
+
+        pollingInterval = setInterval(() => {
+            pollNow();
+            countdown = pollingRate / 1000;
+        }, pollingRate);
+
+        startCountdown();
     }
+
+    function stopPolling() {
+        if (pollingInterval !== null) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+
+        if (countdownTimer !== null) {
+            clearInterval(countdownTimer);
+            countdownTimer = null;
+        }
+
+        updateCountdownDisplay(true);
+    }
+
+    function pollNow() {
+        if (document.hidden) return;
+
+        fetch('/Admin/StaggeredMaintenance/GetPartialView')
+            .then(response => response.text())
+            .then(updateMaintenanceContent);
+    }
+
+    function updateMaintenanceContent(html) {
+        const container = document.getElementById('maintenance-status-container');
+        const oldBar = document.getElementById('maintenance-progress-bar');
+        const oldWidth = oldBar?.style.width;
+        const oldNumber = oldBar ? parseInt(oldBar.textContent) : 0;
+
+        container.innerHTML = html;
+
+        const newBar = document.getElementById('maintenance-progress-bar');
+        if (newBar && oldWidth) {
+            newBar.style.width = oldWidth;
+            void newBar.offsetWidth;
+            newBar.style.width = newBar.getAttribute('aria-valuenow') + '%';
+        }
+
+        const newPercentage = parseInt(newBar?.getAttribute('aria-valuenow') || "0");
+        if (newBar) animateNumber(newBar, oldNumber, newPercentage);
+
+        const isRunning = container.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
+        if (!isRunning) stopPolling();
+
+        // Re-initialize popovers
+        document.querySelectorAll('[data-bs-toggle="popover"]').forEach(el => new bootstrap.Popover(el));
+    }
+
+    // === Countdown ===
+    function startCountdown() {
+        countdown = pollingRate / 1000;
+        updateCountdownDisplay();
+
+        countdownTimer = setInterval(() => {
+            countdown--;
+            updateCountdownDisplay();
+        }, 1000);
+    }
+
+    function updateCountdownDisplay(clear = false) {
+        const el = document.getElementById('refreshCountdown');
+        if (!el) return;
+
+        el.textContent = clear ? '' : `Next refresh in ${countdown}s`;
+    }
+
+    // === Animation ===
+    function animateNumber(element, start, target) {
+        const duration = 800;
+        const startTime = performance.now();
+
+        function step(currentTime) {
+            const progress = Math.min((currentTime - startTime) / duration, 1);
+            const value = Math.floor(progress * (target - start) + start);
+            element.textContent = value + ' %';
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    // === Init ===
+    const toggle = document.getElementById('autoRefreshToggle');
+    const rateSelect = document.getElementById('refreshRateSelect');
+
+    const savedToggle = localStorage.getItem('autoRefreshEnabled');
+    const savedRate = localStorage.getItem('autoRefreshRate');
+
+    if (savedToggle !== null) toggle.checked = savedToggle === 'true';
+    if (savedRate !== null) {
+        rateSelect.value = savedRate;
+        pollingRate = parseInt(savedRate);
+    }
+
+    if (toggle.checked) startPolling();
+
+    toggle.addEventListener('change', () => {
+        localStorage.setItem('autoRefreshEnabled', toggle.checked);
+        toggle.checked ? startPolling() : stopPolling();
+    });
+
+    rateSelect.addEventListener('change', () => {
+        pollingRate = parseInt(rateSelect.value);
+        localStorage.setItem('autoRefreshRate', pollingRate);
+        if (toggle.checked) startPolling();
+    });
+
+    // === Tab visibility handler ===
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && toggle.checked) {
+            startPolling();
+        }
+    });
 </script>

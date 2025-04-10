@@ -1,0 +1,6 @@
+
+<a class="btn btn-info mb-1 @(Model.Part.IsRunning() ? "disabled" : string.Empty)"
+   asp-action="Edit"
+   asp-controller="Admin"
+   asp-route-contentItemId="@Model.Part.ContentItem.ContentItemId"
+   asp-route-area="OrchardCore.Contents">@T["Edit"]</a>

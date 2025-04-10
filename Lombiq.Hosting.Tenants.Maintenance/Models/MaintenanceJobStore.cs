@@ -6,9 +6,19 @@ public static class MaintenanceJobStore
 {
     private static readonly ConcurrentDictionary<string, bool> _cancelFlags = new();
 
-    public static void RequestCancel(string jobId) => _cancelFlags[jobId] = true;
+    public static bool RequestCancel(string jobId)
+    {
+        // Check if there is a job running.
+        if (_cancelFlags.ContainsKey(jobId))
+        {
+            _cancelFlags[jobId] = true;
+            return true;
+        }
+
+        return false;
+    }
 
     public static bool IsCancelled(string jobId) => _cancelFlags.TryGetValue(jobId, out var cancel) && cancel;
 
-    public static bool Clear(string jobId) => _cancelFlags.TryRemove(jobId, out _);
+    public static bool Clear(string jobId) => _cancelFlags.TryAdd(jobId, value: false);
 }

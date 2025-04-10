@@ -51,7 +51,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         await _lock.WaitAsync();
 
-        var staggeredMaintenancePart = (await GetStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
+        var staggeredMaintenancePart = (await GetorCreateStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
         try
         {
             await StaggeredMaintenanceAsync(staggeredMaintenancePart, newVersion, reset);
@@ -66,15 +66,19 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         return staggeredMaintenancePart;
     }
 
-    public async Task<ContentItem> GetStaggeredMaintenanceAsync()
+    public async Task<ContentItem> GetorCreateStaggeredMaintenanceAsync()
     {
         var staggeredContentItem =
             await _session.Query<ContentItem, ContentItemIndex>(item => item.ContentType == ContentTypes.StaggeredMaintenance)
                 .FirstOrDefaultAsync();
 
-        return string.IsNullOrEmpty(staggeredContentItem?.ContentItemId)
-            ? await _contentManager.NewAsync(ContentTypes.StaggeredMaintenance)
-            : staggeredContentItem;
+        if (string.IsNullOrEmpty(staggeredContentItem?.ContentItemId))
+        {
+            staggeredContentItem = await _contentManager.NewAsync(ContentTypes.StaggeredMaintenance);
+            await _contentManager.CreateAsync(staggeredContentItem);
+        }
+
+        return staggeredContentItem;
     }
 
     private async Task StaggeredMaintenanceAsync(
@@ -88,11 +92,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         while (remainingTenants.Count != 0)
         {
-            if (MaintenanceJobStore.IsCancelled(nameof(RunScheduledMaintenanceForAllTenantAsync)))
-            {
-                staggeredMaintenancePart.Cancel();
-                return;
-            }
+            if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync))) return;
 
             await RunStaggeredMaintenanceForEachTenantAsync(
                 remainingTenants,
@@ -104,11 +104,40 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             await SaveSettingsAsync(staggeredMaintenancePart);
             await _session.SaveChangesAsync();
 
-            await Task.Delay(TimeSpan.FromSeconds(2));
-
             // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
+
+            if (remainingTenants.Count != 0 && await WaitBeforeNextAsync(staggeredMaintenancePart))
+            {
+                return;
+            }
         }
+    }
+
+    /// <summary>
+    /// Waits for the specified time before processing the next tenant. This is to avoid overwhelming the system with
+    /// requests and also checking periodically if the maintenance was cancelled.
+    /// </summary>
+    /// <returns><see langword="true"/> if the maintenance was cancelled, <see langword="false"/> otherwise.</returns>
+    private async Task<bool> WaitBeforeNextAsync(StaggeredMaintenancePart staggeredMaintenancePart)
+    {
+        var waited = TimeSpan.Zero;
+        var delay = staggeredMaintenancePart.TimeSpanBetweenBatches.Value!.Value;
+        var delayCheckInterval = TimeSpan.FromMilliseconds(500);
+        while (waited < delay)
+        {
+            if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync)))
+            {
+                _logger.LogInformation("Maintenance cancelled during delay wait. Exiting.");
+                return true;
+            }
+
+            var waitTime = delay - waited < delayCheckInterval ? delay - waited : delayCheckInterval;
+            await Task.Delay(waitTime);
+            waited += waitTime;
+        }
+
+        return false;
     }
 
     private List<ShellSettings> GetRemainingTenants(StaggeredMaintenancePart staggeredMaintenancePart)

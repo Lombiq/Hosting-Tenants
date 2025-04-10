@@ -62,4 +62,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Views\Admin\StaggeredMaintenanceDetails.cshtml" />
+  </ItemGroup>
+
 </Project>

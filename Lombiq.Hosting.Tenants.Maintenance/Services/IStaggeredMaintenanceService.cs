@@ -8,5 +8,5 @@ public interface IStaggeredMaintenanceService
 {
     Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false);
 
-    Task<ContentItem> GetStaggeredMaintenanceAsync();
+    Task<ContentItem> GetorCreateStaggeredMaintenanceAsync();
 }

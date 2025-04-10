@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using OrchardCore.Admin;
 using OrchardCore.BackgroundJobs;
+using OrchardCore.ContentManagement;
 using OrchardCore.DisplayManagement.Notify;
 using System;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ public class AdminController : Controller
     private readonly INotifier _notifier;
     private readonly IHtmlLocalizer<AdminController> H;
     private readonly IStaggeredMaintenanceService _staggeredMaintenanceService;
+    private readonly Lazy<IContentManager> _contentManagerLazy;
 
     public delegate Task CompletionEventHandler(StaggeredMaintenancePart part);
 
@@ -28,18 +30,28 @@ public class AdminController : Controller
         ILogger<AdminController> logger,
         INotifier notifier,
         IHtmlLocalizer<AdminController> htmlLocalizer,
-        IStaggeredMaintenanceService staggeredMaintenanceService)
+        IStaggeredMaintenanceService staggeredMaintenanceService,
+        Lazy<IContentManager> contentManagerLazy)
     {
         _logger = logger;
         _notifier = notifier;
         H = htmlLocalizer;
         _staggeredMaintenanceService = staggeredMaintenanceService;
+        _contentManagerLazy = contentManagerLazy;
     }
 
     public async Task<IActionResult> Index()
     {
-        var model = await _staggeredMaintenanceService.GetStaggeredMaintenanceAsync();
+        var model = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
         return View(model: model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPartialView()
+    {
+        var model = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
+
+        return PartialView("StaggeredMaintenanceDetails", model);
     }
 
     public async Task<IActionResult> Start()
@@ -47,6 +59,12 @@ public class AdminController : Controller
         await ExecuteScheduledMaintenanceAsync();
         OnComplete += async part =>
         {
+            if (part == null)
+            {
+                _logger.LogError("Maintenance failed!");
+                await _notifier.ErrorAsync(H["Maintenance failed!"]);
+                return;
+            }
             _logger.LogError("Maintenance complete! Processed: {Count}", part.ProcessedTenantsCount.Value);
             await Task.CompletedTask;
         };
@@ -73,7 +91,15 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Cancel()
     {
-        MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
+        var successfulCancel = MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
+
+        // If not successful we should directly set the part to cancelled, because it is not running.
+        if (!successfulCancel)
+        {
+            var staggeredMaintenance = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
+            staggeredMaintenance.Alter<StaggeredMaintenancePart>(part => part.Canceled.Value = true);
+            await _contentManagerLazy.Value.UpdateAsync(staggeredMaintenance);
+        }
 
         await _notifier.SuccessAsync(H["Cancelled staggered maintenance."]);
         return RedirectToIndex();

@@ -1,0 +1,167 @@
+@using Lombiq.Hosting.Tenants.Maintenance.Models
+@using OrchardCore.ContentManagement
+@model OrchardCore.ContentManagement.ContentItem
+@{
+    var part = Model.ContentItem.As<StaggeredMaintenancePart>();
+    var currentPercentage = part.ProgressPercentage.Value;
+
+}
+
+<div class="buttons mt-4">
+    @await DisplayAsync(await New.StaggeredMaintenance__NewVersionButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__ContinueButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__CancelButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__ResetButton(Part: part))
+    @await DisplayAsync(await New.StaggeredMaintenance__EditButton(Part: part))
+    <span tabindex="0"
+          class="ms-1"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-html="true"
+          title="@T["Maintenance Actions Info"]"
+          data-bs-content='
+        <div class="mb-2"><strong>@T["Start new"]:</strong> @T["Start staggered maintenance for all the tenants with a new version number."]</div>
+        <div class="mb-2"><strong>@T["Continue"]:</strong> @T["Continues current maintenance version run."]</div>
+        <div class="mb-2"><strong>@T["Cancel"]:</strong> @T["If there is a running maintenance, you can cancel it."]</div>
+        <div class="mb-2"><strong>@T["Reset current version"]:</strong> @T["Runs the staggered maintenance for all the tenants with the current version again."]</div>
+        <div class="mb-2"><strong>@T["Edit"]:</strong> @T["You can edit all the displayed and functional parameters for the staggered maintenance. You can only save if there is no maintenance running."]</div>
+      '>
+        <i class="fas fa-info-circle text-info" style="cursor: pointer;"></i>
+    </span>
+</div>
+
+<div class="progress mb-3 mt-4">
+    <div
+        id="maintenance-progress-bar"
+        class="
+            progress-bar
+            progress-bar-striped
+            @(part.IsRunning() ? "progress-bar-animated" : string.Empty)
+            @(part.Canceled.Value ? "bg-danger" : string.Empty)
+            @(part.IsFinished() ? "bg-success" : string.Empty)"
+         role="progressbar"
+         aria-valuenow="@currentPercentage"
+         aria-valuemin="0"
+         aria-valuemax="100" style="width: @currentPercentage%">@currentPercentage %</div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-5">@T["Running:"]</dt>
+            <dd class="col-sm-7" data-maintenance-running="@part.IsRunning().ToString().ToLower()">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
+
+
+            <dt class="col-sm-5">@T["Canceled:"]</dt>
+            <dd class="col-sm-7">@(part.Canceled.Value ? T["Yes"] : T["No"])</dd>
+
+            <dt class="col-sm-5">@T["Started:"]</dt>
+            <dd class="col-sm-7">@part.Started.Value</dd>
+
+            <dt class="col-sm-5">@(part.Canceled.Value ? T["Finished (canceled):"] : T["Finished:"])</dt>
+            <dd class="col-sm-7">@part.Finished.Value</dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <dl class="row">
+            <dt class="col-sm-6">@T["Current version:"]</dt>
+            <dd class="col-sm-6">@part.CurrentVersion.Value</dd>
+
+            <dt class="col-sm-6">@T["Total running tenants:"]</dt>
+            <dd class="col-sm-6">@part.AllTenantCount.Value</dd>
+
+            <dt class="col-sm-6">@T["Processed tenants:"]</dt>
+            <dd class="col-sm-6">@part.ProcessedTenantsCount.Value</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="accordion mt-4" id="maintenanceAccordion">
+    <!-- Errors Accordion Item -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingErrors">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseErrors" aria-expanded="false" aria-controls="collapseErrors">
+                @T["Errors ({0})", part.ErrorLogs.Count]
+            </button>
+        </h2>
+        <div id="collapseErrors" class="accordion-collapse collapse" aria-labelledby="headingErrors" data-bs-parent="#maintenanceAccordion">
+            <div class="accordion-body">
+                @if (part.ErrorLogs.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>@T["Name"]</th>
+                                    <th>@T["Error"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var error in part.ErrorLogs)
+                                {
+                                    <tr>
+                                        <td>@error.Key</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#error_@error.Key" aria-expanded="false" aria-controls="error_@error.Key">
+                                                @T["Show error"]
+                                            </a>
+                                            <div class="collapse mt-2" id="error_@error.Key">
+                                                <div class="alert alert-danger">@error.Value</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">@T["No errors found."]</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Versions Accordion Item -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingVersions">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVersions" aria-expanded="false" aria-controls="collapseVersions">
+                @T["Versions"]
+            </button>
+        </h2>
+        <div id="collapseVersions" class="accordion-collapse collapse" aria-labelledby="headingVersions" data-bs-parent="#maintenanceAccordion">
+            <div class="accordion-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>@T["Name"]</th>
+                                <th>@T["Version"]</th>
+                                <th>@T["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var version in part.Versions)
+                            {
+                                <tr>
+                                    <td>@version.Key</td>
+                                    <td>@version.Value</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-info"
+                                           asp-action="Edit"
+                                           asp-controller="Admin"
+                                           asp-route-id="@version.Key"
+                                           asp-route-area="OrchardCore.Tenants">
+                                            @T["Edit"]
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

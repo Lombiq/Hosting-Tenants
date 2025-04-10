@@ -14,6 +14,8 @@ public class StaggeredMaintenancePart : ContentPart
     public NumericField ProcessingStep { get; } = new() { Value = 1 };
     public NumericField CurrentVersion { get; } = new() { Value = 0 };
 
+    public TimeField TimeSpanBetweenBatches { get; set; } = new() { Value = TimeSpan.FromSeconds(5) };
+
     public BooleanField Canceled { get; } = new();
     public BooleanField Running { get; } = new();
 
@@ -53,7 +55,19 @@ public class StaggeredMaintenancePart : ContentPart
             ProcessedTenantsCount.Value = 0;
             ProgressPercentage.Value = 0;
             ErrorLogs.Clear();
+            Finished.Value = null;
         }
+    }
+
+    public bool ShouldCancel(string jobId)
+    {
+        if (MaintenanceJobStore.IsCancelled(jobId))
+        {
+            Cancel();
+            return true;
+        }
+
+        return false;
     }
 
     public void Cancel()
@@ -79,4 +93,6 @@ public class StaggeredMaintenancePart : ContentPart
     }
 
     public bool IsFinished() => ProgressPercentage.Value == 100;
+
+    public bool IsRunning() => ProgressPercentage.Value is > 0 and < 100 && !Canceled.Value;
 }
