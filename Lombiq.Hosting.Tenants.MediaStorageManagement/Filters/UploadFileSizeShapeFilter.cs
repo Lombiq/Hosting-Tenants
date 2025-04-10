@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Contents;
 using Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 using Lombiq.Hosting.Tenants.MediaStorageManagement.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -34,21 +35,18 @@ public sealed class UploadFileSizeShapeFilter : IAsyncResultFilter
             return;
         }
 
-        var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
-        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
-        var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
-
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Media)}" &&
-            actionRouteValue is nameof(AdminController.Index) &&
-            context.Result is ViewResult)
+        if (context.Result is ViewResult &&
+            context.IsMvcRoute(
+                nameof(AdminController.Index),
+                typeof(AdminController).ControllerName(),
+                $"{nameof(OrchardCore)}.{nameof(OrchardCore.Media)}"))
         {
-            var layout = await _layoutAccessor.GetLayoutAsync();
-            var contentZone = layout.Zones["Footer"];
-            var maximumStorageQuotaMegabytes = _mediaStorageQuotaService.GetMaxStorageQuotaMegabytes();
-            await contentZone.AddAsync(await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
-                "UploadFileSize",
-                viewModel => viewModel.MaximumStorageQuotaMegabytes = maximumStorageQuotaMegabytes));
+            await _layoutAccessor.AddShapeToZoneAsync(
+                "Footer",
+                await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
+                    "UploadFileSize",
+                    viewModel => viewModel.MaximumStorageQuotaMegabytes = _mediaStorageQuotaService.GetMaxStorageQuotaMegabytes()),
+                "0");
         }
 
         await next();
