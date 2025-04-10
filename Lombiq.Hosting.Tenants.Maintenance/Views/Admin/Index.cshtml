@@ -22,12 +22,15 @@
     <div id="refreshCountdown" class="text-muted small mt-1"></div>
 </div>
 
-
-
-
 <div id="maintenance-status-container">
     @await Html.PartialAsync("StaggeredMaintenanceDetails", Model)
 </div>
+
+<style at="Head">
+    #maintenance-progress-bar {
+        transition: width 1s ease;
+    }
+</style>
 
 <script at="Foot">
     let pollingInterval = null;
