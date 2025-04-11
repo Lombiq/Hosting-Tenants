@@ -6,7 +6,7 @@
 <p class="alert alert-warning"
    data-email-quota-used="@currentEmailUsageCount.ToTechnicalString()"
    data-email-quota-max=@emailQuotaPerMonth.ToTechnicalString()>
-    @T["Unless you use your own email provider (e.g. an SMTP-server or Azure Communication Services), you have a limited " +
+    @T["Unless you use your own email provider (e.g. an SMTP server or Azure Communication Services), you have a limited " +
         "number of e-mails to send in a calendar month. You've sent {0} emails out of {1} so far this month.",
         currentEmailUsageCount, emailQuotaPerMonth]
 </p>
