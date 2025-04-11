@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Contents;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -31,19 +32,16 @@ public sealed class DashboardQuotaFilter : IAsyncResultFilter
             return;
         }
 
-        if (context.Result is ViewResult &&
-            _emailQuotaService.ShouldLimitEmails())
+        if (context.Result is ViewResult && (await _emailQuotaService.ShouldEnforceEmailQuotaAsync()))
         {
             var currentEmailQuota = await _emailQuotaService.IsQuotaOverTheLimitAsync();
-
             var currentUsagePercentage = currentEmailQuota.EmailQuota
                 .CurrentUsagePercentage(_emailQuotaService.GetEmailQuotaPerMonth());
 
             if (currentUsagePercentage >= 80)
             {
-                var layout = await _layoutAccessor.GetLayoutAsync();
-                var contentZone = layout.Zones["Messages"];
-                await contentZone.AddAsync(
+                await _layoutAccessor.AddShapeToZoneAsync(
+                    "Messages",
                     await _shapeFactory.CreateAsync("DashboardQuotaMessage", new
                     {
                         currentEmailQuota.IsOverQuota,

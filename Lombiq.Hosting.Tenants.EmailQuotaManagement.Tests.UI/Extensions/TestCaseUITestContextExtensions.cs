@@ -21,27 +21,32 @@ public static class TestCaseUITestContextExtensions
     public static async Task TestEmailQuotaManagementBehaviorAsync(
         this UITestContext context,
         int maximumEmailQuota,
-        bool moduleShouldInterfere = true)
+        bool quotaShouldBeEnforced = true)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
         context.Missing(By.XPath(DashboardExceededMessage));
 
         await context.GoToEmailSettingsAsync();
-        CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, 0);
         await context.ClickReliablyOnAsync(By.ClassName("save"));
 
         var warningEmails = new List<int>();
+        var quotaAwareEmailCount = 0;
         for (int i = 0; i < maximumEmailQuota; i++)
         {
             await context.GoToEmailTestAsync();
             await context.FillEmailTestFormAsync(SuccessfulSubject);
             context.SuccessMessageExists();
 
-            CheckEmailsSentWarningMessage(context, exists: moduleShouldInterfere, maximumEmailQuota, i + 1);
-            var warningLevel = Convert.ToInt32(Math.Round((double)(i + 1) / maximumEmailQuota * 100, 0));
+            if (quotaShouldBeEnforced)
+            {
+                quotaAwareEmailCount = i + 1;
+            }
 
-            if (!moduleShouldInterfere) continue;
+            CheckEmailsSentWarningMessage(context, maximumEmailQuota, quotaAwareEmailCount);
 
+            if (!quotaShouldBeEnforced) continue;
+
+            var warningLevel = Convert.ToInt32(Math.Round((double)quotaAwareEmailCount / maximumEmailQuota * 100, 0));
             if (warningLevel >= 100)
             {
                 await context.GoToDashboardAsync();
@@ -71,18 +76,18 @@ public static class TestCaseUITestContextExtensions
         context.CheckExistence(ByHelper.SmtpInboxRow(SuccessfulSubject), exists: true);
         context.CheckExistence(
             ByHelper.SmtpInboxRow("[Action Required] Your site has run over its e-mail quota"),
-            exists: moduleShouldInterfere);
+            exists: quotaShouldBeEnforced);
         var warningMessageExists = context.CheckExistence(
             ByHelper.SmtpInboxRow(WarningSubject),
-            exists: moduleShouldInterfere);
-        if (moduleShouldInterfere && warningMessageExists)
+            exists: quotaShouldBeEnforced);
+        if (quotaShouldBeEnforced && warningMessageExists)
         {
             (context.GetAll(
                 ByHelper.SmtpInboxRow(WarningSubject)).Count == warningEmails.Count)
                 .ShouldBeTrue();
         }
 
-        context.CheckExistence(ByHelper.SmtpInboxRow(UnSuccessfulSubject), exists: !moduleShouldInterfere);
+        context.CheckExistence(ByHelper.SmtpInboxRow(UnSuccessfulSubject), exists: !quotaShouldBeEnforced);
     }
 
     private static void CheckMessageExistence(UITestContext context, string warningLevel) =>
@@ -91,19 +96,13 @@ public static class TestCaseUITestContextExtensions
                 $"[contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
             exists: true);
 
-    private static void CheckEmailsSentWarningMessage(UITestContext context, bool exists, int maximumEmailQuota, int currentEmailCount)
+    private static void CheckEmailsSentWarningMessage(UITestContext context, int maximumEmailQuota, int currentEmailCount)
     {
-        var by = By.CssSelector(".alert-warning[data-smtp-quota-max][data-smtp-quota-used]");
-
-        if (!exists)
-        {
-            context.Missing(by);
-            return;
-        }
+        var by = By.CssSelector(".alert-warning[data-email-quota-max][data-email-quota-used]");
 
         var element = context.Get(by);
-        var max = int.Parse(element.GetAttribute("data-smtp-quota-max"), CultureInfo.InvariantCulture);
-        var used = int.Parse(element.GetAttribute("data-smtp-quota-used"), CultureInfo.InvariantCulture);
+        var max = int.Parse(element.GetAttribute("data-email-quota-max"), CultureInfo.InvariantCulture);
+        var used = int.Parse(element.GetAttribute("data-email-quota-used"), CultureInfo.InvariantCulture);
 
         max.ShouldBe(maximumEmailQuota);
         used.ShouldBe(currentEmailCount);

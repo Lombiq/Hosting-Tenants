@@ -35,6 +35,8 @@
   <ItemGroup>
     <PackageReference Include="OrchardCore.Admin" Version="2.1.0" />
     <PackageReference Include="OrchardCore.Email" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email.Azure" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email.Smtp" Version="2.1.0" />
     <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
     <PackageReference Include="OrchardCore.AdminDashboard" Version="2.1.0" />
     <PackageReference Include="OrchardCore.DisplayManagement" Version="2.1.0" />

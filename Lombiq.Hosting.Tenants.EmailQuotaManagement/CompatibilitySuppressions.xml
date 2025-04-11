@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
+<Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Lombiq.Hosting.Tenants.EmailQuotaManagement.Services.QuotaManagingSmtpServiceDecorator</Target>
+    <Left>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Left>
+    <Right>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Lombiq.Hosting.Tenants.EmailQuotaManagement.Services.EmailQuotaService.#ctor(YesSql.ISession,Microsoft.Extensions.Options.IOptions{Lombiq.Hosting.Tenants.EmailQuotaManagement.Models.EmailQuotaOptions},Microsoft.Extensions.Options.IOptions{OrchardCore.Email.DefaultSmtpOptions},Microsoft.Extensions.Options.IOptions{OrchardCore.Email.SmtpOptions},OrchardCore.Modules.IClock,Microsoft.AspNetCore.Identity.UserManager{OrchardCore.Users.IUser})</Target>
+    <Left>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Left>
+    <Right>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Lombiq.Hosting.Tenants.EmailQuotaManagement.Services.EmailQuotaService.ShouldLimitEmails</Target>
+    <Left>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Left>
+    <Right>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Lombiq.Hosting.Tenants.EmailQuotaManagement.Services.IEmailQuotaService.ShouldLimitEmails</Target>
+    <Left>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Left>
+    <Right>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>M:Lombiq.Hosting.Tenants.EmailQuotaManagement.Services.IEmailQuotaService.ShouldEnforceEmailQuotaAsync(System.String)</Target>
+    <Left>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Left>
+    <Right>lib/net8.0/Lombiq.Hosting.Tenants.EmailQuotaManagement.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+</Suppressions>
