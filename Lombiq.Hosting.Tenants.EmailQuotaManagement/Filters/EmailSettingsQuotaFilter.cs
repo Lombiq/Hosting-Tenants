@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Contents;
 using Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -38,16 +39,13 @@ public sealed class EmailSettingsQuotaFilter : IAsyncResultFilter
             typeof(EmailAdminController).ControllerName(),
             $"{nameof(OrchardCore)}.{nameof(OrchardCore.Email)}");
 
-        if ((isEmailTestPage || context.IsSiteSettingsPage("email")) && _emailQuotaService.ShouldLimitEmails())
+        if (isEmailTestPage || (context.IsSiteSettingsPage("email") && (await _emailQuotaService.ShouldEnforceEmailQuotaAsync())))
         {
-            var layout = await _layoutAccessor.GetLayoutAsync();
-            var contentZone = layout.Zones["Content"];
-
-            var quota = await _emailQuotaService.GetOrCreateCurrentQuotaAsync();
-            await contentZone.AddAsync(
+            await _layoutAccessor.AddShapeToZoneAsync(
+                "Messages",
                 await _shapeFactory.CreateAsync("EmailSettingsQuotaMessage", new
                 {
-                    quota.CurrentEmailUsageCount,
+                    (await _emailQuotaService.GetOrCreateCurrentQuotaAsync()).CurrentEmailUsageCount,
                     EmailQuotaPerMonth = _emailQuotaService.GetEmailQuotaPerMonth(),
                 }),
                 "0");

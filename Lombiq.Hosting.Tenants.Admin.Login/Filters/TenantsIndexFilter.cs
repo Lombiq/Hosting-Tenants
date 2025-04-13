@@ -1,15 +1,14 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Contents;
+using Lombiq.Hosting.Tenants.Admin.Login.Extensions;
 using Lombiq.Hosting.Tenants.Admin.Login.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Models;
 using OrchardCore.Modules;
-using OrchardCore.Mvc.Core.Utilities;
-using OrchardCore.Tenants.Controllers;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Admin.Login.Filters;
@@ -38,34 +37,31 @@ public sealed class TenantsIndexFilter : IAsyncResultFilter
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
-        if (IsTenantsEditAction(context) &&
-            context.Result is ViewResult &&
-            await _authorizationService.AuthorizeAsync(
+        if (context.IsNotFullViewRendering() ||
+            !context.IsTenantEditRoute() ||
+            !await _authorizationService.AuthorizeAsync(
                 _hca.HttpContext.User,
                 TenantAdminPermissions.LoginAsAdmin))
         {
-            var shellSettings = _shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
-            if (shellSettings != null &&
-                shellSettings.State == TenantState.Running &&
-                !shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
-            {
-                var layout = await _layoutAccessor.GetLayoutAsync();
-                var contentZone = layout.Zones["Content"];
-                await contentZone.AddAsync(
-                    await _shapeFactory.CreateAsync("TenantAdminShape", new
-                    {
-                        shellSettings.RequestUrlHost,
-                        shellSettings.RequestUrlPrefix,
-                    }),
-                    "5");
-            }
+            await next();
+            return;
+        }
+
+        var shellSettings = _shellHost.GetSettings(context.RouteData.Values["Id"].ToString());
+        if (shellSettings != null &&
+            shellSettings.State == TenantState.Running &&
+            !shellSettings.Name.EqualsOrdinalIgnoreCase(ShellSettings.DefaultShellName))
+        {
+            await _layoutAccessor.AddShapeToZoneAsync(
+                "Content",
+                await _shapeFactory.CreateAsync("TenantAdminShape", new
+                {
+                    shellSettings.RequestUrlHost,
+                    shellSettings.RequestUrlPrefix,
+                }),
+                "5");
         }
 
         await next();
     }
-
-    public static bool IsTenantsEditAction(ActionContext context) =>
-        context.ActionDescriptor.RouteValues["Controller"] == typeof(AdminController).ControllerName() &&
-        context.ActionDescriptor.RouteValues["Area"] == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
-        context.ActionDescriptor.RouteValues["Action"] is nameof(AdminController.Edit);
 }

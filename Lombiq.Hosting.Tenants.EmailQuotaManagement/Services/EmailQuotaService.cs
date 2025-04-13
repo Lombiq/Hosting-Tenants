@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using OrchardCore;
 using OrchardCore.Email;
+using OrchardCore.Email.Azure.Services;
+using OrchardCore.Email.Smtp.Services;
 using OrchardCore.Modules;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
@@ -20,25 +22,22 @@ public class EmailQuotaService : IEmailQuotaService
 {
     private readonly ISession _session;
     private readonly EmailQuotaOptions _emailQuotaOptions;
-    private readonly DefaultSmtpOptions _defaultSmtpOptions;
-    private readonly SmtpOptions _smtpOptions;
     private readonly IClock _clock;
     private readonly UserManager<IUser> _userManager;
+    private readonly IEmailProviderResolver _emailProviderResolver;
 
     public EmailQuotaService(
         ISession session,
         IOptions<EmailQuotaOptions> emailQuotaOptions,
-        IOptions<DefaultSmtpOptions> defaultSmtpOptions,
-        IOptions<SmtpOptions> smtpOptions,
         IClock clock,
-        UserManager<IUser> userManager)
+        UserManager<IUser> userManager,
+        IEmailProviderResolver emailProviderResolver)
     {
         _session = session;
         _emailQuotaOptions = emailQuotaOptions.Value;
-        _defaultSmtpOptions = defaultSmtpOptions.Value;
-        _smtpOptions = smtpOptions.Value;
         _clock = clock;
         _userManager = userManager;
+        _emailProviderResolver = emailProviderResolver;
     }
 
     public async Task<IEnumerable<string>> GetUserEmailsForEmailReminderAsync()
@@ -47,8 +46,13 @@ public class EmailQuotaService : IEmailQuotaService
         return administratorUsers.Select(user => (user as User)?.Email);
     }
 
-    public bool ShouldLimitEmails() =>
-        _defaultSmtpOptions.Host == _smtpOptions.Host || (_defaultSmtpOptions.Host != null && _smtpOptions.Host == null);
+    public async Task<bool> ShouldEnforceEmailQuotaAsync(string providerName = null) =>
+        await _emailProviderResolver.GetAsync(providerName) switch
+        {
+            DefaultSmtpEmailProvider => true,
+            DefaultAzureEmailProvider => true,
+            _ => false,
+        };
 
     public async Task<QuotaResult> IsQuotaOverTheLimitAsync()
     {
