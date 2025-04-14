@@ -25,6 +25,11 @@ public class StaggeredMaintenancePart : ContentPart
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
 
+    public TimeSpan GetTimeBetweenBatches(StaggeredMaintenanceOptions options) =>
+        options.TimeSpanMilliseconds >= 0
+            ? TimeSpan.FromMilliseconds(options.TimeSpanMilliseconds)
+            : TimeSpanBetweenBatches.Value!.Value;
+
     public void AddErrorLog(string tenantName, string error) => ErrorLogs.Add(tenantName, error);
 
     public void AddVersion(string tenantName, string version) => Versions[tenantName] = version;
