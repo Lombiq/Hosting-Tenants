@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using YesSql.Sql;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Migrations;
+namespace Lombiq.Hosting.Tenants.Maintenance;
 
 public sealed class Migrations : DataMigration
 {

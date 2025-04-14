@@ -3,7 +3,6 @@ using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Handlers;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
-using Lombiq.Hosting.Tenants.Maintenance.Migrations;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,7 @@ public sealed class Startup : StartupBase
         services.Configure<StoreCollectionOptions>(options => options.Collections.Add(DocumentCollections.Maintenance));
 
         services.AddIndexProvider<MaintenanceTaskExecutionIndexProvider>();
-        services.AddDataMigration<Migrations.Migrations>();
+        services.AddDataMigration<Migrations>();
 
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();

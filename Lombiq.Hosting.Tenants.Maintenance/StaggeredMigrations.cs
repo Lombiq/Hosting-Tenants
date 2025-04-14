@@ -7,7 +7,7 @@ using OrchardCore.ContentManagement.Metadata.Settings;
 using OrchardCore.Data.Migration;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Migrations;
+namespace Lombiq.Hosting.Tenants.Maintenance;
 
 public sealed class StaggeredMigrations : DataMigration
 {
