@@ -8,6 +8,7 @@ using OrchardCore.ContentManagement.Records;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Modules;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -27,6 +28,9 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     private readonly IClock _clock;
     private readonly IEnumerable<IStaggeredMaintenanceEvents> _staggeredMaintenanceEvents;
     private readonly StaggeredMaintenanceOptions _staggeredMaintenanceOptions;
+    private readonly ConcurrentDictionary<string, string> _versionUpdates = new();
+    private readonly ConcurrentDictionary<string, string> _errorLogs = new();
+    private readonly ConcurrentBag<string> _processedTenantIds = [];
 
     public StaggeredMaintenanceService(
         IShellHost shellHost,
@@ -116,7 +120,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
                 return;
             }
 
-            await RunStaggeredMaintenanceForEachTenantAsync(
+            await RunStaggeredMaintenanceForRemainingTenantsAsync(
                 remainingTenants,
                 staggeredMaintenancePart);
 
@@ -198,64 +202,73 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     /// <summary>
     /// Tenant level part of the staggered maintenance. This is where the actual tenant triggering is done.
     /// </summary>
-    private async Task RunStaggeredMaintenanceForEachTenantAsync(
+    private async Task RunStaggeredMaintenanceForRemainingTenantsAsync(
         List<ShellSettings> remainingTenants,
         StaggeredMaintenancePart staggeredMaintenancePart)
     {
-        foreach (var remainingTenant in remainingTenants)
+        _versionUpdates.Clear();
+        _errorLogs.Clear();
+        _processedTenantIds.Clear();
+
+        if (!staggeredMaintenancePart.RunParallel.Value)
         {
-            try
+            foreach (var remainingTenant in remainingTenants)
             {
-                await _shellHost.WithShellScopeAsync(
-                    scope =>
-                    {
-                        // Only logging is necessary here, as the actual maintenance and migration tasks are already done
-                        // when we get here.
-                        var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
-                        tenantLogger.LogInformation(
-                            "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
-                            staggeredMaintenancePart.CurrentVersion.Value);
-                        return Task.CompletedTask;
-                    },
-                    remainingTenant.Name);
-
-                await SaveMaintenanceVersionAsync(
-                    staggeredMaintenancePart,
-                    staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString(),
-                    remainingTenant.Name);
-
-                _logger.LogInformation(
-                    "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
-                    remainingTenant.Name,
-                    staggeredMaintenancePart.CurrentVersion.Value);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(
-                    exception,
-                    "Staggered maintenance for tenant '{TenantName}' for maintenance version {Version} failed.",
-                    remainingTenant.Name,
-                    staggeredMaintenancePart.CurrentVersion.Value);
-                staggeredMaintenancePart.AddErrorLog(remainingTenant.Name, exception.Message);
-            }
-            finally
-            {
-                // We should always add the tenant to the processed list, even if it failed.
-                staggeredMaintenancePart.ProcessTenant(remainingTenant.TenantId);
+                await StartTenantsAsync(remainingTenant, staggeredMaintenancePart);
             }
         }
+        else
+        {
+            var tasks = remainingTenants.Select(async remainingTenant =>
+                await StartTenantsAsync(remainingTenant, staggeredMaintenancePart));
+            await Task.WhenAll(tasks);
+        }
+
+        staggeredMaintenancePart.Versions.AddRange(_versionUpdates);
+        staggeredMaintenancePart.ErrorLogs.AddRange(_errorLogs);
+        staggeredMaintenancePart.ProcessedTenantIds.AddRange(_processedTenantIds);
     }
 
-    /// <summary>
-    /// Saves the current version of the staggered maintenance for the given tenant.
-    /// </summary>
-    private Task SaveMaintenanceVersionAsync(
-        StaggeredMaintenancePart staggeredMaintenancePart,
-        string version,
-        string tenantName)
+    private async Task StartTenantsAsync(
+        ShellSettings remainingTenant,
+        StaggeredMaintenancePart staggeredMaintenancePart)
     {
-        staggeredMaintenancePart.AddVersion(tenantName, version);
-        return SaveSettingsAsync(staggeredMaintenancePart);
+        try
+        {
+            await _shellHost.WithShellScopeAsync(
+                scope =>
+                {
+                    // Only logging is necessary here, as the actual maintenance and migration tasks are already done
+                    // when we get here.
+                    var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredMaintenanceService>>();
+                    tenantLogger.LogInformation(
+                        "Staggered maintenance for current tenant finished successfully for maintenance version {Version}.",
+                        staggeredMaintenancePart.CurrentVersion.Value);
+                    return Task.CompletedTask;
+                },
+                remainingTenant.Name);
+
+            _versionUpdates[remainingTenant.Name] = staggeredMaintenancePart.CurrentVersion.Value.ToTechnicalString();
+
+            _logger.LogInformation(
+                "Staggered maintenance for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
+                remainingTenant.Name,
+                staggeredMaintenancePart.CurrentVersion.Value);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "Staggered maintenance for tenant '{TenantName}' for maintenance version {Version} failed.",
+                remainingTenant.Name,
+                staggeredMaintenancePart.CurrentVersion.Value);
+            _errorLogs[remainingTenant.Name] = exception.Message;
+        }
+        finally
+        {
+            // We should always add the tenant to the processed list, even if it failed.
+            _processedTenantIds.Add(remainingTenant.TenantId);
+        }
     }
 
     private Task SaveSettingsAsync(ContentPart part)
