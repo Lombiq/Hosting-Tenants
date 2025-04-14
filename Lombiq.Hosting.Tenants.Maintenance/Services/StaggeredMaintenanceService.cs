@@ -224,7 +224,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             await Task.WhenAll(tasks);
         }
 
-        staggeredMaintenancePart.Versions.AddRange(_versionUpdates);
+        staggeredMaintenancePart.Versions.AddRangeAndOverride(_versionUpdates);
         staggeredMaintenancePart.ErrorLogs.AddRange(_errorLogs);
         staggeredMaintenancePart.ProcessedTenantIds.AddRange(_processedTenantIds);
     }
