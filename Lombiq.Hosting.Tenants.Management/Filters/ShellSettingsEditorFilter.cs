@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Contents;
 using Lombiq.Hosting.Tenants.Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -29,46 +30,40 @@ public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
-        var actionRouteController = context.ActionDescriptor.RouteValues["Controller"];
-        var actionRouteArea = context.ActionDescriptor.RouteValues["Area"];
-        var actionRouteValue = context.ActionDescriptor.RouteValues["Action"];
-
-        if (actionRouteController == typeof(AdminController).ControllerName() &&
-            actionRouteArea == $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}" &&
-            actionRouteValue is nameof(AdminController.Edit) &&
-            context.Result is ViewResult)
+        if (context.IsNotFullViewRendering() ||
+            !context.IsMvcRoute(
+                nameof(AdminController.Edit),
+                typeof(AdminController).ControllerName(),
+                $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}"))
         {
-            var tenantName = context.RouteData.Values["Id"].ToString();
-            if (!_shellHost.TryGetSettings(tenantName, out var shellSettings))
-            {
-                await next();
-                return;
-            }
-
-            var layout = await _layoutAccessor.GetLayoutAsync();
-            var contentZone = layout.Zones["Content"];
-
-            (context.Controller as Controller)
-                !.TempData
-                .TryGetValue(
-                    "ValidationErrorJson",
-                    out var validationErrorJson);
-
-            var editableItems = shellSettings.ShellConfiguration.AsJsonNode();
-            var editorJson = string.IsNullOrEmpty(validationErrorJson?.ToString())
-                ? editableItems[$"{tenantName}Prefix"]?.ToJsonString()
-                : validationErrorJson.ToString();
-
-            await contentZone.AddAsync(
-                await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
-                    "ShellSettingsEditor",
-                    viewModel =>
-                    {
-                        viewModel.Json = editorJson;
-                        viewModel.TenantId = tenantName;
-                    }),
-                "10");
+            await next();
+            return;
         }
+
+        var tenantName = context.RouteData.Values["Id"].ToString();
+        if (!_shellHost.TryGetSettings(tenantName, out var shellSettings))
+        {
+            await next();
+            return;
+        }
+
+        (context.Controller as Controller)!.TempData.TryGetValue("ValidationErrorJson", out var validationErrorJson);
+
+        var editableItems = shellSettings.ShellConfiguration.AsJsonNode();
+        var editorJson = string.IsNullOrEmpty(validationErrorJson?.ToString())
+            ? editableItems[$"{tenantName}Prefix"]?.ToJsonString()
+            : validationErrorJson.ToString();
+
+        await _layoutAccessor.AddShapeToZoneAsync(
+            "Content",
+            await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
+                "ShellSettingsEditor",
+                viewModel =>
+                {
+                    viewModel.Json = editorJson;
+                    viewModel.TenantId = tenantName;
+                }),
+            "10");
 
         await next();
     }

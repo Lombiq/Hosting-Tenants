@@ -1,5 +1,5 @@
 using Lombiq.HelpfulLibraries.AspNetCore.Security;
-using Lombiq.Hosting.Tenants.Admin.Login.Filters;
+using Lombiq.Hosting.Tenants.Admin.Login.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using OrchardCore.Environment.Shell;
@@ -23,7 +23,7 @@ internal sealed class TenantLoginSecurityPolicyProvider : IContentSecurityPolicy
     {
         var actionContext = _actionContextAccessor.ActionContext;
 
-        if (!TenantsIndexFilter.IsTenantsEditAction(actionContext))
+        if (!actionContext.IsTenantEditRoute())
         {
             return ValueTask.CompletedTask;
         }
