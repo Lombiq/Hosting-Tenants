@@ -2,6 +2,7 @@
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Records;
 using OrchardCore.Environment.Shell;
@@ -25,6 +26,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     private readonly ISession _session;
     private readonly IClock _clock;
     private readonly IEnumerable<IStaggeredMaintenanceEvents> _staggeredMaintenanceEvents;
+    private readonly StaggeredMaintenanceOptions _staggeredMaintenanceOptions;
 
     public StaggeredMaintenanceService(
         IShellHost shellHost,
@@ -32,7 +34,9 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         ILogger<StaggeredMaintenanceService> logger,
         ISession session,
         IClock clock,
-        IEnumerable<IStaggeredMaintenanceEvents> staggeredMaintenanceEvents)
+        IEnumerable<IStaggeredMaintenanceEvents> staggeredMaintenanceEvents,
+        IOptions<StaggeredMaintenanceOptions> staggeredMaintenanceOptions
+        )
     {
         _shellHost = shellHost;
         _contentManager = contentManager;
@@ -40,6 +44,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         _session = session;
         _clock = clock;
         _staggeredMaintenanceEvents = staggeredMaintenanceEvents;
+        _staggeredMaintenanceOptions = staggeredMaintenanceOptions.Value;
     }
 
     public async Task<StaggeredMaintenancePart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
@@ -147,7 +152,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     private async Task<bool> WaitBeforeNextAsync(StaggeredMaintenancePart staggeredMaintenancePart)
     {
         var waited = TimeSpan.Zero;
-        var delay = staggeredMaintenancePart.TimeSpanBetweenBatches.Value!.Value;
+        var delay = staggeredMaintenancePart.GetTimeBetweenBatches(_staggeredMaintenanceOptions);
         var delayCheckInterval = TimeSpan.FromMilliseconds(500);
         while (waited < delay)
         {

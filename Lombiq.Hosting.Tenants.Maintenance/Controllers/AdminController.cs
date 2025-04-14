@@ -37,7 +37,6 @@ public class AdminController : Controller
         return View(model: model);
     }
 
-    [HttpGet]
     public async Task<IActionResult> GetPartialView()
     {
         var model = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();

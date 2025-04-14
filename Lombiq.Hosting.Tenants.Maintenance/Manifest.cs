@@ -17,9 +17,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     [
         "OrchardCore.Tenants",
         "OrchardCore.Settings",
-        "OrchardCore.CustomSettings",
-        "OrchardCore.ContentFields",
-        "OrchardCore.Contents",
     ]
 )]
 
@@ -91,4 +88,17 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Updates the enabled features of tenants.",
     Category = "Maintenance",
     Dependencies = []
+)]
+
+[assembly: Feature(
+    Id = StaggeredMaintenance,
+    Name = "Lombiq Hosting - Tenants Maintenance Staggered Maintenance",
+    Description = "Creates a scope for all running tenants and this way all migrations and maintenances are triggered.",
+    Category = "Maintenance",
+    DefaultTenantOnly = true,
+    Dependencies = [
+        Maintenance,
+        "OrchardCore.ContentFields",
+        "OrchardCore.Contents"
+    ]
 )]

@@ -1,49 +1,21 @@
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
-using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentFields.Settings;
 using OrchardCore.ContentManagement.Metadata;
 using OrchardCore.ContentManagement.Metadata.Settings;
 using OrchardCore.Data.Migration;
-using System;
 using System.Threading.Tasks;
-using YesSql.Sql;
 
-namespace Lombiq.Hosting.Tenants.Maintenance;
+namespace Lombiq.Hosting.Tenants.Maintenance.Migrations;
 
-public sealed class Migrations : DataMigration
+public sealed class StaggeredMigrations : DataMigration
 {
     private readonly IContentDefinitionManager _contentDefinitionManager;
 
-    public Migrations(IContentDefinitionManager contentDefinitionManager) => _contentDefinitionManager = contentDefinitionManager;
+    public StaggeredMigrations(IContentDefinitionManager contentDefinitionManager) =>
+        _contentDefinitionManager = contentDefinitionManager;
     public async Task<int> CreateAsync()
-    {
-        await SchemaBuilder.CreateMapIndexTableAsync<MaintenanceTaskExecutionIndex>(
-            table => table
-                .Column<string>(nameof(MaintenanceTaskExecutionIndex.MaintenanceId))
-                .Column<DateTime>(nameof(MaintenanceTaskExecutionIndex.ExecutionTimeUtc))
-                .Column<bool>(nameof(MaintenanceTaskExecutionIndex.IsSuccess)),
-            collection: DocumentCollections.Maintenance);
-
-        await SchemaBuilder.AlterIndexTableAsync<MaintenanceTaskExecutionIndex>(
-            table => table
-                .CreateIndex(
-                    $"IDX_{nameof(MaintenanceTaskExecutionIndex)}_{nameof(MaintenanceTaskExecutionIndex.MaintenanceId)}",
-                    nameof(MaintenanceTaskExecutionIndex.MaintenanceId)),
-            collection: DocumentCollections.Maintenance);
-
-        await RunStaggeredMigrationsAsync();
-        return 2;
-    }
-
-    public async Task<int> UpdateFrom1Async()
-    {
-        await RunStaggeredMigrationsAsync();
-        return 2;
-    }
-
-    private async Task RunStaggeredMigrationsAsync()
     {
         await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredMaintenancePart), part => part
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProgressPercentage), field => field
@@ -83,7 +55,8 @@ public sealed class Migrations : DataMigration
                 {
                     // 1 second.
                     Step = "1",
-                    Hint = "The time span between batches of tenants to be processed in hh:mm:ss format.",
+                    Hint = "The time span between batches of tenants to be processed in hh:mm:ss format. " +
+                           "If StaggeredMaintenanceOptions is set, this value will be ignored.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredMaintenancePart.Canceled), field => field
                 .WithSettings(new BooleanFieldSettings
@@ -110,5 +83,6 @@ public sealed class Migrations : DataMigration
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenance, builder => builder
             .WithPart<StaggeredMaintenancePart>()
         );
+        return 1;
     }
 }

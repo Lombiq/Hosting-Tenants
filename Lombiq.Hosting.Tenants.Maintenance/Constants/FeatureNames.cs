@@ -13,4 +13,5 @@ public static class FeatureNames
     public const string DeleteElasticsearchIndicesBeforeSetup = Maintenance + "." + nameof(DeleteElasticsearchIndicesBeforeSetup);
     public const string UpdateEnabledFeatures = Maintenance + "." + nameof(UpdateEnabledFeatures);
     public const string CustomMaintenance = Maintenance + "." + nameof(CustomMaintenance);
+    public const string StaggeredMaintenance = Maintenance + "." + nameof(StaggeredMaintenance);
 }
