@@ -196,3 +196,16 @@ The following configuration options are available to set the enabled features:
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.StaggeredMaintenance`
+
+Adds a page to the admin under Multi-Tenancy/Maintenance that allows you to start all tenants shells in a staggered way. This is useful when you have a lot of tenants and you want to start them in a staggered way to avoid overwhelming the database or other resources. Starting up all the tenants ensures that they get updated to the newest migration steps and also all the above maintenance tasks run.
+
+You can edit the maintenance options directly on the Multi-Tenancy/Maintenance page if you click on the edit button. You can set the batches that the tenants should be run in and the waiting time span between the batches. You can set if you want to run it in parallel or not. If you set it to parallel it will start the Processing Step amount of tenants at once, otherwise it will start tenants one-by-one and then wait the time span after the Processing Step amount of tenants has been started.
+
+Functions on the page:
+- Start new: Start staggered maintenance for all the tenants with a new version number.
+- Continue: Continues current maintenance version run.
+- Cancel: If there is a running maintenance, you can cancel it.
+- Reset current version: Runs the staggered maintenance for all the tenants with the current version again.
+- Edit: You can edit all the displayed and functional parameters for the staggered maintenance. You can only save if there is no maintenance running.

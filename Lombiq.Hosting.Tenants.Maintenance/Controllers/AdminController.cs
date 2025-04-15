@@ -44,7 +44,7 @@ public class AdminController : Controller
         return PartialView("StaggeredMaintenanceDetails", model);
     }
 
-    public async Task<IActionResult> Start()
+    public async Task<IActionResult> Continue()
     {
         await ExecuteScheduledMaintenanceAsync();
 

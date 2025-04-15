@@ -93,7 +93,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 [assembly: Feature(
     Id = StaggeredMaintenance,
     Name = "Lombiq Hosting - Tenants Maintenance Staggered Maintenance",
-    Description = "Creates a scope for all running tenants and this way all migrations and maintenances are triggered.",
+    Description = "Creates a scope for all running tenants and this way all migrations and maintenances are triggered to run.",
     Category = "Maintenance",
     DefaultTenantOnly = true,
     Dependencies = [
