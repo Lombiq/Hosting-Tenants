@@ -14,12 +14,12 @@ public interface IStaggeredMaintenanceEvents
     public Task StartingAsync(StaggeredMaintenancePart part) => Task.CompletedTask;
 
     /// <summary>
-    /// Called when the staggered maintenance process is finished or after cancelled.
+    /// Called when the staggered maintenance process is finished or after canceled.
     /// </summary>
     public Task FinishedAsync(StaggeredMaintenancePart part) => Task.CompletedTask;
 
     /// <summary>
-    /// Called when the staggered maintenance process is cancelled.
+    /// Called when the staggered maintenance process is canceled.
     /// </summary>
-    public Task CancelledAsync(StaggeredMaintenancePart part) => Task.CompletedTask;
+    public Task CanceledAsync(StaggeredMaintenancePart part) => Task.CompletedTask;
 }

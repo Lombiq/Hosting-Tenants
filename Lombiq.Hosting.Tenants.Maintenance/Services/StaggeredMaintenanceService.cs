@@ -100,8 +100,8 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     /// <summary>
     /// Runs the staggered maintenance for the remaining tenants. This is the main method that will be called to run the
     /// maintenance. It will start the maintenance, process the tenants in batches, and wait for the specified time
-    /// between batches. It will also check if the maintenance was cancelled and if so, it will stop the maintenance.
-    /// If the maintenance was cancelled, it will invoke the cancelled event for all registered handlers.
+    /// between batches. It will also check if the maintenance was canceled and if so, it will stop the maintenance.
+    /// If the maintenance was canceled, it will invoke the canceled event for all registered handlers.
     /// </summary>
     private async Task StaggeredMaintenanceAsync(
         StaggeredMaintenancePart staggeredMaintenancePart,
@@ -116,7 +116,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         {
             if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync)))
             {
-                await InvokeCancelledEventAsync(staggeredMaintenancePart);
+                await InvokeCanceledEventAsync(staggeredMaintenancePart);
                 return;
             }
 
@@ -130,29 +130,29 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             await SaveSettingsAsync(staggeredMaintenancePart);
             await _session.SaveChangesAsync();
 
-            // Get the remaining tenants after processing, so if new tenant is added it could be proccessed in the next run
+            // Get the remaining tenants after processing, so if new tenant is added it could be processed in the next run
             remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
 
             if (remainingTenants.Count != 0 && await WaitBeforeNextAsync(staggeredMaintenancePart))
             {
-                await InvokeCancelledEventAsync(staggeredMaintenancePart);
+                await InvokeCanceledEventAsync(staggeredMaintenancePart);
                 return;
             }
         }
     }
 
     /// <summary>
-    /// Invokes the cancelled event for all registered handlers. This is to notify the handlers that the maintenance was
-    /// cancelled.
+    /// Invokes the canceled event for all registered handlers. This is to notify the handlers that the maintenance was
+    /// canceled.
     /// </summary>
-    private Task InvokeCancelledEventAsync(StaggeredMaintenancePart staggeredMaintenancePart) =>
-        _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.CancelledAsync(staggeredMaintenancePart));
+    private Task InvokeCanceledEventAsync(StaggeredMaintenancePart staggeredMaintenancePart) =>
+        _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.CanceledAsync(staggeredMaintenancePart));
 
     /// <summary>
     /// Waits for the specified time before processing the next tenant. This is to avoid overwhelming the system with
-    /// requests and also checking periodically if the maintenance was cancelled.
+    /// requests and also checking periodically if the maintenance was canceled.
     /// </summary>
-    /// <returns><see langword="true"/> if the maintenance was cancelled, <see langword="false"/> otherwise.</returns>
+    /// <returns><see langword="true"/> if the maintenance was canceled, <see langword="false"/> otherwise.</returns>
     private async Task<bool> WaitBeforeNextAsync(StaggeredMaintenancePart staggeredMaintenancePart)
     {
         var waited = TimeSpan.Zero;
@@ -162,7 +162,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         {
             if (staggeredMaintenancePart.ShouldCancel(nameof(RunScheduledMaintenanceForAllTenantAsync)))
             {
-                _logger.LogInformation("Maintenance cancelled during delay wait. Exiting.");
+                _logger.LogInformation("Maintenance canceled during delay wait. Exiting.");
                 return true;
             }
 

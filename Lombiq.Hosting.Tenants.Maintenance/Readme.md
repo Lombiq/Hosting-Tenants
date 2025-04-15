@@ -204,6 +204,7 @@ Adds a page to the admin under Multi-Tenancy/Maintenance that allows you to star
 You can edit the maintenance options directly on the Multi-Tenancy/Maintenance page if you click on the edit button. You can set the batches that the tenants should be run in and the waiting time span between the batches. You can set if you want to run it in parallel or not. If you set it to parallel it will start the Processing Step amount of tenants at once, otherwise it will start tenants one-by-one and then wait the time span after the Processing Step amount of tenants has been started.
 
 Functions on the page:
+
 - Start new: Start staggered maintenance for all the tenants with a new version number.
 - Continue: Continues current maintenance version run.
 - Cancel: If there is a running maintenance, you can cancel it.

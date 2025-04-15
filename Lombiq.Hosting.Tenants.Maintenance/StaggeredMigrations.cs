@@ -22,7 +22,7 @@ public sealed class StaggeredMigrations : DataMigration
                 .WithDisplayName("Progress Percentage")
                 .WithSettings(new NumericFieldSettings
                 {
-                    Hint = "Calculated from proccessed tenants count and all tenant count.",
+                    Hint = "Calculated from processed tenants count and all tenant count.",
                 }))
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.AllTenantCount), field => field
                 .WithDisplayName("All Tenant Count"))
@@ -70,7 +70,7 @@ public sealed class StaggeredMigrations : DataMigration
             .WithField<DateTimeField>(nameof(StaggeredMaintenancePart.Finished), field => field
                 .WithSettings(new DateTimeFieldSettings
                 {
-                    Hint = "The date and time when the current version staggered maintenance process was finished or cancelled.",
+                    Hint = "The date and time when the current version staggered maintenance process was finished or canceled.",
                 }))
         );
 

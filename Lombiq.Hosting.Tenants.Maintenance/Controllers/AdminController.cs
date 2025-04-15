@@ -72,7 +72,7 @@ public class AdminController : Controller
     {
         var successfulCancel = MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
 
-        // If not successful we should directly set the part to cancelled, because it is not running. This could happen
+        // If not successful we should directly set the part to canceled, because it is not running. This could happen
         // if the maintenance was abruptly stopped e.g. by a server restart.
         if (!successfulCancel)
         {
@@ -81,7 +81,7 @@ public class AdminController : Controller
             await _contentManager.UpdateAsync(staggeredMaintenance);
         }
 
-        await _notifier.SuccessAsync(H["Cancelled staggered maintenance."]);
+        await _notifier.SuccessAsync(H["Canceled staggered maintenance."]);
         return RedirectToIndex();
     }
 
