@@ -210,3 +210,19 @@ Functions on the page:
 - Cancel: If there is a running maintenance, you can cancel it.
 - Reset current version: Runs the staggered maintenance for all the tenants with the current version again.
 - Edit: You can edit all the displayed and functional parameters for the staggered maintenance. You can only save if there is no maintenance running.
+
+You can override the following setting with an environment variable:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "StaggeredMaintenance": {
+        "TimeSpanMilliseconds": 1000,
+        "ProcessingStep": 5,
+        "RunParallel": false
+      }
+    }
+  }
+}
+```

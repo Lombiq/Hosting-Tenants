@@ -155,7 +155,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     private async Task<bool> WaitBeforeNextAsync(StaggeredMaintenancePart staggeredMaintenancePart)
     {
         var waited = TimeSpan.Zero;
-        var delay = staggeredMaintenancePart.GetTimeBetweenBatches(_staggeredMaintenanceOptions);
+        var delay = staggeredMaintenancePart.GetOptionsTimeBetweenBatches(_staggeredMaintenanceOptions);
         var delayCheckInterval = TimeSpan.FromMilliseconds(500);
         while (waited < delay)
         {
@@ -182,7 +182,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     {
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
 
-        var take = (int)staggeredMaintenancePart.ProcessingStep.Value!;
+        var take = (int)staggeredMaintenancePart.GetOptionsProcessingStep(_staggeredMaintenanceOptions);
         staggeredMaintenancePart.AllTenantCount.Value = allTenants.Count;
 
         return allTenants.Where(settings => !staggeredMaintenancePart.ProcessedTenantIds.Contains(settings.TenantId))
@@ -209,7 +209,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         _errorLogs.Clear();
         _processedTenantIds.Clear();
 
-        if (!staggeredMaintenancePart.RunParallel.Value)
+        if (!staggeredMaintenancePart.GetOptionsRunParallel(_staggeredMaintenanceOptions))
         {
             foreach (var remainingTenant in remainingTenants)
             {

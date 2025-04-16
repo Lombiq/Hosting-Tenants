@@ -21,10 +21,16 @@ public class StaggeredMaintenancePart : ContentPart
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
 
-    public TimeSpan GetTimeBetweenBatches(StaggeredMaintenanceOptions options) =>
-        options.TimeSpanMilliseconds >= 0
-            ? TimeSpan.FromMilliseconds(options.TimeSpanMilliseconds)
-            : TimeSpanBetweenBatches.Value!.Value;
+    public TimeSpan GetOptionsTimeBetweenBatches(StaggeredMaintenanceOptions options) =>
+        options.TimeSpanMilliseconds is null
+            ? TimeSpanBetweenBatches.Value!.Value
+            : TimeSpan.FromMilliseconds(options.TimeSpanMilliseconds.Value);
+
+    public decimal GetOptionsProcessingStep(StaggeredMaintenanceOptions options) =>
+        options.ProcessingStep ?? ProcessingStep.Value!.Value;
+
+    public bool GetOptionsRunParallel(StaggeredMaintenanceOptions options) =>
+        options.RunParallel ?? RunParallel.Value;
 
     public void CalculatePercentage() =>
         ProgressPercentage.Value = Math.Round((decimal)(ProcessedTenantIds.Count / AllTenantCount.Value * 100)!, 0);
