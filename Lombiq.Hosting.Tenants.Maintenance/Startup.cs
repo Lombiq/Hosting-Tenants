@@ -6,6 +6,7 @@ using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Display.ContentDisplay;
 using OrchardCore.Data;
@@ -13,6 +14,7 @@ using OrchardCore.Data.Migration;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Navigation;
+using OrchardCore.ResourceManagement;
 
 namespace Lombiq.Hosting.Tenants.Maintenance;
 
@@ -41,13 +43,15 @@ public sealed class StaggeredStartup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.AddContentPart<StaggeredMaintenancePart>()
-            .WithMigration<StaggeredMigrations>();
-        services.AddScoped<IStaggeredMaintenanceService, StaggeredMaintenanceService>();
-        services.AddScoped<INavigationProvider, AdminMenu>();
-        services.AddScoped<IContentDisplayHandler, StaggeredMaintenanceHandler>();
         services.BindAndConfigureSection<StaggeredMaintenanceOptions>(
             _shellConfiguration,
             "Lombiq_Hosting_Tenants_Maintenance:StaggeredMaintenance");
+
+        services.AddContentPart<StaggeredMaintenancePart>().WithMigration<StaggeredMigrations>();
+
+        services.AddScoped<INavigationProvider, AdminMenu>();
+        services.AddScoped<IContentDisplayHandler, StaggeredMaintenanceHandler>();
+        services.AddScoped<IStaggeredMaintenanceService, StaggeredMaintenanceService>();
+        services.AddTransient<IConfigureOptions<ResourceManagementOptions>, ResourceManagementOptionsConfiguration>();
     }
 }

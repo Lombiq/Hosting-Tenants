@@ -59,7 +59,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Views\Admin\StaggeredMaintenanceDetails.cshtml" />
+    <ProjectReference Condition="Exists($(LombiqNodeJsExtensionsPath))" Include="$(LombiqNodeJsExtensionsPath)/Lombiq.NodeJs.Extensions.csproj" />
+    <PackageReference Condition="!Exists($(LombiqNodeJsExtensionsPath))" Include="Lombiq.NodeJs.Extensions" Version="2.1.1" />
   </ItemGroup>
+
+  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.props" />
+  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.targets" />
 
 </Project>

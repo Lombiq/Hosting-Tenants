@@ -39,8 +39,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         ISession session,
         IClock clock,
         IEnumerable<IStaggeredMaintenanceEvents> staggeredMaintenanceEvents,
-        IOptions<StaggeredMaintenanceOptions> staggeredMaintenanceOptions
-        )
+        IOptions<StaggeredMaintenanceOptions> staggeredMaintenanceOptions)
     {
         _shellHost = shellHost;
         _contentManager = contentManager;
