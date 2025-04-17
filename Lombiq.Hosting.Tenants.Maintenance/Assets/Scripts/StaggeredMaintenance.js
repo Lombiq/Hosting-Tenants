@@ -28,7 +28,7 @@ function stopPolling() {
     updateCountdownDisplay(true);
 }
 
-// === Animation ===
+// Animation.
 function animateNumber(element, start, target) {
     const duration = 800;
     const startTime = performance.now();
@@ -56,7 +56,7 @@ function updateMaintenanceContent(html) {
         const targetWidth = newBar.getAttribute('aria-valuenow') + '%';
         const newPercentage = parseInt(newBar.getAttribute('aria-valuenow') || '0', 10);
 
-        // Animate width from old to new value
+        // Animate width from old to new value.
         newBar.animate(
             [
                 { width: oldWidth },
@@ -75,7 +75,7 @@ function updateMaintenanceContent(html) {
     const isRunning = container.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
     if (!isRunning) stopPolling();
 
-    // Re-initialize popovers
+    // Re-initialize popovers.
     document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
 }
 
@@ -87,7 +87,7 @@ function pollNow() {
         .then(updateMaintenanceContent);
 }
 
-// === Countdown ===
+// Countdown.
 function startCountdown() {
     countdown = pollingRate / 1000;
     updateCountdownDisplay();
@@ -98,7 +98,7 @@ function startCountdown() {
     }, 1000);
 }
 
-// === Core Polling ===
+// Core polling.
 function startPolling() {
     stopPolling();
 
@@ -112,7 +112,7 @@ function startPolling() {
     startCountdown();
 }
 
-// === Init ===
+// Initialization.
 const toggle = document.getElementById('autoRefreshToggle');
 const rateSelect = document.getElementById('refreshRateSelect');
 
@@ -143,7 +143,7 @@ rateSelect.addEventListener('change', () => {
     if (toggle.checked) startPolling();
 });
 
-// === Tab visibility handler ===
+// Tab visibility handler.
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && toggle.checked) {
         startPolling();
