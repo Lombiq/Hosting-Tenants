@@ -36,6 +36,7 @@ public sealed class StaggeredMigrations : DataMigration
                            "If StaggeredMaintenanceOptions is set, this value will be ignored.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredMaintenancePart.RunParallel), field => field
+                .WithDisplayName("Run Parallel")
                 .WithSettings(new BooleanFieldSettings
                 {
                     Hint = "Indicates whether the staggered maintenance process should run in parallel or not.",
