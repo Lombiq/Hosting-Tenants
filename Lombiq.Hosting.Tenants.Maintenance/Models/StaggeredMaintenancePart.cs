@@ -22,9 +22,9 @@ public class StaggeredMaintenancePart : ContentPart
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
 
     public TimeSpan GetOptionsTimeBetweenBatches(StaggeredMaintenanceOptions options) =>
-        options.TimeSpanMilliseconds is null
+        options.MillisecondBetweenBatches is null
             ? TimeSpanBetweenBatches.Value!.Value
-            : TimeSpan.FromMilliseconds(options.TimeSpanMilliseconds.Value);
+            : TimeSpan.FromMilliseconds(options.MillisecondBetweenBatches.Value);
 
     public decimal GetOptionsProcessingStep(StaggeredMaintenanceOptions options) =>
         options.ProcessingStep ?? ProcessingStep.Value!.Value;
