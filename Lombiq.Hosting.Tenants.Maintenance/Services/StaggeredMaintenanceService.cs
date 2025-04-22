@@ -109,6 +109,10 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     {
         staggeredMaintenancePart.Start(_clock, nameof(RunScheduledMaintenanceForAllTenantAsync), newVersion, reset);
 
+        // Saving right after the start, so the UI can show the progress.
+        await SaveSettingsAsync(staggeredMaintenancePart);
+        await _session.SaveChangesAsync();
+
         var remainingTenants = GetRemainingTenants(staggeredMaintenancePart);
 
         while (remainingTenants.Count != 0)
