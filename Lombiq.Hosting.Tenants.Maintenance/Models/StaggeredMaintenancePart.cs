@@ -24,7 +24,7 @@ public class StaggeredMaintenancePart : ContentPart
     public TimeSpan GetOptionsTimeBetweenBatches(StaggeredMaintenanceOptions options) =>
         options.BatchIntervalSeconds is null
             ? BatchInterval.Value!.Value
-            : TimeSpan.FromMilliseconds(options.BatchIntervalSeconds.Value);
+            : TimeSpan.FromSeconds(options.BatchIntervalSeconds.Value);
 
     public decimal GetOptionsBatchSize(StaggeredMaintenanceOptions options) =>
         options.BatchSize ?? BatchSize.Value!.Value;
