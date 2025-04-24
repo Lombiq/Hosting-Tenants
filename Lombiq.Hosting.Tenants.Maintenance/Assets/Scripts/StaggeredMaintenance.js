@@ -76,7 +76,11 @@ function updateMaintenanceContent(html) {
     if (!isRunning) stopPolling();
 
     // Re-initialize popovers.
-    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => {
+        if (!bootstrap.Popover.getInstance(el)) {
+            new bootstrap.Popover(el);
+        }
+    });
 }
 
 function pollNow() {
@@ -147,5 +151,11 @@ rateSelect.addEventListener('change', () => {
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden && toggle.checked) {
         startPolling();
+    }
+});
+
+document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => {
+    if (!bootstrap.Popover.getInstance(el)) {
+        new bootstrap.Popover(el);
     }
 });
