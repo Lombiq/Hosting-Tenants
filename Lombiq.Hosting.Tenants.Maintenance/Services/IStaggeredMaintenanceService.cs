@@ -20,5 +20,5 @@ public interface IStaggeredMaintenanceService
     /// Gets or creates the staggered maintenance content item. This is done to avoid creating the staggered maintenance
     /// content item multiple times. We are using a content item structure so we can easily have an editor for it.
     /// </summary>
-    Task<ContentItem> GetorCreateStaggeredMaintenanceAsync();
+    Task<ContentItem> GetOrCreateStaggeredMaintenanceAsync();
 }
