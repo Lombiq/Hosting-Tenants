@@ -61,6 +61,7 @@
   <ItemGroup>
     <ProjectReference Condition="Exists($(LombiqNodeJsExtensionsPath))" Include="$(LombiqNodeJsExtensionsPath)/Lombiq.NodeJs.Extensions.csproj" />
     <PackageReference Condition="!Exists($(LombiqNodeJsExtensionsPath))" Include="Lombiq.NodeJs.Extensions" Version="2.1.1" />
+    <ProjectReference Include="..\..\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions\Lombiq.HelpfulExtensions.csproj" />
   </ItemGroup>
 
   <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.props" />

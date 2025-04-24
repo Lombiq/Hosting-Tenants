@@ -186,7 +186,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
     {
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
 
-        var take = (int)staggeredMaintenancePart.GetOptionsProcessingStep(_staggeredMaintenanceOptions);
+        var take = (int)staggeredMaintenancePart.GetOptionsBatchSize(_staggeredMaintenanceOptions);
         staggeredMaintenancePart.AllTenantCount.Value = allTenants.Count;
 
         return allTenants.Where(settings => !staggeredMaintenancePart.ProcessedTenantIds.Contains(settings.TenantId))

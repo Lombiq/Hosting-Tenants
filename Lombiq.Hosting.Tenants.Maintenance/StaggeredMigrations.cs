@@ -1,3 +1,4 @@
+using Lombiq.HelpfulExtensions.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using OrchardCore.ContentFields.Fields;
@@ -19,8 +20,8 @@ public sealed class StaggeredMigrations : DataMigration
     public async Task<int> CreateAsync()
     {
         await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredMaintenancePart), part => part
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProcessingStep), field => field
-                .WithDisplayName("Processing Step")
+            .WithField<NumericField>(nameof(StaggeredMaintenancePart.BatchSize), field => field
+                .WithDisplayName("Batch Size")
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
@@ -41,39 +42,44 @@ public sealed class StaggeredMigrations : DataMigration
                 {
                     Hint = "Indicates whether the staggered maintenance process should run in parallel or not.",
                 }))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProgressPercentage), field => field
-                .WithDisplayName("Progress Percentage")
-                .WithSettings(new NumericFieldSettings
-                {
-                    Hint = "Calculated from processed tenants count and all tenant count.",
-                }))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.AllTenantCount), field => field
-                .WithDisplayName("All Tenant Count")
-                .WithSettings(new NumericFieldSettings
-                {
-                    Hint = "The number of tenants to be processed. This is the total number of running tenants in the system.",
-                }))
             .WithField<NumericField>(nameof(StaggeredMaintenancePart.CurrentVersion), field => field
                 .WithDisplayName("Current Version")
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The current version of the staggered maintenance process.",
                 }))
+            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProgressPercentage), field => field
+                .WithDisplayName("Progress Percentage")
+                .WithSettings(new NumericFieldSettings
+                {
+                    Hint = "Calculated from processed tenants count and all tenant count.",
+                })
+                .WithEditor(Editors.Label))
+            .WithField<NumericField>(nameof(StaggeredMaintenancePart.AllTenantCount), field => field
+                .WithDisplayName("All Tenant Count")
+                .WithSettings(new NumericFieldSettings
+                {
+                    Hint = "The number of tenants to be processed. This is the total number of running tenants in the system.",
+                })
+                .WithEditor(Editors.Label))
             .WithField<BooleanField>(nameof(StaggeredMaintenancePart.Canceled), field => field
                 .WithSettings(new BooleanFieldSettings
                 {
                     Hint = "Indicates whether the staggered maintenance process has been canceled manually.",
-                }))
+                })
+                .WithEditor(Editors.Label))
             .WithField<DateTimeField>(nameof(StaggeredMaintenancePart.Started), field => field
                 .WithSettings(new DateTimeFieldSettings
                 {
                     Hint = "The date and time when the current version staggered maintenance process started.",
-                }))
+                })
+                .WithEditor(Editors.Label))
             .WithField<DateTimeField>(nameof(StaggeredMaintenancePart.Finished), field => field
                 .WithSettings(new DateTimeFieldSettings
                 {
                     Hint = "The date and time when the current version staggered maintenance process was finished or canceled.",
-                }))
+                })
+                .WithEditor(Editors.Label))
         );
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenance, builder => builder
