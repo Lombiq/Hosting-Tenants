@@ -32,7 +32,7 @@ public class StaggeredMaintenanceHandler : IContentDisplayHandler
         {
             context.Updater.ModelState.AddModelError(
                 nameof(StaggeredMaintenancePart.IsRunning),
-                T["You can't save this until a staggered maintenance is running."]);
+                T["You can't save this while a staggered maintenance is running."]);
         }
 
         return Task.CompletedTask;
