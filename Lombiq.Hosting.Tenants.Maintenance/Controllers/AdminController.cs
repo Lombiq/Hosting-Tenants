@@ -1,4 +1,5 @@
-﻿using Lombiq.Hosting.Tenants.Maintenance.Models;
+﻿using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
@@ -7,10 +8,12 @@ using OrchardCore.Admin;
 using OrchardCore.BackgroundJobs;
 using OrchardCore.ContentManagement;
 using OrchardCore.DisplayManagement.Notify;
+using OrchardCore.Modules;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Controllers;
 
+[Feature(FeatureNames.StaggeredMaintenance)]
 [Admin("StaggeredMaintenance/{action}")]
 public class AdminController : Controller
 {
