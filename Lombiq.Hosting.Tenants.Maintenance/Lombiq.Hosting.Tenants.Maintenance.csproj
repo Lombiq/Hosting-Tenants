@@ -54,8 +54,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="12.1.1-alpha.2.nest-561" />
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.1.1-alpha.2.nest-561" />
+    <PackageReference Include="Lombiq.HelpfulLibraries.Common" Version="12.1.1-alpha.3.nest-561" />
+    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.1.1-alpha.3.nest-561" />
   </ItemGroup>
 
   <ItemGroup>
