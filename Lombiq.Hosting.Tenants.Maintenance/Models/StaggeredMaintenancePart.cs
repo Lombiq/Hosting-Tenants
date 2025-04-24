@@ -9,7 +9,7 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 public class StaggeredMaintenancePart : ContentPart
 {
     public NumericField ProcessingStep { get; } = new() { Value = 1 };
-    public TimeField TimeSpanBetweenBatches { get; set; } = new() { Value = TimeSpan.FromSeconds(0) };
+    public TimeField BatchInterval { get; set; } = new() { Value = TimeSpan.FromSeconds(0) };
     public BooleanField RunParallel { get; set; } = new() { Value = true };
     public NumericField ProgressPercentage { get; } = new() { Value = 0 };
     public NumericField AllTenantCount { get; } = new() { Value = 0 };
