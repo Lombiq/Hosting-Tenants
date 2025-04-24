@@ -26,6 +26,5 @@ public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProvider
             !context.WasLatestExecutionSuccessful());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        // Delete all tenant specific indexes in Elasticsearch.
-        _elasticIndexManager.DeleteIndex("*");
+        _elasticIndexManager.DeleteAllIndexesAsync();
 }
