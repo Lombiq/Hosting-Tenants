@@ -33,13 +33,13 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var model = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
+        var model = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
         return View(model: model);
     }
 
     public async Task<IActionResult> GetPartialView()
     {
-        var model = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
+        var model = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
 
         return PartialView("StaggeredMaintenanceDetails", model);
     }
@@ -76,7 +76,7 @@ public class AdminController : Controller
         // if the maintenance was abruptly stopped e.g. by a server restart.
         if (!successfulCancel)
         {
-            var staggeredMaintenance = await _staggeredMaintenanceService.GetorCreateStaggeredMaintenanceAsync();
+            var staggeredMaintenance = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
             staggeredMaintenance.Alter<StaggeredMaintenancePart>(part => part.Canceled.Value = true);
             await _contentManager.UpdateAsync(staggeredMaintenance);
         }

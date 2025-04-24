@@ -62,7 +62,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
 
         await _lock.WaitAsync();
 
-        var staggeredMaintenancePart = (await GetorCreateStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
+        var staggeredMaintenancePart = (await GetOrCreateStaggeredMaintenanceAsync()).As<StaggeredMaintenancePart>();
         await _staggeredMaintenanceEvents.AwaitEachAsync(async handler => await handler.StartingAsync(staggeredMaintenancePart));
         try
         {
@@ -81,7 +81,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
         return staggeredMaintenancePart;
     }
 
-    public async Task<ContentItem> GetorCreateStaggeredMaintenanceAsync()
+    public async Task<ContentItem> GetOrCreateStaggeredMaintenanceAsync()
     {
         var staggeredContentItem =
             await _session.Query<ContentItem, ContentItemIndex>(item => item.ContentType == ContentTypes.StaggeredMaintenance)
@@ -227,7 +227,7 @@ public class StaggeredMaintenanceService : IStaggeredMaintenanceService
             await Task.WhenAll(tasks);
         }
 
-        staggeredMaintenancePart.Versions.AddRangeAndOverride(_versionUpdates);
+        staggeredMaintenancePart.Versions.AddRangeWithOverwrite(_versionUpdates);
         staggeredMaintenancePart.ErrorLogs.AddRange(_errorLogs);
         staggeredMaintenancePart.ProcessedTenantIds.AddRange(_processedTenantIds);
     }
