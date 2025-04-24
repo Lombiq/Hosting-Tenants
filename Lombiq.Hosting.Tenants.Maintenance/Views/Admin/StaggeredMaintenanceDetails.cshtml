@@ -97,7 +97,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var error in part.ErrorLogs)
+                                @foreach (var error in part.ErrorLogs.OrderBy(version => version.Key))
                                 {
                                     <tr>
                                         <td>@error.Key</td>
@@ -142,7 +142,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var version in part.Versions)
+                            @foreach (var version in part.Versions.OrderBy(version => version.Key))
                             {
                                 <tr>
                                     <td>@version.Key</td>
