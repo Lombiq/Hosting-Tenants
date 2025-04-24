@@ -218,7 +218,7 @@ You can override the following setting with an environment variable:
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
       "StaggeredMaintenance": {
-        "MillisecondBetweenBatches": 1000,
+        "BatchIntervalSeconds": 1000,
         "ProcessingStep": 5,
         "RunParallel": false
       }

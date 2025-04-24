@@ -26,7 +26,7 @@ public sealed class StaggeredMigrations : DataMigration
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
                            " number of tenants started at once.",
                 }))
-            .WithField<TimeField>(nameof(StaggeredMaintenancePart.TimeSpanBetweenBatches), field => field
+            .WithField<TimeField>(nameof(StaggeredMaintenancePart.BatchInterval), field => field
                 .WithDisplayName("Time Span Between Batches")
                 .WithSettings(new TimeFieldSettings
                 {
