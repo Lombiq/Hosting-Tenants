@@ -201,7 +201,7 @@ The following configuration options are available to set the enabled features:
 
 Adds a page to the admin under Multi-Tenancy/Maintenance that allows you to start all tenants shells in a staggered way. This is useful when you have a lot of tenants and you want to start them in a staggered way to avoid overwhelming the database or other resources. Starting up all the tenants ensures that they get updated to the newest migration steps and also all the above maintenance tasks run.
 
-You can edit the maintenance options directly on the Multi-Tenancy/Maintenance page if you click on the edit button. 
+You can edit the maintenance options directly on the Multi-Tenancy/Maintenance page if you click on the edit button.
 
 - Batch Size: You can set the batches that the tenants should be run in and the waiting time span between the batches.
 - Time Span Between Batches: You can set the time span between the batches. This is the time that the system will wait after starting a batch of tenants before starting the next batch.
