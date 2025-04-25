@@ -80,7 +80,7 @@ public class AdminController : Controller
         if (!successfulPause)
         {
             var staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
-            staggeredTenantWakeUp.Alter<StaggeredTenantWakeUpPart>(part => part.Paused.Value = true);
+            staggeredTenantWakeUp.Alter<StaggeredTenantWakeUpPart>(part => part.Paused = true);
             await _contentManager.UpdateAsync(staggeredTenantWakeUp);
         }
 

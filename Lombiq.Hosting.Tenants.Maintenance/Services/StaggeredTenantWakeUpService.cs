@@ -187,7 +187,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
 
         var take = (int)staggeredTenantWakeUpPart.GetOptionsBatchSize(_staggeredTenantWakeUpOptions);
-        staggeredTenantWakeUpPart.AllTenantCount.Value = allTenants.Count;
+        staggeredTenantWakeUpPart.AllTenantCount = allTenants.Count;
 
         return allTenants.Where(settings => !staggeredTenantWakeUpPart.ProcessedTenantIds.Contains(settings.TenantId))
             .Take(take)

@@ -3,7 +3,7 @@
 @model OrchardCore.ContentManagement.ContentItem
 @{
     var part = Model.ContentItem.As<StaggeredTenantWakeUpPart>();
-    var currentPercentage = part.ProgressPercentage.Value;
+    var currentPercentage = part.ProgressPercentage;
 }
 
 <div class="buttons mt-4">
@@ -36,7 +36,7 @@
             progress-bar
             progress-bar-striped
             @(part.IsRunning() ? "progress-bar-animated" : string.Empty)
-            @(part.Paused.Value ? "bg-danger" : string.Empty)
+            @(part.Paused ? "bg-danger" : string.Empty)
             @(part.IsFinished() ? "bg-success" : string.Empty)"
          role="progressbar"
          aria-valuenow="@currentPercentage"
@@ -52,13 +52,13 @@
 
 
             <dt class="col-sm-5">@T["Paused:"]</dt>
-            <dd class="col-sm-7">@(part.Paused.Value ? T["Yes"] : T["No"])</dd>
+            <dd class="col-sm-7">@(part.Paused ? T["Yes"] : T["No"])</dd>
 
             <dt class="col-sm-5">@T["Started:"]</dt>
-            <dd class="col-sm-7">@(part.Started.Value == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Started.Value)))</dd>
+            <dd class="col-sm-7">@(part.Started == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Started)))</dd>
 
-            <dt class="col-sm-5">@(part.Paused.Value ? T["Finished (paused):"] : T["Finished:"])</dt>
-            <dd class="col-sm-7">@(part.Finished.Value == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Finished.Value)))</dd>
+            <dt class="col-sm-5">@(part.Paused ? T["Finished (paused):"] : T["Finished:"])</dt>
+            <dd class="col-sm-7">@(part.Finished == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Finished)))</dd>
         </dl>
     </div>
     <div class="col-md-6">
@@ -67,7 +67,7 @@
             <dd class="col-sm-6">@part.CurrentVersion.Value</dd>
 
             <dt class="col-sm-6">@T["Total running tenants:"]</dt>
-            <dd class="col-sm-6">@part.AllTenantCount.Value</dd>
+            <dd class="col-sm-6">@part.AllTenantCount</dd>
 
             <dt class="col-sm-6">@T["Processed tenants:"]</dt>
             <dd class="col-sm-6">@part.ProcessedTenantIds.Count</dd>

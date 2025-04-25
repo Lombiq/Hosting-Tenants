@@ -11,12 +11,12 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public NumericField BatchSize { get; } = new() { Value = 1 };
     public TimeField BatchInterval { get; set; } = new() { Value = TimeSpan.FromSeconds(0) };
     public BooleanField RunParallel { get; set; } = new() { Value = true };
-    public NumericField ProgressPercentage { get; } = new() { Value = 0 };
-    public NumericField AllTenantCount { get; } = new() { Value = 0 };
     public NumericField CurrentVersion { get; } = new() { Value = 0 };
-    public BooleanField Paused { get; } = new();
-    public DateTimeField Started { get; set; } = new();
-    public DateTimeField Finished { get; set; } = new();
+    public int ProgressPercentage { get; set; }
+    public int AllTenantCount { get; set; }
+    public bool Paused { get; set; }
+    public DateTime? Started { get; set; }
+    public DateTime? Finished { get; set; }
     public IList<string> ProcessedTenantIds { get; } = [];
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
@@ -33,7 +33,7 @@ public class StaggeredTenantWakeUpPart : ContentPart
         options.RunParallel ?? RunParallel.Value;
 
     public void CalculatePercentage() =>
-        ProgressPercentage.Value = Math.Round((decimal)(ProcessedTenantIds.Count / AllTenantCount.Value * 100)!, 0);
+        ProgressPercentage = (int)Math.Round(((double)ProcessedTenantIds.Count / AllTenantCount * 100)!, 0);
 
     public bool ShouldPause(string jobId)
     {
@@ -49,18 +49,18 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public void Start(IClock clock, string maintenanceJobName, bool newVersion, bool reset)
     {
         MaintenanceJobStore.Clear(maintenanceJobName);
-        Paused.Value = false;
-        Started.Value = clock.UtcNow;
-        Finished.Value = null;
+        Paused = false;
+        Started = clock.UtcNow;
+        Finished = null;
         SetVersion(newVersion);
         Clear(newVersion, reset);
     }
 
-    public void Finish(IClock clock) => Finished.Value = clock.UtcNow;
+    public void Finish(IClock clock) => Finished = clock.UtcNow;
 
-    public bool IsFinished() => ProgressPercentage.Value == 100;
+    public bool IsFinished() => ProgressPercentage == 100;
 
-    public bool IsRunning() => ProgressPercentage.Value is > 0 and < 100 && !Paused.Value;
+    public bool IsRunning() => ProgressPercentage is > 0 and < 100 && !Paused;
 
     private void SetVersion(bool newVersion)
     {
@@ -75,11 +75,11 @@ public class StaggeredTenantWakeUpPart : ContentPart
         if (newVersion || reset)
         {
             ProcessedTenantIds.Clear();
-            AllTenantCount.Value = 0;
-            ProgressPercentage.Value = 0;
+            AllTenantCount = 0;
+            ProgressPercentage = 0;
             ErrorLogs.Clear();
         }
     }
 
-    private void Pause() => Paused.Value = true;
+    private void Pause() => Paused = true;
 }

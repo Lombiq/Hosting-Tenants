@@ -1,4 +1,3 @@
-using Lombiq.HelpfulExtensions.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using OrchardCore.ContentFields.Fields;
@@ -48,38 +47,6 @@ public sealed class StaggeredMigrations : DataMigration
                 {
                     Hint = "The current version of the staggered tenant wake-up process.",
                 }))
-            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.ProgressPercentage), field => field
-                .WithDisplayName("Progress Percentage")
-                .WithSettings(new NumericFieldSettings
-                {
-                    Hint = "Calculated from processed tenants count and all tenant count.",
-                })
-                .WithEditor(Editors.Label))
-            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.AllTenantCount), field => field
-                .WithDisplayName("All Tenant Count")
-                .WithSettings(new NumericFieldSettings
-                {
-                    Hint = "The number of tenants to be processed. This is the total number of running tenants in the system.",
-                })
-                .WithEditor(Editors.Label))
-            .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.Paused), field => field
-                .WithSettings(new BooleanFieldSettings
-                {
-                    Hint = "Indicates whether the staggered tenant wake-up process has been paused manually.",
-                })
-                .WithEditor(Editors.Label))
-            .WithField<DateTimeField>(nameof(StaggeredTenantWakeUpPart.Started), field => field
-                .WithSettings(new DateTimeFieldSettings
-                {
-                    Hint = "The date and time when the current version staggered tenant wake-up process started.",
-                })
-                .WithEditor(Editors.Label))
-            .WithField<DateTimeField>(nameof(StaggeredTenantWakeUpPart.Finished), field => field
-                .WithSettings(new DateTimeFieldSettings
-                {
-                    Hint = "The date and time when the current version staggered tenant wake-up process was finished or paused.",
-                })
-                .WithEditor(Editors.Label))
         );
 
         await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredTenantWakeUp, builder => builder
