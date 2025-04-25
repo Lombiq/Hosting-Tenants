@@ -13,45 +13,45 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Controllers;
 
-[Feature(FeatureNames.StaggeredMaintenance)]
-[Admin("StaggeredMaintenance/{action}")]
+[Feature(FeatureNames.StaggeredTenantWakeUp)]
+[Admin("StaggeredTenantWakeUp/{action}")]
 public class AdminController : Controller
 {
     private readonly INotifier _notifier;
     private readonly IHtmlLocalizer<AdminController> H;
-    private readonly IStaggeredMaintenanceService _staggeredMaintenanceService;
+    private readonly IStaggeredTenantWakeUpService _staggeredTenantWakeUpService;
     private readonly IContentManager _contentManager;
 
     public AdminController(
         INotifier notifier,
         IHtmlLocalizer<AdminController> htmlLocalizer,
-        IStaggeredMaintenanceService staggeredMaintenanceService,
+        IStaggeredTenantWakeUpService staggeredTenantWakeUpService,
         IContentManager contentManager)
     {
         _notifier = notifier;
         H = htmlLocalizer;
-        _staggeredMaintenanceService = staggeredMaintenanceService;
+        _staggeredTenantWakeUpService = staggeredTenantWakeUpService;
         _contentManager = contentManager;
     }
 
     public async Task<IActionResult> Index()
     {
-        var model = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
+        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
         return View(model: model);
     }
 
     public async Task<IActionResult> GetPartialView()
     {
-        var model = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
+        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
 
-        return PartialView("StaggeredMaintenanceDetails", model);
+        return PartialView("StaggeredTenantWakeUpDetails", model);
     }
 
     public async Task<IActionResult> Continue()
     {
         await ExecuteScheduledMaintenanceAsync();
 
-        await _notifier.SuccessAsync(H["Started staggered maintenance."]);
+        await _notifier.SuccessAsync(H["Started staggered tenant wake-up."]);
         return RedirectToIndex();
     }
 
@@ -59,7 +59,7 @@ public class AdminController : Controller
     {
         await ExecuteScheduledMaintenanceAsync(newVersion: true);
 
-        await _notifier.SuccessAsync(H["Started staggered maintenance for new version."]);
+        await _notifier.SuccessAsync(H["Started staggered tenant wake-up for new version."]);
         return RedirectToIndex();
     }
 
@@ -67,24 +67,24 @@ public class AdminController : Controller
     {
         await ExecuteScheduledMaintenanceAsync(reset: true);
 
-        await _notifier.SuccessAsync(H["Started staggered maintenance with reset."]);
+        await _notifier.SuccessAsync(H["Started staggered tenant wake-up with reset."]);
         return RedirectToIndex();
     }
 
-    public async Task<IActionResult> Cancel()
+    public async Task<IActionResult> Pause()
     {
-        var successfulCancel = MaintenanceJobStore.RequestCancel(nameof(StaggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync));
+        var successfulPause = MaintenanceJobStore.RequestPause(nameof(StaggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync));
 
-        // If not successful we should directly set the part to canceled, because it is not running. This could happen
+        // If not successful we should directly set the part to paused, because it is not running. This could happen
         // if the maintenance was abruptly stopped e.g. by a server restart.
-        if (!successfulCancel)
+        if (!successfulPause)
         {
-            var staggeredMaintenance = await _staggeredMaintenanceService.GetOrCreateStaggeredMaintenanceAsync();
-            staggeredMaintenance.Alter<StaggeredMaintenancePart>(part => part.Canceled.Value = true);
-            await _contentManager.UpdateAsync(staggeredMaintenance);
+            var staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
+            staggeredTenantWakeUp.Alter<StaggeredTenantWakeUpPart>(part => part.Paused.Value = true);
+            await _contentManager.UpdateAsync(staggeredTenantWakeUp);
         }
 
-        await _notifier.SuccessAsync(H["Canceled staggered maintenance."]);
+        await _notifier.SuccessAsync(H["Paused staggered tenant wake-up."]);
         return RedirectToIndex();
     }
 
@@ -94,7 +94,7 @@ public class AdminController : Controller
     private Task ExecuteScheduledMaintenanceAsync(bool newVersion = false, bool reset = false) =>
         HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(AdminController), async scope =>
         {
-            var staggeredMaintenanceService = scope.ServiceProvider.GetRequiredService<IStaggeredMaintenanceService>();
-            await staggeredMaintenanceService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);
+            var staggeredTenantWakeUpService = scope.ServiceProvider.GetRequiredService<IStaggeredTenantWakeUpService>();
+            await staggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);
         });
 }

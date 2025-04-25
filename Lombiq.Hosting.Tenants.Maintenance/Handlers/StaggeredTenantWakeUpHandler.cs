@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Handlers;
 
-public class StaggeredMaintenanceHandler : IContentDisplayHandler
+public class StaggeredTenantWakeUpHandler : IContentDisplayHandler
 {
-    private readonly IStringLocalizer<StaggeredMaintenanceHandler> T;
+    private readonly IStringLocalizer<StaggeredTenantWakeUpHandler> T;
 
-    public StaggeredMaintenanceHandler(IStringLocalizer<StaggeredMaintenanceHandler> localizer) => T = localizer;
+    public StaggeredTenantWakeUpHandler(IStringLocalizer<StaggeredTenantWakeUpHandler> localizer) => T = localizer;
 
     public Task BuildDisplayAsync(ContentItem contentItem, BuildDisplayContext context) => Task.CompletedTask;
 
@@ -20,19 +20,19 @@ public class StaggeredMaintenanceHandler : IContentDisplayHandler
 
     public Task UpdateEditorAsync(ContentItem contentItem, UpdateEditorContext context)
     {
-        if (contentItem.ContentType != ContentTypes.StaggeredMaintenance)
+        if (contentItem.ContentType != ContentTypes.StaggeredTenantWakeUp)
         {
             return Task.CompletedTask;
         }
 
-        var staggeredMaintenancePart = contentItem.As<StaggeredMaintenancePart>();
-        if (staggeredMaintenancePart == null) return Task.CompletedTask;
+        var staggeredTenantWakeUpPart = contentItem.As<StaggeredTenantWakeUpPart>();
+        if (staggeredTenantWakeUpPart == null) return Task.CompletedTask;
 
-        if (staggeredMaintenancePart.IsRunning())
+        if (staggeredTenantWakeUpPart.IsRunning())
         {
             context.Updater.ModelState.AddModelError(
-                nameof(StaggeredMaintenancePart.IsRunning),
-                T["You can't save this while a staggered maintenance is running."]);
+                nameof(StaggeredTenantWakeUpPart.IsRunning),
+                T["You can't save this while a staggered tenant wake-up is running."]);
         }
 
         return Task.CompletedTask;

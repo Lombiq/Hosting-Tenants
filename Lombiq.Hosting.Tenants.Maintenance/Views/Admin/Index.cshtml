@@ -1,9 +1,15 @@
 ﻿@using Lombiq.Hosting.Tenants.Maintenance.Constants
 @using Lombiq.Hosting.Tenants.Maintenance.Controllers
+@using Lombiq.Hosting.Tenants.Maintenance.Models
+@using OrchardCore.ContentManagement
 @using OrchardCore.Mvc.Core.Utilities
 @model OrchardCore.ContentManagement.ContentItem
 
-<zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Maintenance"])</h1></zone>
+@{
+    var part = Model.ContentItem.As<StaggeredTenantWakeUpPart>();
+}
+
+<zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Tenant Wake-up"])</h1></zone>
 <div class="d-flex align-items-center gap-3 mb-3">
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="autoRefreshToggle">
@@ -23,11 +29,11 @@
 </div>
 
 <div id="maintenance-status-container"
-    data-maintenance-url="@Url.Action(
-        nameof(AdminController.GetPartialView),
-        typeof(AdminController).ControllerName(),
-        new { area = FeatureNames.Maintenance })">
-    @await Html.PartialAsync("StaggeredMaintenanceDetails", Model)
+     data-maintenance-url="@Url.Action(
+                               nameof(AdminController.GetPartialView),
+                               typeof(AdminController).ControllerName(),
+                               new { area = FeatureNames.Maintenance })">
+    @await Html.PartialAsync("StaggeredTenantWakeUpDetails", Model)
 </div>
 
 <style at="Head">
@@ -36,4 +42,4 @@
     }
 </style>
 
-<script asp-name="@ResourceNames.StaggeredMaintenance"></script>
+<script asp-name="@ResourceNames.StaggeredTenantWakeUp"></script>

@@ -197,7 +197,7 @@ The following configuration options are available to set the enabled features:
 }
 ```
 
-### `Lombiq.Hosting.Tenants.Maintenance.StaggeredMaintenance`
+### `Lombiq.Hosting.Tenants.Maintenance.StaggeredTenantWakeUp`
 
 Adds a page to the admin under Multi-Tenancy/Maintenance that allows you to start all tenants shells in a staggered way. This is useful when you have a lot of tenants and you want to start them in a staggered way to avoid overwhelming the database or other resources. Starting up all the tenants ensures that they get updated to the newest migration steps and also all the above maintenance tasks run.
 
@@ -206,15 +206,15 @@ You can edit the maintenance options directly on the Multi-Tenancy/Maintenance p
 - Batch Size: You can set the batches that the tenants should be run in and the waiting time span between the batches.
 - Time Span Between Batches: You can set the time span between the batches. This is the time that the system will wait after starting a batch of tenants before starting the next batch.
 - Run In Parallel: You can set if you want to run it in parallel or not. If you set it to parallel it will start the Batch Size of tenants at once, otherwise it will start tenants one-by-one and then wait the time span after the Batch Size amount of tenants has been started.
-- Current Version: The current version of the staggered maintenance process. Usually this should not be set manually.
+- Current Version: The current version of the staggered tenant wake-up process. Usually this should not be set manually.
 
 Functions on the page:
 
-- Start new: Start staggered maintenance for all the tenants with a new version number.
+- Start new: Start staggered tenant wake-up for all the tenants with a new version number.
 - Continue: Continues current maintenance version run.
-- Cancel: If there is a running maintenance, you can cancel it.
-- Reset current version: Runs the staggered maintenance for all the tenants with the current version again.
-- Edit: You can edit all the displayed and functional parameters for the staggered maintenance. You can only save if there is no maintenance running.
+- Pause: If there is a running maintenance, you can pause it.
+- Reset current version: Runs the staggered tenant wake-up for all the tenants with the current version again.
+- Edit: You can edit all the displayed and functional parameters for the staggered tenant wake-up. You can only save if there is no maintenance running.
 
 You can override the following setting with an environment variable:
 
@@ -222,7 +222,7 @@ You can override the following setting with an environment variable:
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
-      "StaggeredMaintenance": {
+      "StaggeredTenantWakeUp": {
         "BatchIntervalSeconds": 1000,
         "BatchSize": 5,
         "RunParallel": false

@@ -21,10 +21,10 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Tests.UI.Extensions;
 
 public static class TestCaseUITestContextExtensions
 {
-    private const string TenantName = "StaggeredMaintenance";
+    private const string TenantName = "StaggeredTenantWakeUp";
     private const string TenantUrlPrefix = "staggered-maintenance";
 
-    public static async Task TestStaggeredMaintenanceAsync(this UITestContext context, string setupRecipeId)
+    public static async Task TestStaggeredTenantWakeUpAsync(this UITestContext context, string setupRecipeId)
     {
         await context.SignInDirectlyAndGoToDashboardAsync();
         await context.CreateAndSwitchToTenantManuallyAsync(TenantName, TenantUrlPrefix, string.Empty);
@@ -43,7 +43,7 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAndGoToDashboardAsync();
         await context.ClickReliablyOnByLinkTextAsync("Multi-Tenancy");
         await context.ClickReliablyOnByLinkTextAsync("Tenants");
-        await context.ClickReliablyOnByLinkTextAsync("StaggeredMaintenance");
+        await context.ClickReliablyOnByLinkTextAsync("StaggeredTenantWakeUp");
         await context.GoToDashboardAsync();
 
         // Put the tenant into idle mode, to see if it works that way also.

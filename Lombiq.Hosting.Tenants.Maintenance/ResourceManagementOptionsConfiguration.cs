@@ -12,9 +12,9 @@ public class ResourceManagementOptionsConfiguration : IConfigureOptions<Resource
 
     static ResourceManagementOptionsConfiguration() =>
         _manifest
-            .DefineScript(ResourceNames.StaggeredMaintenance)
+            .DefineScript(ResourceNames.StaggeredTenantWakeUp)
             .SetDependencies("bootstrap")
-            .SetUrl($"{Js}{ResourceNames.StaggeredMaintenance}.js");
+            .SetUrl($"{Js}{ResourceNames.StaggeredTenantWakeUp}.js");
 
     public void Configure(ResourceManagementOptions options) => options.ResourceManifests.Add(_manifest);
 }

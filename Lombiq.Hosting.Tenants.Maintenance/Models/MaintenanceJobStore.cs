@@ -4,21 +4,21 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 
 public static class MaintenanceJobStore
 {
-    private static readonly ConcurrentDictionary<string, bool> _cancelFlags = new();
+    private static readonly ConcurrentDictionary<string, bool> _pauseFlags = new();
 
-    public static bool RequestCancel(string jobId)
+    public static bool RequestPause(string jobId)
     {
         // Check if there is a job running.
-        if (_cancelFlags.ContainsKey(jobId))
+        if (_pauseFlags.ContainsKey(jobId))
         {
-            _cancelFlags[jobId] = true;
+            _pauseFlags[jobId] = true;
             return true;
         }
 
         return false;
     }
 
-    public static bool IsCancelled(string jobId) => _cancelFlags.TryGetValue(jobId, out var cancel) && cancel;
+    public static bool IsPaused(string jobId) => _pauseFlags.TryGetValue(jobId, out var pause) && pause;
 
-    public static void Clear(string jobId) => _cancelFlags.AddOrUpdate(jobId, addValue: false, (_, _) => false);
+    public static void Clear(string jobId) => _pauseFlags.AddOrUpdate(jobId, addValue: false, (_, _) => false);
 }

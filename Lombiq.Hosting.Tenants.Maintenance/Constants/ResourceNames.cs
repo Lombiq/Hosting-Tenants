@@ -2,5 +2,5 @@
 
 public static class ResourceNames
 {
-    public const string StaggeredMaintenance = nameof(StaggeredMaintenance);
+    public const string StaggeredTenantWakeUp = nameof(StaggeredTenantWakeUp);
 }

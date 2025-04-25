@@ -19,71 +19,71 @@ public sealed class StaggeredMigrations : DataMigration
 
     public async Task<int> CreateAsync()
     {
-        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredMaintenancePart), part => part
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.BatchSize), field => field
+        await _contentDefinitionManager.AlterPartDefinitionAsync(nameof(StaggeredTenantWakeUpPart), part => part
+            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.BatchSize), field => field
                 .WithDisplayName("Batch Size")
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
                            " number of tenants started at once.",
                 }))
-            .WithField<TimeField>(nameof(StaggeredMaintenancePart.BatchInterval), field => field
+            .WithField<TimeField>(nameof(StaggeredTenantWakeUpPart.BatchInterval), field => field
                 .WithDisplayName("Time Span Between Batches")
                 .WithSettings(new TimeFieldSettings
                 {
                     // 1 second.
                     Step = "1",
                     Hint = "The time span between batches of tenants to be processed in hh:mm:ss format. " +
-                           "If StaggeredMaintenanceOptions is set, this value will be ignored.",
+                           "If StaggeredTenantWakeUpOptions is set, this value will be ignored.",
                 }))
-            .WithField<BooleanField>(nameof(StaggeredMaintenancePart.RunParallel), field => field
+            .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunParallel), field => field
                 .WithDisplayName("Run In Parallel")
                 .WithSettings(new BooleanFieldSettings
                 {
-                    Hint = "Indicates whether the staggered maintenance process should run in parallel or not.",
+                    Hint = "Indicates whether the staggered tenant wake-up process should run in parallel or not.",
                 }))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.CurrentVersion), field => field
+            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.CurrentVersion), field => field
                 .WithDisplayName("Current Version")
                 .WithSettings(new NumericFieldSettings
                 {
-                    Hint = "The current version of the staggered maintenance process.",
+                    Hint = "The current version of the staggered tenant wake-up process.",
                 }))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.ProgressPercentage), field => field
+            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.ProgressPercentage), field => field
                 .WithDisplayName("Progress Percentage")
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "Calculated from processed tenants count and all tenant count.",
                 })
                 .WithEditor(Editors.Label))
-            .WithField<NumericField>(nameof(StaggeredMaintenancePart.AllTenantCount), field => field
+            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.AllTenantCount), field => field
                 .WithDisplayName("All Tenant Count")
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The number of tenants to be processed. This is the total number of running tenants in the system.",
                 })
                 .WithEditor(Editors.Label))
-            .WithField<BooleanField>(nameof(StaggeredMaintenancePart.Canceled), field => field
+            .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.Paused), field => field
                 .WithSettings(new BooleanFieldSettings
                 {
-                    Hint = "Indicates whether the staggered maintenance process has been canceled manually.",
+                    Hint = "Indicates whether the staggered tenant wake-up process has been paused manually.",
                 })
                 .WithEditor(Editors.Label))
-            .WithField<DateTimeField>(nameof(StaggeredMaintenancePart.Started), field => field
+            .WithField<DateTimeField>(nameof(StaggeredTenantWakeUpPart.Started), field => field
                 .WithSettings(new DateTimeFieldSettings
                 {
-                    Hint = "The date and time when the current version staggered maintenance process started.",
+                    Hint = "The date and time when the current version staggered tenant wake-up process started.",
                 })
                 .WithEditor(Editors.Label))
-            .WithField<DateTimeField>(nameof(StaggeredMaintenancePart.Finished), field => field
+            .WithField<DateTimeField>(nameof(StaggeredTenantWakeUpPart.Finished), field => field
                 .WithSettings(new DateTimeFieldSettings
                 {
-                    Hint = "The date and time when the current version staggered maintenance process was finished or canceled.",
+                    Hint = "The date and time when the current version staggered tenant wake-up process was finished or paused.",
                 })
                 .WithEditor(Editors.Label))
         );
 
-        await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredMaintenance, builder => builder
-            .WithPart<StaggeredMaintenancePart>()
+        await _contentDefinitionManager.AlterTypeDefinitionAsync(ContentTypes.StaggeredTenantWakeUp, builder => builder
+            .WithPart<StaggeredTenantWakeUpPart>()
         );
 
         return 1;
