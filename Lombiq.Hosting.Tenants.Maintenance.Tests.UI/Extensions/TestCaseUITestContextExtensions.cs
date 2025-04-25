@@ -56,13 +56,13 @@ public static class TestCaseUITestContextExtensions
             },
             TenantName);
 
-        await context.ClickReliablyOnByLinkTextAsync("Maintenance");
+        await context.ClickReliablyOnByLinkTextAsync("Staggered Tenant Wake-Up");
         await context.ClickReliablyOnByLinkTextAsync("Start new");
 
         await context.DoWithRetriesOrFailAsync(
             async () =>
             {
-                await context.ClickReliablyOnByLinkTextAsync("Maintenance");
+                await context.ClickReliablyOnByLinkTextAsync("Staggered Tenant Wake-Up");
                 return context.Get(By.XPath("//div[@id='maintenance-progress-bar']/..")).Text == "100 %";
             },
             TimeSpan.FromMinutes(1),
