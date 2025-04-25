@@ -55,10 +55,10 @@
             <dd class="col-sm-7">@(part.Paused.Value ? T["Yes"] : T["No"])</dd>
 
             <dt class="col-sm-5">@T["Started:"]</dt>
-            <dd class="col-sm-7">@await DisplayAsync(await New.DateTime(Utc: part.Started.Value))</dd>
+            <dd class="col-sm-7">@(part.Started.Value == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Started.Value)))</dd>
 
             <dt class="col-sm-5">@(part.Paused.Value ? T["Finished (paused):"] : T["Finished:"])</dt>
-            <dd class="col-sm-7">@await DisplayAsync(await New.DateTime(Utc: part.Finished.Value))</dd>
+            <dd class="col-sm-7">@(part.Finished.Value == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Finished.Value)))</dd>
         </dl>
     </div>
     <div class="col-md-6">
