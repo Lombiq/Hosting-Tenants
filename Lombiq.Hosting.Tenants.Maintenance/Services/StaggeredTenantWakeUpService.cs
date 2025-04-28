@@ -238,18 +238,23 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     {
         try
         {
-            await _shellHost.WithShellScopeAsync(
-                scope =>
-                {
-                    // Only logging is necessary here, as the actual maintenance and migration tasks are already done
-                    // when we get here.
-                    var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredTenantWakeUpService>>();
-                    tenantLogger.LogInformation(
-                        "staggered tenant wake-up for current tenant finished successfully for maintenance version {Version}.",
-                        staggeredTenantWakeUpPart.CurrentVersion.Value);
-                    return Task.CompletedTask;
-                },
-                remainingTenant.Name);
+            _shellHost.TryGetShellContext(remainingTenant.Name, out var shellContext);
+
+            if (!shellContext.IsActivated)
+            {
+                await _shellHost.WithShellScopeAsync(
+                    scope =>
+                    {
+                        // Only logging is necessary here, as the actual maintenance and migration tasks are already done
+                        // when we get here.
+                        var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredTenantWakeUpService>>();
+                        tenantLogger.LogInformation(
+                            "Staggered tenant wake-up for current tenant finished successfully for maintenance version {Version}.",
+                            staggeredTenantWakeUpPart.CurrentVersion.Value);
+                        return Task.CompletedTask;
+                    },
+                    remainingTenant.Name);
+            }
 
             _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.Value.ToTechnicalString();
 
