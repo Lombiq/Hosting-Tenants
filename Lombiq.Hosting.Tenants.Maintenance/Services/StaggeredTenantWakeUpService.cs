@@ -259,7 +259,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
             _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.Value.ToTechnicalString();
 
             _logger.LogInformation(
-                "staggered tenant wake-up for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
+                "Staggered tenant wake-up for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
                 remainingTenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion.Value);
         }
@@ -267,7 +267,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         {
             _logger.LogError(
                 exception,
-                "staggered tenant wake-up for tenant '{TenantName}' for maintenance version {Version} failed.",
+                "Staggered tenant wake-up for tenant '{TenantName}' for maintenance version {Version} failed.",
                 remainingTenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion.Value);
             _errorLogs[remainingTenant.Name] = exception.Message;
