@@ -1,11 +1,10 @@
 ﻿using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Helpers;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Localization;
-using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Admin;
-using OrchardCore.BackgroundJobs;
 using OrchardCore.ContentManagement;
 using OrchardCore.DisplayManagement.Notify;
 using OrchardCore.Modules;
@@ -49,7 +48,7 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Continue()
     {
-        await ExecuteScheduledMaintenanceAsync();
+        await ExecuteStaggeredTenantWakeUpAsync();
 
         await _notifier.SuccessAsync(H["Started staggered tenant wake-up."]);
         return RedirectToIndex();
@@ -57,7 +56,7 @@ public class AdminController : Controller
 
     public async Task<IActionResult> NewVersion()
     {
-        await ExecuteScheduledMaintenanceAsync(newVersion: true);
+        await ExecuteStaggeredTenantWakeUpAsync(newVersion: true);
 
         await _notifier.SuccessAsync(H["Started staggered tenant wake-up for new version."]);
         return RedirectToIndex();
@@ -65,7 +64,7 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Reset()
     {
-        await ExecuteScheduledMaintenanceAsync(reset: true);
+        await ExecuteStaggeredTenantWakeUpAsync(reset: true);
 
         await _notifier.SuccessAsync(H["Started staggered tenant wake-up with reset."]);
         return RedirectToIndex();
@@ -91,10 +90,6 @@ public class AdminController : Controller
     private RedirectToActionResult RedirectToIndex() =>
         RedirectToAction(nameof(Index));
 
-    private Task ExecuteScheduledMaintenanceAsync(bool newVersion = false, bool reset = false) =>
-        HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(nameof(AdminController), async scope =>
-        {
-            var staggeredTenantWakeUpService = scope.ServiceProvider.GetRequiredService<IStaggeredTenantWakeUpService>();
-            await staggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);
-        });
+    private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false, bool reset = false) =>
+        StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion, reset);
 }
