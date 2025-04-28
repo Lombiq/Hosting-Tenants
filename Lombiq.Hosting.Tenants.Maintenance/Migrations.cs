@@ -32,7 +32,8 @@ public sealed class Migrations : DataMigration
     public async Task<int> UpdateFrom1Async()
     {
         await SchemaBuilder.AlterIndexTableAsync<MaintenanceTaskExecutionIndex>(table =>
-            table.AddColumn<string>(nameof(MaintenanceTaskExecutionIndex.BuildVersion)));
+            table.AddColumn<string>(nameof(MaintenanceTaskExecutionIndex.BuildVersion)),
+            collection: DocumentCollections.Maintenance);
 
         return 2;
     }
