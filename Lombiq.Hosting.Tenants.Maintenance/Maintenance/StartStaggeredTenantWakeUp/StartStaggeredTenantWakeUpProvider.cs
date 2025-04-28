@@ -1,6 +1,7 @@
 using Lombiq.Hosting.Tenants.Maintenance.Helpers;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
+using Microsoft.Extensions.Options;
 using OrchardCore.ContentManagement;
 using System.Threading.Tasks;
 
@@ -9,11 +10,18 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.StartStaggeredTenantWak
 public class StartStaggeredTenantWakeUpProvider : MaintenanceProviderBase
 {
     private readonly IStaggeredTenantWakeUpService _staggeredTenantWakeUpService;
+    private readonly StaggeredTenantWakeUpOptions _staggeredTenantWakeUpOptions;
 
-    public StartStaggeredTenantWakeUpProvider(IStaggeredTenantWakeUpService staggeredTenantWakeUpService) =>
+    public StartStaggeredTenantWakeUpProvider(
+        IStaggeredTenantWakeUpService staggeredTenantWakeUpService,
+        IOptions<StaggeredTenantWakeUpOptions> staggeredTenantWakeUpOptions)
+    {
         _staggeredTenantWakeUpService = staggeredTenantWakeUpService;
+        _staggeredTenantWakeUpOptions = staggeredTenantWakeUpOptions.Value;
+    }
 
-    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) => Task.FromResult(true);
+    public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
+        Task.FromResult(_staggeredTenantWakeUpOptions.RunOnStartup);
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {

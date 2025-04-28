@@ -216,18 +216,21 @@ Functions on the page:
 - Reset current version: Runs the staggered tenant wake-up for all the tenants with the current version again.
 - Edit: You can edit all the displayed and functional parameters for the staggered tenant wake-up. You can only save if there is no maintenance running.
 
-You can override the following setting with an environment variable:
+You can override the following settings with an environment variable:
 
 ```json
 {
   "OrchardCore": {
     "Lombiq_Hosting_Tenants_Maintenance": {
       "StaggeredTenantWakeUp": {
-        "BatchIntervalSeconds": 1000,
+        "BatchIntervalSeconds": 5,
         "BatchSize": 5,
-        "RunParallel": false
+        "RunParallel": false,
+        "RunOnStartup": true
       }
     }
   }
 }
 ```
+
+- RunOnStartup: If you set this to true, the staggered tenant wake-up will start a new version if a new deployment was done, or it will continue the current wake-up maintenance if it hasn't finished. This is useful if you want to run the staggered tenant wake-up automatically when the application starts. If you set this to false, you will have to start it manually from the admin page.
