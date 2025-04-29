@@ -24,7 +24,7 @@ public sealed class StaggeredMigrations : DataMigration
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
-                           " number of tenants started at once.",
+                           " number of tenants started at once. If StaggeredTenantWakeUpOptions is set, these values will be ignored.",
                 }))
             .WithField<TimeField>(nameof(StaggeredTenantWakeUpPart.BatchInterval), field => field
                 .WithDisplayName("Time Span Between Batches")
@@ -32,8 +32,7 @@ public sealed class StaggeredMigrations : DataMigration
                 {
                     // 1 second.
                     Step = "1",
-                    Hint = "The time span between batches of tenants to be processed in hh:mm:ss format. " +
-                           "If StaggeredTenantWakeUpOptions is set, this value will be ignored.",
+                    Hint = "The time span between batches of tenants to be processed in hh:mm:ss format.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunParallel), field => field
                 .WithDisplayName("Run In Parallel")
