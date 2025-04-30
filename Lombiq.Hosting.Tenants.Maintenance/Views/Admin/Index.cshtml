@@ -30,9 +30,9 @@
 
 <div id="maintenance-status-container"
      data-maintenance-url="@Url.Action(
-                               nameof(AdminController.GetPartialView),
-                               typeof(AdminController).ControllerName(),
-                               new { area = FeatureNames.Maintenance })">
+         nameof(AdminController.GetPartialView),
+         typeof(AdminController).ControllerName(),
+         new { area = FeatureNames.Maintenance })">
     @await Html.PartialAsync("StaggeredTenantWakeUpDetails", Model)
 </div>
 
