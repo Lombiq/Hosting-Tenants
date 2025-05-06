@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance;
 
-public sealed class StaggeredMigrations : DataMigration
+public sealed class StaggeredTenantWakeUpMigrations : DataMigration
 {
     private readonly IContentDefinitionManager _contentDefinitionManager;
 
-    public StaggeredMigrations(IContentDefinitionManager contentDefinitionManager) =>
+    public StaggeredTenantWakeUpMigrations(IContentDefinitionManager contentDefinitionManager) =>
         _contentDefinitionManager = contentDefinitionManager;
 
     public async Task<int> CreateAsync()
@@ -24,14 +24,13 @@ public sealed class StaggeredMigrations : DataMigration
                 .WithSettings(new NumericFieldSettings
                 {
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
-                           " number of tenants started at once. If StaggeredTenantWakeUpOptions is set, these values will be ignored.",
+                        " number of tenants started at once. If StaggeredTenantWakeUpOptions is set, these values will be ignored.",
                 }))
             .WithField<TimeField>(nameof(StaggeredTenantWakeUpPart.BatchInterval), field => field
                 .WithDisplayName("Time Span Between Batches")
                 .WithSettings(new TimeFieldSettings
                 {
-                    // 1 second.
-                    Step = "1",
+                    Step = "1", // 1 second.
                     Hint = "The time span between batches of tenants to be processed in hh:mm:ss format.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunParallel), field => field

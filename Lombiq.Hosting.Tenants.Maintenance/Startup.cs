@@ -47,7 +47,7 @@ public sealed class StaggeredStartup : StartupBase
             _shellConfiguration,
             "Lombiq_Hosting_Tenants_Maintenance:StaggeredTenantWakeUp");
 
-        services.AddContentPart<StaggeredTenantWakeUpPart>().WithMigration<StaggeredMigrations>();
+        services.AddContentPart<StaggeredTenantWakeUpPart>().WithMigration<StaggeredTenantWakeUpMigrations>();
 
         services.AddScoped<INavigationProvider, AdminMenu>();
         services.AddScoped<IContentDisplayHandler, StaggeredTenantWakeUpHandler>();
