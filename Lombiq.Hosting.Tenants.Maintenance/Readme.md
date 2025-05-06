@@ -199,24 +199,24 @@ The following configuration options are available to set the enabled features:
 
 ### `Lombiq.Hosting.Tenants.Maintenance.StaggeredTenantWakeUp`
 
-Adds a page to the admin under Multi-Tenancy/Maintenance that allows you to start all tenants shells in a staggered way. This is useful when you have a lot of tenants and you want to start them in a staggered way to avoid overwhelming the database or other resources. Starting up all the tenants ensures that they get updated to the newest migration steps and also all the above maintenance tasks run.
+Adds a page to the admin under Multi-Tenancy/Staggered Tenant Wake Up that allows you to start all tenants shells in a staggered way. Waking up all the tenants this way ensures that migrations (and maintenance, should you have them) are all executed without having to start each tenant manually and also avoids saturating hardware resources (when configured correctly), such as the database access.
 
-You can edit the maintenance options directly on the Multi-Tenancy/Maintenance page if you click on the edit button.
+You can edit the maintenance options directly on the Multi-Tenancy / Staggered Tenant Wake Up page if you click on the edit button.
 
-- Batch Size: You can set the batches that the tenants should be run in and the waiting time span between the batches.
-- Time Span Between Batches: You can set the time span between the batches. This is the time that the system will wait after starting a batch of tenants before starting the next batch.
-- Run In Parallel: You can set if you want to run it in parallel or not. If you set it to parallel it will start the Batch Size of tenants at once, otherwise it will start tenants one-by-one and then wait the time span after the Batch Size amount of tenants has been started.
+- Batch Size: The number of tenants processed in one iteration.
+- Time Span Between Batches: The amount of time to wait between processing batches.
+- Run In Parallel: Determines whether the number of tenants defined by the batch size are woken up in parallel or sequentially.
 - Current Version: The current version of the staggered tenant wake-up process. Usually this should not be set manually.
 
 Functions on the page:
 
-- Start new: Start staggered tenant wake-up for all the tenants with a new version number.
-- Continue: Continues current maintenance version run.
-- Pause: If there is a running maintenance, you can pause it.
-- Reset current version: Runs the staggered tenant wake-up for all the tenants with the current version again.
-- Edit: You can edit all the displayed and functional parameters for the staggered tenant wake-up. You can only save if there is no maintenance running.
+- Start new: Starts the staggered tenant wake-up process with a new version number.
+- Continue: Continues most recent wake-up process if it was paused.
+- Pause: Pauses the currently running wake-up process.
+- Reset current version: Runs the staggered tenant wake-up process again with the current version.
+- Edit: Allows you to edit the options listed above. You can only save if there is no maintenance running.
 
-You can override the following settings with an environment variable:
+You can initialize the configuration with the following app settings:
 
 ```json
 {
@@ -233,4 +233,4 @@ You can override the following settings with an environment variable:
 }
 ```
 
-- RunOnStartup: If you set this to true, the staggered tenant wake-up will start a new version if a new deployment was done, or it will continue the current wake-up maintenance if it hasn't finished. This is useful if you want to run the staggered tenant wake-up automatically when the application starts. If you set this to false, you will have to start it manually from the admin page.
+- RunOnStartup: When set to true, the staggered tenant wake-up process will start a new version if a new deployment was done, or it will continue the current wake-up process if it hasn't finished yet. This is useful if you want to run the staggered tenant wake-up process automatically when the application starts. If you set this to false, you will have to start it manually from the admin page.
