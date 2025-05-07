@@ -50,7 +50,7 @@ public sealed class StaggeredStartup : StartupBase
         services.AddContentPart<StaggeredTenantWakeUpPart>().WithMigration<StaggeredTenantWakeUpMigrations>();
 
         services.AddScoped<INavigationProvider, AdminMenu>();
-        services.AddScoped<IContentDisplayHandler, StaggeredTenantWakeUpHandler>();
+        services.AddScoped<IContentDisplayHandler, StaggeredTenantWakeUpDisplayHandler>();
         services.AddScoped<IStaggeredTenantWakeUpService, StaggeredTenantWakeUpService>();
         services.AddTransient<IConfigureOptions<ResourceManagementOptions>, ResourceManagementOptionsConfiguration>();
     }

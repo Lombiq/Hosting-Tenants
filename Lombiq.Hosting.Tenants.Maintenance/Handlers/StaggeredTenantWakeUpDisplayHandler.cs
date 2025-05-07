@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Handlers;
 
-public class StaggeredTenantWakeUpHandler : IContentDisplayHandler
+public class StaggeredTenantWakeUpDisplayHandler : IContentDisplayHandler
 {
-    private readonly IStringLocalizer<StaggeredTenantWakeUpHandler> T;
+    private readonly IStringLocalizer<StaggeredTenantWakeUpDisplayHandler> T;
 
-    public StaggeredTenantWakeUpHandler(IStringLocalizer<StaggeredTenantWakeUpHandler> localizer) => T = localizer;
+    public StaggeredTenantWakeUpDisplayHandler(IStringLocalizer<StaggeredTenantWakeUpDisplayHandler> localizer) => T = localizer;
 
     public Task BuildDisplayAsync(ContentItem contentItem, BuildDisplayContext context) => Task.CompletedTask;
 
