@@ -72,9 +72,6 @@ function updateMaintenanceContent(html) {
         animateNumber(newBar, oldNumber, newPercentage);
     }
 
-    const isRunning = container.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
-    if (!isRunning) stopPolling();
-
     // Re-initialize popovers.
     document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
 }

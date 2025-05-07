@@ -1,13 +1,7 @@
 ﻿@using Lombiq.Hosting.Tenants.Maintenance.Constants
 @using Lombiq.Hosting.Tenants.Maintenance.Controllers
-@using Lombiq.Hosting.Tenants.Maintenance.Models
-@using OrchardCore.ContentManagement
 @using OrchardCore.Mvc.Core.Utilities
 @model OrchardCore.ContentManagement.ContentItem
-
-@{
-    var part = Model.ContentItem.As<StaggeredTenantWakeUpPart>();
-}
 
 <zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Tenant Wake-up"])</h1></zone>
 <div class="d-flex align-items-center gap-3 mb-3">
