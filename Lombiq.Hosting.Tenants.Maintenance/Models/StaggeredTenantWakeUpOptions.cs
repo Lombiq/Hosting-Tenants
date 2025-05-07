@@ -5,5 +5,5 @@ public class StaggeredTenantWakeUpOptions
     public int? BatchIntervalSeconds { get; set; }
     public int? BatchSize { get; set; }
     public bool? RunParallel { get; set; }
-    public bool RunOnStartup { get; set; }
+    public bool? RunOnStartup { get; set; }
 }

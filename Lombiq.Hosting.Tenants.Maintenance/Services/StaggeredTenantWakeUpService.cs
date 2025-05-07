@@ -2,7 +2,6 @@
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Records;
 using OrchardCore.Environment.Shell;
@@ -27,7 +26,6 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     private readonly ISession _session;
     private readonly IClock _clock;
     private readonly IEnumerable<IStaggeredTenantWakeUpEvents> _staggeredTenantWakeUpEvents;
-    private readonly StaggeredTenantWakeUpOptions _staggeredTenantWakeUpOptions;
     private readonly ConcurrentDictionary<string, string> _versionUpdates = new();
     private readonly ConcurrentDictionary<string, string> _errorLogs = new();
     private readonly ConcurrentBag<string> _processedTenantIds = [];
@@ -38,8 +36,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         ILogger<StaggeredTenantWakeUpService> logger,
         ISession session,
         IClock clock,
-        IEnumerable<IStaggeredTenantWakeUpEvents> staggeredTenantWakeUpEvents,
-        IOptions<StaggeredTenantWakeUpOptions> staggeredTenantWakeUpOptions)
+        IEnumerable<IStaggeredTenantWakeUpEvents> staggeredTenantWakeUpEvents)
     {
         _shellHost = shellHost;
         _contentManager = contentManager;
@@ -47,7 +44,6 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         _session = session;
         _clock = clock;
         _staggeredTenantWakeUpEvents = staggeredTenantWakeUpEvents;
-        _staggeredTenantWakeUpOptions = staggeredTenantWakeUpOptions.Value;
     }
 
     public async Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
@@ -159,7 +155,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     private async Task<bool> WaitBeforeNextAsync(StaggeredTenantWakeUpPart staggeredTenantWakeUpPart)
     {
         var waited = TimeSpan.Zero;
-        var delay = staggeredTenantWakeUpPart.GetOptionsTimeBetweenBatches(_staggeredTenantWakeUpOptions);
+        var delay = TimeSpan.FromSeconds((int)staggeredTenantWakeUpPart.BatchIntervalSeconds.Value!);
         var delayCheckInterval = TimeSpan.FromMilliseconds(500);
         while (waited < delay)
         {
@@ -186,7 +182,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     {
         var allTenants = GetAllRunningTenantSettingsExceptDefault().ToList();
 
-        var take = (int)staggeredTenantWakeUpPart.GetOptionsBatchSize(_staggeredTenantWakeUpOptions);
+        var take = (int)staggeredTenantWakeUpPart.BatchSize.Value!;
         staggeredTenantWakeUpPart.AllTenantCount = allTenants.Count;
 
         return allTenants.Where(settings => !staggeredTenantWakeUpPart.ProcessedTenantIds.Contains(settings.TenantId))
@@ -213,7 +209,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         _errorLogs.Clear();
         _processedTenantIds.Clear();
 
-        if (!staggeredTenantWakeUpPart.GetOptionsRunParallel(_staggeredTenantWakeUpOptions))
+        if (!staggeredTenantWakeUpPart.RunParallel.Value)
         {
             foreach (var remainingTenant in remainingTenants)
             {
@@ -250,18 +246,18 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredTenantWakeUpService>>();
                         tenantLogger.LogInformation(
                             "Staggered tenant wake-up for current tenant finished successfully for maintenance version {Version}.",
-                            staggeredTenantWakeUpPart.CurrentVersion.Value);
+                            staggeredTenantWakeUpPart.CurrentVersion);
                         return Task.CompletedTask;
                     },
                     remainingTenant.Name);
             }
 
-            _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.Value.ToTechnicalString();
+            _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.ToTechnicalString();
 
             _logger.LogInformation(
                 "Staggered tenant wake-up for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
                 remainingTenant.Name,
-                staggeredTenantWakeUpPart.CurrentVersion.Value);
+                staggeredTenantWakeUpPart.CurrentVersion);
         }
         catch (Exception exception)
         {
@@ -269,7 +265,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                 exception,
                 "Staggered tenant wake-up for tenant '{TenantName}' for maintenance version {Version} failed.",
                 remainingTenant.Name,
-                staggeredTenantWakeUpPart.CurrentVersion.Value);
+                staggeredTenantWakeUpPart.CurrentVersion);
             _errorLogs[remainingTenant.Name] = exception.Message;
         }
         finally

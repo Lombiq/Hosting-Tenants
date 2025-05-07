@@ -9,9 +9,10 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 public class StaggeredTenantWakeUpPart : ContentPart
 {
     public NumericField BatchSize { get; } = new() { Value = 1 };
-    public TimeField BatchInterval { get; set; } = new() { Value = TimeSpan.FromSeconds(0) };
+    public NumericField BatchIntervalSeconds { get; set; } = new() { Value = 0 };
     public BooleanField RunParallel { get; set; } = new() { Value = true };
-    public NumericField CurrentVersion { get; } = new() { Value = 0 };
+    public BooleanField RunOnStartup { get; set; } = new() { Value = true };
+    public int CurrentVersion { get; set; }
     public int ProgressPercentage { get; set; }
     public int AllTenantCount { get; set; }
     public bool Paused { get; set; }
@@ -20,17 +21,6 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public IList<string> ProcessedTenantIds { get; } = [];
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
-
-    public TimeSpan GetOptionsTimeBetweenBatches(StaggeredTenantWakeUpOptions options) =>
-        options.BatchIntervalSeconds is null
-            ? BatchInterval.Value!.Value
-            : TimeSpan.FromSeconds(options.BatchIntervalSeconds.Value);
-
-    public decimal GetOptionsBatchSize(StaggeredTenantWakeUpOptions options) =>
-        options.BatchSize ?? BatchSize.Value!.Value;
-
-    public bool GetOptionsRunParallel(StaggeredTenantWakeUpOptions options) =>
-        options.RunParallel ?? RunParallel.Value;
 
     public void CalculatePercentage() =>
         ProgressPercentage = (int)Math.Round(((double)ProcessedTenantIds.Count / AllTenantCount * 100)!, 0);
@@ -64,9 +54,9 @@ public class StaggeredTenantWakeUpPart : ContentPart
 
     private void SetVersion(bool newVersion)
     {
-        if (newVersion || CurrentVersion.Value == 0)
+        if (newVersion || CurrentVersion == 0)
         {
-            CurrentVersion.Value++;
+            CurrentVersion++;
         }
     }
 

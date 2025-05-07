@@ -9,8 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.ContentManagement;
 using OrchardCore.ContentManagement.Display.ContentDisplay;
+using OrchardCore.ContentManagement.Handlers;
 using OrchardCore.Data;
 using OrchardCore.Data.Migration;
+using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 using OrchardCore.Navigation;
@@ -37,12 +39,19 @@ public sealed class Startup : StartupBase
 public sealed class StaggeredStartup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
+    private readonly ShellSettings _shellSettings;
 
-    public StaggeredStartup(IShellConfiguration shellConfiguration) =>
+    public StaggeredStartup(IShellConfiguration shellConfiguration, ShellSettings shellSettings)
+    {
         _shellConfiguration = shellConfiguration;
+        _shellSettings = shellSettings;
+    }
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        // Safety check, this feature should only be enabled on the default shell.
+        if (!_shellSettings.IsDefaultShell()) return;
+
         services.BindAndConfigureSection<StaggeredTenantWakeUpOptions>(
             _shellConfiguration,
             "Lombiq_Hosting_Tenants_Maintenance:StaggeredTenantWakeUp");
@@ -51,6 +60,7 @@ public sealed class StaggeredStartup : StartupBase
 
         services.AddScoped<INavigationProvider, AdminMenu>();
         services.AddScoped<IContentDisplayHandler, StaggeredTenantWakeUpDisplayHandler>();
+        services.AddScoped<IContentHandler, StaggeredTenantWakeUpContentHandler>();
         services.AddScoped<IStaggeredTenantWakeUpService, StaggeredTenantWakeUpService>();
         services.AddTransient<IConfigureOptions<ResourceManagementOptions>, ResourceManagementOptionsConfiguration>();
     }

@@ -23,15 +23,16 @@ public sealed class StaggeredTenantWakeUpMigrations : DataMigration
                 .WithDisplayName("Batch Size")
                 .WithSettings(new NumericFieldSettings
                 {
+                    Scale = 0,
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
-                        " number of tenants started at once. If StaggeredTenantWakeUpOptions is set, these values will be ignored.",
+                        " number of tenants started at once.",
                 }))
-            .WithField<TimeField>(nameof(StaggeredTenantWakeUpPart.BatchInterval), field => field
-                .WithDisplayName("Time Span Between Batches")
-                .WithSettings(new TimeFieldSettings
+            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.BatchIntervalSeconds), field => field
+                .WithDisplayName("Batch Interval Second")
+                .WithSettings(new NumericFieldSettings
                 {
-                    Step = "1", // 1 second.
-                    Hint = "The time span between batches of tenants to be processed in hh:mm:ss format.",
+                    Scale = 0,
+                    Hint = "The seconds between batches of tenants to be processed.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunParallel), field => field
                 .WithDisplayName("Run In Parallel")
@@ -39,11 +40,11 @@ public sealed class StaggeredTenantWakeUpMigrations : DataMigration
                 {
                     Hint = "Indicates whether the staggered tenant wake-up process should run in parallel or not.",
                 }))
-            .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.CurrentVersion), field => field
-                .WithDisplayName("Current Version")
-                .WithSettings(new NumericFieldSettings
+            .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunOnStartup), field => field
+                .WithDisplayName("Run On Startup")
+                .WithSettings(new BooleanFieldSettings
                 {
-                    Hint = "The current version of the staggered tenant wake-up process.",
+                    Hint = "Indicates whether the staggered tenant wake-up process should run on startup or not.",
                 }))
         );
 
