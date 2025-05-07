@@ -26,7 +26,7 @@ public sealed class AdminMenu : AdminMenuNavigationProviderBase
             .Add(T["Multi-Tenancy"], tenancy => tenancy
                 .AddClass("menu-multitenancy")
                 .Add(T["Staggered Tenant Wake-Up"], T["Staggered Tenant Wake-Up"].PrefixPosition(), featureProfiles => featureProfiles
-                    .ActionTask<AdminController>(_hca.HttpContext, controller => controller.Index())
+                    .ActionTask<AdminController>(_hca.HttpContext, controller => controller.Index(false))
                     .LocalNav())
             );
     }

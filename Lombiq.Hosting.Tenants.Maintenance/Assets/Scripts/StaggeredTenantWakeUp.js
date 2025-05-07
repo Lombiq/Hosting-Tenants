@@ -106,6 +106,8 @@ function startCountdown() {
 function startPolling() {
     stopPolling();
 
+    pollNow();
+
     pollingInterval = setInterval(() => {
         pollNow();
         countdown = pollingRate / 1000;

@@ -33,10 +33,10 @@ public class AdminController : Controller
         _contentManager = contentManager;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(bool started = false)
     {
         var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
-        return View(model: model);
+        return View(model: new { ContentItem = model, Started = started });
     }
 
     public async Task<IActionResult> GetPartialView()
@@ -59,7 +59,7 @@ public class AdminController : Controller
         await ExecuteStaggeredTenantWakeUpAsync(newVersion: true);
 
         await _notifier.SuccessAsync(H["Started staggered tenant wake-up for new version."]);
-        return RedirectToIndex();
+        return RedirectToIndex(started: true);
     }
 
     public async Task<IActionResult> Pause()
@@ -79,8 +79,8 @@ public class AdminController : Controller
         return RedirectToIndex();
     }
 
-    private RedirectToActionResult RedirectToIndex() =>
-        RedirectToAction(nameof(Index));
+    private RedirectToActionResult RedirectToIndex(bool started = false) =>
+        RedirectToAction(nameof(Index), new { started });
 
     private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false) =>
         StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion);
