@@ -4,6 +4,7 @@
 @{
     var part = Model.ContentItem.As<StaggeredTenantWakeUpPart>();
     var currentPercentage = part.ProgressPercentage;
+    var started = part.Paused == false && part.Started != null && part.Finished == null;
 }
 
 <div class="buttons mt-4">
@@ -46,7 +47,7 @@
     <div class="col-md-6">
         <dl class="row">
             <dt class="col-sm-5">@T["Running:"]</dt>
-            <dd class="col-sm-7" data-maintenance-running="@part.IsRunning().ToString().ToLower()">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
+            <dd class="col-sm-7" data-maintenance-running="@started.ToString().ToLower()">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
 
 
             <dt class="col-sm-5">@T["Paused:"]</dt>
