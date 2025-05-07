@@ -213,7 +213,6 @@ Functions on the page:
 - Start new: Starts the staggered tenant wake-up process with a new version number.
 - Continue: Continues most recent wake-up process if it was paused.
 - Pause: Pauses the currently running wake-up process.
-- Reset current version: Runs the staggered tenant wake-up process again with the current version.
 - Edit: Allows you to edit the options listed above. You can only save if there is no maintenance running.
 
 You can initialize the configuration with the following app settings:

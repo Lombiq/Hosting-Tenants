@@ -10,7 +10,6 @@
     @await DisplayAsync(await New.StaggeredTenantWakeUp__NewVersionButton(Part: part))
     @await DisplayAsync(await New.StaggeredTenantWakeUp__ContinueButton(Part: part))
     @await DisplayAsync(await New.StaggeredTenantWakeUp__PauseButton(Part: part))
-    @await DisplayAsync(await New.StaggeredTenantWakeUp__ResetButton(Part: part))
     @await DisplayAsync(await New.StaggeredTenantWakeUp__EditButton(Part: part))
     <span tabindex="0"
           class="ms-1"
@@ -22,7 +21,6 @@
         <div class="mb-2"><strong>@T["Start new"]:</strong> @T["Start staggered tenant wake-up for all the tenants with a new version number."]</div>
         <div class="mb-2"><strong>@T["Continue"]:</strong> @T["Continues current maintenance version run."]</div>
         <div class="mb-2"><strong>@T["Pause"]:</strong> @T["If there is a running maintenance, you can pause it."]</div>
-        <div class="mb-2"><strong>@T["Reset current version"]:</strong> @T["Runs the staggered tenant wake-up for all the tenants with the current version again."]</div>
         <div class="mb-2"><strong>@T["Edit"]:</strong> @T["You can edit all the displayed and functional parameters for the staggered tenant wake-up. You can only save if there is no maintenance running."]</div>
       '>
         <i class="fas fa-info-circle text-info" style="cursor: pointer;"></i>

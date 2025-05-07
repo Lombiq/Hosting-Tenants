@@ -36,14 +36,14 @@ public class StaggeredTenantWakeUpPart : ContentPart
         return false;
     }
 
-    public void Start(IClock clock, string maintenanceJobName, bool newVersion, bool reset)
+    public void Start(IClock clock, string maintenanceJobName, bool newVersion)
     {
         MaintenanceJobStore.Clear(maintenanceJobName);
         Paused = false;
         Started = clock.UtcNow;
         Finished = null;
         SetVersion(newVersion);
-        Clear(newVersion, reset);
+        Clear(newVersion);
     }
 
     public void Finish(IClock clock) => Finished = clock.UtcNow;
@@ -60,9 +60,9 @@ public class StaggeredTenantWakeUpPart : ContentPart
         }
     }
 
-    private void Clear(bool newVersion, bool reset)
+    private void Clear(bool newVersion)
     {
-        if (newVersion || reset)
+        if (newVersion)
         {
             ProcessedTenantIds.Clear();
             AllTenantCount = 0;

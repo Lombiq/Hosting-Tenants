@@ -62,14 +62,6 @@ public class AdminController : Controller
         return RedirectToIndex();
     }
 
-    public async Task<IActionResult> Reset()
-    {
-        await ExecuteStaggeredTenantWakeUpAsync(reset: true);
-
-        await _notifier.SuccessAsync(H["Started staggered tenant wake-up with reset."]);
-        return RedirectToIndex();
-    }
-
     public async Task<IActionResult> Pause()
     {
         var successfulPause = MaintenanceJobStore.RequestPause(nameof(StaggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync));
@@ -90,6 +82,6 @@ public class AdminController : Controller
     private RedirectToActionResult RedirectToIndex() =>
         RedirectToAction(nameof(Index));
 
-    private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false, bool reset = false) =>
-        StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion, reset);
+    private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false) =>
+        StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion);
 }

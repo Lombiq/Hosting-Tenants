@@ -14,7 +14,7 @@ public interface IStaggeredTenantWakeUpService
     /// default tenant. Starts the maintenance process for all tenants in a staggered manner, with a delay between each
     /// batch of tenants.
     /// </summary>
-    Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false);
+    Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false);
 
     /// <summary>
     /// Gets or creates the staggered tenant wake-up content item. This is done to avoid creating the staggered tenant wake-up

@@ -46,7 +46,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         _staggeredTenantWakeUpEvents = staggeredTenantWakeUpEvents;
     }
 
-    public async Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false, bool reset = false)
+    public async Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false)
     {
         // Only one thread can run the maintenance at a time, we don't want to run it in parallel. Also, we don't want
         // to run after each other, so we use a SemaphoreSlim to limit the number of concurrent threads to 1 and check
@@ -62,7 +62,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         await _staggeredTenantWakeUpEvents.AwaitEachAsync(async handler => await handler.StartingAsync(staggeredTenantWakeUpPart));
         try
         {
-            await StaggeredTenantWakeUpAsync(staggeredTenantWakeUpPart, newVersion, reset);
+            await StaggeredTenantWakeUpAsync(staggeredTenantWakeUpPart, newVersion);
         }
         finally
         {
@@ -98,12 +98,9 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     /// between batches. It will also check if the maintenance was paused and if so, it will stop the maintenance.
     /// If the maintenance was paused, it will invoke the paused event for all registered handlers.
     /// </summary>
-    private async Task StaggeredTenantWakeUpAsync(
-        StaggeredTenantWakeUpPart staggeredTenantWakeUpPart,
-        bool newVersion,
-        bool reset)
+    private async Task StaggeredTenantWakeUpAsync(StaggeredTenantWakeUpPart staggeredTenantWakeUpPart, bool newVersion)
     {
-        staggeredTenantWakeUpPart.Start(_clock, nameof(RunScheduledMaintenanceForAllTenantAsync), newVersion, reset);
+        staggeredTenantWakeUpPart.Start(_clock, nameof(RunScheduledMaintenanceForAllTenantAsync), newVersion);
 
         // Saving right after the start, so the UI can show the progress.
         await SaveSettingsAsync(staggeredTenantWakeUpPart);

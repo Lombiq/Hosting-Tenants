@@ -7,10 +7,10 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Helpers;
 
 public static class StaggeredTenantWakeUpHelper
 {
-    public static Task ExecuteStaggeredTenantWakeUpAsync(string jobName, bool newVersion = false, bool reset = false) =>
+    public static Task ExecuteStaggeredTenantWakeUpAsync(string jobName, bool newVersion = false) =>
         HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(jobName, async scope =>
         {
             var staggeredTenantWakeUpService = scope.ServiceProvider.GetRequiredService<IStaggeredTenantWakeUpService>();
-            await staggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync(newVersion, reset);
+            await staggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync(newVersion);
         });
 }
