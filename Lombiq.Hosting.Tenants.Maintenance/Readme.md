@@ -206,14 +206,14 @@ You can edit the maintenance options directly on the Multi-Tenancy / Staggered T
 - Batch Size: The number of tenants processed in one iteration.
 - Time Span Between Batches: The amount of time to wait between processing batches.
 - Run In Parallel: Determines whether the number of tenants defined by the batch size are woken up in parallel or sequentially.
-- Current Version: The current version of the staggered tenant wake-up process. Usually this should not be set manually.
+- RunOnStartup: When set to true, the staggered tenant wake-up maintenance will start a new version if a new deployment was done, or it will continue the current run if it hasn't finished yet. If you set this to false, you will have to start it manually from the admin page.
 
 Functions on the page:
 
-- Start new: Starts the staggered tenant wake-up process with a new version number.
-- Continue: Continues most recent wake-up process if it was paused.
-- Pause: Pauses the currently running wake-up process.
-- Edit: Allows you to edit the options listed above. You can only save if there is no maintenance running.
+- Start new: Starts the staggered tenant wake-up maintenance with a new version number.
+- Continue: Continues most recent if it was paused.
+- Pause: Pauses the current run.
+- Edit: Allows you to edit the options listed above. You can only save while the maintenance isn't running.
 
 You can initialize the configuration with the following app settings:
 
@@ -231,5 +231,3 @@ You can initialize the configuration with the following app settings:
   }
 }
 ```
-
-- RunOnStartup: When set to true, the staggered tenant wake-up process will start a new version if a new deployment was done, or it will continue the current wake-up process if it hasn't finished yet. This is useful if you want to run the staggered tenant wake-up process automatically when the application starts. If you set this to false, you will have to start it manually from the admin page.
