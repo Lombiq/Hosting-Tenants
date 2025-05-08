@@ -1,17 +1,10 @@
 ﻿@using Lombiq.Hosting.Tenants.Maintenance.Constants
 @using Lombiq.Hosting.Tenants.Maintenance.Controllers
-@using Lombiq.Hosting.Tenants.Maintenance.Models
-@using OrchardCore.ContentManagement
 @using OrchardCore.Mvc.Core.Utilities
-
-@{
-    var part = ((ContentItem)Model.ContentItem).As<StaggeredTenantWakeUpPart>();
-    var started = part.Paused == false && part.Started != null && part.Finished == null;
-}
 
 <zone Name="Title"><h1>@RenderTitleSegments(T["Staggered Tenant Wake-up"])</h1></zone>
 <div class="d-flex align-items-center gap-3 mb-3">
-    <div class="form-check form-switch" data-maintenance-running="@(Model.Started || started)">
+    <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" id="autoRefreshToggle">
         <label class="form-check-label" for="autoRefreshToggle">@T["Auto Refresh"]</label>
     </div>
@@ -32,8 +25,8 @@
      data-maintenance-url="@Url.Action(
          nameof(AdminController.GetPartialView),
          typeof(AdminController).ControllerName(),
-         new { area = FeatureNames.Maintenance })">
-    @await Html.PartialAsync("StaggeredTenantWakeUpDetails", (ContentItem)Model.ContentItem)
+         new { area = FeatureNames.Maintenance, Model.Started })">
+    @await Html.PartialAsync("StaggeredTenantWakeUpDetails", (object)Model)
 </div>
 
 <style at="Head">

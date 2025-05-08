@@ -44,8 +44,7 @@ function animateNumber(element, start, target) {
 }
 
 function isRunning(){
-    const container = document.getElementById('maintenance-status-container');
-    return container.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
+    return document.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
 }
 
 function updateMaintenanceContent(html) {

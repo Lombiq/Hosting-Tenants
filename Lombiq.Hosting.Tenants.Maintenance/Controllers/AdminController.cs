@@ -35,23 +35,27 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Index(bool started = false)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
         return View(model: new { ContentItem = model, Started = started });
     }
 
-    public async Task<IActionResult> GetPartialView()
+    public async Task<IActionResult> GetPartialView(bool started = false)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
         var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
 
-        return PartialView("StaggeredTenantWakeUpDetails", model);
+        return PartialView("StaggeredTenantWakeUpDetails", model: new { ContentItem = model, Started = started });
     }
 
     public async Task<IActionResult> Continue()
     {
         await ExecuteStaggeredTenantWakeUpAsync();
 
-        await _notifier.SuccessAsync(H["Started staggered tenant wake-up."]);
-        return RedirectToIndex();
+        await _notifier.SuccessAsync(H["Continued staggered tenant wake-up."]);
+        return RedirectToIndex(started: true);
     }
 
     public async Task<IActionResult> NewVersion()
