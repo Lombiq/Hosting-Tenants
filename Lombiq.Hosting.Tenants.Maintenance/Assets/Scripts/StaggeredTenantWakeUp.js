@@ -43,7 +43,7 @@ function animateNumber(element, start, target) {
     requestAnimationFrame(step);
 }
 
-function isRunning(){
+function isRunning() {
     return document.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
 }
 
