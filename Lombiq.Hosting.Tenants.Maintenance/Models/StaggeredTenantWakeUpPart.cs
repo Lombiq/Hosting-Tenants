@@ -1,4 +1,4 @@
-﻿using OrchardCore.ContentFields.Fields;
+using OrchardCore.ContentFields.Fields;
 using OrchardCore.ContentManagement;
 using OrchardCore.Modules;
 using System;
@@ -16,8 +16,8 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public int ProgressPercentage { get; set; }
     public int AllTenantCount { get; set; }
     public bool Paused { get; set; }
-    public DateTime? Started { get; set; }
-    public DateTime? Finished { get; set; }
+    public DateTime? StartedUtc { get; set; }
+    public DateTime? FinishedUtc { get; set; }
     public IList<string> ProcessedTenantIds { get; } = [];
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
     public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
@@ -40,13 +40,13 @@ public class StaggeredTenantWakeUpPart : ContentPart
     {
         MaintenanceJobStore.Clear(maintenanceJobName);
         Paused = false;
-        Started = clock.UtcNow;
-        Finished = null;
+        StartedUtc = clock.UtcNow;
+        FinishedUtc = null;
         SetVersion(newVersion);
         Clear(newVersion);
     }
 
-    public void Finish(IClock clock) => Finished = clock.UtcNow;
+    public void Finish(IClock clock) => FinishedUtc = clock.UtcNow;
 
     public bool IsFinished() => ProgressPercentage == 100;
 

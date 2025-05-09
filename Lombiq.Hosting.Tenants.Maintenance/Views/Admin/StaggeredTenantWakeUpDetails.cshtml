@@ -3,7 +3,7 @@
 @{
     var part = ((ContentItem)Model.ContentItem).As<StaggeredTenantWakeUpPart>();
     var currentPercentage = part.ProgressPercentage;
-    var started = part.Paused == false && part.Started != null && part.Finished == null;
+    var started = part.Paused == false && part.StartedUtc != null && part.FinishedUtc == null;
 }
 
 <div class="buttons mt-4">
@@ -53,10 +53,10 @@
             <dd class="col-sm-7">@(part.Paused ? T["Yes"] : T["No"])</dd>
 
             <dt class="col-sm-5">@T["Started:"]</dt>
-            <dd class="col-sm-7">@(part.Started == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Started)))</dd>
+            <dd class="col-sm-7">@(part.StartedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.StartedUtc)))</dd>
 
             <dt class="col-sm-5">@(part.Paused ? T["Finished (paused):"] : T["Finished:"])</dt>
-            <dd class="col-sm-7">@(part.Finished == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.Finished)))</dd>
+            <dd class="col-sm-7">@(part.FinishedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.FinishedUtc)))</dd>
         </dl>
     </div>
     <div class="col-md-6">
