@@ -235,7 +235,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
             if (!shellContext.IsActivated)
             {
                 await _shellHost.WithShellScopeAsync(
-                    scope =>
+                    async scope =>
                     {
                         // Only logging is necessary here, as the actual maintenance and migration tasks are already done
                         // when we get here.
@@ -243,9 +243,14 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                         tenantLogger.LogInformation(
                             "Staggered tenant wake-up for current tenant finished successfully for maintenance version {Version}.",
                             staggeredTenantWakeUpPart.CurrentVersion);
-                        return Task.CompletedTask;
+
+                        // Need to call DisposeAsync() manually, otherwise the shell context won't be released.
+                        await scope.DisposeAsync();
                     },
                     remainingTenant.Name);
+
+                // We release the shell context to free up resources. Calling DisposeAsync() manually is needed before this.
+                await _shellHost.ReleaseShellContextAsync(remainingTenant, eventSource: false);
             }
 
             _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.ToTechnicalString();

@@ -14,6 +14,7 @@ using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using Shouldly;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using static OrchardCore.OrchardCoreConstants.Roles;
 
@@ -71,6 +72,17 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnAsync(By.XPath("//button[contains(.,'Versions')]"));
         context.Get(By.XPath(
             $"//tbody//td[contains(.,'{TenantName}')]/../td[contains(.,'1')]/../td[contains(.,'Edit')]"));
+
+        // Confirm that the tenant is sleeping again after the maintenance.
+        await context.Application.UsingScopeAsync(serviceProvider =>
+            {
+                var shellHost = serviceProvider.GetRequiredService<IShellHost>();
+                var allRunningTenants = shellHost.GetAllSettings().Where(shell => !shell.IsDefaultShell() && shell.IsRunning());
+                allRunningTenants.Where(tenantSettings =>
+                    shellHost.TryGetShellContext(tenantSettings.Name, out var shellContext) && shellContext.IsActivated)
+                    .ShouldBeEmpty();
+                return Task.CompletedTask;
+            });
     }
 
     public static async Task TestSiteUrlMaintenanceExecutionAsync(this UITestContext context)
