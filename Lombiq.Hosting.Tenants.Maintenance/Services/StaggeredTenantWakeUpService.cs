@@ -241,7 +241,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                         // when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredTenantWakeUpService>>();
                         tenantLogger.LogInformation(
-                            "Staggered tenant wake-up for current tenant finished successfully for maintenance version {Version}.",
+                            "Staggered tenant wake-up for current tenant finished successfully on version {Version}.",
                             staggeredTenantWakeUpPart.CurrentVersion);
 
                         // Need to call DisposeAsync() manually, otherwise the shell context won't be released.
@@ -256,7 +256,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
             _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.ToTechnicalString();
 
             _logger.LogInformation(
-                "Staggered tenant wake-up for tenant '{TenantName}' finished successfully for maintenance version {Version}.",
+                "Staggered tenant wake-up for tenant '{TenantName}' finished successfully on version {Version}.",
                 remainingTenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
         }
@@ -264,7 +264,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         {
             _logger.LogError(
                 exception,
-                "Staggered tenant wake-up for tenant '{TenantName}' for maintenance version {Version} failed.",
+                "Staggered tenant wake-up for tenant '{TenantName}' on version {Version} failed.",
                 remainingTenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
             _errorLogs[remainingTenant.Name] = exception.Message;
