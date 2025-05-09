@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Helpers;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -33,21 +33,21 @@ public class AdminController : Controller
         _contentManager = contentManager;
     }
 
-    public async Task<IActionResult> Index(bool started = false)
+    public async Task<IActionResult> Index()
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
-        return View(model: new { ContentItem = model, Started = started });
+        return View(model: new { ContentItem = model });
     }
 
-    public async Task<IActionResult> GetPartialView(bool started = false)
+    public async Task<IActionResult> GetPartialView()
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
 
-        return PartialView("StaggeredTenantWakeUpDetails", model: new { ContentItem = model, Started = started });
+        return PartialView("StaggeredTenantWakeUpDetails", model: new { ContentItem = model });
     }
 
     public async Task<IActionResult> Continue()
@@ -55,7 +55,7 @@ public class AdminController : Controller
         await ExecuteStaggeredTenantWakeUpAsync();
 
         await _notifier.SuccessAsync(H["Continued staggered tenant wake-up."]);
-        return RedirectToIndex(started: true);
+        return RedirectToIndex();
     }
 
     public async Task<IActionResult> NewVersion()
@@ -63,7 +63,7 @@ public class AdminController : Controller
         await ExecuteStaggeredTenantWakeUpAsync(newVersion: true);
 
         await _notifier.SuccessAsync(H["Started staggered tenant wake-up for new version."]);
-        return RedirectToIndex(started: true);
+        return RedirectToIndex();
     }
 
     public async Task<IActionResult> Pause()
@@ -83,8 +83,7 @@ public class AdminController : Controller
         return RedirectToIndex();
     }
 
-    private RedirectToActionResult RedirectToIndex(bool started = false) =>
-        RedirectToAction(nameof(Index), new { started });
+    private RedirectToActionResult RedirectToIndex() => RedirectToAction(nameof(Index));
 
     private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false) =>
         StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion);

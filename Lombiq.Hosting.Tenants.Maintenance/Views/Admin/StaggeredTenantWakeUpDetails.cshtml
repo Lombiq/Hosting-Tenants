@@ -46,7 +46,7 @@
     <div class="col-md-6">
         <dl class="row">
             <dt class="col-sm-5">@T["Running:"]</dt>
-            <dd class="col-sm-7" data-maintenance-running="@(((bool)Model.Started || started).ToString().ToLower())">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
+            <dd class="col-sm-7">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
 
 
             <dt class="col-sm-5">@T["Paused:"]</dt>

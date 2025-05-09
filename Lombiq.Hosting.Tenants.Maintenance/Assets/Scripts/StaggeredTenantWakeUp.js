@@ -43,10 +43,6 @@ function animateNumber(element, start, target) {
     requestAnimationFrame(step);
 }
 
-function isRunning() {
-    return document.querySelector('[data-maintenance-running]')?.dataset.maintenanceRunning === 'true';
-}
-
 function updateMaintenanceContent(html) {
     const container = document.getElementById('maintenance-status-container');
     const oldBar = document.getElementById('maintenance-progress-bar');
@@ -75,8 +71,6 @@ function updateMaintenanceContent(html) {
 
         animateNumber(newBar, oldNumber, newPercentage);
     }
-
-    if (!isRunning()) stopPolling();
 
     // Re-initialize popovers.
     document.querySelectorAll('[data-bs-toggle="popover"]').forEach((el) => new bootstrap.Popover(el));
@@ -148,7 +142,7 @@ rateSelect.addEventListener('change', () => {
 
 // Tab visibility handler.
 document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && toggle.checked && isRunning()) {
+    if (!document.hidden && toggle.checked) {
         startPolling();
     }
 });

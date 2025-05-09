@@ -1,4 +1,4 @@
-﻿@using Lombiq.Hosting.Tenants.Maintenance.Constants
+@using Lombiq.Hosting.Tenants.Maintenance.Constants
 @using Lombiq.Hosting.Tenants.Maintenance.Controllers
 @using OrchardCore.Mvc.Core.Utilities
 
@@ -25,7 +25,7 @@
      data-maintenance-url="@Url.Action(
          nameof(AdminController.GetPartialView),
          typeof(AdminController).ControllerName(),
-         new { area = FeatureNames.Maintenance, Model.Started })">
+         new { area = FeatureNames.Maintenance })">
     @await Html.PartialAsync("StaggeredTenantWakeUpDetails", (object)Model)
 </div>
 
