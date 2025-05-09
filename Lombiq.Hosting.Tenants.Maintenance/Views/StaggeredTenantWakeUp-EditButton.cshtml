@@ -1,6 +1,11 @@
+@using Lombiq.Hosting.Tenants.Maintenance.Controllers
+@using OrchardCore.Mvc.Core.Utilities
 
 <a class="btn btn-info mb-1 @(Model.Part.IsRunning() ? "disabled" : string.Empty)"
    asp-action="Edit"
    asp-controller="Admin"
+   asp-route-area="OrchardCore.Contents"
    asp-route-contentItemId="@Model.Part.ContentItem.ContentItemId"
-   asp-route-area="OrchardCore.Contents">@T["Edit"]</a>
+   asp-route-returnUrl="@Url.Action(nameof(StaggeredTenantsWakeUpAdminController.Index), typeof(StaggeredTenantsWakeUpAdminController).ControllerName())">
+    @T["Edit"]
+</a>
