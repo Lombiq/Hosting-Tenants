@@ -17,7 +17,7 @@ public class StartStaggeredTenantWakeUpProvider : MaintenanceProviderBase
 
     public override async Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context)
     {
-        _staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
+        _staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpSettingsAsync();
         return _staggeredTenantWakeUp.As<StaggeredTenantWakeUpPart>().RunOnStartup.Value;
     }
 

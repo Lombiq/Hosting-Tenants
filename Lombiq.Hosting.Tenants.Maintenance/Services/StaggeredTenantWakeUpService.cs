@@ -46,7 +46,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         _staggeredTenantWakeUpEvents = staggeredTenantWakeUpEvents;
     }
 
-    public async Task<StaggeredTenantWakeUpPart> RunScheduledMaintenanceForAllTenantAsync(bool newVersion = false)
+    public async Task<StaggeredTenantWakeUpPart> RunStaggeredTenantWakeUpAsync(bool newVersion = false)
     {
         // Only one thread can run the maintenance at a time, we don't want to run it in parallel. Also, we don't want
         // to run after each other, so we use a SemaphoreSlim to limit the number of concurrent threads to 1 and check
@@ -58,7 +58,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
 
         await _lock.WaitAsync();
 
-        var staggeredTenantWakeUpPart = (await GetOrCreateStaggeredTenantWakeUpAsync()).As<StaggeredTenantWakeUpPart>();
+        var staggeredTenantWakeUpPart = (await GetOrCreateStaggeredTenantWakeUpSettingsAsync()).As<StaggeredTenantWakeUpPart>();
         await _staggeredTenantWakeUpEvents.AwaitEachAsync(async handler => await handler.StartingAsync(staggeredTenantWakeUpPart));
         try
         {
@@ -77,7 +77,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         return staggeredTenantWakeUpPart;
     }
 
-    public async Task<ContentItem> GetOrCreateStaggeredTenantWakeUpAsync()
+    public async Task<ContentItem> GetOrCreateStaggeredTenantWakeUpSettingsAsync()
     {
         var staggeredContentItem =
             await _session.Query<ContentItem, ContentItemIndex>(item => item.ContentType == ContentTypes.StaggeredTenantWakeUp)
@@ -100,7 +100,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     /// </summary>
     private async Task StaggeredTenantWakeUpAsync(StaggeredTenantWakeUpPart staggeredTenantWakeUpPart, bool newVersion)
     {
-        staggeredTenantWakeUpPart.Start(_clock, nameof(RunScheduledMaintenanceForAllTenantAsync), newVersion);
+        staggeredTenantWakeUpPart.Start(_clock, nameof(RunStaggeredTenantWakeUpAsync), newVersion);
 
         // Saving right after the start, so the UI can show the progress.
         await SaveSettingsAsync(staggeredTenantWakeUpPart);
@@ -110,7 +110,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
 
         while (remainingTenants.Count != 0)
         {
-            if (staggeredTenantWakeUpPart.ShouldPause(nameof(RunScheduledMaintenanceForAllTenantAsync)))
+            if (staggeredTenantWakeUpPart.ShouldPause(nameof(RunStaggeredTenantWakeUpAsync)))
             {
                 await InvokePausedEventAsync(staggeredTenantWakeUpPart);
                 return;
@@ -156,7 +156,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         var delayCheckInterval = TimeSpan.FromMilliseconds(500);
         while (waited < delay)
         {
-            if (staggeredTenantWakeUpPart.ShouldPause(nameof(RunScheduledMaintenanceForAllTenantAsync)))
+            if (staggeredTenantWakeUpPart.ShouldPause(nameof(RunStaggeredTenantWakeUpAsync)))
             {
                 _logger.LogInformation("Maintenance paused during delay wait. Exiting.");
                 return true;

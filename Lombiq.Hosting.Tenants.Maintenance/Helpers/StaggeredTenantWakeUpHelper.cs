@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.Maintenance.Services;
+using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.BackgroundJobs;
 using System.Threading.Tasks;
@@ -11,6 +11,6 @@ public static class StaggeredTenantWakeUpHelper
         HttpBackgroundJob.ExecuteAfterEndOfRequestAsync(jobName, async scope =>
         {
             var staggeredTenantWakeUpService = scope.ServiceProvider.GetRequiredService<IStaggeredTenantWakeUpService>();
-            await staggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync(newVersion);
+            await staggeredTenantWakeUpService.RunStaggeredTenantWakeUpAsync(newVersion);
         });
 }

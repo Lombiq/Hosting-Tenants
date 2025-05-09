@@ -37,7 +37,7 @@ public class AdminController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
+        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpSettingsAsync();
         return View(model: new { ContentItem = model });
     }
 
@@ -45,7 +45,7 @@ public class AdminController : Controller
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
+        var model = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpSettingsAsync();
 
         return PartialView("StaggeredTenantWakeUpDetails", model: new { ContentItem = model });
     }
@@ -68,13 +68,13 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Pause()
     {
-        var successfulPause = MaintenanceJobStore.RequestPause(nameof(StaggeredTenantWakeUpService.RunScheduledMaintenanceForAllTenantAsync));
+        var successfulPause = MaintenanceJobStore.RequestPause(nameof(StaggeredTenantWakeUpService.RunStaggeredTenantWakeUpAsync));
 
         // If not successful we should directly set the part to paused, because it is not running. This could happen
         // if the maintenance was abruptly stopped e.g. by a server restart.
         if (!successfulPause)
         {
-            var staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpAsync();
+            var staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpSettingsAsync();
             staggeredTenantWakeUp.Alter<StaggeredTenantWakeUpPart>(part => part.Paused = true);
             await _contentManager.UpdateAsync(staggeredTenantWakeUp);
         }
