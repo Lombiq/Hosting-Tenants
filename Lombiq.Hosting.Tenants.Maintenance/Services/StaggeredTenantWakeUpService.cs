@@ -1,4 +1,4 @@
-﻿using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -192,8 +192,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     /// default.
     /// </summary>
     private IEnumerable<ShellSettings> GetAllRunningTenantSettingsExceptDefault() =>
-        _shellHost.GetAllSettings()
-            .Where(settings => settings.Name != ShellSettings.DefaultShellName && settings.IsRunning());
+        _shellHost.GetAllSettings().Where(settings => !settings.IsDefaultShell() && settings.IsRunning());
 
     /// <summary>
     /// Tenant level part of the staggered tenant wake-up. This is where the actual tenant triggering is done.
