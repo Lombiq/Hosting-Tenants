@@ -209,13 +209,13 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         {
             foreach (var remainingTenant in remainingTenants)
             {
-                await StartTenantsAsync(remainingTenant, staggeredTenantWakeUpPart);
+                await WakeUpTenantAsync(remainingTenant, staggeredTenantWakeUpPart);
             }
         }
         else
         {
             var tasks = remainingTenants.Select(async remainingTenant =>
-                await StartTenantsAsync(remainingTenant, staggeredTenantWakeUpPart));
+                await WakeUpTenantAsync(remainingTenant, staggeredTenantWakeUpPart));
             await Task.WhenAll(tasks);
         }
 
@@ -224,19 +224,19 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         staggeredTenantWakeUpPart.ProcessedTenantIds.AddRange(_processedTenantIds);
     }
 
-    private async Task StartTenantsAsync(
-        ShellSettings remainingTenant,
+    private async Task WakeUpTenantAsync(
+        ShellSettings tenant,
         StaggeredTenantWakeUpPart staggeredTenantWakeUpPart)
     {
         try
         {
-            _shellHost.TryGetShellContext(remainingTenant.Name, out var shellContext);
+            _shellHost.TryGetShellContext(tenant.Name, out var shellContext);
 
             if (!shellContext.IsActivated)
             {
                 _logger.LogInformation(
                     "Starting staggered tenant wake-up for tenant '{TenantName}' on version {Version}.",
-                    remainingTenant.Name,
+                    tenant.Name,
                     staggeredTenantWakeUpPart.CurrentVersion);
 
                 await _shellHost.WithShellScopeAsync(
@@ -244,17 +244,17 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                         // The actual maintenance and migration tasks are already done at this point.
                         // Need to call DisposeAsync() manually, otherwise the shell context won't be released.
                         await scope.DisposeAsync(),
-                    remainingTenant.Name);
+                    tenant.Name);
 
                 // We release the shell context to free up resources. Calling DisposeAsync() manually is needed before this.
-                await _shellHost.ReleaseShellContextAsync(remainingTenant, eventSource: false);
+                await _shellHost.ReleaseShellContextAsync(tenant, eventSource: false);
             }
 
-            _versionUpdates[remainingTenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.ToTechnicalString();
+            _versionUpdates[tenant.Name] = staggeredTenantWakeUpPart.CurrentVersion.ToTechnicalString();
 
             _logger.LogInformation(
                 "Staggered tenant wake-up for tenant '{TenantName}' finished successfully on version {Version}.",
-                remainingTenant.Name,
+                tenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
         }
         catch (Exception exception)
@@ -262,14 +262,14 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
             _logger.LogError(
                 exception,
                 "Staggered tenant wake-up for tenant '{TenantName}' on version {Version} failed.",
-                remainingTenant.Name,
+                tenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
-            _errorLogs[remainingTenant.Name] = exception.Message;
+            _errorLogs[tenant.Name] = exception.Message;
         }
         finally
         {
             // We should always add the tenant to the processed list, even if it failed.
-            _processedTenantIds.Add(remainingTenant.TenantId);
+            _processedTenantIds.Add(tenant.TenantId);
         }
     }
 
