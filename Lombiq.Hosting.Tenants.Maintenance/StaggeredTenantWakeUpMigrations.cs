@@ -24,15 +24,17 @@ public sealed class StaggeredTenantWakeUpMigrations : DataMigration
                 .WithSettings(new NumericFieldSettings
                 {
                     Scale = 0,
+                    Minimum = 1,
                     Hint = "The number of tenants to be processed in each step or in case of parallel processing the" +
                         " number of tenants started at once.",
                 }))
             .WithField<NumericField>(nameof(StaggeredTenantWakeUpPart.BatchIntervalSeconds), field => field
-                .WithDisplayName("Batch Interval Second")
+                .WithDisplayName("Batch Interval (Seconds)")
                 .WithSettings(new NumericFieldSettings
                 {
                     Scale = 0,
-                    Hint = "The seconds between batches of tenants to be processed.",
+                    Minimum = 0,
+                    Hint = "The number of seconds to wait between batches.",
                 }))
             .WithField<BooleanField>(nameof(StaggeredTenantWakeUpPart.RunParallel), field => field
                 .WithDisplayName("Run In Parallel")

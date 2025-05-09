@@ -195,7 +195,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
         _shellHost.GetAllSettings().Where(settings => !settings.IsDefaultShell() && settings.IsRunning());
 
     /// <summary>
-    /// Tenant level part of the staggered tenant wake-up. This is where the actual tenant triggering is done.
+    /// This is where the actual tenant wake-up is triggered for each processed tenant.
     /// </summary>
     private async Task RunStaggeredTenantWakeUpForRemainingTenantsAsync(
         List<ShellSettings> remainingTenants,
