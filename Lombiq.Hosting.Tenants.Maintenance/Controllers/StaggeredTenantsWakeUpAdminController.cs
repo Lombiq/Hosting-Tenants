@@ -14,16 +14,16 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Controllers;
 
 [Feature(FeatureNames.StaggeredTenantWakeUp)]
 [Admin("StaggeredTenantWakeUp/{action}")]
-public class AdminController : Controller
+public class StaggeredTenantsWakeUpAdminController : Controller
 {
     private readonly INotifier _notifier;
-    private readonly IHtmlLocalizer<AdminController> H;
+    private readonly IHtmlLocalizer<StaggeredTenantsWakeUpAdminController> H;
     private readonly IStaggeredTenantWakeUpService _staggeredTenantWakeUpService;
     private readonly IContentManager _contentManager;
 
-    public AdminController(
+    public StaggeredTenantsWakeUpAdminController(
         INotifier notifier,
-        IHtmlLocalizer<AdminController> htmlLocalizer,
+        IHtmlLocalizer<StaggeredTenantsWakeUpAdminController> htmlLocalizer,
         IStaggeredTenantWakeUpService staggeredTenantWakeUpService,
         IContentManager contentManager)
     {
@@ -86,5 +86,5 @@ public class AdminController : Controller
     private RedirectToActionResult RedirectToIndex() => RedirectToAction(nameof(Index));
 
     private Task ExecuteStaggeredTenantWakeUpAsync(bool newVersion = false) =>
-        StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(AdminController), newVersion);
+        StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(StaggeredTenantsWakeUpAdminController), newVersion);
 }

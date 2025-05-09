@@ -1,5 +1,6 @@
 @using Lombiq.Hosting.Tenants.Maintenance.Models
 @using OrchardCore.ContentManagement
+
 @{
     var part = ((ContentItem)Model.ContentItem).As<StaggeredTenantWakeUpPart>();
     var currentPercentage = part.ProgressPercentage;

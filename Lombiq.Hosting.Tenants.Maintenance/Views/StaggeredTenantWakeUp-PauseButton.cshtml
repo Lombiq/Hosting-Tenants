@@ -1,6 +1,10 @@
 @using Lombiq.Hosting.Tenants.Maintenance.Constants
+@using Lombiq.Hosting.Tenants.Maintenance.Controllers
+@using OrchardCore.Mvc.Core.Utilities
 
 <a class="btn btn-danger mb-1 @(!Model.Part.IsRunning() ? "disabled" : string.Empty )"
-   asp-action="Pause"
-   asp-controller="Admin"
-   asp-route-area="@FeatureNames.Maintenance">@T["Pause"]</a>
+   asp-action="@nameof(StaggeredTenantsWakeUpAdminController.Pause)"
+   asp-controller="@typeof(StaggeredTenantsWakeUpAdminController).ControllerName()"
+   asp-route-area="@FeatureNames.Maintenance">
+    @T["Pause"]
+</a>
