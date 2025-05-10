@@ -20,7 +20,7 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public DateTime? FinishedUtc { get; set; }
     public IList<string> ProcessedTenantIds { get; } = [];
     public IDictionary<string, string> Versions { get; } = new Dictionary<string, string>();
-    public IDictionary<string, string> ErrorLogs { get; } = new Dictionary<string, string>();
+    public IDictionary<string, string> ErrorLogs { get; private set; } = new Dictionary<string, string>();
 
     public void CalculatePercentage() =>
         ProgressPercentage = (int)Math.Round(((double)ProcessedTenantIds.Count / AllTenantCount * 100)!, 0);
@@ -67,7 +67,11 @@ public class StaggeredTenantWakeUpPart : ContentPart
             ProcessedTenantIds.Clear();
             AllTenantCount = 0;
             ProgressPercentage = 0;
-            ErrorLogs.Clear();
+
+            // This is needed because the dictionary won't be cleared with a simple Clear() and .Apply().
+            ErrorLogs = null;
+            this.Apply();
+            ErrorLogs = new Dictionary<string, string>();
         }
     }
 
