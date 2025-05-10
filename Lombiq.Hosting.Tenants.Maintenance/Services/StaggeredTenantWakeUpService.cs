@@ -10,6 +10,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using YesSql;
@@ -267,7 +268,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                 "Staggered tenant wake-up for tenant '{TenantName}' on version {Version} failed.",
                 tenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
-            _errorLogs[tenant.Name] = exception.Message;
+            _errorLogs[tenant.Name] = $"{exception.Message} : {JsonSerializer.Serialize(exception)}";
         }
         finally
         {
