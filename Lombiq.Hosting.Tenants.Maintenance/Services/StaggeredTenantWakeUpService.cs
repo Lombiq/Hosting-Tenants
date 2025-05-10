@@ -268,7 +268,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                 "Staggered tenant wake-up for tenant '{TenantName}' on version {Version} failed.",
                 tenant.Name,
                 staggeredTenantWakeUpPart.CurrentVersion);
-            _errorLogs[tenant.Name] = $"{exception.Message} : {JsonSerializer.Serialize(exception)}";
+            _errorLogs[tenant.Name] = $"{exception.Message} : {exception}";
         }
         finally
         {
