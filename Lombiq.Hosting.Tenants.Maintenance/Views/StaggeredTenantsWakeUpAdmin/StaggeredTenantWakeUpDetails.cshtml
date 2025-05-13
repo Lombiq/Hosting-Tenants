@@ -1,17 +1,43 @@
+@using Lombiq.Hosting.Tenants.Maintenance.Controllers
 @using Lombiq.Hosting.Tenants.Maintenance.Models
 @using OrchardCore.ContentManagement
+@using OrchardCore.Mvc.Core.Utilities
 
 @{
-    var part = ((ContentItem)Model.ContentItem).As<StaggeredTenantWakeUpPart>();
+    var part = (Model.ContentItem as ContentItem).As<StaggeredTenantWakeUpPart>();
     var currentPercentage = part.ProgressPercentage;
     var started = part.Paused == false && part.StartedUtc != null && part.FinishedUtc == null;
+    var routeControllerName = typeof(StaggeredTenantsWakeUpAdminController).ControllerName();
 }
 
 <div class="buttons mt-4">
-    @await DisplayAsync(await New.StaggeredTenantWakeUp__NewVersionButton(Part: part))
-    @await DisplayAsync(await New.StaggeredTenantWakeUp__ContinueButton(Part: part))
-    @await DisplayAsync(await New.StaggeredTenantWakeUp__PauseButton(Part: part))
-    @await DisplayAsync(await New.StaggeredTenantWakeUp__EditButton(Part: part))
+    <a class="btn btn-info mb-1 @(part.IsRunning() ? "disabled" : string.Empty)"
+       asp-action="@nameof(StaggeredTenantsWakeUpAdminController.NewVersion)"
+       asp-controller="@routeControllerName">
+        @T["Start new"]
+    </a>
+
+    <a class="btn btn-success mb-1 @(part.IsFinished() ? "disabled" : string.Empty)"
+       asp-action="@nameof(StaggeredTenantsWakeUpAdminController.Continue)"
+       asp-controller="@routeControllerName">
+        @T["Continue"]
+    </a>
+
+    <a class="btn btn-danger mb-1 @(!part.IsRunning() ? "disabled" : string.Empty)"
+       asp-action="@nameof(StaggeredTenantsWakeUpAdminController.Pause)"
+       asp-controller="@routeControllerName">
+        @T["Pause"]
+    </a>
+
+    <a class="btn btn-info mb-1 @(part.IsRunning() ? "disabled" : string.Empty)"
+       asp-action="Edit"
+       asp-controller="Admin"
+       asp-area="OrchardCore.Contents"
+       asp-route-contentItemId="@part.ContentItem.ContentItemId"
+       asp-route-returnUrl="@Url.Action(nameof(StaggeredTenantsWakeUpAdminController.Index), routeControllerName)">
+        @T["Edit"]
+    </a>
+
     <span tabindex="0"
           class="ms-1"
           data-bs-toggle="popover"
@@ -29,9 +55,8 @@
 </div>
 
 <div class="progress mb-3 mt-4">
-    <div
-        id="maintenance-progress-bar"
-        class="
+    <div id="maintenance-progress-bar"
+         class="
             progress-bar
             progress-bar-striped
             @(part.IsRunning() ? "progress-bar-animated" : string.Empty)
@@ -41,125 +66,125 @@
          aria-valuenow="@currentPercentage"
          aria-valuemin="0"
          aria-valuemax="100" style="width: @currentPercentage%">@currentPercentage %</div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-md-6">
-        <dl class="row">
-            <dt class="col-sm-5">@T["Running:"]</dt>
-            <dd class="col-sm-7">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
-
-
-            <dt class="col-sm-5">@T["Paused:"]</dt>
-            <dd class="col-sm-7">@(part.Paused ? T["Yes"] : T["No"])</dd>
-
-            <dt class="col-sm-5">@T["Started:"]</dt>
-            <dd class="col-sm-7">@(part.StartedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.StartedUtc)))</dd>
-
-            <dt class="col-sm-5">@(part.Paused ? T["Finished (paused):"] : T["Finished:"])</dt>
-            <dd class="col-sm-7">@(part.FinishedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.FinishedUtc)))</dd>
-        </dl>
     </div>
-    <div class="col-md-6">
-        <dl class="row">
-            <dt class="col-sm-6">@T["Current version:"]</dt>
-            <dd class="col-sm-6">@part.CurrentVersion</dd>
 
-            <dt class="col-sm-6">@T["Total running tenants:"]</dt>
-            <dd class="col-sm-6">@part.AllTenantCount</dd>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-5">@T["Running:"]</dt>
+                <dd class="col-sm-7">@(part.IsRunning() ? T["Yes"] : T["No"])</dd>
 
-            <dt class="col-sm-6">@T["Processed tenants:"]</dt>
-            <dd class="col-sm-6">@part.ProcessedTenantIds.Count</dd>
-        </dl>
-    </div>
-</div>
 
-<div class="accordion mt-4" id="maintenanceAccordion">
-    <!-- Errors Accordion Item -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingErrors">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseErrors" aria-expanded="false" aria-controls="collapseErrors">
-                @T["Errors ({0})", part.ErrorLogs.Count]
-            </button>
-        </h2>
-        <div id="collapseErrors" class="accordion-collapse collapse" aria-labelledby="headingErrors">
-            <div class="accordion-body">
-                @if (part.ErrorLogs.Count > 0)
-                {
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead>
-                            <tr>
-                                <th>@T["Name"]</th>
-                                <th>@T["Error"]</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var error in part.ErrorLogs.OrderBy(e => e.Key))
-                            {
-                                <tr>
-                                    <td>@error.Key</td>
-                                    <td>
-                                        <a class="btn btn-sm btn-primary" data-bs-toggle="collapse" href="#error_@error.Key" role="button" aria-expanded="false" aria-controls="error_@error.Key">
-                                            @T["Show error"]
-                                        </a>
-                                        <div class="collapse mt-2" id="error_@error.Key">
-                                            <div class="alert alert-danger">@error.Value</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted">@T["No errors found. Please check the logs."]</p>
-                }
-            </div>
+                <dt class="col-sm-5">@T["Paused:"]</dt>
+                <dd class="col-sm-7">@(part.Paused ? T["Yes"] : T["No"])</dd>
+
+                <dt class="col-sm-5">@T["Started:"]</dt>
+                <dd class="col-sm-7">@(part.StartedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.StartedUtc)))</dd>
+
+                <dt class="col-sm-5">@(part.Paused ? T["Finished (paused):"] : T["Finished:"])</dt>
+                <dd class="col-sm-7">@(part.FinishedUtc == null ? string.Empty : await DisplayAsync(await New.DateTime(Utc: part.FinishedUtc)))</dd>
+            </dl>
+        </div>
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-6">@T["Current version:"]</dt>
+                <dd class="col-sm-6">@part.CurrentVersion</dd>
+
+                <dt class="col-sm-6">@T["Total running tenants:"]</dt>
+                <dd class="col-sm-6">@part.AllTenantCount</dd>
+
+                <dt class="col-sm-6">@T["Processed tenants:"]</dt>
+                <dd class="col-sm-6">@part.ProcessedTenantIds.Count</dd>
+            </dl>
         </div>
     </div>
 
-    <!-- Versions Accordion Item -->
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingVersions">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVersions" aria-expanded="false" aria-controls="collapseVersions">
-                @T["Versions"]
-            </button>
-        </h2>
-        <div id="collapseVersions" class="accordion-collapse collapse" aria-labelledby="headingVersions">
-            <div class="accordion-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="thead-light">
-                        <tr>
-                            <th>@T["Name"]</th>
-                            <th>@T["Version"]</th>
-                            <th>@T["Actions"]</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var version in part.Versions.OrderBy(v => v.Key))
-                        {
-                            <tr>
-                                <td>@version.Key</td>
-                                <td>@version.Value</td>
-                                <td>
-                                    <a class="btn btn-sm btn-info"
-                                       asp-action="Edit"
-                                       asp-controller="Admin"
-                                       asp-route-id="@version.Key"
-                                       asp-route-area="OrchardCore.Tenants">
-                                        @T["Edit"]
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+    <div class="accordion mt-4" id="maintenanceAccordion">
+        <!-- Errors Accordion Item -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingErrors">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseErrors" aria-expanded="false" aria-controls="collapseErrors">
+                    @T["Errors ({0})", part.ErrorLogs.Count]
+                </button>
+            </h2>
+            <div id="collapseErrors" class="accordion-collapse collapse" aria-labelledby="headingErrors">
+                <div class="accordion-body">
+                    @if (part.ErrorLogs.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>@T["Name"]</th>
+                                        <th>@T["Error"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var error in part.ErrorLogs.OrderBy(e => e.Key))
+                                    {
+                                        <tr>
+                                            <td>@error.Key</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-primary" data-bs-toggle="collapse" href="#error_@error.Key" role="button" aria-expanded="false" aria-controls="error_@error.Key">
+                                                    @T["Show error"]
+                                                </a>
+                                                <div class="collapse mt-2" id="error_@error.Key">
+                                                    <div class="alert alert-danger">@error.Value</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@T["No errors found. Please check the logs."]</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Versions Accordion Item -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingVersions">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVersions" aria-expanded="false" aria-controls="collapseVersions">
+                    @T["Versions"]
+                </button>
+            </h2>
+            <div id="collapseVersions" class="accordion-collapse collapse" aria-labelledby="headingVersions">
+                <div class="accordion-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>@T["Name"]</th>
+                                    <th>@T["Version"]</th>
+                                    <th>@T["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var version in part.Versions.OrderBy(v => v.Key))
+                                {
+                                    <tr>
+                                        <td>@version.Key</td>
+                                        <td>@version.Value</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-info"
+                                               asp-action="Edit"
+                                               asp-controller="Admin"
+                                               asp-route-id="@version.Key"
+                                               asp-route-area="OrchardCore.Tenants">
+                                                @T["Edit"]
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
