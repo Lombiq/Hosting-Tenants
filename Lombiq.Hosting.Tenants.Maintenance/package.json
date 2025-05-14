@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "npm explore nodejs-extensions -- pnpm build",
+    "lint": "npm explore nodejs-extensions -- pnpm lint",
+    "clean": "npm explore nodejs-extensions -- pnpm clean",
+    "watch": "npm explore nodejs-extensions -- pnpm watch"
+  },
+  "nodejsExtensions": {
+    "scripts": {
+      "source": "Assets/Scripts",
+      "target": "wwwroot/js"
+    }
+  }
+}

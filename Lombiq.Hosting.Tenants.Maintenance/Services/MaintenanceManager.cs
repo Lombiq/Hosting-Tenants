@@ -1,3 +1,4 @@
+using Lombiq.Hosting.BuildVersionDisplay.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
@@ -52,6 +53,7 @@ public class MaintenanceManager : IMaintenanceManager
             {
                 MaintenanceId = provider.Id,
                 ExecutionTimeUtc = _clock.UtcNow,
+                BuildVersion = new BuildVersionModel().BuildVersion,
             };
             var context = new MaintenanceTaskExecutionContext
             {

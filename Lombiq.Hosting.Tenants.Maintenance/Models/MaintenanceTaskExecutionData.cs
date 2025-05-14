@@ -10,4 +10,5 @@ public class MaintenanceTaskExecutionData : Entity
     public DateTime ExecutionTimeUtc { get; set; }
     public bool IsSuccess { get; set; }
     public string Error { get; set; }
+    public string BuildVersion { get; set; }
 }

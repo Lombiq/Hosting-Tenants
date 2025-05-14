@@ -1,0 +1,20 @@
+using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Microsoft.Extensions.Options;
+using OrchardCore.ResourceManagement;
+
+namespace Lombiq.Hosting.Tenants.Maintenance;
+
+public class ResourceManagementOptionsConfiguration : IConfigureOptions<ResourceManagementOptions>
+{
+    private const string WwwRoot = "~/" + FeatureNames.Module + "/";
+    private const string Js = WwwRoot + "js/";
+    private static readonly ResourceManifest _manifest = new();
+
+    static ResourceManagementOptionsConfiguration() =>
+        _manifest
+            .DefineScript(ResourceNames.StaggeredTenantWakeUp)
+            .SetDependencies("bootstrap")
+            .SetUrl($"{Js}{ResourceNames.StaggeredTenantWakeUp}.js");
+
+    public void Configure(ResourceManagementOptions options) => options.ResourceManifests.Add(_manifest);
+}

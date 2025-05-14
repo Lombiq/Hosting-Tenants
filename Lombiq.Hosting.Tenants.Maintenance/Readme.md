@@ -196,3 +196,38 @@ The following configuration options are available to set the enabled features:
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.StaggeredTenantWakeUp`
+
+Adds a page to the admin under Multi-Tenancy/Staggered Tenant Wake Up that allows you to start all tenants shells in a staggered way. Waking up all the tenants this way ensures that migrations (and maintenance, should you have them) are all executed without having to start each tenant manually and also avoids saturating hardware resources (when configured correctly), such as the database access.
+
+You can edit the maintenance options directly on the Multi-Tenancy / Staggered Tenant Wake Up page if you click on the edit button.
+
+- Batch Size: The number of tenants processed in one iteration.
+- Time Span Between Batches: The amount of time to wait between processing batches.
+- Run In Parallel: Determines whether the number of tenants defined by the batch size are woken up in parallel or sequentially.
+- RunOnStartup: When set to true, the staggered tenant wake-up maintenance will start a new version if a new deployment was done, or it will continue the current run if it hasn't finished yet. If you set this to false, you will have to start it manually from the admin page.
+
+Functions on the page:
+
+- Start new: Starts the staggered tenant wake-up maintenance with a new version number.
+- Continue: Continues most recent if it was paused.
+- Pause: Pauses the current run.
+- Edit: Allows you to edit the options listed above. You can only save while the maintenance isn't running.
+
+You can initialize the configuration with the following app settings:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "StaggeredTenantWakeUp": {
+        "BatchIntervalSeconds": 5,
+        "BatchSize": 5,
+        "RunParallel": false,
+        "RunOnStartup": true
+      }
+    }
+  }
+}
+```
