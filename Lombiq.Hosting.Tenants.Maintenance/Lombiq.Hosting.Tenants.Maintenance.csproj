@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <DefaultItemExcludes>$(DefaultItemExcludes);.git*;node_modules\**;Tests\**</DefaultItemExcludes>
+    <LombiqNodeJsExtensionsPath Condition="'$(LombiqNodeJsExtensionsPath)' == '' and Exists('../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.csproj')"
+      >../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions</LombiqNodeJsExtensionsPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -63,7 +65,7 @@
     <PackageReference Condition="!Exists($(LombiqNodeJsExtensionsPath))" Include="Lombiq.NodeJs.Extensions" Version="2.2.0" />
   </ItemGroup>
 
-  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.props" />
-  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.targets" />
+  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="$(LombiqNodeJsExtensionsPath)/Lombiq.NodeJs.Extensions.props" />
+  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="$(LombiqNodeJsExtensionsPath)/Lombiq.NodeJs.Extensions.targets" />
 
 </Project>
