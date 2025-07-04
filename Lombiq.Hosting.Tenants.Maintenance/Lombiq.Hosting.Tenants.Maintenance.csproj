@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <DefaultItemExcludes>$(DefaultItemExcludes);.git*;node_modules\**;Tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -43,11 +42,6 @@
     <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="node_modules\**" />
-    <None Remove="Tests\**" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
     <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
     <ProjectReference Include="..\..\Lombiq.Hosting.BuildVersionDisplay\Lombiq.Hosting.BuildVersionDisplay\Lombiq.Hosting.BuildVersionDisplay.csproj" />
@@ -57,13 +51,5 @@
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.2.1-alpha.0.nest-561" />
     <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="7.0.1-alpha.1.nest-562" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Condition="Exists($(LombiqNodeJsExtensionsPath))" Include="$(LombiqNodeJsExtensionsPath)/Lombiq.NodeJs.Extensions.csproj" />
-    <PackageReference Condition="!Exists($(LombiqNodeJsExtensionsPath))" Include="Lombiq.NodeJs.Extensions" Version="2.2.0" />
-  </ItemGroup>
-
-  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.props" />
-  <Import Condition="Exists($(LombiqNodeJsExtensionsPath))" Project="../../../Utilities/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions/Lombiq.NodeJs.Extensions.targets" />
 
 </Project>
