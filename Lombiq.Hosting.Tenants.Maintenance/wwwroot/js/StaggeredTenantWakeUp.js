@@ -1,14 +1,13 @@
 /* global bootstrap */
 
 let pollingInterval = null;
-var countdownTimer = null
+let countdownTimer = null;
 let pollingRate = 10000;
 let countdown = pollingRate / 1000;
 const maintenanceStatusContainer = document.getElementById('maintenance-status-container');
 const url = maintenanceStatusContainer.getAttribute('data-maintenance-url');
 
-function updateCountdownDisplay(clear = false)
-{
+function updateCountdownDisplay(clear = false) {
     const el = document.getElementById('refreshCountdown');
     if (!el) return;
 
