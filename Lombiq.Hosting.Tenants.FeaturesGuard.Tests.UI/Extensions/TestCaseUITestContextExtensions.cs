@@ -78,7 +78,7 @@ public static class TestCaseUITestContextExtensions
             });
 
         await context.SignInDirectlyAsync();
-        await context.GoToAdminRelativeUrlAsync("/Features");
+        await context.GoToFeaturesAsync();
     }
 
     private static async Task RunTestConditionallyEnabledFeaturesAssertionsAsync(
@@ -122,6 +122,6 @@ public static class TestCaseUITestContextExtensions
 
         await context.ClickReliablyOnSubmitAsync();
         context.SuccessMessageExists("Recipe imported successfully!");
-        await context.GoToAdminRelativeUrlAsync("/Features");
+        await context.GoToFeaturesAsync();
     }
 }
