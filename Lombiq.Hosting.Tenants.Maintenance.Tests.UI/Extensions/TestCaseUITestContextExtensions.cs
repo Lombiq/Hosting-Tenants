@@ -45,7 +45,7 @@ public static class TestCaseUITestContextExtensions
         await context.ClickReliablyOnByLinkTextAsync("Multi-Tenancy");
         await context.ClickReliablyOnByLinkTextAsync("Tenants");
         await context.ClickReliablyOnByLinkTextAsync("StaggeredTenantWakeUp");
-        await context.GoToDashboardAsync();
+        await context.GoToAdminAsync();
 
         // Put the tenant into idle mode, to see if it works that way also.
         await context.Application.UsingScopeAsync(
