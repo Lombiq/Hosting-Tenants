@@ -30,7 +30,7 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAndGoToDashboardAsync();
         await context.CreateAndSwitchToTenantManuallyAsync(TenantName, TenantUrlPrefix, string.Empty);
 
-        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+        await context.GoToSetupAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = TenantName,

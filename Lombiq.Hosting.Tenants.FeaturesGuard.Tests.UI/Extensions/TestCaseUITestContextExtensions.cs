@@ -68,7 +68,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.CreateAndSwitchToTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "Features Guard");
 
-        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+        await context.GoToSetupAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = tenantName,

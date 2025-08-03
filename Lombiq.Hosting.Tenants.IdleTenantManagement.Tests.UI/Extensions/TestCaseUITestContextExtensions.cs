@@ -19,7 +19,7 @@ public static class TestCaseUITestContextExtensions
 
         // Because this test is aimed at a single tenant's behavior we don't need dynamic tenant data.
         // The used constants here can be found at IdleTenantManagement.Tests.UI/Constants/IdleTenantData.
-        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+        await context.GoToSetupAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = IdleTenantName,
