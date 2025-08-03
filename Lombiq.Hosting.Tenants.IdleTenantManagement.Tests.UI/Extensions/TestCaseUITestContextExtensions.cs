@@ -45,6 +45,6 @@ public static class TestCaseUITestContextExtensions
         // If we can access the admin menu after the tenant shut down that means the new shell was created and it is
         // working as intended.
         await context.SignInDirectlyAsync();
-        await context.GoToAdminAsync();
+        await context.GoToDashboardAsync();
     }
 }

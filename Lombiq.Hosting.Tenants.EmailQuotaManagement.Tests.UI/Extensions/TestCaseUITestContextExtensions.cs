@@ -49,12 +49,12 @@ public static class TestCaseUITestContextExtensions
             var warningLevel = Convert.ToInt32(Math.Round((double)quotaAwareEmailCount / maximumEmailQuota * 100, 0));
             if (warningLevel >= 100)
             {
-                await context.GoToAdminAsync();
+                await context.GoToDashboardAsync();
                 context.CheckExistence(By.XPath(DashboardExceededMessage), exists: true);
             }
             else if (warningLevel >= 80)
             {
-                await context.GoToAdminAsync();
+                await context.GoToDashboardAsync();
                 CheckMessageExistence(context, warningLevel.ToTechnicalString());
 
                 await context.GoToContentItemListAsync();
