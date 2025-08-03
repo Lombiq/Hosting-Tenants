@@ -199,7 +199,7 @@ The following configuration options are available to set the enabled features:
 
 ### `Lombiq.Hosting.Tenants.Maintenance.StaggeredTenantWakeUp`
 
-Adds a page to the admin under Multi-Tenancy/Staggered Tenant Wake Up that allows you to start all tenants shells in a staggered way. Waking up all the tenants this way ensures that migrations (and maintenance, should you have them) are all executed without having to start each tenant manually and also avoids saturating hardware resources (when configured correctly), such as the database access.
+Adds a page to the admin under Multi-Tenancy/Staggered Tenant Wake Up that allows you to start all tenants' shells in a staggered way. Waking up all the tenants this way ensures that migrations (and maintenance, should you have them) are all executed without having to start each tenant manually and also avoids saturating hardware resources (when configured correctly), such as the database access.
 
 You can edit the maintenance options directly on the Multi-Tenancy / Staggered Tenant Wake Up page if you click on the edit button.
 
