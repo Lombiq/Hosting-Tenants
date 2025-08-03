@@ -13,11 +13,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance",
     Description = "Provides maintenance operations for tenants.",
     Category = "Hosting",
-    Dependencies =
-    [
-        "OrchardCore.Tenants",
-        "OrchardCore.Settings",
-    ]
+    Dependencies = ["OrchardCore.Settings"]
 )]
 
 [assembly: Feature(
@@ -98,6 +94,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     DefaultTenantOnly = true,
     Dependencies = [
         Maintenance,
+        "OrchardCore.Tenants",
         "OrchardCore.ContentFields",
         "OrchardCore.Contents"
     ]
