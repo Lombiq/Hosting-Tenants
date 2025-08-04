@@ -1,6 +1,5 @@
-using Atata;
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Pages;
+using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
 using System;
@@ -68,7 +67,7 @@ public static class TestCaseUITestContextExtensions
 
         await context.CreateAndSwitchToTenantManuallyAsync(tenantName, tenantUrlPrefix, string.Empty, "Features Guard");
 
-        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+        await context.GoToSetupAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = tenantName,
@@ -78,7 +77,7 @@ public static class TestCaseUITestContextExtensions
             });
 
         await context.SignInDirectlyAsync();
-        await context.GoToAdminRelativeUrlAsync("/Features");
+        await context.GoToFeaturesAsync();
     }
 
     private static async Task RunTestConditionallyEnabledFeaturesAssertionsAsync(
@@ -122,6 +121,6 @@ public static class TestCaseUITestContextExtensions
 
         await context.ClickReliablyOnSubmitAsync();
         context.SuccessMessageExists("Recipe imported successfully!");
-        await context.GoToAdminRelativeUrlAsync("/Features");
+        await context.GoToFeaturesAsync();
     }
 }

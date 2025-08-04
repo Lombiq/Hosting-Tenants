@@ -4,7 +4,7 @@ using Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Pages;
+using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +30,7 @@ public static class TestCaseUITestContextExtensions
         await context.SignInDirectlyAndGoToDashboardAsync();
         await context.CreateAndSwitchToTenantManuallyAsync(TenantName, TenantUrlPrefix, string.Empty);
 
-        await context.GoToSetupPageAndSetupOrchardCoreAsync(
+        await context.GoToSetupAndSetupOrchardCoreAsync(
             new OrchardCoreSetupParameters(context)
             {
                 SiteName = TenantName,

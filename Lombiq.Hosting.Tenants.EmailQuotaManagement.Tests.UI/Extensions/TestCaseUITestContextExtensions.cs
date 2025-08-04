@@ -57,10 +57,10 @@ public static class TestCaseUITestContextExtensions
                 await context.GoToDashboardAsync();
                 CheckMessageExistence(context, warningLevel.ToTechnicalString());
 
-                await context.GoToContentItemsPageAsync();
+                await context.GoToContentItemListAsync();
                 CheckMessageExistence(context, warningLevel.ToTechnicalString());
 
-                await context.GoToFeaturesPageAsync();
+                await context.GoToFeaturesAsync();
                 CheckMessageExistence(context, warningLevel.ToTechnicalString());
 
                 if (!warningEmails.Contains(warningLevel))
