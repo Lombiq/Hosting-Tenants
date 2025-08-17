@@ -53,6 +53,6 @@
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.3.0" />
-    <PackageReference Include="Lombiq.HelpfulExtensions" Version="10.0.1-alpha.11.osoe-1069" />
+    <PackageReference Include="Lombiq.HelpfulExtensions" Version="11.0.0" />
   </ItemGroup>
 </Project>
