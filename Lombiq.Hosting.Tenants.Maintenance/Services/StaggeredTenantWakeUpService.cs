@@ -93,10 +93,10 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     }
 
     /// <summary>
-    /// Runs the staggered tenant wake-up for the remaining tenants. This is the main method that will be called to run the
-    /// maintenance. It will start the maintenance, process the tenants in batches, and wait for the specified time
-    /// between batches. It will also check if the maintenance was paused and if so, it will stop the maintenance.
-    /// If the maintenance was paused, it will invoke the paused event for all registered handlers.
+    /// Runs the staggered tenant wake-up for the remaining tenants. This is the main method that will be called to run
+    /// the maintenance. It will start the maintenance, process the tenants in batches, and wait for the specified time
+    /// between batches. It will also check if the maintenance was paused and if so, it will stop the maintenance. If
+    /// the maintenance was paused, it will invoke the paused event for all registered handlers.
     /// </summary>
     private async Task StaggeredTenantWakeUpAsync(StaggeredTenantWakeUpPart staggeredTenantWakeUpPart, bool newVersion)
     {
@@ -126,7 +126,8 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
             await SaveSettingsAsync(staggeredTenantWakeUpPart);
             await _session.SaveChangesAsync();
 
-            // Get the remaining tenants after processing, so if new tenant is added it could be processed in the next run
+            // Get the remaining tenants after processing, so if a new tenant is added it could be processed in the next
+            // run.
             remainingTenants = GetRemainingTenants(staggeredTenantWakeUpPart);
 
             if (remainingTenants.Count != 0 && await WaitBeforeNextAsync(staggeredTenantWakeUpPart))
@@ -171,9 +172,9 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
     }
 
     /// <summary>
-    /// Gets the remaining tenants that need to be processed. This is done by getting all running tenants and
-    /// excluding the ones that have already been processed. It also takes into account the number of tenants to be
-    /// per batch, so it only returns the number of tenants that need to be processed in the current batch.
+    /// Gets the remaining tenants that need to be processed. This is done by getting all running tenants and excluding
+    /// the ones that have already been processed. It also takes into account the number of tenants to be per batch, so
+    /// it only returns the number of tenants that need to be processed in the current batch.
     /// </summary>
     private List<ShellSettings> GetRemainingTenants(StaggeredTenantWakeUpPart staggeredTenantWakeUpPart)
     {
@@ -237,8 +238,8 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                 await _shellHost.WithShellScopeAsync(
                     scope =>
                     {
-                        // Only logging is necessary here, as the actual maintenance and migration tasks are already done
-                        // when we get here.
+                        // Only logging is necessary here, as the actual maintenance and migration tasks are already
+                        // done when we get here.
                         var tenantLogger = scope.ServiceProvider.GetRequiredService<ILogger<StaggeredTenantWakeUpService>>();
                         tenantLogger.LogInformation(
                             "Staggered tenant wake-up for current tenant finished successfully on version {Version}.",
@@ -247,7 +248,8 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
                     },
                     tenant.Name);
 
-                // We release the shell context to free up resources. Calling DisposeAsync() manually is needed before this.
+                // We release the shell context to free up resources. Calling DisposeAsync() manually is needed before
+                // this.
                 await _shellHost.ReleaseShellContextAsync(tenant, eventSource: false);
             }
 
