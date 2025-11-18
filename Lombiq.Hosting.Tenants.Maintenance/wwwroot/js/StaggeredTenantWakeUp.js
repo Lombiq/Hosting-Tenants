@@ -1,5 +1,4 @@
 /* global bootstrap */
-/* eslint-disable n/no-unsupported-features/node-builtins -- This script is executed in the browser, not Node.js. */
 
 let pollingInterval = null;
 let countdownTimer = null;
