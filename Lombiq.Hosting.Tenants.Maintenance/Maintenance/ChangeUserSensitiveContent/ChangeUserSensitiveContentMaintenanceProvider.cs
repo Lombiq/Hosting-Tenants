@@ -46,7 +46,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
         var randomNameGenerator = new PersonNameGenerator();
         var emailExcludeRegex = new Regex(
             _options.Value.EmailExcludePattern,
-            RegexOptions.None,
+            RegexOptions.Compiled,
             TimeSpan.FromMilliseconds(400));
 
         // To have the best performance, we are processing users in batches of 15 and then saving them. Multiple batch
