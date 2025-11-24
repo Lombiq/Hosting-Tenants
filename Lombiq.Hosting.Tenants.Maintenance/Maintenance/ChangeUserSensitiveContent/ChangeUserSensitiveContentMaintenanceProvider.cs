@@ -50,7 +50,7 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             TimeSpan.FromMilliseconds(400));
 
         // To have the best performance, we are processing users in batches of 15 and then saving them. Multiple batch
-        // sizes were tried but 15 seems to have grant the best performance.
+        // sizes were tried but 15 seems to grant the best performance.
         const int batchSize = 15;
 
         var users = await _session.Query<User>().ListAsync();
