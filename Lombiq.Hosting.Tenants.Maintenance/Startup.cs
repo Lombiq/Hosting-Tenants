@@ -34,34 +34,4 @@ public sealed class Startup : StartupBase
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
     }
 }
-
-[Feature(FeatureNames.StaggeredTenantWakeUp)]
-public sealed class StaggeredStartup : StartupBase
-{
-    private readonly IShellConfiguration _shellConfiguration;
-    private readonly ShellSettings _shellSettings;
-
-    public StaggeredStartup(IShellConfiguration shellConfiguration, ShellSettings shellSettings)
-    {
-        _shellConfiguration = shellConfiguration;
-        _shellSettings = shellSettings;
-    }
-
-    public override void ConfigureServices(IServiceCollection services)
-    {
-        // Safety check, this feature should only be enabled on the default shell.
-        if (!_shellSettings.IsDefaultShell()) return;
-
-        services.BindAndConfigureSection<StaggeredTenantWakeUpOptions>(
-            _shellConfiguration,
-            "Lombiq_Hosting_Tenants_Maintenance:StaggeredTenantWakeUp");
-
-        services.AddContentPart<StaggeredTenantWakeUpPart>().WithMigration<StaggeredTenantWakeUpMigrations>();
-
-        services.AddScoped<INavigationProvider, AdminMenu>();
-        services.AddScoped<IContentDisplayHandler, StaggeredTenantWakeUpDisplayHandler>();
-        services.AddScoped<IContentHandler, StaggeredTenantWakeUpContentHandler>();
-        services.AddScoped<IStaggeredTenantWakeUpService, StaggeredTenantWakeUpService>();
-        services.AddTransient<IConfigureOptions<ResourceManagementOptions>, ResourceManagementOptionsConfiguration>();
-    }
 }
