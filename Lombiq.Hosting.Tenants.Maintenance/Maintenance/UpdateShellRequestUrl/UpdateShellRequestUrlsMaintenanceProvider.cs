@@ -46,7 +46,7 @@ public class UpdateShellRequestUrlsMaintenanceProvider : MaintenanceProviderBase
                 _options.Value.RequestUrlPrefix,
                 shellSettings);
 
-            await _shellHost.UpdateShellSettingsAsync(shellSettings);
+            await _shellSettingsManager.SaveSettingsAsync(shellSettings);
         }
 
         context.ReloadShellAfterMaintenanceCompletion = true;
