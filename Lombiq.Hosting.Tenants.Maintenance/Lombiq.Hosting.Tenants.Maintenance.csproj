@@ -1,5 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
+  <PropertyGroup>
+    <ImportLombiqHelpfulLibrariesOrchardCore>true</ImportLombiqHelpfulLibrariesOrchardCore>
+    <ImportLombiqHostingBuildVersionDisplay>true</ImportLombiqHostingBuildVersionDisplay>
+  </PropertyGroup>
+
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.props"
           Condition="'$(NuGetBuild)' != 'true' "/>
 
@@ -25,16 +30,6 @@
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
     <!-- Only needed because RandomNameGeneratorLibrary indirectly referenced a vulnerable version. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
-    <ProjectReference Include="..\..\..\Libraries\Lombiq.HelpfulLibraries\Lombiq.HelpfulLibraries.OrchardCore\Lombiq.HelpfulLibraries.OrchardCore.csproj" />
-    <ProjectReference Include="..\..\Lombiq.Hosting.BuildVersionDisplay\Lombiq.Hosting.BuildVersionDisplay\Lombiq.Hosting.BuildVersionDisplay.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.5.0" />
-    <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="7.0.1-alpha.1.nest-562" />
   </ItemGroup>
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.targets"
