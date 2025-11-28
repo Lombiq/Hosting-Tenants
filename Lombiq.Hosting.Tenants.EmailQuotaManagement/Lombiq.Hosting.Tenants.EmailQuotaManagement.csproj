@@ -23,8 +23,6 @@
     <PackageReference Include="OrchardCore.Email.Azure" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="OrchardCore.Email.Smtp" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="OrchardCore.AdminDashboard" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.ResourceManagement" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="OrchardCore.Email.Abstractions" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="Scrutor" Version="6.1.0" />
