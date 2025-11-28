@@ -1,45 +1,30 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-  </PropertyGroup>
+  <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.props"
+          Condition="'$(NuGetBuild)' != 'true' "/>
 
   <PropertyGroup>
     <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core</Title>
-    <Authors>Lombiq Technologies</Authors>
     <Copyright>Copyright © 2021, Lombiq Technologies Ltd.</Copyright>
     <Description>Lombiq Hosting - Tenants Maintenance for Orchard Core: With the help of this module you can execute maintenance tasks on tenants.</Description>
-    <PackageIcon>NuGetIcon.png</PackageIcon>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;Maintenance</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Maintenance/Readme.md</PackageProjectUrl>
-    <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="OrchardCore.Module.Targets" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.ContentManagement" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Contents" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.DisplayManagement" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Settings" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Users.Abstractions" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Users.Core" Version="2.1.0" />
-    <PackageReference Include="OrchardCore.Features.Core" Version="2.0.0" />
+    <PackageReference Include="OrchardCore.ContentManagement" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Contents" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.DisplayManagement" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Settings" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Users.Abstractions" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Users.Core" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Features.Core" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
     <!-- Only needed because RandomNameGeneratorLibrary indirectly referenced a vulnerable version. -->
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Readme.md" />
-    <None Include="NuGetIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
@@ -51,5 +36,8 @@
     <PackageReference Include="Lombiq.HelpfulLibraries.OrchardCore" Version="12.5.0" />
     <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="7.0.1-alpha.1.nest-562" />
   </ItemGroup>
+
+  <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.targets"
+          Condition="'$(NuGetBuild)' != 'true' "/>
 
 </Project>
