@@ -54,8 +54,8 @@ public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         if (!_shellSettings.IsUninitialized()) return;
 
         // This is necessary to initialize Elasticsearch here like this, instead of using the Elasticsearch module from
-        // OC. Because the Elasticsearch module can't be enabled the regular way if this module is added
-        // as a setup feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard.
+        // OC. Because the Elasticsearch module can't be enabled the regular way if this module is added as a setup
+        // feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard.
         var elasticClient = _shellConfiguration.CreateElasticClient();
         services.Configure<ElasticConnectionOptions>(options =>
             options.SetFileConfigurationExists(fileConfigurationExists: true));

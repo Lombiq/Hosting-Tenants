@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.StartStaggeredTenantWakeUp;
 
-public class StartStaggeredTenantWakeUpProvider : MaintenanceProviderBase
+public class StartStaggeredTenantWakeUpMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly IStaggeredTenantWakeUpService _staggeredTenantWakeUpService;
 
     private ContentItem _staggeredTenantWakeUp;
 
-    public StartStaggeredTenantWakeUpProvider(IStaggeredTenantWakeUpService staggeredTenantWakeUpService) =>
+    public StartStaggeredTenantWakeUpMaintenanceProvider(IStaggeredTenantWakeUpService staggeredTenantWakeUpService) =>
         _staggeredTenantWakeUpService = staggeredTenantWakeUpService;
 
     public override async Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context)
@@ -30,12 +30,12 @@ public class StartStaggeredTenantWakeUpProvider : MaintenanceProviderBase
         if (context.LatestExecution?.BuildVersion == context.CurrentExecution.BuildVersion &&
             !part.IsFinished())
         {
-            await StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(StartStaggeredTenantWakeUpProvider));
+            await StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(nameof(StartStaggeredTenantWakeUpMaintenanceProvider));
         }
         else if (context.LatestExecution?.BuildVersion != context.CurrentExecution.BuildVersion)
         {
             await StaggeredTenantWakeUpHelper.ExecuteStaggeredTenantWakeUpAsync(
-                nameof(StartStaggeredTenantWakeUpProvider),
+                nameof(StartStaggeredTenantWakeUpMaintenanceProvider),
                 newVersion: true);
         }
     }
