@@ -5,9 +5,10 @@
   </PropertyGroup>
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.props"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core</Title>
     <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
     <Description>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core: This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.</Description>
@@ -23,6 +24,6 @@
   </ItemGroup>
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.targets"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
 </Project>

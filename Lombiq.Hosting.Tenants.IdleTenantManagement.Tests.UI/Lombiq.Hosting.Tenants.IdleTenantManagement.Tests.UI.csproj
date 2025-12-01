@@ -3,6 +3,7 @@
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Tests.UI.Targets/Lombiq.MSBuild.Tests.UI.Targets.props" />
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core - UI Test Extensions</Title>
     <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
     <Description>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core - UI Test Extensions: Extension methods that test tenants idle management for Orchard Core. </Description>

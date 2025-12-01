@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.props"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core</Title>
     <Copyright>Copyright © 2022, Lombiq Technologies Ltd.</Copyright>
     <Description>Lombiq Hosting - Tenants Idle Tenant Management for Orchard Core: With the help of this module, you can ensure that any tenant where the feature is enabled will shutdown after a preset time is elapsed. This can be used to free up resources..</Description>
@@ -18,6 +19,6 @@
   </ItemGroup>
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.targets"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
 </Project>

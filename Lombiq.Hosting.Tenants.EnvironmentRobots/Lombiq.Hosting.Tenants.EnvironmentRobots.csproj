@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.props"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
     <Title>Lombiq Hosting - Tenants EnvironmentRobots for Orchard Core</Title>
     <Copyright>Copyright © 2023, Lombiq Technologies Ltd.</Copyright>
     <Description>EnvironmentRobots for Orchard Core: This module contains the EnvironmentRobots feature, which prevents search bots from indexing non-production environments by adding a meta tag and a response header with noindex, nofollow values.</Description>
@@ -17,6 +18,6 @@
   </ItemGroup>
 
   <Import Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.Module.Targets/Lombiq.MSBuild.Module.Targets.targets"
-          Condition="'$(NuGetBuild)' != 'true' "/>
+          Condition="'$(NuGetBuild)' != 'true'" />
 
 </Project>
