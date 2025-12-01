@@ -18,13 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Admin" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.Email" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.Email.Azure" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.Email.Smtp" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.AdminDashboard" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.Email.Abstractions" Version="$(OrchardCoreVersion)" />
-    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Admin" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email.Azure" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email.Smtp" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.AdminDashboard" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Email.Abstractions" Version="2.1.0" />
+    <PackageReference Include="OrchardCore.Infrastructure.Abstractions" Version="2.1.0" />
     <PackageReference Include="Scrutor" Version="6.1.0" />
   </ItemGroup>
 

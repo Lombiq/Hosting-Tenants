@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Media" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Media" Version="2.1.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.3" />
   </ItemGroup>
 
