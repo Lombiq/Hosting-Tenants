@@ -1,7 +1,9 @@
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.Media;
+using System;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.PurgeMediaCache;
@@ -9,14 +11,14 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.PurgeMediaCache;
 public class PurgeMediaCacheMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly IOptions<PurgeMediaCacheMaintenanceOptions> _options;
-    private readonly IMediaFileStoreCacheFileProvider _mediaFileStoreCacheFileProvider;
+    private readonly IServiceProvider _serviceProvider;
 
     public PurgeMediaCacheMaintenanceProvider(
         IOptions<PurgeMediaCacheMaintenanceOptions> options,
-        IMediaFileStoreCacheFileProvider mediaFileStoreCacheFileProvider)
+        IServiceProvider serviceProvider)
     {
         _options = options;
-        _mediaFileStoreCacheFileProvider = mediaFileStoreCacheFileProvider;
+        _serviceProvider = serviceProvider;
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
@@ -27,5 +29,5 @@ public class PurgeMediaCacheMaintenanceProvider : MaintenanceProviderBase
             context.LatestExecution?.BuildVersion != context.CurrentExecution.BuildVersion);
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        _mediaFileStoreCacheFileProvider.PurgeAsync();
+        _serviceProvider.GetService<IMediaFileStoreCacheFileProvider>()?.PurgeAsync() ?? Task.CompletedTask;
 }
