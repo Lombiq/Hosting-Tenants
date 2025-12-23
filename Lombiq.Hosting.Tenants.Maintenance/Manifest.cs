@@ -79,6 +79,14 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 )]
 
 [assembly: Feature(
+    Id = PurgeMediaCache,
+    Name = "Lombiq Hosting - Tenants Maintenance Purge Media Cache",
+    Description = "Purges the local cache for remote media files to avoid stale assets during production-staging swaps.",
+    Category = "Maintenance",
+    Dependencies = [Maintenance, "OrchardCore.Media"]
+)]
+
+[assembly: Feature(
     Id = UpdateEnabledFeatures,
     Name = "Lombiq Hosting - Tenants Maintenance Update Enabled Features",
     Description = "Updates the enabled features of tenants.",
