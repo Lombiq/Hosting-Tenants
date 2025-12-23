@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Hosting;
@@ -7,16 +8,16 @@ using OrchardCore.Media.Core;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteMediaCache;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.PurgeMediaCache;
 
-public class DeleteMediaCacheMaintenanceProvider : MaintenanceProviderBase
+public class PurgeMediaCacheMaintenanceProvider : MaintenanceProviderBase
 {
-    private readonly IOptions<DeleteMediaCacheMaintenanceOptions> _options;
+    private readonly IOptions<PurgeMediaCacheMaintenanceOptions> _options;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly ShellSettings _shellSettings;
 
-    public DeleteMediaCacheMaintenanceProvider(
-        IOptions<DeleteMediaCacheMaintenanceOptions> options,
+    public PurgeMediaCacheMaintenanceProvider(
+        IOptions<PurgeMediaCacheMaintenanceOptions> options,
         IWebHostEnvironment webHostEnvironment,
         ShellSettings shellSettings)
     {

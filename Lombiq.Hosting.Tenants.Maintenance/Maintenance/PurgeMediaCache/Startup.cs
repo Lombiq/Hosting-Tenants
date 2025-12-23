@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 
-namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.DeleteMediaCache;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.PurgeMediaCache;
 
-[Feature(FeatureNames.DeleteMediaCache)]
+[Feature(FeatureNames.PurgeMediaCache)]
 public sealed class Startup : StartupBase
 {
     private readonly IShellConfiguration _shellConfiguration;
@@ -17,10 +17,10 @@ public sealed class Startup : StartupBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.BindAndConfigureSection<DeleteMediaCacheMaintenanceOptions>(
+        services.BindAndConfigureSection<PurgeMediaCacheMaintenanceOptions>(
             _shellConfiguration,
-            "Lombiq_Hosting_Tenants_Maintenance:DeleteMediaCache");
+            "Lombiq_Hosting_Tenants_Maintenance:PurgeMediaCache");
 
-        services.AddScoped<IMaintenanceProvider, DeleteMediaCacheMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, PurgeMediaCacheMaintenanceProvider>();
     }
 }
