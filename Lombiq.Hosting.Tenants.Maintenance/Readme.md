@@ -231,3 +231,20 @@ You can initialize the configuration with the following app settings:
   }
 }
 ```
+
+### `Lombiq.Hosting.Tenants.Maintenance.PurgeMediaCache`
+
+A maintenance task that purges the local cache for remote Media files under the app's `wwwroot`, preventing it going stale during production-staging swaps.
+
+Enable it with:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_Maintenance": {
+      "PurgeMediaCache": {
+        "IsEnabled": true
+      }
+    }
+  }
+}
