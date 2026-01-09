@@ -34,8 +34,6 @@
     <PackageReference Include="OrchardCore.Users.Core" Version="3.0.0-preview-18875" />
     <PackageReference Include="OrchardCore.Features.Core" Version="2.0.0" />
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
-    <!-- Only needed because RandomNameGeneratorLibrary indirectly referenced a vulnerable version. -->
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>

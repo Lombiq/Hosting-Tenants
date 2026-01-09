@@ -95,7 +95,6 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
     {
         var emailMessage = new MailMessage
         {
-            IsHtmlBody = true,
             Subject = subject,
         };
         foreach (var administratorEmail in administratorEmails)
@@ -103,7 +102,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
             ShellScope.AddDeferredTask(async _ =>
             {
                 emailMessage.To = administratorEmail;
-                emailMessage.Body = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
+                emailMessage.HtmlBody = await _emailTemplateService.RenderEmailTemplateAsync(emailTemplateName, new
                 {
                     HostName = _shellSettings.Name,
                     Percentage = percentage,
