@@ -1,5 +1,4 @@
 using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -35,7 +34,7 @@ public static class IdleTenantManagementExtensions
 
         configuration.AssertAppLogsAsync = app =>
             app.LogsShouldNotContainAsync(
-                logEntry => AppLogAssertionHelper.NotMediaCacheEntries(logEntry) && logEntry.Level != LogLevel.Information,
+                logEntry => logEntry.Level != LogLevel.Information,
                 configuration.TestCancellationToken);
     }
 }
