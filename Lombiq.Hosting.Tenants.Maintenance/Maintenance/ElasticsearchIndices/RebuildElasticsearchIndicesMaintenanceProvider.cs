@@ -2,30 +2,29 @@ using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
-using OrchardCore.Documents;
+using OrchardCore.Entities;
+using OrchardCore.Indexing;
 using OrchardCore.Search.Elasticsearch.Core.Models;
 using OrchardCore.Search.Elasticsearch.Core.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
 public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
+    private readonly ElasticsearchIndexManager _elasticsearchIndexManager;
+    private readonly IIndexProfileStore _indexProfileStore;
     private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
-    private readonly IDocumentManager<ElasticIndexSettingsDocument> _documentManager;
-    private readonly ElasticIndexingService _elasticIndexingService;
-    private readonly ElasticIndexSettingsService _elasticIndexSettingsService;
 
     public RebuildElasticsearchIndicesMaintenanceProvider(
-        IOptions<ElasticsearchIndicesMaintenanceOptions> options,
-        IDocumentManager<ElasticIndexSettingsDocument> documentManager,
-        ElasticIndexingService elasticIndexingService,
-        ElasticIndexSettingsService elasticIndexSettingsService)
+        ElasticsearchIndexManager elasticsearchIndexManager,
+        IIndexProfileStore indexProfileStore,
+        IOptions<ElasticsearchIndicesMaintenanceOptions> options)
     {
+        _elasticsearchIndexManager = elasticsearchIndexManager;
+        _indexProfileStore = indexProfileStore;
         _options = options;
-        _documentManager = documentManager;
-        _elasticIndexingService = elasticIndexingService;
-        _elasticIndexSettingsService = elasticIndexSettingsService;
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
@@ -34,35 +33,33 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
             !context.WasLatestExecutionSuccessful());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        MigrateAsync(_documentManager, _elasticIndexingService, _elasticIndexSettingsService);
+        MigrateAsync(_elasticsearchIndexManager, _indexProfileStore);
 
     public static async Task MigrateAsync(
-        IDocumentManager<ElasticIndexSettingsDocument> documentManager,
-        ElasticIndexingService elasticIndexingService,
-        ElasticIndexSettingsService elasticIndexSettingsService)
+        ElasticsearchIndexManager elasticsearchIndexManager,
+        IIndexProfileStore indexProfileStore)
     {
-        var settings = await elasticIndexSettingsService.GetSettingsAsync();
-        foreach (var setting in settings)
-        {
-            await elasticIndexingService.RebuildIndexAsync(setting);
+        var indexProfiles = await indexProfileStore.GetAllElasticsearchIndexesAsync();
 
-            if (setting.QueryAnalyzerName != setting.AnalyzerName)
+        await indexProfiles
+            .AwaitEachAsync(async indexProfile =>
             {
-                // Query Analyzer may be different until the index is rebuilt.
-                // Since the index is rebuilt, lets make sure we query using the same analyzer.
-                setting.QueryAnalyzerName = setting.AnalyzerName;
+                await elasticsearchIndexManager.RebuildAsync(indexProfile);
 
-                await elasticIndexSettingsService.UpdateIndexAsync(setting);
+                var analyzerName = indexProfile.As<ElasticsearchIndexMetadata>()?.AnalyzerName;
+                var queryAnalyzerName = indexProfile.As<ElasticsearchDefaultQueryMetadata>()?.QueryAnalyzerName;
+                if (queryAnalyzerName != analyzerName)
+                {
+                    // Query Analyzer may be different until the index is rebuilt.
+                    // Since the index is rebuilt, lets make sure we query using the same analyzer.
+                    indexProfile.Alter<ElasticsearchDefaultQueryMetadata>(
+                        setting => setting.QueryAnalyzerName = analyzerName);
+                }
 
                 // Without this, the connection may remain open, causing a concurrent access exception when we query
                 // anything from the database using the same underlying session.
-                if (documentManager is DocumentManager<ElasticIndexSettingsDocument> { DocumentStore: { } store })
-                {
-                    await store.CommitAsync();
-                }
-            }
-
-            await elasticIndexingService.ProcessContentItemsAsync(setting.IndexName);
-        }
+                await indexProfileStore.UpdateAsync(indexProfile);
+                await indexProfileStore.SaveChangesAsync();
+            });
     }
 }

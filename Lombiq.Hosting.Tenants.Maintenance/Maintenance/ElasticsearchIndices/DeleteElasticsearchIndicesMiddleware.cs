@@ -62,7 +62,7 @@ public class DeleteElasticsearchIndicesMiddleware
         // If the tenant was initialized by another instance, then skip again.
         if (await InvokeNextIfUninitializedAsync(settings, httpContext)) return;
 
-        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticIndexManager>();
+        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticsearchIndexManager>();
 
         // Delete all tenant specific indexes in Elasticsearch.
         await elasticIndexManager.DeleteAllIndexesAsync();
