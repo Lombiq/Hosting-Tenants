@@ -10,11 +10,11 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 public class DeleteElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
-    private readonly ElasticIndexManager _elasticIndexManager;
+    private readonly ElasticsearchIndexManager _elasticIndexManager;
 
     public DeleteElasticsearchIndicesMaintenanceProvider(
         IOptions<ElasticsearchIndicesMaintenanceOptions> options,
-        ElasticIndexManager elasticIndexManager)
+        ElasticsearchIndexManager elasticIndexManager)
     {
         _options = options;
         _elasticIndexManager = elasticIndexManager;
