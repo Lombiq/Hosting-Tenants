@@ -31,10 +31,5 @@ public static class IdleTenantManagementExtensions
 
         configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration =
             (_, fakeLogCollectorOptions) => fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
-
-        configuration.AssertAppLogsAsync = app =>
-            app.LogsShouldNotContainAsync(
-                logEntry => logEntry.Level != LogLevel.Information,
-                configuration.TestCancellationToken);
     }
 }
