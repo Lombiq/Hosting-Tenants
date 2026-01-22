@@ -30,7 +30,7 @@ public sealed class Startup : StartupBase
 
         services.Configure<MvcOptions>(options =>
         {
-            options.Filters.Add(typeof(UploadFileSizeShapeFilter));
+            options.Filters.Add<UploadFileSizeShapeFilter>();
             options.Conventions.Add(new MediaStorageQuotaActionFilterConvention());
         });
     }

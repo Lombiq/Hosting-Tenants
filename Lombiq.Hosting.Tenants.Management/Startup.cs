@@ -26,7 +26,7 @@ public sealed class ForbiddenTenantNamesStartup : StartupBase
                 .Bind(options));
 
         services.Configure<MvcOptions>(options =>
-            options.Filters.Add(typeof(ForbiddenTenantsFilter)));
+            options.Filters.Add<ForbiddenTenantsFilter>());
     }
 }
 
@@ -42,5 +42,5 @@ public sealed class ShellSettingsEditorStartup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services) =>
         services.Configure<MvcOptions>(options =>
-            options.Filters.Add(typeof(ShellSettingsEditorFilter)));
+            options.Filters.Add<ShellSettingsEditorFilter>());
 }
