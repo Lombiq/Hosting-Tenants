@@ -1,7 +1,11 @@
+using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Locking.Distributed;
+using OrchardCore.Search.Elasticsearch;
 using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 using System.Net;
@@ -62,10 +66,14 @@ public class DeleteElasticsearchIndicesMiddleware
         // If the tenant was initialized by another instance, then skip again.
         if (await InvokeNextIfUninitializedAsync(settings, httpContext)) return;
 
-        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticsearchIndexManager>();
+        var services = httpContext.RequestServices;
+        var client = services.GetRequiredService<ElasticsearchClient>();
+        var prefix = services.GetRequiredService<IShellConfiguration>()
+            .GetSection(ElasticsearchConnectionOptionsConfigurations.ConfigSectionName)
+            .GetValue<string>(nameof(ElasticsearchOptions.IndexPrefix));
 
         // Delete all tenant specific indexes in Elasticsearch.
-        await elasticIndexManager.DeleteAllIndexesAsync();
+        await client.DeleteAllIndexesAsync(prefix);
 
         await _next.Invoke(httpContext);
     }
