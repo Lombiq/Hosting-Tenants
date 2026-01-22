@@ -14,7 +14,7 @@ public static class TestCaseUITestContextExtensions
         this UITestContext context,
         string recipeId = DefaultIdleTenantSetupRecipeId)
     {
-        await context.EnableTenantsFeatureAsync();
+        await context.EnableTenantsFeatureDirectlyAsync();
 
         // Setting up new tenant to test the feature
         await context.CreateAndSwitchToTenantManuallyAsync(IdleTenantName, IdleTenantPrefix, string.Empty);
