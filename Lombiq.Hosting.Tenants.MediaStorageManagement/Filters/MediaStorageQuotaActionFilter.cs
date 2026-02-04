@@ -2,13 +2,15 @@ using Lombiq.Hosting.Tenants.MediaStorageManagement.Service;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Media.Services;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
 public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter
 {
-    public int Order => 950; // Should be above the InternalMediaSizeFilter (900) to override its value.
+    // Should be above the InternalMediaSizeFilter (900) to override its value.
+    public int Order { get; } = new MediaSizeLimitAttribute().Order + 1;
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
