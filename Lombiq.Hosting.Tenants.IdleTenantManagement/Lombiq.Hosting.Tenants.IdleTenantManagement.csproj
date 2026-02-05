@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Abstractions" Version="3.0.0-preview-18906" />
-    <PackageReference Include="OrchardCore" Version="3.0.0-preview-18906" />
-    <PackageReference Include="OrchardCore.Module.Targets" Version="3.0.0-preview-18906" />
+    <PackageReference Include="OrchardCore.Abstractions" Version="3.0.0-preview-18907" />
+    <PackageReference Include="OrchardCore" Version="3.0.0-preview-18907" />
+    <PackageReference Include="OrchardCore.Module.Targets" Version="3.0.0-preview-18907" />
   </ItemGroup>
 
   <ItemGroup>
