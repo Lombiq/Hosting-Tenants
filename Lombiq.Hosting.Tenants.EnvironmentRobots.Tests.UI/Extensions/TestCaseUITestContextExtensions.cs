@@ -11,7 +11,7 @@ public static class TestCaseUITestContextExtensions
 {
     public static async Task TestRobotMetaTagIsMissingAsync(this UITestContext context, bool shouldBeMissing)
     {
-        var metaTagXPath = By.XPath($"//meta[@name='robots' and @content='noindex, nofollow']").OfAnyVisibility();
+        var metaTagXPath = By.XPath("//meta[@name='robots' and @content='noindex, nofollow']").OfAnyVisibility();
 
         await context.SignInDirectlyAsync();
         await context.GoToHomePageAsync();

@@ -81,7 +81,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
         await SendEmailQuotaReminderAsync(
             emailQuota,
             administratorEmails,
-            $"EmailQuotaWarning",
+            "EmailQuotaWarning",
             _emailQuotaSubjectService.GetWarningEmailSubject(currentUsagePercentage),
             currentUsagePercentage);
     }
