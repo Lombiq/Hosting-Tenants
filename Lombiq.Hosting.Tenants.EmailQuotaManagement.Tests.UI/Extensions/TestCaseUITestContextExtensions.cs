@@ -92,8 +92,7 @@ public static class TestCaseUITestContextExtensions
 
     private static void CheckMessageExistence(UITestContext context, string warningLevel) =>
         context.CheckExistence(
-            By.XPath($"//p[contains(@class,'alert-warning')]" +
-                $"[contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
+            By.XPath($"//p[contains(@class,'alert-warning')][contains(.,'It seems that your site sent out {warningLevel}% of e-mail')]"),
             exists: true);
 
     private static void CheckEmailsSentWarningMessage(UITestContext context, int maximumEmailQuota, int currentEmailCount)
