@@ -40,7 +40,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Adds the Administrator role to users with the configured role (e.g., when the production database " +
         "is copied to staging).",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
     Dependencies = [Maintenance]
 )]
 
@@ -49,7 +48,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Remove Users",
     Description = "Removes users with the configured email domain.",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
     Dependencies = [Maintenance]
 )]
 
@@ -58,7 +56,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Change User Sensitive Content",
     Description = "Replaces the users' username, email and password with realistic but random values.",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
     Dependencies = [Maintenance]
 )]
 
