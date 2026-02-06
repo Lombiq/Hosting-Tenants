@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
-public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter
+public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter, IRequestFormLimitsPolicy, IRequestSizePolicy
 {
-    // Should be above the InternalMediaSizeFilter (900) to override its value.
+    // Should be above the InternalMediaSizeFilter (900) to override make it the effective policy, which will prevent
+    // InternalMediaSizeFilter from doing anything.
     public int Order { get; } = new MediaSizeLimitAttribute().Order + 1;
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -21,37 +22,23 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
             .GetRequiredService<IMediaStorageQuotaService>()
             .GetRemainingMediaStorageQuotaBytesAsync();
 
-        // Code below is copied from OrchardCore.Media.Services.MediaSizeLimitAttribute.InternalMediaSizeFilter with
-        // only the necessary changes to satisfy the static code analysis checks. The purpose of this is to invoke the
-        // filter with the remaining quota instead of MediaOptions.MaxFileSize. Make sure to keep this in sync.
-        var effectiveFormPolicy = context.FindEffectivePolicy<IRequestFormLimitsPolicy>();
-        if (effectiveFormPolicy == null || effectiveFormPolicy == this)
+        var formOptions = new FormOptions
         {
-            var features = context.HttpContext.Features;
-            var formFeature = features.Get<IFormFeature>();
+            MultipartBodyLengthLimit = maxFileSize,
+        };
 
-            if (formFeature?.Form == null)
-            {
-                // Request form has not been read yet, so set the limits
-                var formOptions = new FormOptions
-                {
-                    MultipartBodyLengthLimit = maxFileSize,
-                };
+        context.HttpContext.Features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, formOptions));
 
-                features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, formOptions));
-            }
-        }
-
-        var effectiveRequestSizePolicy = context.FindEffectivePolicy<IRequestSizePolicy>();
-        if (effectiveRequestSizePolicy == null)
+        var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
+        // Only setting MaxRequestBodySize if it wouldn't go over the preconfigured size. This is necessary because
+        // larger requests would pose a security issue (since the original limit was configured for a reason), and under
+        // IIS it wouldn't work with the following message anyway: "Increasing the MaxRequestBodySize conflicts with the
+        // max value for IIS limit maxAllowedContentLength. HTTP requests that have a content length greater than
+        // maxAllowedContentLength will still be rejected by IIS. You can disable the limit by either removing or
+        // setting the maxAllowedContentLength value to a higher limit."
+        if (maxRequestBodySizeFeature is { IsReadOnly: false } && maxRequestBodySizeFeature.MaxRequestBodySize > maxFileSize)
         {
-            // Will only be available when running OutOfProcess with Kestrel.
-            var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
-
-            if (maxRequestBodySizeFeature is { IsReadOnly: false })
-            {
-                maxRequestBodySizeFeature.MaxRequestBodySize = maxFileSize;
-            }
+            maxRequestBodySizeFeature.MaxRequestBodySize = maxFileSize;
         }
     }
 }

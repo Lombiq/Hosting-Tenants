@@ -1,3 +1,4 @@
+using Atata;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
 using OpenQA.Selenium;
@@ -16,9 +17,14 @@ public static class TestCaseUITestContextExtensions
 
         context.UploadSamplePngByIdOfAnyVisibility("fileupload");
 
-        // Workaround for pending uploads, until you make an action the page is stuck on "Uploads Pending".
-        context.WaitForPageLoad();
-        await context.ClickReliablyOnAsync(By.CssSelector("body"));
+        // Workaround for pending uploads without blocking, until you make an action the page is stuck on "Uploads Pending".
+        await context.DoWithRetriesOrFailAsync(async () =>
+        {
+            await context.ClickReliablyOnAsync(By.CssSelector("body"));
+            return context.Get(By.ClassName("upload-list").Safely()) is { } uploadList && 
+                !uploadList.Text.Contains("(Pending: 1)");
+        });
+
         await context.ClickReliablyOnAsync(By.CssSelector(".text-danger"));
         context.Get(By.CssSelector(".error-message")).Text.ShouldContain("Error: You may only store");
     }
