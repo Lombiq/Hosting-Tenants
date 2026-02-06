@@ -59,6 +59,6 @@ public static class TestCaseUITestContextExtensions
         var editorJson = string.IsNullOrEmpty(editorText) ? "{}" : editorText;
 
         var editorValue = JObject.Parse(editorJson);
-        editorValue.SelectNode($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?.ToString().ShouldBeAsString(expectedValue);
+        editorValue?["TestKey"]?["TestSubKey"]?["TestSubOptions"]?[keyToCheck]?.ToString().ShouldBeAsString(expectedValue);
     }
 }
