@@ -21,7 +21,7 @@ public static class TestCaseUITestContextExtensions
         await context.DoWithRetriesOrFailAsync(async () =>
         {
             await context.ClickReliablyOnAsync(By.CssSelector("body"));
-            return context.Get(By.ClassName("upload-list").Safely()) is { } uploadList && 
+            return context.Get(By.ClassName("upload-list").Safely()) is { } uploadList &&
                 !uploadList.Text.Contains("(Pending: 1)");
         });
 
