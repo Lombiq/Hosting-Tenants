@@ -27,7 +27,7 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
             MultipartBodyLengthLimit = maxFileSize,
         };
 
-        context.HttpContext.Features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, formOptions));
+        context.HttpContext.Features.Set<IFormFeature>(CreateFormFeatureWithNewOptions(context, formOptions));
 
         var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
         // Only setting MaxRequestBodySize if it wouldn't go over the preconfigured size. This is necessary because
@@ -40,5 +40,14 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
         {
             maxRequestBodySizeFeature.MaxRequestBodySize = maxFileSize;
         }
+    }
+
+    private static FormFeature CreateFormFeatureWithNewOptions(AuthorizationFilterContext context, FormOptions formOptions)
+    {
+        var form = context.HttpContext.Features.Get<IFormFeature>().Form;
+        return new FormFeature(context.HttpContext.Request, formOptions)
+        {
+            Form = form,
+        };
     }
 }
