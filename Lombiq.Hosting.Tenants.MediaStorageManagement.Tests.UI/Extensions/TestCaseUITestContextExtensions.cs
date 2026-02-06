@@ -17,12 +17,14 @@ public static class TestCaseUITestContextExtensions
 
         context.UploadSamplePngByIdOfAnyVisibility("fileupload");
 
-        // Workaround for pending uploads without blocking, until you make an action the page is stuck on "Uploads Pending".
+        // Wait for upload without blocking, until you make an action the page is stuck on "Uploads Pending".
         await context.DoWithRetriesOrFailAsync(async () =>
         {
             await context.ClickReliablyOnAsync(By.CssSelector("body"));
-            return context.Get(By.ClassName("upload-list").Safely()) is { } uploadList &&
+            var isPending =
+                context.Get(By.ClassName("upload-list").Safely()) is not { } uploadList ||
                 !uploadList.Text.Contains("(Pending: 1)");
+            return isPending || context.Exists(By.CssSelector(".text-danger").Safely());
         });
 
         await context.ClickReliablyOnAsync(By.CssSelector(".text-danger"));

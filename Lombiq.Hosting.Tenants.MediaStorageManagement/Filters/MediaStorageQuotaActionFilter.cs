@@ -22,6 +22,15 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
             .GetRequiredService<IMediaStorageQuotaService>()
             .GetRemainingMediaStorageQuotaBytesAsync();
 
+        // This check is only necessary for non-multipart bodies. It becomes relevant when the quota is nearly exhausted
+        // and even a small file (that doesn't require multipart) can't be uploaded. It also protects from maliciously
+        // uploading a huge number of tiny files to overfill storage beyond the quota.
+        if (context.HttpContext.Request.ContentLength > maxFileSize)
+        {
+            context.Result = new BadRequestResult();
+            return;
+        }
+
         var formOptions = new FormOptions
         {
             MultipartBodyLengthLimit = maxFileSize,
