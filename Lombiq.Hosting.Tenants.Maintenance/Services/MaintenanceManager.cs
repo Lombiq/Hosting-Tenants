@@ -102,6 +102,9 @@ public class MaintenanceManager : IMaintenanceManager
                         provider.Id,
                         execution.Error);
                 }
+
+                await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
+                await _session.FlushAsync();
             }
             catch (Exception exception) when (!exception.IsFatal())
             {
@@ -113,9 +116,6 @@ public class MaintenanceManager : IMaintenanceManager
                     "Maintenance task {MaintenanceId} failed to execute due to an exception.",
                     provider.Id);
             }
-
-            await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await _session.FlushAsync();
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
