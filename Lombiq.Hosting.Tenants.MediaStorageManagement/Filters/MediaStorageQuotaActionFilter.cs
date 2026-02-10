@@ -53,7 +53,7 @@ public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrdered
 
     private static FormFeature CreateFormFeatureWithNewOptions(AuthorizationFilterContext context, FormOptions formOptions)
     {
-        var form = context.HttpContext.Features.Get<IFormFeature>().Form;
+        var form = context.HttpContext.Features.Get<IFormFeature>()?.Form;
         return new FormFeature(context.HttpContext.Request, formOptions)
         {
             Form = form,
