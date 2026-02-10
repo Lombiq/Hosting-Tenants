@@ -23,7 +23,6 @@ using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Management Hide Recipes From Setup",
     Description = "Adds the ability to hide recipes from the setup screen based on configurable tags.",
     Category = "Hosting",
-    DefaultTenantOnly = true,
     Dependencies = ["OrchardCore.Setup"]
 )]
 
