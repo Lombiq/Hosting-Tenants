@@ -115,7 +115,7 @@ public class MaintenanceManager : IMaintenanceManager
             }
 
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await _session.FlushAsync();
+            await _session.SaveChangesAsync();
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
