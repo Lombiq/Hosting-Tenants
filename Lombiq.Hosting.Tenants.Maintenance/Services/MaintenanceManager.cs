@@ -114,8 +114,10 @@ public class MaintenanceManager : IMaintenanceManager
                     provider.Id);
             }
 
+            // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
+            // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
             await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await _session.FlushAsync();
+            await _session.SaveChangesAsync();
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }
