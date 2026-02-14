@@ -10,7 +10,7 @@ namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Filters;
 
 public class MediaStorageQuotaActionFilter : IAsyncAuthorizationFilter, IOrderedFilter, IRequestFormLimitsPolicy, IRequestSizePolicy
 {
-    // Should be above the InternalMediaSizeFilter (900) to override make it the effective policy, which will prevent
+    // Should be above the InternalMediaSizeFilter (900) to make it the effective policy, which will prevent
     // InternalMediaSizeFilter from doing anything.
     public int Order { get; } = new MediaSizeLimitAttribute().Order + 1;
 
