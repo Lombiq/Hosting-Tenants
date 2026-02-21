@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using OrchardCore.Email;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Scope;
+using OrchardCore.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,7 +36,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
         _emailQuotaSubjectService = emailQuotaSubjectService;
     }
 
-    public async Task<EmailResult> SendAsync(MailMessage message, string providerName = null)
+    public async Task<Result> SendAsync(MailMessage message, string providerName = null)
     {
         if (!await _emailQuotaService.ShouldEnforceEmailQuotaAsync(providerName))
         {
@@ -48,7 +49,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
         // Should send the email if the quota is not over the limit.
         if (isQuotaOverResult.IsOverQuota)
         {
-            return EmailResult.FailedResult(T["Your site has run out of the email quota for this month."]);
+            return Result.Failed(T["Your site has run out of the email quota for this month."]);
         }
 
         var emailResult = await _emailService.SendAsync(message, providerName);
