@@ -18,12 +18,3 @@ public interface IMediaStorageQuotaService
     /// </summary>
     long GetMaxStorageQuotaBytes();
 }
-
-public static class MediaStorageQuotaServiceExtensions
-{
-    /// <summary>
-    /// Returns the maximum storage quota space in Megabytes.
-    /// </summary>
-    public static float GetMaxStorageQuotaMegabytes(this IMediaStorageQuotaService mediaStorageQuotaService) =>
-        mediaStorageQuotaService.GetMaxStorageQuotaBytes() / 1024f / 1024f;
-}
