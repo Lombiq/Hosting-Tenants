@@ -29,7 +29,7 @@ public sealed class Startup : StartupBase
             options.MaximumStorageQuotaBytes = maximumStorageQuotaBytes ?? MaximumStorageQuotaBytes);
 
         services.AddScoped<IMediaStorageQuotaService, MediaStorageQuotaService>();
-        services.AddScoped<IMediaEventHandler, MediaStorageQuotaHandler>();
+        services.AddSingleton<IMediaEventHandler, MediaStorageQuotaHandler>();
 
         services.Configure<MvcOptions>(options => options.Filters.Add<UploadFileSizeShapeFilter>());
     }
