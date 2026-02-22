@@ -1,6 +1,11 @@
+using Lombiq.HelpfulLibraries.Common.Utilities;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
+using Microsoft.Extensions.Logging;
+using OrchardCore.FileStorage;
+using OrchardCore.Media.Core.Helpers;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Lombiq.Hosting.Tenants.MediaStorageManagement.Tests.UI.Extensions;
 
@@ -21,11 +26,13 @@ public static class MediaStorageManagementExtensions
                 return Task.CompletedTask;
             };
 
-        // By default, apart from some commonly known false positives, the response log should be empty. However, Media
-        // Storage Quota feature causes a 400 on upload if the file is over the limit, so we need to make sure not to
-        // fail on that.
-        configuration.ResponseLogFilter = e =>
-            e.IsNonSuccessResponse() &&
-            e.IsNonSuccessResponseAndNotExpectedStatusResponse("/Admin/Media/Upload", 400);
+        // Exceeding the upload file upload limit causes an error log. This is expected.
+        var permittedErrorMessage = StringHelper.CreateInvariant(
+            $"You tried to upload a file that requires {FileSizeHelpers.FormatAsBytes(maximumStorageQuotaBytes)}");
+        configuration.AssertAppLogsAsync = app => app.LogsShouldNotContainAsync(
+            logEntry =>
+                logEntry.Level >= LogLevel.Error &&
+                !(logEntry.Exception is FileStoreException && logEntry.Exception.Message.Contains(permittedErrorMessage)),
+            TestContext.Current.CancellationToken);
     }
 }
