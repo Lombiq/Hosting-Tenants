@@ -24,7 +24,7 @@
 <script asp-name="dynamic-upload-limit" at="Foot" depends-on="media">
 $(function () {
     bus.$on('ErrorOnUpload', function (model) {
-        if (model.errorMessage === "This file exceeds the maximum upload size"){
+        if (model.errorMessage.startsWith('You tried to upload a file that requires')){
             model.errorMessage = @friendlyErrorMessage.Json();
         }
     });
