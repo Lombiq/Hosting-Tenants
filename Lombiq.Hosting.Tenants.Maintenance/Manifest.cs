@@ -40,7 +40,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Adds the Administrator role to users with the configured role (e.g., when the production database " +
         "is copied to staging).",
     Category = "Maintenance",
-    Dependencies = [Maintenance]
+    Dependencies = [Maintenance, "OrchardCore.Users"]
 )]
 
 [assembly: Feature(
