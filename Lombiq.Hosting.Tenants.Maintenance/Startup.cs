@@ -18,7 +18,6 @@ public sealed class Startup : StartupBase
 
         services.AddIndexProvider<MaintenanceTaskExecutionIndexProvider>();
         services.AddDataMigration<Migrations>();
-        services.AddDataMigration<BugFixMigrations>();
 
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
