@@ -7,7 +7,6 @@
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="1.0.1-alpha.6.osoe-1208" />
 
   <PropertyGroup>
-    <IsLombiqProject>true</IsLombiqProject>
     <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core</Title>
     <CopyrightYear>2021</CopyrightYear>
     <DescriptionBody>With the help of this module you can execute maintenance tasks on tenants.</DescriptionBody>

@@ -7,7 +7,6 @@
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="1.0.1-alpha.6.osoe-1208" />
 
   <PropertyGroup>
-    <IsLombiqProject>true</IsLombiqProject>
     <Title>Lombiq Hosting - Tenants FeaturesGuard for Orchard Core</Title>
     <CopyrightYear>2022</CopyrightYear>
     <DescriptionBody>This module contains the FeaturesGuard feature, which prevents disabling a configurable set of features on tenants.</DescriptionBody>

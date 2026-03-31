@@ -7,7 +7,6 @@
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="1.0.1-alpha.6.osoe-1208" />
 
   <PropertyGroup>
-    <IsLombiqProject>true</IsLombiqProject>
     <Title>Lombiq Hosting - Tenants Admin Login for Orchard Core</Title>
     <CopyrightYear>2021</CopyrightYear>
     <DescriptionBody>With the help of this module, you can log in from the Default tenant's admin dashboard to any other tenants as an administrator user. This is useful if you manage a lot of customer tenants and don't want to create individual logins of yours for each of them. See the project website for detailed documentation.</DescriptionBody>
