@@ -10,7 +10,7 @@
   <PropertyGroup>
     <Title>Lombiq Hosting - Tenants Media Storage Management for Orchard Core</Title>
     <CopyrightYear>2023</CopyrightYear>
-    <DescriptionBody>With the help of this module, you can set restrictions regarding maximum media space per tenant. See the project website for detailed documentation.</DescriptionBody>
+    <DescriptionBody>With the help of this module, you can set restrictions regarding maximum media space per tenant.</DescriptionBody>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.MediaStorageManagement/Readme.md</PackageProjectUrl>

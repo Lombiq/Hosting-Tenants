@@ -9,7 +9,7 @@
   <PropertyGroup>
     <Title>Lombiq Hosting - Tenants Management for Orchard Core</Title>
     <CopyrightYear>2021</CopyrightYear>
-    <DescriptionBody>With the help of this module, you can set restrictions on tenant creation. See the project website for detailed documentation.</DescriptionBody>
+    <DescriptionBody>With the help of this module, you can set restrictions on tenant creation.</DescriptionBody>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Management/Readme.md</PackageProjectUrl>

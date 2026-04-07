@@ -9,7 +9,7 @@
   <PropertyGroup>
     <Title>Lombiq Hosting - Tenants Email Quota Management - UI Test Extensions</Title>
     <CopyrightYear>2023</CopyrightYear>
-    <DescriptionBody>Extension methods that test various features in Lombiq Hosting - Tenants Email Quota Management, with the help of Lombiq UI Testing Toolbox for Orchard Core. See the project website for detailed documentation.</DescriptionBody>
+    <DescriptionBody>Extension methods that test various features in Lombiq Hosting - Tenants Email Quota Management, with the help of Lombiq UI Testing Toolbox for Orchard Core.</DescriptionBody>
     <PackageTags>OrchardCore;Lombiq;AspNetCore;Tenants;LombiqHostingSuite;Shouldly;xUnit;UITesting;Testing</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI/Readme.md</PackageProjectUrl>
