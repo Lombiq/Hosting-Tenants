@@ -4,8 +4,8 @@ using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
 using OrchardCore.Entities;
 using OrchardCore.Indexing;
-using OrchardCore.Search.Elasticsearch.Core.Models;
-using OrchardCore.Search.Elasticsearch.Core.Services;
+using OrchardCore.Elasticsearch.Core.Models;
+using OrchardCore.Elasticsearch.Core.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

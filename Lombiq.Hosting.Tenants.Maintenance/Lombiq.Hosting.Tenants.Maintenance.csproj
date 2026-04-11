@@ -29,7 +29,7 @@
     <PackageReference Include="OrchardCore.DisplayManagement" Version="3.0.0-preview-18973" />
     <PackageReference Include="OrchardCore.Media.Core" Version="3.0.0-preview-18973" />
     <PackageReference Include="OrchardCore.Settings" Version="3.0.0-preview-18973" />
-    <PackageReference Include="OrchardCore.Search.Elasticsearch.Core" Version="3.0.0-preview-18973" />
+    <PackageReference Include="OrchardCore.Elasticsearch.Core" Version="3.0.0-preview-18973" />
     <PackageReference Include="OrchardCore.Users.Abstractions" Version="3.0.0-preview-18973" />
     <PackageReference Include="OrchardCore.Users.Core" Version="3.0.0-preview-18973" />
     <PackageReference Include="OrchardCore.Features.Core" Version="3.0.0-preview-18973" />
