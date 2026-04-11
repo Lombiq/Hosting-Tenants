@@ -46,8 +46,8 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
             {
                 await elasticsearchIndexManager.RebuildAsync(indexProfile);
 
-                var analyzerName = indexProfile.As<ElasticsearchIndexMetadata>()?.AnalyzerName;
-                var queryAnalyzerName = indexProfile.As<ElasticsearchDefaultQueryMetadata>()?.QueryAnalyzerName;
+                var analyzerName = indexProfile.GetOrCreate<ElasticsearchIndexMetadata>().AnalyzerName;
+                var queryAnalyzerName = indexProfile.GetOrCreate<ElasticsearchDefaultQueryMetadata>().QueryAnalyzerName;
                 if (queryAnalyzerName != analyzerName)
                 {
                     // Query Analyzer may be different until the index is rebuilt.

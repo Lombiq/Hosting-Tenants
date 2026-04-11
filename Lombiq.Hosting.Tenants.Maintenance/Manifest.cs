@@ -64,7 +64,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Delete Elasticsearch Indexes",
     Description = "Deletes Elasticsearch indexes.",
     Category = "Maintenance",
-    Dependencies = [Maintenance, "OrchardCore.Search.Elasticsearch"]
+    Dependencies = [Maintenance, "OrchardCore.Elasticsearch"]
 )]
 
 [assembly: Feature(
