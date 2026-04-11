@@ -25,7 +25,7 @@ public class StaggeredTenantWakeUpDisplayHandler : IContentDisplayHandler
             return Task.CompletedTask;
         }
 
-        var staggeredTenantWakeUpPart = contentItem.As<StaggeredTenantWakeUpPart>();
+        var staggeredTenantWakeUpPart = contentItem.GetOrCreate<StaggeredTenantWakeUpPart>();
         if (staggeredTenantWakeUpPart == null) return Task.CompletedTask;
 
         if (staggeredTenantWakeUpPart.IsRunning())
