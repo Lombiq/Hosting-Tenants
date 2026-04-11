@@ -2,10 +2,10 @@ using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
-using OrchardCore.Entities;
-using OrchardCore.Indexing;
 using OrchardCore.Elasticsearch.Core.Models;
 using OrchardCore.Elasticsearch.Core.Services;
+using OrchardCore.Entities;
+using OrchardCore.Indexing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
