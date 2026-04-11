@@ -17,8 +17,8 @@ public class StaggeredTenantWakeUpContentHandler : ContentHandlerBase
     {
         var contentItem = context.ContentItem;
         if (contentItem.ContentType != Constants.ContentTypes.StaggeredTenantWakeUp ||
-            contentItem.GetOrCreate<StaggeredTenantWakeUpPart>() is null ||
-            !contentItem.IsNew())
+            !contentItem.IsNew() ||
+            !contentItem.Has<StaggeredTenantWakeUpPart>())
         {
             return Task.CompletedTask;
         }

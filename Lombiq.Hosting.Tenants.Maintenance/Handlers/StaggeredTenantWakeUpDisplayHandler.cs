@@ -20,13 +20,11 @@ public class StaggeredTenantWakeUpDisplayHandler : IContentDisplayHandler
 
     public Task UpdateEditorAsync(ContentItem contentItem, UpdateEditorContext context)
     {
-        if (contentItem.ContentType != ContentTypes.StaggeredTenantWakeUp)
+        if (contentItem.ContentType != ContentTypes.StaggeredTenantWakeUp ||
+            !contentItem.TryGet<StaggeredTenantWakeUpPart>(out var staggeredTenantWakeUpPart))
         {
             return Task.CompletedTask;
         }
-
-        var staggeredTenantWakeUpPart = contentItem.GetOrCreate<StaggeredTenantWakeUpPart>();
-        if (staggeredTenantWakeUpPart == null) return Task.CompletedTask;
 
         if (staggeredTenantWakeUpPart.IsRunning())
         {
