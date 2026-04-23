@@ -32,7 +32,7 @@
     <PackageReference Include="OrchardCore.Media" Version="2.1.0" />
     <PackageReference Include="OrchardCore.ResourceManagement" Version="2.1.0" />
     <PackageReference Include="OrchardCore.DisplayManagement" Version="2.1.0" />
-    <PackageReference Include="System.Linq.Async" Version="7.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
