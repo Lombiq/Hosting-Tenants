@@ -16,9 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Email" Version="3.0.0-preview-18960" />
-    <PackageReference Include="OrchardCore.Email.Azure" Version="3.0.0-preview-18960" />
-    <PackageReference Include="OrchardCore.Email.Smtp" Version="3.0.0-preview-18960" />
+    <PackageReference Include="OrchardCore.Email" Version="3.0.0-preview-18983" />
+    <PackageReference Include="OrchardCore.Email.Azure" Version="3.0.0-preview-18983" />
+    <PackageReference Include="OrchardCore.Email.Smtp" Version="3.0.0-preview-18983" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.HelpfulExtensions" Version="11.1.1-alpha.6.osoe-925" />
+    <PackageReference Include="Lombiq.HelpfulExtensions" Version="11.1.1-alpha.9.osoe-925" />
   </ItemGroup>
 
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />

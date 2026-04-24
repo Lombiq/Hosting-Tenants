@@ -18,12 +18,12 @@ public class StartStaggeredTenantWakeUpMaintenanceProvider : MaintenanceProvider
     public override async Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context)
     {
         _staggeredTenantWakeUp = await _staggeredTenantWakeUpService.GetOrCreateStaggeredTenantWakeUpSettingsAsync();
-        return _staggeredTenantWakeUp.As<StaggeredTenantWakeUpPart>().RunOnStartup.Value;
+        return _staggeredTenantWakeUp.GetOrCreate<StaggeredTenantWakeUpPart>().RunOnStartup.Value;
     }
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
-        var part = _staggeredTenantWakeUp.As<StaggeredTenantWakeUpPart>();
+        var part = _staggeredTenantWakeUp.GetOrCreate<StaggeredTenantWakeUpPart>();
 
         // If there were no deployment since the latest run and the task is not finished, continue.
         // Else if the build version changes, start a new staggered tenant wake-up, because a new deployment happened.

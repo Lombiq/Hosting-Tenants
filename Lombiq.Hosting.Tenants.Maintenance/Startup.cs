@@ -19,6 +19,8 @@ public sealed class Startup : StartupBase
         services.AddIndexProvider<MaintenanceTaskExecutionIndexProvider>();
         services.AddDataMigration<Migrations>();
 
+        services.AddDataMigration<QueryElasticsearchMigration>();
+
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
     }

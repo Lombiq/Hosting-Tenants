@@ -25,7 +25,7 @@ public static class OrchardCoreBuilderExtensions
         builder.ConfigureFeaturesGuardWithoutOverriding(
             new Dictionary<string, IEnumerable<string>>
             {
-                ["OrchardCore.Search.Elasticsearch"] =
+                ["OrchardCore.Elasticsearch"] =
                     ["OrchardCore.Search", "OrchardCore.Indexing"],
             });
 
