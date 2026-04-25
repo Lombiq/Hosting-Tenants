@@ -7,3 +7,4 @@ artifacts/
 node_modules/
 *.user
 .pnpm-debug.log
+.editorconfig
