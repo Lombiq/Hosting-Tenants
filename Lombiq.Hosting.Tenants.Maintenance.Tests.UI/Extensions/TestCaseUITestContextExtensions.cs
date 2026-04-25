@@ -42,8 +42,7 @@ public static class TestCaseUITestContextExtensions
         context.SwitchCurrentTenant(tenantName: null, string.Empty);
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-        await context.ClickReliablyOnByLinkTextAsync("Multi-Tenancy");
-        await context.ClickReliablyOnByLinkTextAsync("Tenants");
+        await context.ClickThroughAdminMenuAsync(By.Id("multitenancy"), By.XPath("//a[span[@title='Tenants']]"));
         await context.ClickReliablyOnByLinkTextAsync("StaggeredTenantWakeUp");
         await context.GoToDashboardAsync();
 
@@ -57,7 +56,7 @@ public static class TestCaseUITestContextExtensions
             },
             TenantName);
 
-        await context.ClickReliablyOnByLinkTextAsync("Staggered Tenant Wake-Up");
+        await context.ClickThroughAdminMenuAsync(By.Id("multitenancy"), By.Id("staggered-tenant-wakeup"));
         await context.ClickReliablyOnByLinkTextAsync("Start new");
 
         await context.DoWithRetriesOrFailAsync(
