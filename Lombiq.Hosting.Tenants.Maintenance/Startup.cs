@@ -19,9 +19,14 @@ public sealed class Startup : StartupBase
         services.AddIndexProvider<MaintenanceTaskExecutionIndexProvider>();
         services.AddDataMigration<Migrations>();
 
-        services.AddDataMigration<QueryElasticsearchMigration>();
-
         services.AddScoped<IModularTenantEvents, MaintenanceRunnerService>();
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
     }
+}
+
+[RequireFeatures("OrchardCore.Elasticsearch")]
+public sealed class ElasticsearchStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services) =>
+        services.AddDataMigration<QueryElasticsearchMigration>();
 }
