@@ -56,8 +56,7 @@ public class QueryElasticsearchMigration : DataMigration
 
         var allRoles = await roleService.GetRolesAsync();
         var rolesToUpdate = allRoles
-            .Where(role => role is Role)
-            .Cast<Role>()
+            .OfType<Role>()
             .Where(role => role.RoleClaims.Any(IsElasticsearchIndexPermissionClaim))
             .ToList();
 
