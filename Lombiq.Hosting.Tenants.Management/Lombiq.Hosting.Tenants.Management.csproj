@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Tenants" Version="3.0.0-preview-18975" />
+    <PackageReference Include="OrchardCore.Tenants" Version="3.0.0-preview-18991" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
