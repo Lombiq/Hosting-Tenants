@@ -46,7 +46,7 @@ public static class TestCaseUITestContextExtensions
 
             if (!quotaShouldBeEnforced) continue;
 
-            var warningLevel = Convert.ToInt32(Math.Round((double)quotaAwareEmailCount / maximumEmailQuota * 100, 0));
+            var warningLevel = Convert.ToInt32(Math.Round((double)quotaAwareEmailCount / maximumEmailQuota * 100, 0, MidpointRounding.AwayFromZero));
             if (warningLevel >= 100)
             {
                 await context.GoToDashboardAsync();
