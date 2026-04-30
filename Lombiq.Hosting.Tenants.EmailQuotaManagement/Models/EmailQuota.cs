@@ -9,5 +9,5 @@ public class EmailQuota
     public int LastReminderPercentage { get; set; }
 
     public int CurrentUsagePercentage(int emailQuotaPerMonth) =>
-        Convert.ToInt32(Math.Round((double)CurrentEmailUsageCount / emailQuotaPerMonth * 100, 0));
+        Convert.ToInt32(Math.Round((double)CurrentEmailUsageCount / emailQuotaPerMonth * 100, 0, MidpointRounding.AwayFromZero));
 }
