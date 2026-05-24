@@ -16,9 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Email" Version="3.0.0-preview-19009" />
-    <PackageReference Include="OrchardCore.Email.Azure" Version="3.0.0-preview-19009" />
-    <PackageReference Include="OrchardCore.Email.Smtp" Version="3.0.0-preview-19009" />
+    <PackageReference Include="OrchardCore.Email" Version="3.0.0-preview-19023" />
+    <PackageReference Include="OrchardCore.Email.Azure" Version="3.0.0-preview-19023" />
+    <PackageReference Include="OrchardCore.Email.Smtp" Version="3.0.0-preview-19023" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
