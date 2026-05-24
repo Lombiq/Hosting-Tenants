@@ -7,6 +7,7 @@ using OrchardCore.Environment.Shell.Scope;
 using OrchardCore.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Services;
@@ -36,11 +37,11 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
         _emailQuotaSubjectService = emailQuotaSubjectService;
     }
 
-    public async Task<Result> SendAsync(MailMessage message, string providerName = null)
+    public async Task<Result> SendAsync(MailMessage message, string providerName = null, CancellationToken cancellationToken = default)
     {
         if (!await _emailQuotaService.ShouldEnforceEmailQuotaAsync(providerName))
         {
-            return await _emailService.SendAsync(message, providerName);
+            return await _emailService.SendAsync(message, providerName, cancellationToken);
         }
 
         var isQuotaOverResult = await _emailQuotaService.IsQuotaOverTheLimitAsync();
@@ -52,7 +53,7 @@ public class QuotaEnforcingEmailServiceDecorator : IEmailService
             return Result.Failed(T["Your site has run out of the email quota for this month."]);
         }
 
-        var emailResult = await _emailService.SendAsync(message, providerName);
+        var emailResult = await _emailService.SendAsync(message, providerName, cancellationToken);
         if (emailResult.Succeeded) await _emailQuotaService.IncreaseEmailUsageAsync(isQuotaOverResult.EmailQuota);
 
         return emailResult;
