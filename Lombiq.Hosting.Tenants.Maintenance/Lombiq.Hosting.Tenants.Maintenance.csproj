@@ -17,6 +17,9 @@
 
   <ItemGroup>
     <PackageReference Include="RandomNameGeneratorLibrary" Version="1.2.2" />
+    <!-- An outdated version is referenced by the above "RandomNameGeneratorLibrary", which hasn't been updated since
+         2016 so the NoWarn attribute below is necessary. --> 
+    <PackageReference Include="System.Net.Http" Version="4.3.4" NoWarn="NU1510" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' != 'true'">
