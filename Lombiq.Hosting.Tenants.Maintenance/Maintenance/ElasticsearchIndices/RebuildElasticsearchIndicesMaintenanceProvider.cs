@@ -59,7 +59,6 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
                 // Without this, the connection may remain open, causing a concurrent access exception when we query
                 // anything from the database using the same underlying session.
                 await indexProfileStore.UpdateAsync(indexProfile);
-                await indexProfileStore.SaveChangesAsync();
             });
     }
 }
