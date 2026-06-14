@@ -1,3 +1,4 @@
+using Lombiq.HelpfulLibraries.OrchardCore.Security;
 using Lombiq.Hosting.Tenants.Management.Constants;
 using Lombiq.Hosting.Tenants.Management.Filters;
 using Lombiq.Hosting.Tenants.Management.Services;
@@ -40,7 +41,11 @@ public sealed class HideRecipesFromSetupStartup : StartupBase
 [Feature(FeatureNames.ShellSettingsEditor)]
 public sealed class ShellSettingsEditorStartup : StartupBase
 {
-    public override void ConfigureServices(IServiceCollection services) =>
+    public override void ConfigureServices(IServiceCollection services)
+    {
         services.Configure<MvcOptions>(options =>
             options.Filters.Add<ShellSettingsEditorFilter>());
+
+        services.AddContentSecurityPolicyProvider<ShellSettingsEditorContentSecurityPolicyProvider>();
+    }
 }

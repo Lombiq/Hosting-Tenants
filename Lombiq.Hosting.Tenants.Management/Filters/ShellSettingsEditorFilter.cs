@@ -1,5 +1,6 @@
 using Lombiq.HelpfulLibraries.OrchardCore.Contents;
 using Lombiq.Hosting.Tenants.Management.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.DisplayManagement;
@@ -30,17 +31,13 @@ public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
 
     public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
     {
-        if (context.IsNotFullViewRendering() ||
-            !context.IsMvcRoute(
-                nameof(AdminController.Edit),
-                typeof(AdminController).ControllerName(),
-                $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}"))
+        if (context.IsNotFullViewRendering() || !Condition(context.HttpContext))
         {
             await next();
             return;
         }
 
-        var tenantName = context.RouteData.Values["Id"].ToString();
+        var tenantName = context.RouteData.Values["Id"]?.ToString();
         if (!_shellHost.TryGetSettings(tenantName, out var shellSettings))
         {
             await next();
@@ -55,7 +52,7 @@ public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
             : validationErrorJson.ToString();
 
         await _layoutAccessor.AddShapeToZoneAsync(
-            "Content",
+            CommonLocationNames.Content,
             await _shapeFactory.CreateAsync<ShellSettingsEditorViewModel>(
                 "ShellSettingsEditor",
                 viewModel =>
@@ -67,4 +64,10 @@ public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
 
         await next();
     }
+
+    public static bool Condition(HttpContext context) => 
+        context.IsMvcRoute(
+            nameof(AdminController.Edit),
+            typeof(AdminController).ControllerName(),
+            $"{nameof(OrchardCore)}.{nameof(OrchardCore.Tenants)}");
 }
