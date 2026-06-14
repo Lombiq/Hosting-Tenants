@@ -65,7 +65,7 @@ public sealed class ShellSettingsEditorFilter : IAsyncResultFilter
         await next();
     }
 
-    public static bool Condition(HttpContext context) => 
+    public static bool Condition(HttpContext context) =>
         context.IsMvcRoute(
             nameof(AdminController.Edit),
             typeof(AdminController).ControllerName(),
