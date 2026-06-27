@@ -72,8 +72,15 @@ public class DeleteElasticsearchIndicesMiddleware
             .GetSection(ElasticsearchConnectionOptionsConfigurations.ConfigSectionName)
             .GetValue<string>(nameof(ElasticsearchOptions.IndexPrefix));
 
-        // Delete all tenant specific indexes in Elasticsearch.
-        await client.DeleteAllIndexesAsync(prefix);
+        try
+        {
+            // Delete all tenant specific indexes in Elasticsearch.
+            await client.DeleteAllIndexesAsync(prefix);
+        }
+        catch (InvalidOperationException exception) when (exception.Message.Contains("cannot be deleted"))
+        {
+            // Nothing can be done.
+        }
 
         await _next.Invoke(httpContext);
     }
