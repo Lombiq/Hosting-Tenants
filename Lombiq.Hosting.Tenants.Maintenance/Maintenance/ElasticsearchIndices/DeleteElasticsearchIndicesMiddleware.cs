@@ -2,6 +2,7 @@ using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using OrchardCore.Elasticsearch;
 using OrchardCore.Elasticsearch.Core.Services;
 using OrchardCore.Environment.Shell;
@@ -22,17 +23,20 @@ public class DeleteElasticsearchIndicesMiddleware
     private readonly IShellSettingsManager _shellSettingsManager;
 
     private readonly IDistributedLock _distributedLock;
+    private readonly ILogger<DeleteElasticsearchIndicesMiddleware> _logger;
 
     public DeleteElasticsearchIndicesMiddleware(
         RequestDelegate next,
         ShellSettings shellSettings,
         IShellSettingsManager shellSettingsManager,
-        IDistributedLock distributedLock)
+        IDistributedLock distributedLock,
+        ILogger<DeleteElasticsearchIndicesMiddleware> logger)
     {
         _next = next;
         _shellSettings = shellSettings;
         _shellSettingsManager = shellSettingsManager;
         _distributedLock = distributedLock;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -79,7 +83,7 @@ public class DeleteElasticsearchIndicesMiddleware
         }
         catch (InvalidOperationException exception) when (exception.Message.Contains("cannot be deleted"))
         {
-            // Nothing can be done.
+            _logger.LogInformation(exception, "Some indexes cannot be deleted.");
         }
 
         await _next.Invoke(httpContext);
