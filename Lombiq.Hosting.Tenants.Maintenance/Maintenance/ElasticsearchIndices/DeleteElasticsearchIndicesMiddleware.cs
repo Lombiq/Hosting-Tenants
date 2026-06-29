@@ -83,7 +83,7 @@ public class DeleteElasticsearchIndicesMiddleware
         }
         catch (InvalidOperationException exception) when (exception.Message.Contains("cannot be deleted"))
         {
-            _logger.LogInformation(exception, "Some indexes cannot be deleted.");
+            _logger.LogWarning(exception, "Some indexes cannot be deleted.");
         }
 
         await _next.Invoke(httpContext);
