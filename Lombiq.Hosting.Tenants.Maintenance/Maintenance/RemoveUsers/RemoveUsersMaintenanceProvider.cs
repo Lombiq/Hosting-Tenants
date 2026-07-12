@@ -35,9 +35,10 @@ public class RemoveUsersMaintenanceProvider : MaintenanceProviderBase
 
     public override async Task ExecuteAsync(MaintenanceTaskExecutionContext context)
     {
-        var users = await _session.Query<User>().ListAsync();
-        foreach (var user in users.Where(user =>
-            user.Email.EndsWith($"@{_options.Value.EmailDomain}", StringComparison.InvariantCulture)))
+        var users = (await _session.Query<User>().ListAsync())
+            .Where(user => user.Email.EndsWith($"@{_options.Value.EmailDomain}", StringComparison.InvariantCulture));
+
+        foreach (var user in users)
         {
             await _userManager.DeleteAsync(user);
         }
