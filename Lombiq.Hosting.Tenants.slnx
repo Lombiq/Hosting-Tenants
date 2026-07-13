@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="NuGet.config" />
+  </Folder>
   <Project Path="Lombiq.Hosting.Tenants.Admin.Login/Lombiq.Hosting.Tenants.Admin.Login.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI/Lombiq.Hosting.Tenants.EmailQuotaManagement.Tests.UI.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.EmailQuotaManagement/Lombiq.Hosting.Tenants.EmailQuotaManagement.csproj" />
