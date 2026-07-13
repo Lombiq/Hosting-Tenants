@@ -1,7 +1,6 @@
 <Project>
   <!-- Add shared configuration specific to Helpful Libraries projects here. -->
   <PropertyGroup>
-    <NuGetBuild>true</NuGetBuild>
   </PropertyGroup>
 
   <!-- Inherit parent props file if one exists. -->
