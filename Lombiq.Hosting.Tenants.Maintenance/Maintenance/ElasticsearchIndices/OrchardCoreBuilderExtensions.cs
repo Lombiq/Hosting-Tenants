@@ -8,11 +8,11 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 public static class OrchardCoreBuilderExtensions
 {
     /// <summary>
-    /// Adds Elasticsearch setup and tenant features, if <paramref name="useElasticSearch"/> is <see langword="true"/>.
+    /// Adds Elasticsearch setup and tenant features, if <paramref name="useElasticsearch"/> is <see langword="true"/>.
     /// </summary>
-    public static OrchardCoreBuilder AddElasticsearchFeatures(this OrchardCoreBuilder builder, IWebHostEnvironment environment, bool useElasticSearch)
+    public static OrchardCoreBuilder AddElasticsearchFeatures(this OrchardCoreBuilder builder, IWebHostEnvironment environment, bool useElasticsearch)
     {
-        if (!useElasticSearch) return builder;
+        if (!useElasticsearch) return builder;
 
         builder.AddSetupFeatures(FeatureNames.DeleteElasticsearchIndicesBeforeSetup);
 
