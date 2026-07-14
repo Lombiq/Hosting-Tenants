@@ -1,5 +1,5 @@
 <Project>
-  <!-- Add shared configuration specific to Helpful Libraries projects here. -->
+  <!-- Add shared configuration specific to Lombiq.Hosting.Tenants projects here. -->
   <PropertyGroup>
   </PropertyGroup>
 
