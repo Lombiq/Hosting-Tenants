@@ -58,7 +58,7 @@ public class StaggeredTenantWakeUpService : IStaggeredTenantWakeUpService
 
         await _lock.WaitAsync();
 
-        var staggeredTenantWakeUpPart = (await GetOrCreateStaggeredTenantWakeUpSettingsAsync()).As<StaggeredTenantWakeUpPart>();
+        var staggeredTenantWakeUpPart = (await GetOrCreateStaggeredTenantWakeUpSettingsAsync()).GetOrCreate<StaggeredTenantWakeUpPart>();
         await _staggeredTenantWakeUpEvents.AwaitEachAsync(async handler => await handler.StartingAsync(staggeredTenantWakeUpPart));
         try
         {

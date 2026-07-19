@@ -28,7 +28,7 @@ public sealed class Startup : StartupBase
         configSection.Bind(options);
         services.Configure<EnvironmentRobotsOptions>(configSection);
 
-        services.AddMvc(options => options.Filters.Add(typeof(EnvironmentRobotsMetaTagFilter)));
+        services.AddMvc(options => options.Filters.Add<EnvironmentRobotsMetaTagFilter>());
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider) =>

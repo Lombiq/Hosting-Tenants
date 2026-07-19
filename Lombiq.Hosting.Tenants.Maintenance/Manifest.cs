@@ -1,4 +1,5 @@
 using OrchardCore.Modules.Manifest;
+using OrchardCore.Users;
 using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
 
 [assembly: Module(
@@ -40,8 +41,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Description = "Adds the Administrator role to users with the configured role (e.g., when the production database " +
         "is copied to staging).",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
-    Dependencies = [Maintenance]
+    Dependencies = [Maintenance, UserConstants.Features.Users]
 )]
 
 [assembly: Feature(
@@ -49,7 +49,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Remove Users",
     Description = "Removes users with the configured email domain.",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
     Dependencies = [Maintenance]
 )]
 
@@ -58,7 +57,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Change User Sensitive Content",
     Description = "Replaces the users' username, email and password with realistic but random values.",
     Category = "Maintenance",
-    DefaultTenantOnly = true,
     Dependencies = [Maintenance]
 )]
 
@@ -67,7 +65,7 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
     Name = "Lombiq Hosting - Tenants Maintenance Delete Elasticsearch Indexes",
     Description = "Deletes Elasticsearch indexes.",
     Category = "Maintenance",
-    Dependencies = [Maintenance, "OrchardCore.Search.Elasticsearch"]
+    Dependencies = [Maintenance, "OrchardCore.Elasticsearch"]
 )]
 
 [assembly: Feature(
@@ -104,6 +102,6 @@ using static Lombiq.Hosting.Tenants.Maintenance.Constants.FeatureNames;
         Maintenance,
         "OrchardCore.Tenants",
         "OrchardCore.ContentFields",
-        "OrchardCore.Contents"
+        "OrchardCore.Contents",
     ]
 )]

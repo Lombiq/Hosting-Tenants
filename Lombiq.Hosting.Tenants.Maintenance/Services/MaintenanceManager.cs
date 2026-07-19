@@ -102,6 +102,11 @@ public class MaintenanceManager : IMaintenanceManager
                         provider.Id,
                         execution.Error);
                 }
+
+                // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
+                // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
+                await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
+                await _session.SaveChangesAsync();
             }
             catch (Exception exception) when (!exception.IsFatal())
             {
@@ -113,11 +118,6 @@ public class MaintenanceManager : IMaintenanceManager
                     "Maintenance task {MaintenanceId} failed to execute due to an exception.",
                     provider.Id);
             }
-
-            // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
-            // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
-            await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-            await _session.SaveChangesAsync();
 
             if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
         }

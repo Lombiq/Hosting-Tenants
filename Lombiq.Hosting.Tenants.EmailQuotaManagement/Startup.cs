@@ -34,8 +34,8 @@ public sealed class Startup : StartupBase
 
         services.Configure<MvcOptions>(options =>
             {
-                options.Filters.Add(typeof(DashboardQuotaFilter));
-                options.Filters.Add(typeof(EmailSettingsQuotaFilter));
+                options.Filters.Add<DashboardQuotaFilter>();
+                options.Filters.Add<EmailSettingsQuotaFilter>();
             }
         );
 

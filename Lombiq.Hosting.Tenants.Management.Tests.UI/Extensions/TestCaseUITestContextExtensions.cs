@@ -12,6 +12,7 @@ public static class TestCaseUITestContextExtensions
     public static async Task TestShellSettingsEditorFeatureAsync(this UITestContext context)
     {
         await context.SignInDirectlyAsync();
+        await context.EnableFeatureDirectlyAsync("Lombiq.Hosting.Tenants.Management.ShellSettingsEditor");
         await context.GoToAdminRelativeUrlAsync("/Tenants/Edit/Default");
 
         // Expected JSON string.
@@ -58,6 +59,6 @@ public static class TestCaseUITestContextExtensions
         var editorJson = string.IsNullOrEmpty(editorText) ? "{}" : editorText;
 
         var editorValue = JObject.Parse(editorJson);
-        editorValue.SelectNode($"TestKey.TestSubKey.TestSubOptions.{keyToCheck}")?.ToString().ShouldBeAsString(expectedValue);
+        editorValue?["TestKey"]?["TestSubKey"]?["TestSubOptions"]?[keyToCheck]?.ToString().ShouldBeAsString(expectedValue);
     }
 }

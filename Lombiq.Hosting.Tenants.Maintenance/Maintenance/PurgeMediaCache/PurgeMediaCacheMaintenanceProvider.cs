@@ -21,11 +21,11 @@ public class PurgeMediaCacheMaintenanceProvider : MaintenanceProviderBase
         _serviceProvider = serviceProvider;
     }
 
+    // Should run on every swap, although not every new deployment. No better simple way to check for this, so running
+    // on every deployment anyway.
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         Task.FromResult(
             _options.Value.IsEnabled &&
-            // Should run on every swap, although not every new deployment. No better simple way to check for this, so
-            // running on every deployment anyway.
             context.LatestExecution?.BuildVersion != context.CurrentExecution.BuildVersion);
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>

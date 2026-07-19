@@ -14,7 +14,7 @@ public sealed class Startup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<MvcOptions>(options => options.Filters.Add(typeof(TenantsIndexFilter)));
+        services.Configure<MvcOptions>(options => options.Filters.Add<TenantsIndexFilter>());
         services.AddPermissionProvider<TenantAdminPermissions>();
         services.AddSingleton<ITenantLoginPasswordValidator, TenantLoginKeyValidator>();
         services.AddContentSecurityPolicyProvider<TenantLoginSecurityPolicyProvider>();

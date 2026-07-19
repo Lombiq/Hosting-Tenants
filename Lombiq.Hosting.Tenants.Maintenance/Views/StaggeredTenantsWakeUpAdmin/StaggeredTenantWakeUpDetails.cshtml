@@ -4,9 +4,8 @@
 @using OrchardCore.Mvc.Core.Utilities
 
 @{
-    var part = (Model.ContentItem as ContentItem).As<StaggeredTenantWakeUpPart>();
+    var part = (Model.ContentItem as ContentItem).GetOrCreate<StaggeredTenantWakeUpPart>();
     var currentPercentage = part.ProgressPercentage;
-    var started = part.Paused == false && part.StartedUtc != null && part.FinishedUtc == null;
     var routeControllerName = typeof(StaggeredTenantsWakeUpAdminController).ControllerName();
 }
 

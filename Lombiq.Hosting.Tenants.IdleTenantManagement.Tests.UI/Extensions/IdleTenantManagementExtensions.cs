@@ -1,5 +1,3 @@
-using Lombiq.Tests.UI.Extensions;
-using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Services;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -32,10 +30,5 @@ public static class IdleTenantManagementExtensions
 
         configuration.OrchardCoreConfiguration.AfterFakeLoggingConfiguration =
             (_, fakeLogCollectorOptions) => fakeLogCollectorOptions.FilteredLevels.Add(LogLevel.Information);
-
-        configuration.AssertAppLogsAsync = app =>
-            app.LogsShouldNotContainAsync(
-                logEntry => AppLogAssertionHelper.NotMediaCacheEntries(logEntry) && logEntry.Level != LogLevel.Information,
-                configuration.TestCancellationToken);
     }
 }

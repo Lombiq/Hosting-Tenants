@@ -1,6 +1,7 @@
 using Lombiq.Hosting.Tenants.MediaStorageManagement.Settings;
 using Microsoft.Extensions.Options;
 using OrchardCore.Media;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ public class MediaStorageQuotaService : IMediaStorageQuotaService
         var sumBytes = listed.Where(item => item.Length > 0).Sum(item => item.Length);
         var remainingStorageQuotaBytes = GetMaxStorageQuotaBytes() - sumBytes;
 
-        return remainingStorageQuotaBytes < 0 ? 0 : remainingStorageQuotaBytes;
+        return Math.Max(remainingStorageQuotaBytes, 0);
     }
 
     public long GetMaxStorageQuotaBytes() => _mediaStorageManagementOptions.MaximumStorageQuotaBytes;

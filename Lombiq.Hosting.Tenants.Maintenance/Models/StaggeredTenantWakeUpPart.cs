@@ -23,7 +23,7 @@ public class StaggeredTenantWakeUpPart : ContentPart
     public IDictionary<string, string> ErrorLogs { get; private set; } = new Dictionary<string, string>();
 
     public void CalculatePercentage() =>
-        ProgressPercentage = (int)Math.Round(((double)ProcessedTenantIds.Count / AllTenantCount * 100)!, 0, MidpointRounding.AwayFromZero);
+        ProgressPercentage = 100 * ProcessedTenantIds.Count / AllTenantCount;
 
     public bool ShouldPause(string jobId)
     {

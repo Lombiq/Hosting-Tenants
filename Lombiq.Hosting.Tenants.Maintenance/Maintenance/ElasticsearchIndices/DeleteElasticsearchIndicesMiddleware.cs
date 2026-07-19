@@ -1,8 +1,13 @@
+using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using OrchardCore.Elasticsearch;
+using OrchardCore.Elasticsearch.Core.Services;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Locking.Distributed;
-using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,17 +23,20 @@ public class DeleteElasticsearchIndicesMiddleware
     private readonly IShellSettingsManager _shellSettingsManager;
 
     private readonly IDistributedLock _distributedLock;
+    private readonly ILogger<DeleteElasticsearchIndicesMiddleware> _logger;
 
     public DeleteElasticsearchIndicesMiddleware(
         RequestDelegate next,
         ShellSettings shellSettings,
         IShellSettingsManager shellSettingsManager,
-        IDistributedLock distributedLock)
+        IDistributedLock distributedLock,
+        ILogger<DeleteElasticsearchIndicesMiddleware> logger)
     {
         _next = next;
         _shellSettings = shellSettings;
         _shellSettingsManager = shellSettingsManager;
         _distributedLock = distributedLock;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -62,10 +70,21 @@ public class DeleteElasticsearchIndicesMiddleware
         // If the tenant was initialized by another instance, then skip again.
         if (await InvokeNextIfUninitializedAsync(settings, httpContext)) return;
 
-        var elasticIndexManager = httpContext.RequestServices.GetRequiredService<ElasticIndexManager>();
+        var services = httpContext.RequestServices;
+        var client = services.GetRequiredService<ElasticsearchClient>();
+        var prefix = services.GetRequiredService<IShellConfiguration>()
+            .GetSection(ElasticsearchConnectionOptionsConfigurations.ConfigSectionName)
+            .GetValue<string>(nameof(ElasticsearchOptions.IndexPrefix));
 
-        // Delete all tenant specific indexes in Elasticsearch.
-        await elasticIndexManager.DeleteAllIndexesAsync();
+        try
+        {
+            // Delete all tenant specific indexes in Elasticsearch.
+            await client.DeleteAllIndexesAsync(prefix);
+        }
+        catch (InvalidOperationException exception) when (exception.Message.Contains("cannot be deleted"))
+        {
+            _logger.LogWarning(exception, "Some indexes cannot be deleted.");
+        }
 
         await _next.Invoke(httpContext);
     }

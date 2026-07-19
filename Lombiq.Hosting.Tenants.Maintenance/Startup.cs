@@ -23,3 +23,10 @@ public sealed class Startup : StartupBase
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
     }
 }
+
+[RequireFeatures("OrchardCore.Elasticsearch")]
+public sealed class ElasticsearchStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services) =>
+        services.AddDataMigration<QueryElasticsearchMigration>();
+}

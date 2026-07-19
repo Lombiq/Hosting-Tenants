@@ -10,9 +10,9 @@
       asp-area="@Module"
       method="post"
       class="no-multisubmit">
-    <div class="@Orchard.GetWrapperClasses("field-wrapper")" id="FieldWrapper">
-        <label asp-for="Json" class="@Orchard.GetLabelClasses()">@T["Shell Settings editor"]</label>
-        <div class="@Orchard.GetEndClasses()">
+    <div class="ocat-wrapper field-wrapper" id="FieldWrapper">
+        <label asp-for="Json" class="ocat-label">@T["Shell Settings editor"]</label>
+        <div class="ocat-label">
             <span class="hint">
                 @T["JSON key-value pairs should be set here, in the same way you'd configure the tenant-specific section in an appsettings.json file."]
             </span>

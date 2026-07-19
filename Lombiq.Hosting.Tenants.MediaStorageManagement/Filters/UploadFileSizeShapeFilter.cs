@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using OrchardCore.DisplayManagement;
 using OrchardCore.DisplayManagement.Layout;
 using OrchardCore.Media.Controllers;
+using OrchardCore.Media.Core.Helpers;
 using OrchardCore.Mvc.Core.Utilities;
 using System.Threading.Tasks;
 
@@ -45,7 +46,8 @@ public sealed class UploadFileSizeShapeFilter : IAsyncResultFilter
                 "Footer",
                 await _shapeFactory.CreateAsync<UploadFileSizeViewModel>(
                     "UploadFileSize",
-                    viewModel => viewModel.MaximumStorageQuotaMegabytes = _mediaStorageQuotaService.GetMaxStorageQuotaMegabytes()),
+                    viewModel => viewModel.MaximumStorageQuotaHumanReadable = FileSizeHelpers.FormatAsBytes(
+                        _mediaStorageQuotaService.GetMaxStorageQuotaBytes())),
                 "0");
         }
 

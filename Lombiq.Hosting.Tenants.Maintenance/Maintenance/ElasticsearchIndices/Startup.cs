@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using OrchardCore.Elasticsearch.Core.Models;
+using OrchardCore.Elasticsearch.Core.Services;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
-using OrchardCore.Search.Elasticsearch.Core.Models;
-using OrchardCore.Search.Elasticsearch.Core.Services;
 using System;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
@@ -56,12 +56,11 @@ public sealed class DeleteElasticsearchIndicesBeforeSetupStartup : StartupBase
         // This is necessary to initialize Elasticsearch here like this, instead of using the Elasticsearch module from
         // OC. Because the Elasticsearch module can't be enabled the regular way if this module is added as a setup
         // feature, otherwise you get a ContentsAdminList shape missing exception on the admin dashboard.
-        var elasticClient = _shellConfiguration.CreateElasticClient();
-        services.Configure<ElasticConnectionOptions>(options =>
+        services.AddSingleton(_ => _shellConfiguration.CreateElasticsearchClient());
+        services.Configure<ElasticsearchConnectionOptions>(options =>
             options.SetFileConfigurationExists(fileConfigurationExists: true));
 
-        services.AddSingleton(elasticClient);
-        services.AddSingleton<ElasticIndexManager>();
+        services.AddSingleton<ElasticsearchIndexManager>();
     }
 
     public override void Configure(IApplicationBuilder app, IEndpointRouteBuilder routes, IServiceProvider serviceProvider)

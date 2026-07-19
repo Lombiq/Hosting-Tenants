@@ -42,13 +42,12 @@ public static class TestCaseUITestContextExtensions
         context.SwitchCurrentTenant(tenantName: null, string.Empty);
 
         await context.SignInDirectlyAndGoToDashboardAsync();
-        await context.ClickReliablyOnByLinkTextAsync("Multi-Tenancy");
-        await context.ClickReliablyOnByLinkTextAsync("Tenants");
+        await context.ClickThroughAdminMenuAsync(By.Id("multitenancy"), By.XPath("//a[span[@title='Tenants']]"));
         await context.ClickReliablyOnByLinkTextAsync("StaggeredTenantWakeUp");
         await context.GoToDashboardAsync();
 
         // Put the tenant into idle mode, to see if it works that way also.
-        await context.Application.UsingScopeAsync(
+        await context.Application.UsingScopeServiceProviderAsync(
             async serviceProvider =>
             {
                 var shellSettings = serviceProvider.GetRequiredService<ShellSettings>();
@@ -57,7 +56,7 @@ public static class TestCaseUITestContextExtensions
             },
             TenantName);
 
-        await context.ClickReliablyOnByLinkTextAsync("Staggered Tenant Wake-Up");
+        await context.ClickThroughAdminMenuAsync(By.Id("multitenancy"), By.Id("staggered-tenant-wakeup"));
         await context.ClickReliablyOnByLinkTextAsync("Start new");
 
         await context.DoWithRetriesOrFailAsync(
@@ -74,7 +73,7 @@ public static class TestCaseUITestContextExtensions
             $"//tbody//td[contains(.,'{TenantName}')]/../td[contains(.,'1')]/../td[contains(.,'Edit')]"));
 
         // Confirm that the tenant is sleeping again after the maintenance.
-        await context.Application.UsingScopeAsync(serviceProvider =>
+        await context.Application.UsingScopeServiceProviderAsync(serviceProvider =>
             {
                 var shellHost = serviceProvider.GetRequiredService<IShellHost>();
                 var allRunningTenants = shellHost.GetAllSettings().Where(shell => !shell.IsDefaultShell() && shell.IsRunning());
@@ -101,7 +100,7 @@ public static class TestCaseUITestContextExtensions
 
         await ResetMaintenanceAsync(context, nameof(AddAdministratorRoleToUsersWithRoleMaintenanceProvider));
 
-        await context.Application.UsingScopeAsync(async serviceProvider =>
+        await context.Application.UsingScopeServiceProviderAsync(async serviceProvider =>
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
             var user = (User)await userManager.FindByNameAsync(TestUser.UserName);
@@ -116,7 +115,7 @@ public static class TestCaseUITestContextExtensions
 
         await ResetMaintenanceAsync(context, nameof(ChangeUserSensitiveContentMaintenanceProvider));
 
-        await context.Application.UsingScopeAsync(async serviceProvider =>
+        await context.Application.UsingScopeServiceProviderAsync(async serviceProvider =>
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
@@ -130,7 +129,7 @@ public static class TestCaseUITestContextExtensions
 
     private static async Task ResetMaintenanceAsync(UITestContext context, string maintenanceId)
     {
-        await context.Application.UsingScopeAsync(async serviceProvider =>
+        await context.Application.UsingScopeServiceProviderAsync(async serviceProvider =>
         {
             var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
             await maintenanceManager.DeleteMaintenanceExecutionsByIdAsync(maintenanceId);
