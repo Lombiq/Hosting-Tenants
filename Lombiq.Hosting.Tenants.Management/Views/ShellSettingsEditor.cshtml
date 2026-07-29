@@ -1,9 +1,19 @@
 @using Lombiq.Hosting.Tenants.Management.Controllers
-@using OrchardCore
+@using OrchardCore.Localization
 @using OrchardCore.Mvc.Core.Utilities
+@using System.Globalization
 @using static Lombiq.Hosting.Tenants.Management.Constants.FeatureNames
 
 @model Lombiq.Hosting.Tenants.Management.Models.ShellSettingsEditorViewModel
+
+@{
+    var culture = CultureInfo.CurrentUICulture;
+    var settings = new
+    {
+        AutomaticLayout = true,
+        Language = "json",
+    };
+}
 
 <form asp-action="@nameof(ShellSettingsEditorController.Edit)"
       asp-controller="@typeof(ShellSettingsEditorController).ControllerName()"
@@ -12,12 +22,12 @@
       class="no-multisubmit">
     <div class="ocat-wrapper field-wrapper" id="FieldWrapper">
         <label asp-for="Json" class="ocat-label">@T["Shell Settings editor"]</label>
-        <div class="ocat-label">
+        <div class="ocat-end">
             <span class="hint">
                 @T["JSON key-value pairs should be set here, in the same way you'd configure the tenant-specific section in an appsettings.json file."]
             </span>
-            <div id="@Html.IdFor(model => model.Json)_editor" asp-for="Settings" style="min-height: 400px;" class="form-control"></div>
-            <textarea asp-for="Json" hidden>@Html.Raw(Model.Json)</textarea>
+            <div id="@Html.IdFor(x => x.Json)_editor" asp-for="Text" style="min-height: 400px;" class="form-control" dir="@culture.GetLanguageDirection()"></div>
+            <textarea asp-for="Json" class="content-preview-text" hidden>@Html.Raw(Model.Json)</textarea>
         </div>
     </div>
     <div class="mb-3">
@@ -26,53 +36,54 @@
     </div>
 </form>
 
-<script asp-name="monaco" depends-on="admin" at="Foot"></script>
+@* Based on HtmlBodyPart-Monaco.Edit.cshtml, but using "json" instead of "html" and the shortcodes removed. *@
+<script asp-name="monaco" at="Foot"></script>
 <script at="Foot" depends-on="monaco">
-    $(() => {
-        require(['vs/editor/editor.main'], () => {
-            const settings = @Json.Serialize(
-                new {
-                    AutomaticLayout = true,
-                    Language = "json",
-                });
+    function onDocumentReady(fn) {
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn);
+        } else {
+            fn();
+        }
+    }
 
-            const html = document.getElementsByTagName('html')[0];
+    onDocumentReady(function () {
+        const divEditor = document.getElementById('@Html.IdFor(x => x.Json)_editor');
+        if (!divEditor) {
+            return;
+        }
+
+        require(['vs/editor/editor.main'], function () {
+            const settings = @Json.Serialize(settings);
+
+            const json = document.documentElement;
             const mutationObserver = new MutationObserver(setTheme);
-            mutationObserver.observe(html, { attributes: true });
+            mutationObserver.observe(json, { attributes: true });
 
             function setTheme() {
-                const theme = html.dataset.theme;
-                if (theme === 'darkmode') {
-                    monaco.editor.setTheme('vs-dark');
-                }
-                else {
-                    monaco.editor.setTheme('vs');
+                const theme = json.dataset.bsTheme;
+                if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    monaco.editor.setTheme('vs-dark')
+                } else {
+                    monaco.editor.setTheme('vs')
                 }
             }
 
             setTheme();
 
-            const editor = monaco.editor.create(document.getElementById('@Html.IdFor(model => model.Json)_editor'), settings);
-            const textArea = document.getElementById('@Html.IdFor(model => model.Json)');
-
-            editor.setValue(textArea.value);
-
-            window.addEventListener('submit', () => {
-                textArea.value = editor.getValue();
-            });
+            const editor = monaco.editor.create(divEditor, settings);
+            const textArea = document.getElementById('@Html.IdFor(x => x.Json)');
 
             editor.getModel().onDidChangeContent(() => {
                 textArea.value = editor.getValue();
-                $(document).trigger('contentpreview:render');
+                document.dispatchEvent(new Event('contentpreview:render'));
             });
 
-            function formatDocument() {
-                editor.getAction('editor.action.formatDocument').run();
-            }
+            editor.getModel().setValue(textArea.value);
 
-            editor.onDidChangeModelLanguageConfiguration(formatDocument);
-            editor.onDidLayoutChange(formatDocument);
+            window.addEventListener('submit', function () {
+                textArea.value = editor.getValue();
+            });
         });
     });
-
 </script>
