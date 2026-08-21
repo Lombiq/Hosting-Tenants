@@ -1,4 +1,3 @@
-using Lombiq.HelpfulLibraries.Common.Utilities;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Services;
 using Microsoft.Extensions.Logging;
@@ -27,8 +26,8 @@ public static class MediaStorageManagementExtensions
             };
 
         // Exceeding the upload file upload limit causes an error log. This is expected.
-        var permittedErrorMessage = StringHelper.CreateInvariant(
-            $"You tried to upload a file that requires {FileSizeHelpers.FormatAsBytes(maximumStorageQuotaBytes)}");
+        var permittedErrorMessage =
+            $"You tried to upload a file that requires {FileSizeHelpers.FormatAsBytes(maximumStorageQuotaBytes)}";
         configuration.AssertAppLogsAsync = app => app.LogsShouldNotContainAsync(
             logEntry =>
                 logEntry.Level >= LogLevel.Error &&
