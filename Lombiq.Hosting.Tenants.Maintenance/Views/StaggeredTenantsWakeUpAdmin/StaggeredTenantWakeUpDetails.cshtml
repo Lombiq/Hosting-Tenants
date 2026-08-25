@@ -30,7 +30,7 @@
 
     <a class="btn btn-info mb-1 @(part.IsRunning() ? "disabled" : string.Empty)"
        asp-action="Edit"
-       asp-controller="Admin"
+       asp-controller="MaintenanceTask"
        asp-area="OrchardCore.Contents"
        asp-route-contentItemId="@part.ContentItem.ContentItemId"
        asp-route-returnUrl="@Url.Action(nameof(StaggeredTenantsWakeUpAdminController.Index), routeControllerName)">
@@ -172,7 +172,7 @@
                                         <td>
                                             <a class="btn btn-sm btn-info"
                                                asp-action="Edit"
-                                               asp-controller="Admin"
+                                               asp-controller="MaintenanceTask"
                                                asp-route-id="@version.Key"
                                                asp-route-area="OrchardCore.Tenants">
                                                 @T["Edit"]

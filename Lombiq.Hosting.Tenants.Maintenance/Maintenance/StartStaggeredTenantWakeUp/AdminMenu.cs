@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Navigation;
 
-namespace Lombiq.Hosting.Tenants.Maintenance;
+namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.StartStaggeredTenantWakeUp;
 
 public sealed class AdminMenu : AdminMenuNavigationProviderBase
 {
@@ -23,10 +23,11 @@ public sealed class AdminMenu : AdminMenuNavigationProviderBase
         }
 
         builder
-            .Add(T["Tools"], tenancy => tenancy
-                .Add(T["Maintenance Task Executions"], T["Maintenance Task Executions"].PrefixPosition(), executions => executions
-                    .ActionTask<MaintenanceTaskController>(_hca.HttpContext, controller => controller.Index())
-                    .Id("maintenance-task-executions")
+            .Add(T["Multi-Tenancy"], tenancy => tenancy
+                .AddClass("menu-multitenancy")
+                .Add(T["Staggered Tenant Wake-Up"], T["Staggered Tenant Wake-Up"].PrefixPosition(), featureProfiles => featureProfiles
+                    .ActionTask<StaggeredTenantsWakeUpAdminController>(_hca.HttpContext, controller => controller.Index())
+                    .Id("staggered-tenant-wakeup")
                     .LocalNav())
             );
     }

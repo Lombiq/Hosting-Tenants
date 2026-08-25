@@ -30,6 +30,10 @@
     <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Views\MaintenanceTask\Index.cshtml" />
+  </ItemGroup>
+
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.targets" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="2.0.1" />
 </Project>
