@@ -28,9 +28,7 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(
-            _options.Value.RebuildMaintenanceIsEnabled &&
-            !context.WasLatestExecutionSuccessful());
+        Task.FromResult(_options.Value.RebuildMaintenanceIsEnabled && context.IsFailedOrOutdated());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
         MigrateAsync(_elasticsearchIndexManager, _indexProfileStore);
