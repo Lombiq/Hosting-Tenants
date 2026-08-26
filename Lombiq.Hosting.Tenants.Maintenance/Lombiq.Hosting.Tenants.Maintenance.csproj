@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(NuGetBuild)' == 'true'">
-    <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="8.0.0" />
+    <PackageReference Include="Lombiq.Hosting.BuildVersionDisplay" Version="8.0.1-alpha.0.nest-608" />
   </ItemGroup>
 
   <ItemGroup>
