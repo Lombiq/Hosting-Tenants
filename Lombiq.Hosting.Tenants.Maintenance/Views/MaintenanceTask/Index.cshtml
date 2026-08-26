@@ -18,17 +18,17 @@
     </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.OrderBy(item => item.Id))
-        {
-            var localTime = await LocalClock.ConvertToLocalAsync(item.ExecutionTimeUtc);
-            <tr>
-                <td>@item.Id</td>
-                <td>@item.MaintenanceId</td>
-                <td>@localTime.ToString(CultureInfo.CurrentUICulture)</td>
-                <td>@item.IsSuccess</td>
-                <td>@item.Error</td>
-                <td>@item.BuildVersion</td>
-            </tr>
-        }
+    @foreach (var item in Model.OrderBy(item => item.Id))
+    {
+        var localTime = await LocalClock.ConvertToLocalAsync(item.ExecutionTimeUtc);
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.MaintenanceId</td>
+            <td>@localTime.ToString(CultureInfo.CurrentUICulture)</td>
+            <td>@item.IsSuccess</td>
+            <td>@item.Error</td>
+            <td>@item.BuildVersion</td>
+        </tr>
+    }
     </tbody>
 </table>
