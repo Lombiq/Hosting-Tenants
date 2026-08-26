@@ -31,6 +31,8 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
         _options = options;
     }
 
+    // We use IsFailedOrOutdated, which triggers on every new build, to work around problematic backend changes in OC v3
+    // that make it necessary to fully rebuild after deployment.
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
         Task.FromResult(_options.Value.RebuildMaintenanceIsEnabled && context.IsFailedOrOutdated());
 
