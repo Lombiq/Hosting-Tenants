@@ -14,14 +14,7 @@ public sealed class AdminMenu : AdminMenuNavigationProviderBase
     public AdminMenu(IHttpContextAccessor hca, IStringLocalizer<AdminMenu> stringLocalizer, ShellSettings shellSettings)
         : base(hca, stringLocalizer) => _shellSettings = shellSettings;
 
-    protected override void Build(NavigationBuilder builder)
-    {
-        // Don't add the menu item on non-default tenants.
-        if (!_shellSettings.IsDefaultShell())
-        {
-            return;
-        }
-
+    protected override void Build(NavigationBuilder builder) =>
         builder
             .Add(T["Tools"], tenancy => tenancy
                 .Add(T["Maintenance Task Executions"], T["Maintenance Task Executions"].PrefixPosition(), executions => executions
@@ -29,5 +22,4 @@ public sealed class AdminMenu : AdminMenuNavigationProviderBase
                     .Id("maintenance-task-executions")
                     .LocalNav())
             );
-    }
 }
