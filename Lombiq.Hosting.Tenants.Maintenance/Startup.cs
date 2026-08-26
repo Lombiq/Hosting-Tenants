@@ -7,6 +7,7 @@ using OrchardCore.Data;
 using OrchardCore.Data.Migration;
 using OrchardCore.Modules;
 using OrchardCore.Navigation;
+using OrchardCore.Security.Permissions;
 
 namespace Lombiq.Hosting.Tenants.Maintenance;
 
@@ -24,6 +25,7 @@ public sealed class Startup : StartupBase
         services.AddScoped<IMaintenanceManager, MaintenanceManager>();
 
         services.AddNavigationProvider<AdminMenu>();
+        services.AddPermissionProvider<MaintenancePermissions>();
     }
 }
 
