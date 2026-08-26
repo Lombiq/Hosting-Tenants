@@ -1,0 +1,34 @@
+@using OrchardCore.Modules
+@using System.Globalization
+@model IEnumerable<Lombiq.Hosting.Tenants.Maintenance.Models.MaintenanceTaskExecutionData>
+
+@inject ILocalClock LocalClock
+
+<h1>@RenderTitleSegments(T["Maintenance Task Executions"])</h1>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">@T["ID"]</th>
+        <th scope="col">@T["Maintenance ID"]</th>
+        <th scope="col">@T["Execution Time"]</th>
+        <th scope="col">@T["Success?"]</th>
+        <th scope="col">@T["Error"]</th>
+        <th scope="col">@T["Build Version"]</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.OrderBy(item => item.Id))
+    {
+        var localTime = await LocalClock.ConvertToLocalAsync(item.ExecutionTimeUtc);
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.MaintenanceId</td>
+            <td>@localTime.ToString(CultureInfo.CurrentUICulture)</td>
+            <td>@item.IsSuccess</td>
+            <td>@item.Error</td>
+            <td>@item.BuildVersion</td>
+        </tr>
+    }
+    </tbody>
+</table>
