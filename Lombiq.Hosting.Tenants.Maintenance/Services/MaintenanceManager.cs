@@ -49,11 +49,13 @@ public class MaintenanceManager : IMaintenanceManager
         var orderedProviders = _maintenanceProviders.OrderBy(provider => provider.Order);
         foreach (var provider in orderedProviders)
         {
+            var currentBuildVersions = new BuildVersionModel();
             var currentExecution = new MaintenanceTaskExecutionData
             {
                 MaintenanceId = provider.Id,
                 ExecutionTimeUtc = _clock.UtcNow,
-                BuildVersion = new BuildVersionModel().BuildVersion,
+                BuildVersion = currentBuildVersions.BuildVersion,
+                OrchardVersion = currentBuildVersions.OrchardVersion,
             };
             var context = new MaintenanceTaskExecutionContext
             {

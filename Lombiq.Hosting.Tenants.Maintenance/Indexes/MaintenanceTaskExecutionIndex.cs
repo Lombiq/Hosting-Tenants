@@ -11,6 +11,7 @@ public class MaintenanceTaskExecutionIndex : MapIndex
     public DateTime ExecutionTimeUtc { get; set; }
     public bool IsSuccess { get; set; }
     public string BuildVersion { get; set; }
+    public string OrchardVersion { get; set; }
 }
 
 public class MaintenanceTaskExecutionIndexProvider : IndexProvider<MaintenanceTaskExecutionData>
@@ -26,5 +27,6 @@ public class MaintenanceTaskExecutionIndexProvider : IndexProvider<MaintenanceTa
                 ExecutionTimeUtc = execution.ExecutionTimeUtc,
                 IsSuccess = execution.IsSuccess,
                 BuildVersion = execution.BuildVersion,
+                OrchardVersion = execution.OrchardVersion,
             });
 }

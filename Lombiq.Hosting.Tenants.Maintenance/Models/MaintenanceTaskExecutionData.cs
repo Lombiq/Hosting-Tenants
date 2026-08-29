@@ -11,4 +11,5 @@ public class MaintenanceTaskExecutionData : Entity
     public bool IsSuccess { get; set; }
     public string Error { get; set; }
     public string BuildVersion { get; set; }
+    public string OrchardVersion { get; set; }
 }
