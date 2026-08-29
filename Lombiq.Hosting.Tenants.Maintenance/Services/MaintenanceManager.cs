@@ -64,8 +64,6 @@ public class MaintenanceManager : IMaintenanceManager
             };
 
             await ExecuteMaintenanceTaskIfNeededAsync(provider, context, currentExecution);
-
-            currentExecution.ExecutionEndUtc = _clock.UtcNow;
         }
     }
 
@@ -89,45 +87,45 @@ public class MaintenanceManager : IMaintenanceManager
     {
         _logger.LogDebug("Executing maintenance task {MaintenanceId}, if needed.", provider.Id);
 
-        if (await provider.ShouldExecuteAsync(context))
-        {
-            try
-            {
-                await provider.ExecuteAsync(context);
-                execution.IsSuccess = string.IsNullOrEmpty(execution.Error);
-                if (execution.IsSuccess)
-                {
-                    _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
-                }
-                else
-                {
-                    _logger.LogError(
-                        "Maintenance task {MaintenanceId} executed with error: {Error}",
-                        provider.Id,
-                        execution.Error);
-                }
-
-                // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
-                // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
-                await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-                await _session.SaveChangesAsync();
-            }
-            catch (Exception exception) when (!exception.IsFatal())
-            {
-                execution.IsSuccess = false;
-                execution.Error = exception.ToString();
-
-                _logger.LogError(
-                    exception,
-                    "Maintenance task {MaintenanceId} failed to execute due to an exception.",
-                    provider.Id);
-            }
-
-            if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
-        }
-        else
+        if (!await provider.ShouldExecuteAsync(context))
         {
             _logger.LogDebug("Maintenance task {MaintenanceId} is not needed.", provider.Id);
+            return;
         }
+
+        try
+        {
+            await provider.ExecuteAsync(context);
+            execution.IsSuccess = string.IsNullOrEmpty(execution.Error);
+            if (execution.IsSuccess)
+            {
+                _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
+                execution.ExecutionEndUtc = _clock.UtcNow;
+            }
+            else
+            {
+                _logger.LogError(
+                    "Maintenance task {MaintenanceId} executed with error: {Error}",
+                    provider.Id,
+                    execution.Error);
+            }
+
+            // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
+            // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
+            await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
+            await _session.SaveChangesAsync();
+        }
+        catch (Exception exception) when (!exception.IsFatal())
+        {
+            execution.IsSuccess = false;
+            execution.Error = exception.ToString();
+
+            _logger.LogError(
+                exception,
+                "Maintenance task {MaintenanceId} failed to execute due to an exception.",
+                provider.Id);
+        }
+
+        if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
     }
 }
