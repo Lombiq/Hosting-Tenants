@@ -3,9 +3,7 @@ using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
-using OrchardCore.Elasticsearch.Core.Models;
 using OrchardCore.Elasticsearch.Core.Services;
-using OrchardCore.Entities;
 using OrchardCore.Indexing;
 using System;
 using System.Collections.Generic;
@@ -38,7 +36,7 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
             (!context.WasLatestExecutionSuccessful() || ShouldExecute(context.LatestExecution)));
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        RebuildAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
+        ResetAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
 
     private static bool ShouldExecute(MaintenanceTaskExecutionData contextLatestExecution)
     {
@@ -49,35 +47,7 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
         return previousOrchardVersion.Major <= 2 && currentOrchardVersion.Major >= 3;
     }
 
-    [Obsolete($"Use {nameof(RebuildAsync)} instead.")]
-    public static async Task MigrateAsync(
-        ElasticsearchIndexManager elasticsearchIndexManager,
-        IIndexProfileStore indexProfileStore)
-    {
-        var indexProfiles = await indexProfileStore.GetAllElasticsearchIndexesAsync();
-
-        await indexProfiles
-            .AwaitEachAsync(async indexProfile =>
-            {
-                await elasticsearchIndexManager.RebuildAsync(indexProfile);
-
-                var analyzerName = indexProfile.GetOrCreate<ElasticsearchIndexMetadata>().AnalyzerName;
-                var queryAnalyzerName = indexProfile.GetOrCreate<ElasticsearchDefaultQueryMetadata>().QueryAnalyzerName;
-                if (queryAnalyzerName != analyzerName)
-                {
-                    // Query Analyzer may be different until the index is rebuilt.
-                    // Since the index is rebuilt, lets make sure we query using the same analyzer.
-                    indexProfile.Alter<ElasticsearchDefaultQueryMetadata>(
-                        setting => setting.QueryAnalyzerName = analyzerName);
-                }
-
-                // Without this, the connection may remain open, causing a concurrent access exception when we query
-                // anything from the database using the same underlying session.
-                await indexProfileStore.UpdateAsync(indexProfile);
-            });
-    }
-
-    public static async Task RebuildAsync(
+    public static async Task ResetAsync(
         IIndexProfileManager indexProfileManager,
         IIndexProfileStore indexProfileStore,
         ElasticsearchIndexManager elasticsearchIndexManager)
@@ -87,11 +57,10 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
         await indexProfiles
             .AwaitEachAsync(async indexProfile =>
             {
-                // This is the same thing you see in the ~/Admin/indexing/rebuild/{id} action, just batched for all
+                // This is the same thing you see in the ~/Admin/indexing/reset/{id} action, just batched for all
                 // Elasticsearch indexes.
                 await indexProfileManager.ResetAsync(indexProfile);
                 await indexProfileManager.UpdateAsync(indexProfile);
-                await elasticsearchIndexManager.RebuildAsync(indexProfile);
                 await indexProfileManager.SynchronizeAsync(indexProfile);
             });
     }
