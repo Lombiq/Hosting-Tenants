@@ -30,7 +30,7 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(ShouldExecute(context.LatestExecution));
+        Task.FromResult(false);
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
         ResetAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
