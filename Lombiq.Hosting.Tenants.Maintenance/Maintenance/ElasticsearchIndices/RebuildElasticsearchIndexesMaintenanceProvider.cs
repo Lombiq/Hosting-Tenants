@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
-public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
+public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly ElasticsearchIndexManager _elasticsearchIndexManager;
     private readonly IIndexProfileManager _indexProfileManager;
     private readonly IIndexProfileStore _indexProfileStore;
     private readonly IOptions<ElasticsearchIndicesMaintenanceOptions> _options;
 
-    public RebuildElasticsearchIndicesMaintenanceProvider(
+    public RebuildElasticsearchIndexesMaintenanceProvider(
         ElasticsearchIndexManager elasticsearchIndexManager,
         IIndexProfileManager indexProfileManager,
         IIndexProfileStore indexProfileStore,
@@ -31,10 +31,8 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
         _options = options;
     }
 
-    // We use IsFailedOrOutdated, which triggers on every new build, to work around problematic backend changes in OC v3
-    // that make it necessary to fully rebuild after deployment.
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_options.Value.RebuildMaintenanceIsEnabled && context.IsFailedOrOutdated());
+        Task.FromResult(_options.Value.RebuildMaintenanceIsEnabled && !context.WasLatestExecutionSuccessful());
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
         RebuildAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
@@ -77,11 +75,8 @@ public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProvide
         await indexProfiles
             .AwaitEachAsync(async indexProfile =>
             {
-                // This is the same thing you see in the "~/Admin/indexing/rebuild/{id}" action. It's just batched for
-                // all Elasticsearch indexes. Note that even after SynchronizeAsync below, the actual reindexing process
-                // continues in the Elasticsearch server in the background. When triggering rebuild via the admin UI,
-                // this is also communicated with the success message: "An index has been rebuilt successfully. The
-                // synchronizing process was triggered in the background."
+                // This is the same thing you see in the ~/Admin/indexing/rebuild/{id} action, just batched for all
+                // Elasticsearch indexes.
                 await indexProfileManager.ResetAsync(indexProfile);
                 await indexProfileManager.UpdateAsync(indexProfile);
                 await elasticsearchIndexManager.RebuildAsync(indexProfile);
