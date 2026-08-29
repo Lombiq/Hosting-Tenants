@@ -6,11 +6,13 @@ using OrchardCore.Elasticsearch.Core.Models;
 using OrchardCore.Elasticsearch.Core.Services;
 using OrchardCore.Entities;
 using OrchardCore.Indexing;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ElasticsearchIndices;
 
+[Obsolete($"This provider is not used in any code and has been replaced with {nameof(RebuildElasticsearchIndexesMaintenanceProvider)}.")]
 public class RebuildElasticsearchIndicesMaintenanceProvider : MaintenanceProviderBase
 {
     private readonly ElasticsearchIndexManager _elasticsearchIndexManager;
