@@ -1,3 +1,4 @@
+using Lombiq.Hosting.BuildVersionDisplay.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
@@ -32,10 +33,21 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(_options.Value.RebuildMaintenanceIsEnabled && !context.WasLatestExecutionSuccessful());
+        Task.FromResult(
+            _options.Value.RebuildMaintenanceIsEnabled &&
+            (!context.WasLatestExecutionSuccessful() || ShouldExecute(context.LatestExecution)));
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
         RebuildAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
+
+    private static bool ShouldExecute(MaintenanceTaskExecutionData contextLatestExecution)
+    {
+        var previousOrchardVersion = new Version(contextLatestExecution?.OrchardVersion ?? "0.0.0.0");
+        var currentOrchardVersion = new Version(new BuildVersionModel().OrchardVersion);
+
+        // It is always necessary to rebuild the indexes when upgrading to OC 3.0.0 or newer.
+        return previousOrchardVersion.Major <= 2 && currentOrchardVersion.Major >= 3;
+    }
 
     [Obsolete($"Use {nameof(RebuildAsync)} instead.")]
     public static async Task MigrateAsync(
