@@ -57,8 +57,11 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
         await indexProfiles
             .AwaitEachAsync(async indexProfile =>
             {
-                // This is the same thing you see in the ~/Admin/indexing/reset/{id} action, just batched for all
-                // Elasticsearch indexes.
+                // This is the same thing you see in the ~/Admin/indexing/reset/{id} action. It's just batched for all
+                // Elasticsearch indexes. Note that even after SynchronizeAsync below, the actual reindexing process
+                // continues in the Elasticsearch server in the background. When triggering rebuild via the admin UI,
+                // this is also communicated with the success message: "An index has been rebuilt successfully. The
+                // synchronizing process was triggered in the background."
                 await indexProfileManager.ResetAsync(indexProfile);
                 await indexProfileManager.UpdateAsync(indexProfile);
                 await indexProfileManager.SynchronizeAsync(indexProfile);
