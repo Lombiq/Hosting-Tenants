@@ -30,8 +30,8 @@
         <tr>
             <td>@item.Id</td>
             <td>@item.MaintenanceId</td>
-            <td>@localTimeStart.ToString(CultureInfo.CurrentUICulture)</td>
-            <td>@localTimeEnd?.ToString(CultureInfo.CurrentUICulture)</td>
+            <td>@localTimeStart.ToString("yyyy-MM-dd HH\\:mm\\:ss.fffffff", CultureInfo.CurrentUICulture)</td>
+            <td>@localTimeEnd?.ToString("yyyy-MM-dd HH\\:mm\\:ss.fffffff", CultureInfo.CurrentUICulture)</td>
             <td>@item.IsSuccess</td>
             <td>@item.Error</td>
             <td>@item.BuildVersion</td>
