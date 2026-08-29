@@ -64,6 +64,8 @@ public class MaintenanceManager : IMaintenanceManager
             };
 
             await ExecuteMaintenanceTaskIfNeededAsync(provider, context, currentExecution);
+
+            currentExecution.ExecutionEndUtc = _clock.UtcNow;
         }
     }
 
