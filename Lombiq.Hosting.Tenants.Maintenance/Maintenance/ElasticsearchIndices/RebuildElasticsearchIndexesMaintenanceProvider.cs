@@ -1,5 +1,4 @@
 using Lombiq.Hosting.BuildVersionDisplay.Models;
-using Lombiq.Hosting.Tenants.Maintenance.Extensions;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.Options;
@@ -31,7 +30,7 @@ public class RebuildElasticsearchIndexesMaintenanceProvider : MaintenanceProvide
     }
 
     public override Task<bool> ShouldExecuteAsync(MaintenanceTaskExecutionContext context) =>
-        Task.FromResult(context.IsFailedOrOutdated() || ShouldExecute(context.LatestExecution));
+        Task.FromResult(ShouldExecute(context.LatestExecution));
 
     public override Task ExecuteAsync(MaintenanceTaskExecutionContext context) =>
         ResetAsync(_indexProfileManager, _indexProfileStore, _elasticsearchIndexManager);
