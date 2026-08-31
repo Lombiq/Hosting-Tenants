@@ -22,5 +22,7 @@ public sealed class Startup : StartupBase
             "Lombiq_Hosting_Tenants_Maintenance:ChangeUserSensitiveContent");
 
         services.AddScoped<IMaintenanceProvider, ChangeUserSensitiveContentMaintenanceProvider>();
+        services.AddSingleton<IChangeUserSensitiveContentQueue, ChangeUserSensitiveContentQueue>();
+        services.AddHostedService<BackgroundChangeUserSensitiveContentService>();
     }
 }
