@@ -17,13 +17,13 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
     private readonly IOptions<ChangeUserSensitiveContentMaintenanceOptions> _options;
     private readonly ISession _session;
     private readonly ShellSettings _shellSettings;
-    private readonly ChangeUserSensitiveContentQueue _changeUserSensitiveContentQueue;
+    private readonly IChangeUserSensitiveContentQueue _changeUserSensitiveContentQueue;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
         ISession session,
         ShellSettings shellSettings,
-        ChangeUserSensitiveContentQueue changeUserSensitiveContentQueue)
+        IChangeUserSensitiveContentQueue changeUserSensitiveContentQueue)
     {
         _options = options;
         _session = session;
