@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Users.Models;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,13 +9,14 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveCont
 
 public class ChangeUserSensitiveContentQueue : IChangeUserSensitiveContentQueue
 {
-    private readonly ISession _session;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ConcurrentQueue<long> _userIds = new();
 
     // Multiple batch sizes were tried and 15 seems to grant the best performance.
     public int BatchSize => 15;
 
-    public ChangeUserSensitiveContentQueue(ISession session) => _session = session;
+    public ChangeUserSensitiveContentQueue(IServiceScopeFactory serviceScopeFactory) =>
+        _serviceScopeFactory = serviceScopeFactory;
 
     public void Enqueue(IEnumerable<User> users)
     {
@@ -38,7 +40,8 @@ public class ChangeUserSensitiveContentQueue : IChangeUserSensitiveContentQueue
 
     private async Task<ICollection<User>> DequeueInnerAsync(List<long> userIds)
     {
-        var users = await _session.GetAsync<User>([.. userIds]);
+        using var scope = _serviceScopeFactory.CreateScope();
+        var users = await scope.ServiceProvider.GetRequiredService<ISession>().GetAsync<User>([.. userIds]);
         return users.AsList();
     }
 }

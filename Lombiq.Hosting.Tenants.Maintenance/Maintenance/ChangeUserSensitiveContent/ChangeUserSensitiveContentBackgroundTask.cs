@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OrchardCore.BackgroundTasks;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
@@ -15,35 +16,44 @@ using static Lombiq.HelpfulLibraries.OrchardCore.Users.PasswordHelper;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 
-public sealed class BackgroundChangeUserSensitiveContentService : BackgroundService
+[BackgroundTask(
+    Schedule = "*/10 * * * *",
+    Description = "Check on the .")]
+public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
 {
+    private readonly IChangeUserSensitiveContentQueue _queue;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public BackgroundChangeUserSensitiveContentService(IServiceScopeFactory serviceScopeFactory) =>
-        _serviceScopeFactory = serviceScopeFactory;
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public ChangeUserSensitiveContentBackgroundTask(
+        IChangeUserSensitiveContentQueue queue,
+        IServiceScopeFactory serviceScopeFactory)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        _queue = queue;
+        _serviceScopeFactory = serviceScopeFactory;
+    }
+
+    public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
+    {
+        if (await _queue.DequeueAsync() is not { Count: > 0 } firstBatch)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
+            return;
+        }
 
-            var queue = scope.ServiceProvider.GetRequiredService<IChangeUserSensitiveContentQueue>();
-            var session = scope.ServiceProvider.GetRequiredService<ISession>();
-            var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<IUser>>();
+        using var scope = _serviceScopeFactory.CreateScope();
 
-            var randomNameGenerator = new PersonNameGenerator();
+        var session = scope.ServiceProvider.GetRequiredService<ISession>();
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<IUser>>();
 
-            // We don't want to login with these accounts, so we are generating the same password hash for each user, to
-            // make the process faster.
-            var passwordHash = passwordHasher.HashPassword(new User(), GenerateRandomPassword(32));
+        var randomNameGenerator = new PersonNameGenerator();
 
-            while (await queue.DequeueAsync() is { Count: > 0 } batch)
-            {
-                await ExecuteAsync(session, batch, randomNameGenerator, passwordHash, stoppingToken);
-            }
+        // We don't want to login with these accounts, so we are generating the same password hash for each user, to
+        // make the process faster.
+        var passwordHash = passwordHasher.HashPassword(new User(), GenerateRandomPassword(32));
 
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+        await ExecuteAsync(session, firstBatch, randomNameGenerator, passwordHash, cancellationToken);
+        while (await _queue.DequeueAsync() is { Count: > 0 } batch)
+        {
+            await ExecuteAsync(session, batch, randomNameGenerator, passwordHash, cancellationToken);
         }
     }
 
@@ -52,7 +62,7 @@ public sealed class BackgroundChangeUserSensitiveContentService : BackgroundServ
         ICollection<User> batch,
         PersonNameGenerator randomNameGenerator,
         string passwordHash,
-        CancellationToken stoppingToken)
+        CancellationToken cancellationToken)
     {
         foreach (var user in batch)
         {
@@ -69,10 +79,10 @@ public sealed class BackgroundChangeUserSensitiveContentService : BackgroundServ
 
             user.PasswordHash = passwordHash;
 
-            await session.SaveAsync(user, cancellationToken: stoppingToken);
+            await session.SaveAsync(user, cancellationToken: cancellationToken);
         }
 
-        await session.SaveChangesAsync(stoppingToken);
+        await session.SaveChangesAsync(cancellationToken);
     }
 
     private static string GetFormattedFullName(string firstName, string lastName) =>
