@@ -17,6 +17,7 @@
         <th scope="col">@T["Error"]</th>
         <th scope="col">@T["Build Version"]</th>
         <th scope="col">@T["Orchard Core Version"]</th>
+        <th scope="col">@T["Actions"]</th>
     </tr>
     </thead>
     <tbody>
@@ -36,6 +37,13 @@
             <td>@item.Error</td>
             <td>@item.BuildVersion</td>
             <td>@item.OrchardVersion</td>
+            <td>
+                <a class="btn btn-sm btn-primary start"
+                   asp-action="Start"
+                   asp-route-id="@item.MaintenanceId">
+                    @T["Start Task"]
+                </a>
+            </td>
         </tr>
     }
     </tbody>

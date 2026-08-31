@@ -1,4 +1,5 @@
-using Lombiq.Hosting.BuildVersionDisplay.Models;
+#nullable enable
+
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
@@ -38,32 +39,25 @@ public class MaintenanceManager : IMaintenanceManager
         _shellSettings = shellSettings;
     }
 
-    public Task<MaintenanceTaskExecutionData> GetLatestExecutionByMaintenanceIdAsync(string maintenanceId) =>
-        _session.Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
+    public Task<MaintenanceTaskExecutionData?> GetLatestExecutionByMaintenanceIdAsync(string maintenanceId) =>
+        _session
+            .Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
             .Where(execution => execution.MaintenanceId == maintenanceId)
             .OrderByDescending(execution => execution.ExecutionTimeUtc)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()!;
 
     public async Task ExecuteMaintenanceTasksAsync()
     {
         var orderedProviders = _maintenanceProviders.OrderBy(provider => provider.Order);
         foreach (var provider in orderedProviders)
         {
-            var currentVersionModel = new BuildVersionModel();
-            var currentExecution = new MaintenanceTaskExecutionData
-            {
-                MaintenanceId = provider.Id,
-                ExecutionTimeUtc = _clock.UtcNow,
-                BuildVersion = currentVersionModel.BuildVersion,
-                OrchardVersion = currentVersionModel.OrchardVersion,
-            };
             var context = new MaintenanceTaskExecutionContext
             {
                 LatestExecution = await GetLatestExecutionByMaintenanceIdAsync(provider.Id),
-                CurrentExecution = currentExecution,
+                CurrentExecution = MaintenanceTaskExecutionData.FromProvider(provider, _clock.UtcNow),
             };
 
-            await ExecuteMaintenanceTaskIfNeededAsync(provider, context, currentExecution);
+            await ExecuteMaintenanceTaskIfNeededAsync(provider, context);
         }
     }
 
@@ -80,18 +74,22 @@ public class MaintenanceManager : IMaintenanceManager
         }
     }
 
-    private async Task ExecuteMaintenanceTaskIfNeededAsync(
-        IMaintenanceProvider provider,
+    public IMaintenanceProvider? GetProviderById(string maintenanceId) =>
+        _maintenanceProviders.FirstOrDefault(provider => provider.Id == maintenanceId);
+
+    public async Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(IMaintenanceProvider provider,
         MaintenanceTaskExecutionContext context,
-        MaintenanceTaskExecutionData execution)
+        bool forceExecute = false)
     {
         _logger.LogDebug("Executing maintenance task {MaintenanceId}, if needed.", provider.Id);
 
-        if (!await provider.ShouldExecuteAsync(context))
+        if (!forceExecute && !await provider.ShouldExecuteAsync(context))
         {
             _logger.LogDebug("Maintenance task {MaintenanceId} is not needed.", provider.Id);
-            return;
+            return null;
         }
+
+        var execution = context.CurrentExecution;
 
         try
         {
@@ -127,5 +125,6 @@ public class MaintenanceManager : IMaintenanceManager
         }
 
         if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
+        return execution;
     }
 }
