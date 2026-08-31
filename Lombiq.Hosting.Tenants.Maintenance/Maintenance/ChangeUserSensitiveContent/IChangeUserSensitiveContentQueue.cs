@@ -16,6 +16,11 @@ public interface IChangeUserSensitiveContentQueue
     int BatchSize { get; }
 
     /// <summary>
+    /// Gets the number of users in the queue.
+    /// </summary>
+    int Count { get; }
+
+    /// <summary>
     /// Adds the IDs from the provided <paramref name="users"/> to the queue.
     /// </summary>
     void Enqueue(IEnumerable<User> users);

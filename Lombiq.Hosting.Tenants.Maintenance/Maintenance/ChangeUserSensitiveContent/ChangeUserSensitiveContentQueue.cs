@@ -15,6 +15,8 @@ public class ChangeUserSensitiveContentQueue : IChangeUserSensitiveContentQueue
     // Multiple batch sizes were tried and 15 seems to grant the best performance.
     public int BatchSize => 15;
 
+    public int Count => _userIds.Count;
+
     public ChangeUserSensitiveContentQueue(IServiceScopeFactory serviceScopeFactory) =>
         _serviceScopeFactory = serviceScopeFactory;
 

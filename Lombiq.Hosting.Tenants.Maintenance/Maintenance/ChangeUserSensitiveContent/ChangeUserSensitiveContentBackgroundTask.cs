@@ -16,7 +16,7 @@ using static Lombiq.HelpfulLibraries.OrchardCore.Users.PasswordHelper;
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 
 [BackgroundTask(
-    Schedule = "*/10 * * * *",
+    Schedule = "* * * * *",
     Description = "Check on the .")]
 public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
 {

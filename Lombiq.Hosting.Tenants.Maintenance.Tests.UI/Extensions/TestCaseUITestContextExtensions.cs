@@ -117,13 +117,24 @@ public static class TestCaseUITestContextExtensions
 
         await context.Application.UsingScopeServiceProviderAsync(async serviceProvider =>
         {
+            // Since the processing is not blocking the main thread, we have to wait until the queue is emptied in the
+            // background.
+            var queue = serviceProvider.GetRequiredService<IChangeUserSensitiveContentQueue>();
+            var waiting = true;
+            for (var i = 0; waiting && i < 120; i++)
+            {
+                waiting = queue.Count > 0;
+                await Task.Delay(1000, context.Configuration.TestCancellationToken);
+            }
+
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
             var testUser = (User)await userManager.FindByNameAsync(TestUser.UserName);
-            testUser.UserName.ShouldBe(TestUser.UserName);
+            testUser!.UserName.ShouldBe(TestUser.UserName);
             testUser.Email.ShouldBe(TestUser.Email);
 
-            (await userManager.FindByNameAsync(DefaultUser.UserName)).ShouldBeNull();
+            var foundUser = await userManager.FindByNameAsync(DefaultUser.UserName);
+            foundUser.ShouldBeNull();
         });
     }
 
