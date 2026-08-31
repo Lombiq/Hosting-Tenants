@@ -77,7 +77,8 @@ public class MaintenanceManager : IMaintenanceManager
     public IMaintenanceProvider? GetProviderById(string maintenanceId) =>
         _maintenanceProviders.FirstOrDefault(provider => provider.Id == maintenanceId);
 
-    public async Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(IMaintenanceProvider provider,
+    public async Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(
+        IMaintenanceProvider provider,
         MaintenanceTaskExecutionContext context,
         bool forceExecute = false)
     {

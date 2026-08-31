@@ -38,7 +38,8 @@ public interface IMaintenanceManager
     /// name="forceExecute"/> is <see langword="true"/> or if <see cref="IMaintenanceProvider.ShouldExecuteAsync"/>
     /// evaluates to <see langword="true"/>.
     /// </summary>
-    Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(IMaintenanceProvider provider,
+    Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(
+        IMaintenanceProvider provider,
         MaintenanceTaskExecutionContext context,
         bool forceExecute = false);
 }
