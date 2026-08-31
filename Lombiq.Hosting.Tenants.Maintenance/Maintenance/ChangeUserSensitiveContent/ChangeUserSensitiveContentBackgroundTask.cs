@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
