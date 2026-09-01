@@ -17,7 +17,7 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveCont
 
 [BackgroundTask(
     Schedule = "* * * * *",
-    Description = "Check on the .")]
+    Description = $"Check on the {nameof(IChangeUserSensitiveContentQueue)} to see if there are users to change.")]
 public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
 {
     private readonly IChangeUserSensitiveContentQueue _queue;
