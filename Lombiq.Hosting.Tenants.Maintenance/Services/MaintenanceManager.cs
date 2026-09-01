@@ -95,7 +95,6 @@ public class MaintenanceManager : IMaintenanceManager
         try
         {
             await provider.ExecuteAsync(context);
-            execution.IsSuccess = string.IsNullOrEmpty(execution.Error);
             if (execution.IsSuccess)
             {
                 _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
@@ -116,7 +115,6 @@ public class MaintenanceManager : IMaintenanceManager
         }
         catch (Exception exception) when (!exception.IsFatal())
         {
-            execution.IsSuccess = false;
             execution.Error = exception.ToString();
 
             _logger.LogError(

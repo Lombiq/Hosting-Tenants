@@ -11,7 +11,21 @@ public class MaintenanceTaskExecutionData : Entity
     public string MaintenanceId { get; set; }
     public DateTime ExecutionTimeUtc { get; set; }
     public DateTime? ExecutionEndUtc { get; set; }
-    public bool IsSuccess { get; set; }
+
+    public bool IsSuccess
+    {
+        get => !string.IsNullOrEmpty(Error);
+
+        [Obsolete($"In future versions this setter will be removed, making {nameof(IsSuccess)} a get-only property.")]
+        set
+        {
+            if (value != string.IsNullOrEmpty(Error))
+            {
+                Error = value ? "Unknown Error" : null;
+            }
+        }
+    }
+
     public string Error { get; set; }
     public string BuildVersion { get; set; }
     public string OrchardVersion { get; set; }
