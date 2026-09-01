@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
@@ -39,28 +40,37 @@ public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
         }
 
         using var scope = _serviceScopeFactory.CreateScope();
+        var provider = scope.ServiceProvider;
 
-        var session = scope.ServiceProvider.GetRequiredService<ISession>();
-        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<IUser>>();
+        var session = provider.GetRequiredService<ISession>();
+        var passwordHasher = provider.GetRequiredService<IPasswordHasher<IUser>>();
+        var options = provider.GetRequiredService<IOptions<ChangeUserSensitiveContentMaintenanceOptions>>();
 
         var randomNameGenerator = new PersonNameGenerator();
+        var passwordHash = GeneratePasswordHash(passwordHasher);
+        var domainName = options.Value.TargetEmailDomainName;
 
-        // We don't want to login with these accounts, so we are generating the same password hash for each user, to
-        // make the process faster.
-        var passwordHash = passwordHasher.HashPassword(new User(), GenerateRandomPassword(32));
 
-        await ExecuteAsync(session, firstBatch, randomNameGenerator, passwordHash, cancellationToken);
+        await ExecuteAsync(session, firstBatch, randomNameGenerator, passwordHash, domainName, cancellationToken);
         while (await _queue.DequeueAsync() is { Count: > 0 } batch)
         {
-            await ExecuteAsync(session, batch, randomNameGenerator, passwordHash, cancellationToken);
+            await ExecuteAsync(session, batch, randomNameGenerator, passwordHash, domainName, cancellationToken);
         }
     }
+
+    /// <summary>
+    /// Generates a useless but valid password hash. We don't want to log in with these accounts, so we can generate the
+    /// same password hash for each user to make the process faster.
+    /// </summary>
+    private static string GeneratePasswordHash(IPasswordHasher<IUser> passwordHasher) =>
+        passwordHasher.HashPassword(new User(), GenerateRandomPassword(32));
 
     private static async Task ExecuteAsync(
         ISession session,
         ICollection<User> batch,
         PersonNameGenerator randomNameGenerator,
         string passwordHash,
+        string domainName,
         CancellationToken cancellationToken)
     {
         foreach (var user in batch)
@@ -68,8 +78,8 @@ public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
             var firstName = randomNameGenerator.GenerateRandomFirstName();
             var lastName = randomNameGenerator.GenerateRandomLastName();
 
-            var formattedFullName = GetFormattedFullName(firstName, lastName);
-            var formattedEmail = GetFormattedEmail(firstName, lastName);
+            var formattedFullName = $"{firstName} {lastName}";
+            var formattedEmail = $"{firstName}{lastName}@{domainName}";
 
             user.UserName = formattedFullName;
             user.NormalizedUserName = formattedFullName.ToUpperInvariant();
@@ -83,10 +93,4 @@ public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
 
         await session.SaveChangesAsync(cancellationToken);
     }
-
-    private static string GetFormattedFullName(string firstName, string lastName) =>
-        $"{firstName} {lastName}";
-
-    private static string GetFormattedEmail(string firstName, string lastName) =>
-        $"{firstName}{lastName}@test.com";
 }

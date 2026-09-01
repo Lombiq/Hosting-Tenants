@@ -146,14 +146,15 @@ The following configuration should be used to allow the maintenance to run:
       "ChangeUserSensitiveContent": {
         "IsEnabled": true,
         "TenantNames": "Default, Tenant1, Tenant2",
-        "EmailExcludePattern": ".+@(lombiq.com|example.com|foo.com)$"
+        "EmailExcludePattern": ".+@(lombiq.com|example.com|foo.com)$",
+        "TargetEmailDomainName": "foo.com"
       }
     }
   }
 }
 ```
 
-Any user accounts with an e-mail matching the `EmailExcludePattern` regex will not be depersonalized.
+Any user accounts with an e-mail matching the `EmailExcludePattern` regex will not be depersonalized. The rest will be altered to use the format `{FirstName}{LastName}@{TargetEmailDomainName}`. If you change either `TargetEmailDomainName` or `TargetEmailDomainName`, make sure that emails ending with `TargetEmailDomainName` are excluded by the `EmailExcludePattern`.
 
 ### `Lombiq.Hosting.Tenants.Maintenance.DeleteElasticsearchIndices`
 
