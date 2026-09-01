@@ -7,6 +7,8 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Models;
 
 public class MaintenanceTaskExecutionData : Entity
 {
+    private const string WarningPrefix = "WARN:";
+
     public int Id { get; set; }
     public string MaintenanceId { get; set; }
     public DateTime ExecutionTimeUtc { get; set; }
@@ -26,9 +28,13 @@ public class MaintenanceTaskExecutionData : Entity
         }
     }
 
+    public bool IsWarning => Error?.StartsWithOrdinal(WarningPrefix) == true;
     public string Error { get; set; }
     public string BuildVersion { get; set; }
     public string OrchardVersion { get; set; }
+
+    public void SetWarning(string text) =>
+        Error = $"{WarningPrefix} {text}";
 
     public static MaintenanceTaskExecutionData FromProvider(
         IMaintenanceProvider provider,

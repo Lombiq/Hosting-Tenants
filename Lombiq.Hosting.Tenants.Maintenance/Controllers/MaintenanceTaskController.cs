@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Localization;
 using OrchardCore.Admin;
 using OrchardCore.DisplayManagement.Notify;
 using OrchardCore.Modules;
+using System;
 using System.Threading.Tasks;
 using YesSql;
 
@@ -81,7 +82,8 @@ public class MaintenanceTaskController : Controller
                     H["The \"{0}\" maintenance task ran to completion in {1:0.##} seconds.", id, seconds]);
                 break;
             default:
-                await _notifier.ErrorAsync(
+                await _notifier.AddAsync(
+                    result.IsWarning ? NotifyType.Warning : NotifyType.Error,
                     H["The \"{0}\" maintenance task failed with the following error: {1}", id, result.Error]);
                 break;
         }

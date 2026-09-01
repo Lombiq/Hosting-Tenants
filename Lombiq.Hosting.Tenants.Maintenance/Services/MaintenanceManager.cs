@@ -102,9 +102,12 @@ public class MaintenanceManager : IMaintenanceManager
             }
             else
             {
-                _logger.LogError(
-                    "Maintenance task {MaintenanceId} executed with error: {Error}",
+                var isWarning = execution.IsWarning;
+                _logger.Log(
+                    isWarning ? LogLevel.Warning : LogLevel.Error,
+                    "Maintenance task {MaintenanceId} executed with {Type}: {Error}",
                     provider.Id,
+                    isWarning ? "warning" : "error",
                     execution.Error);
             }
 
