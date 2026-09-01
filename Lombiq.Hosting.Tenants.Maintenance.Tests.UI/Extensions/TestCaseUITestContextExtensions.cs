@@ -4,6 +4,7 @@ using Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
+using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.Identity;
@@ -120,12 +121,10 @@ public static class TestCaseUITestContextExtensions
             // Since the processing is not blocking the main thread, we have to wait until the queue is emptied in the
             // background.
             var queue = serviceProvider.GetRequiredService<IChangeUserSensitiveContentQueue>();
-            var waiting = true;
-            for (var i = 0; waiting && i < 120; i++)
-            {
-                waiting = queue.Count > 0;
-                await Task.Delay(1000, context.Configuration.TestCancellationToken);
-            }
+            ReliabilityHelper.DoWithRetriesOrFail(
+                () => queue.Count == 0,
+                TimeSpan.FromMinutes(2),
+                cancellationToken: context.Configuration.TestCancellationToken);
 
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
