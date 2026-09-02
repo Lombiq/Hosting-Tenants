@@ -60,7 +60,6 @@ public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
                 collection: DocumentCollections.Maintenance,
                 cancellationToken: cancellationToken);
         }
-
     }
 
     /// <summary>
