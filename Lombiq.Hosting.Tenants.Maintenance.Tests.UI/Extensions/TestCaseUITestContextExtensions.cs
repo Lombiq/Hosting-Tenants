@@ -126,6 +126,12 @@ public static class TestCaseUITestContextExtensions
                 TimeSpan.FromMinutes(2),
                 cancellationToken: context.Configuration.TestCancellationToken);
 
+            var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
+            var latestMaintenanceExecution = await maintenanceManager.GetLatestExecutionByMaintenanceIdAsync(
+                ChangeUserSensitiveContentMaintenanceProvider.ProviderId);
+            latestMaintenanceExecution.ShouldNotBeNull();
+            latestMaintenanceExecution.IsSuccess.ShouldBeTrue(latestMaintenanceExecution.Error);
+
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
             var testUser = (User)await userManager.FindByNameAsync(TestUser.UserName);

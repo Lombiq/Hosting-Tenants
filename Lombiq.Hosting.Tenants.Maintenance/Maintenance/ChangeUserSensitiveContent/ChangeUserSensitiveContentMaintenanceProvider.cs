@@ -14,10 +14,14 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveCont
 
 public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProviderBase
 {
+    public const string ProviderId = "ChangeUserSensitiveContent";
+
     private readonly IOptions<ChangeUserSensitiveContentMaintenanceOptions> _options;
     private readonly ISession _session;
     private readonly ShellSettings _shellSettings;
     private readonly IChangeUserSensitiveContentQueue _changeUserSensitiveContentQueue;
+
+    public override string Id => ProviderId;
 
     public ChangeUserSensitiveContentMaintenanceProvider(
         IOptions<ChangeUserSensitiveContentMaintenanceOptions> options,
@@ -45,6 +49,11 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
             TimeSpan.FromMilliseconds(400));
 
         var users = await _session.Query<User>().ListAsync();
-        _changeUserSensitiveContentQueue.Enqueue(users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())));
+        var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())).ToList();
+        _changeUserSensitiveContentQueue.Enqueue(filteredUsers);
+
+        context.CurrentExecution.SetWarning(
+            $"Added {filteredUsers.Count} users to the queue. If you see this warning, the process is either pending " +
+            "or it has failed.");
     }
 }

@@ -1,9 +1,12 @@
 #nullable enable
 
+using Lombiq.Hosting.Tenants.Maintenance.Constants;
+using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OrchardCore.BackgroundTasks;
+using OrchardCore.Modules;
 using OrchardCore.Users;
 using OrchardCore.Users.Models;
 using RandomNameGeneratorLibrary;
@@ -13,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YesSql;
 using static Lombiq.HelpfulLibraries.OrchardCore.Users.PasswordHelper;
+using static Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent.ChangeUserSensitiveContentMaintenanceProvider;
 
 namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 
@@ -22,40 +26,41 @@ namespace Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveCont
 public sealed class ChangeUserSensitiveContentBackgroundTask : IBackgroundTask
 {
     private readonly IChangeUserSensitiveContentQueue _queue;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ChangeUserSensitiveContentBackgroundTask(
-        IChangeUserSensitiveContentQueue queue,
-        IServiceScopeFactory serviceScopeFactory)
+    public ChangeUserSensitiveContentBackgroundTask(IChangeUserSensitiveContentQueue queue) => _queue = queue;
+
+    public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
+        _queue.Count == 0 ? Task.CompletedTask : DoWorkInnerAsync(serviceProvider, cancellationToken);
+
+    public async Task DoWorkInnerAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
     {
-        _queue = queue;
-        _serviceScopeFactory = serviceScopeFactory;
-    }
+        // Acquire services.
+        var clock = serviceProvider.GetRequiredService<IClock>();
+        var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
+        var options = serviceProvider.GetRequiredService<IOptions<ChangeUserSensitiveContentMaintenanceOptions>>();
+        var passwordHasher = serviceProvider.GetRequiredService<IPasswordHasher<IUser>>();
+        var session = serviceProvider.GetRequiredService<ISession>();
 
-    public async Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
-    {
-        if (await _queue.DequeueAsync() is not { Count: > 0 } firstBatch)
-        {
-            return;
-        }
-
-        using var scope = _serviceScopeFactory.CreateScope();
-        var provider = scope.ServiceProvider;
-
-        var session = provider.GetRequiredService<ISession>();
-        var passwordHasher = provider.GetRequiredService<IPasswordHasher<IUser>>();
-        var options = provider.GetRequiredService<IOptions<ChangeUserSensitiveContentMaintenanceOptions>>();
-
+        // Process users in batches.
         var randomNameGenerator = new PersonNameGenerator();
         var passwordHash = GeneratePasswordHash(passwordHasher);
         var domainName = options.Value.TargetEmailDomainName;
-
-
-        await ExecuteAsync(session, firstBatch, randomNameGenerator, passwordHash, domainName, cancellationToken);
         while (await _queue.DequeueAsync() is { Count: > 0 } batch)
         {
             await ExecuteAsync(session, batch, randomNameGenerator, passwordHash, domainName, cancellationToken);
         }
+
+        // If we reached this point, we can remove the warning from the latest execution.
+        if (await maintenanceManager.GetLatestExecutionByMaintenanceIdAsync(ProviderId) is { } execution)
+        {
+            execution.Error = null;
+            execution.ExecutionEndUtc = clock.UtcNow;
+            await session.SaveAsync(
+                execution,
+                collection: DocumentCollections.Maintenance,
+                cancellationToken: cancellationToken);
+        }
+
     }
 
     /// <summary>

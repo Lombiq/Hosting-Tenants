@@ -16,14 +16,14 @@ public class MaintenanceTaskExecutionData : Entity
 
     public bool IsSuccess
     {
-        get => !string.IsNullOrEmpty(Error);
+        get => string.IsNullOrEmpty(Error);
 
         [Obsolete($"In future versions this setter will be removed, making {nameof(IsSuccess)} a get-only property.")]
         set
         {
-            if (value != string.IsNullOrEmpty(Error))
+            if (value || string.IsNullOrEmpty(Error))
             {
-                Error = value ? "Unknown Error" : null;
+                Error = value ? null : "Unknown Error";
             }
         }
     }
