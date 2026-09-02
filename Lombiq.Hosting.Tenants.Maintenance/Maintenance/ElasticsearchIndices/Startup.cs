@@ -28,7 +28,7 @@ public sealed class DeleteElasticsearchIndicesStartup : StartupBase
             "Lombiq_Hosting_Tenants_Maintenance:ElasticsearchIndicesOptions");
 
         services.AddScoped<IMaintenanceProvider, DeleteElasticsearchIndicesMaintenanceProvider>();
-        services.AddScoped<IMaintenanceProvider, RebuildElasticsearchIndicesMaintenanceProvider>();
+        services.AddScoped<IMaintenanceProvider, RebuildElasticsearchIndexesMaintenanceProvider>();
     }
 }
 

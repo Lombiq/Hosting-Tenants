@@ -15,8 +15,10 @@ public sealed class Migrations : DataMigration
             table => table
                 .Column<string>(nameof(MaintenanceTaskExecutionIndex.MaintenanceId))
                 .Column<DateTime>(nameof(MaintenanceTaskExecutionIndex.ExecutionTimeUtc))
+                .Column<DateTime?>(nameof(MaintenanceTaskExecutionIndex.ExecutionEndUtc))
                 .Column<bool>(nameof(MaintenanceTaskExecutionIndex.IsSuccess))
-                .Column<string>(nameof(MaintenanceTaskExecutionIndex.BuildVersion)),
+                .Column<string>(nameof(MaintenanceTaskExecutionIndex.BuildVersion))
+                .Column<string>(nameof(MaintenanceTaskExecutionIndex.OrchardVersion)),
             collection: DocumentCollections.Maintenance);
 
         await SchemaBuilder.AlterIndexTableAsync<MaintenanceTaskExecutionIndex>(
@@ -26,7 +28,7 @@ public sealed class Migrations : DataMigration
                     nameof(MaintenanceTaskExecutionIndex.MaintenanceId)),
             collection: DocumentCollections.Maintenance);
 
-        return 2;
+        return 3;
     }
 
     public async Task<int> UpdateFrom1Async()
@@ -36,5 +38,18 @@ public sealed class Migrations : DataMigration
             collection: DocumentCollections.Maintenance);
 
         return 2;
+    }
+
+    public async Task<int> UpdateFrom2Async()
+    {
+        await SchemaBuilder.AlterIndexTableAsync<MaintenanceTaskExecutionIndex>(
+            table =>
+            {
+                table.AddColumn<string>(nameof(MaintenanceTaskExecutionIndex.ExecutionEndUtc));
+                table.AddColumn<string>(nameof(MaintenanceTaskExecutionIndex.OrchardVersion));
+            },
+            collection: DocumentCollections.Maintenance);
+
+        return 3;
     }
 }

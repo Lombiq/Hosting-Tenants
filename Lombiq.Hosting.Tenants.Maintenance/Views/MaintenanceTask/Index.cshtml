@@ -11,23 +11,39 @@
     <tr>
         <th scope="col">@T["ID"]</th>
         <th scope="col">@T["Maintenance ID"]</th>
-        <th scope="col">@T["Execution Time"]</th>
+        <th scope="col">@T["Execution Time Start"]</th>
+        <th scope="col">@T["Execution Time End"]</th>
         <th scope="col">@T["Success?"]</th>
         <th scope="col">@T["Error"]</th>
         <th scope="col">@T["Build Version"]</th>
+        <th scope="col">@T["Orchard Core Version"]</th>
+        <th scope="col">@T["Actions"]</th>
     </tr>
     </thead>
     <tbody>
     @foreach (var item in Model.OrderBy(item => item.Id))
     {
-        var localTime = await LocalClock.ConvertToLocalAsync(item.ExecutionTimeUtc);
+        var localTimeStart = await LocalClock.ConvertToLocalAsync(item.ExecutionTimeUtc);
+        var localTimeEnd = item.ExecutionEndUtc.HasValue 
+            ? await LocalClock.ConvertToLocalAsync(item.ExecutionEndUtc.Value)
+            : (DateTimeOffset?)null;
+
         <tr>
             <td>@item.Id</td>
             <td>@item.MaintenanceId</td>
-            <td>@localTime.ToString(CultureInfo.CurrentUICulture)</td>
+            <td>@localTimeStart.ToString("yyyy-MM-dd HH\\:mm\\:ss", CultureInfo.CurrentUICulture)</td>
+            <td>@localTimeEnd?.ToString("yyyy-MM-dd HH\\:mm\\:ss", CultureInfo.CurrentUICulture)</td>
             <td>@item.IsSuccess</td>
             <td>@item.Error</td>
             <td>@item.BuildVersion</td>
+            <td>@item.OrchardVersion</td>
+            <td>
+                <a class="btn btn-sm btn-primary start"
+                   asp-action="Start"
+                   asp-route-id="@item.MaintenanceId">
+                    @T["Start Task"]
+                </a>
+            </td>
         </tr>
     }
     </tbody>

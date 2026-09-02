@@ -4,6 +4,7 @@ using Lombiq.Hosting.Tenants.Maintenance.Maintenance.ChangeUserSensitiveContent;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Lombiq.Tests.UI.Constants;
 using Lombiq.Tests.UI.Extensions;
+using Lombiq.Tests.UI.Helpers;
 using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
 using Microsoft.AspNetCore.Identity;
@@ -117,13 +118,28 @@ public static class TestCaseUITestContextExtensions
 
         await context.Application.UsingScopeServiceProviderAsync(async serviceProvider =>
         {
+            // Since the processing is not blocking the main thread, we have to wait until the queue is emptied in the
+            // background.
+            var queue = serviceProvider.GetRequiredService<IChangeUserSensitiveContentQueue>();
+            ReliabilityHelper.DoWithRetriesOrFail(
+                () => queue.Count == 0,
+                TimeSpan.FromMinutes(2),
+                cancellationToken: context.Configuration.TestCancellationToken);
+
+            var maintenanceManager = serviceProvider.GetRequiredService<IMaintenanceManager>();
+            var latestMaintenanceExecution = await maintenanceManager.GetLatestExecutionByMaintenanceIdAsync(
+                ChangeUserSensitiveContentMaintenanceProvider.ProviderId);
+            latestMaintenanceExecution.ShouldNotBeNull();
+            latestMaintenanceExecution.IsSuccess.ShouldBeTrue(latestMaintenanceExecution.Error);
+
             var userManager = serviceProvider.GetRequiredService<UserManager<IUser>>();
 
             var testUser = (User)await userManager.FindByNameAsync(TestUser.UserName);
-            testUser.UserName.ShouldBe(TestUser.UserName);
+            testUser!.UserName.ShouldBe(TestUser.UserName);
             testUser.Email.ShouldBe(TestUser.Email);
 
-            (await userManager.FindByNameAsync(DefaultUser.UserName)).ShouldBeNull();
+            var foundUser = await userManager.FindByNameAsync(DefaultUser.UserName);
+            foundUser.ShouldBeNull();
         });
     }
 

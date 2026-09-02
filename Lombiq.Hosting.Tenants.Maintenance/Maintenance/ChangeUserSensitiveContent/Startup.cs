@@ -2,6 +2,7 @@ using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Services;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.BackgroundTasks;
 using OrchardCore.Environment.Shell.Configuration;
 using OrchardCore.Modules;
 
@@ -22,5 +23,7 @@ public sealed class Startup : StartupBase
             "Lombiq_Hosting_Tenants_Maintenance:ChangeUserSensitiveContent");
 
         services.AddScoped<IMaintenanceProvider, ChangeUserSensitiveContentMaintenanceProvider>();
+        services.AddSingleton<IChangeUserSensitiveContentQueue, ChangeUserSensitiveContentQueue>();
+        services.AddSingleton<IBackgroundTask, ChangeUserSensitiveContentBackgroundTask>();
     }
 }

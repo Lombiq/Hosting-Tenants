@@ -1,4 +1,5 @@
-using Lombiq.Hosting.BuildVersionDisplay.Models;
+#nullable enable
+
 using Lombiq.Hosting.Tenants.Maintenance.Constants;
 using Lombiq.Hosting.Tenants.Maintenance.Indexes;
 using Lombiq.Hosting.Tenants.Maintenance.Models;
@@ -38,30 +39,25 @@ public class MaintenanceManager : IMaintenanceManager
         _shellSettings = shellSettings;
     }
 
-    public Task<MaintenanceTaskExecutionData> GetLatestExecutionByMaintenanceIdAsync(string maintenanceId) =>
-        _session.Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
+    public Task<MaintenanceTaskExecutionData?> GetLatestExecutionByMaintenanceIdAsync(string maintenanceId) =>
+        _session
+            .Query<MaintenanceTaskExecutionData, MaintenanceTaskExecutionIndex>(collection: DocumentCollections.Maintenance)
             .Where(execution => execution.MaintenanceId == maintenanceId)
             .OrderByDescending(execution => execution.ExecutionTimeUtc)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync()!;
 
     public async Task ExecuteMaintenanceTasksAsync()
     {
         var orderedProviders = _maintenanceProviders.OrderBy(provider => provider.Order);
         foreach (var provider in orderedProviders)
         {
-            var currentExecution = new MaintenanceTaskExecutionData
-            {
-                MaintenanceId = provider.Id,
-                ExecutionTimeUtc = _clock.UtcNow,
-                BuildVersion = new BuildVersionModel().BuildVersion,
-            };
             var context = new MaintenanceTaskExecutionContext
             {
                 LatestExecution = await GetLatestExecutionByMaintenanceIdAsync(provider.Id),
-                CurrentExecution = currentExecution,
+                CurrentExecution = MaintenanceTaskExecutionData.FromProvider(provider, _clock.UtcNow),
             };
 
-            await ExecuteMaintenanceTaskIfNeededAsync(provider, context, currentExecution);
+            await ExecuteMaintenanceTaskIfNeededAsync(provider, context);
         }
     }
 
@@ -78,52 +74,59 @@ public class MaintenanceManager : IMaintenanceManager
         }
     }
 
-    private async Task ExecuteMaintenanceTaskIfNeededAsync(
+    public IMaintenanceProvider? GetProviderById(string maintenanceId) =>
+        _maintenanceProviders.FirstOrDefault(provider => provider.Id == maintenanceId);
+
+    public async Task<MaintenanceTaskExecutionData?> ExecuteMaintenanceTaskIfNeededAsync(
         IMaintenanceProvider provider,
         MaintenanceTaskExecutionContext context,
-        MaintenanceTaskExecutionData execution)
+        bool forceExecute = false)
     {
         _logger.LogDebug("Executing maintenance task {MaintenanceId}, if needed.", provider.Id);
 
-        if (await provider.ShouldExecuteAsync(context))
-        {
-            try
-            {
-                await provider.ExecuteAsync(context);
-                execution.IsSuccess = string.IsNullOrEmpty(execution.Error);
-                if (execution.IsSuccess)
-                {
-                    _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
-                }
-                else
-                {
-                    _logger.LogError(
-                        "Maintenance task {MaintenanceId} executed with error: {Error}",
-                        provider.Id,
-                        execution.Error);
-                }
-
-                // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
-                // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
-                await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
-                await _session.SaveChangesAsync();
-            }
-            catch (Exception exception) when (!exception.IsFatal())
-            {
-                execution.IsSuccess = false;
-                execution.Error = exception.ToString();
-
-                _logger.LogError(
-                    exception,
-                    "Maintenance task {MaintenanceId} failed to execute due to an exception.",
-                    provider.Id);
-            }
-
-            if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
-        }
-        else
+        if (!forceExecute && !await provider.ShouldExecuteAsync(context))
         {
             _logger.LogDebug("Maintenance task {MaintenanceId} is not needed.", provider.Id);
+            return null;
         }
+
+        var execution = context.CurrentExecution;
+
+        try
+        {
+            await provider.ExecuteAsync(context);
+            if (execution.IsSuccess)
+            {
+                _logger.LogDebug("Maintenance task {MaintenanceId} executed successfully.", provider.Id);
+                execution.ExecutionEndUtc = _clock.UtcNow;
+            }
+            else
+            {
+                var isWarning = execution.IsWarning;
+                _logger.Log(
+                    isWarning ? LogLevel.Warning : LogLevel.Error,
+                    "Maintenance task {MaintenanceId} executed with {Type}: {Error}",
+                    provider.Id,
+                    isWarning ? "warning" : "error",
+                    execution.Error);
+            }
+
+            // We must use SaveChangesAsync and not FlushAsync, otherwise the migration will fail after site reset. See
+            // https://github.com/Lombiq/Hosting-Tenants/pull/182 for details.
+            await _session.SaveAsync(execution, collection: DocumentCollections.Maintenance);
+            await _session.SaveChangesAsync();
+        }
+        catch (Exception exception) when (!exception.IsFatal())
+        {
+            execution.Error = exception.ToString();
+
+            _logger.LogError(
+                exception,
+                "Maintenance task {MaintenanceId} failed to execute due to an exception.",
+                provider.Id);
+        }
+
+        if (context.ReloadShellAfterMaintenanceCompletion) await _shellHost.ReloadShellContextAsync(_shellSettings);
+        return execution;
     }
 }
