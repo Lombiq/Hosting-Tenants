@@ -52,8 +52,11 @@ public class ChangeUserSensitiveContentMaintenanceProvider : MaintenanceProvider
         var filteredUsers = users.Where(user => !emailExcludeRegex.IsMatch(user.Email.Trim())).ToList();
         _changeUserSensitiveContentQueue.Enqueue(filteredUsers);
 
-        context.CurrentExecution.SetWarning(
-            $"Added {filteredUsers.Count} users to the queue. If you see this warning, the process is either pending " +
-            "or it has failed.");
+        if (filteredUsers.Count > 0)
+        {
+            context.CurrentExecution.SetWarning(
+                $"Added {filteredUsers.Count} users to the queue. If you see this warning, the process is either " +
+                "pending or it has failed.");
+        }
     }
 }
