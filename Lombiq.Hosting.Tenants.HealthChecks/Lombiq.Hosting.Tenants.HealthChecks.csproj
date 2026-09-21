@@ -18,6 +18,7 @@
   <ItemGroup>
     <PackageReference Include="OrchardCore.Tenants" Version="$(OrchardCoreVersion)" />
     <PackageReference Include="OrchardCore.HealthChecks" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />

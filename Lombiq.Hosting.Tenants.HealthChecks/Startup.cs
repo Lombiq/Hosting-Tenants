@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Lombiq.Hosting.Tenants.Management.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OrchardCore.Modules;
@@ -9,14 +9,6 @@ public sealed class TenantHealthChecksStartup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {
-        services.Configure<HealthCheckOptions>(options => options.ResponseWriter = (context, report) =>
-        {
-            if (report.Status != HealthStatus.Healthy)
-            {
-//                context
-            }
-
-            return options.ResponseWriter(context, report);
-        });
+        services.Decorate<HealthCheckService, ReportingHealthCheckService>();
     }
 }
