@@ -1,5 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using OrchardCore.Environment.Shell;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,12 +13,19 @@ public class ReportingHealthCheckService : HealthCheckService
 {
     private readonly HealthCheckService _healthCheckService;
     private readonly ILogger _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ShellSettings _shellSettings;
+
     public ReportingHealthCheckService(
         HealthCheckService healthCheckService,
-        ILogger<ReportingHealthCheckService> logger)
+        ILogger<ReportingHealthCheckService> logger,
+        IServiceProvider serviceProvider,
+        ShellSettings shellSettings)
     {
         _healthCheckService = healthCheckService;
         _logger = logger;
+        _serviceProvider = serviceProvider;
+        _shellSettings = shellSettings;
     }
 
     public override async Task<HealthReport> CheckHealthAsync(
@@ -24,25 +33,50 @@ public class ReportingHealthCheckService : HealthCheckService
         CancellationToken cancellationToken = default)
     {
         var report = await _healthCheckService.CheckHealthAsync(predicate, cancellationToken);
-        if (report.Status == HealthStatus.Healthy) return report;
 
+        if (report.Status == HealthStatus.Unhealthy)
+        {
+            if (_shellSettings.IsDefaultShell())
+            {
+                LogNotHealthy(_logger, report);
+                await AddToNotHealthyTenantsAsync(_shellSettings.Name, report);
+            }
+            else
+            {
+                await _serviceProvider.WithShellScopeAsync(scope =>
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<ReportingHealthCheckService>>();
+
+                    LogNotHealthy(logger, report);
+                    return AddToNotHealthyTenantsAsync(_shellSettings.Name, report);
+                });
+            }
+        }
+
+        return report;
+    }
+
+    private static void LogNotHealthy(ILogger logger, HealthReport report)
+    {
         string json;
         try
         {
             json = JsonSerializer.Serialize(report);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
             json = JsonSerializer.Serialize(new
             {
-                Failed = "Cannot serialize.",
-                Error = e.GetType().FullName,
-                e.Message,
+                Failed = "Failed to serialize health report.",
+                Error = exception.ToString(),
             });
         }
 
-        _logger.LogError("Tenant is {Status}: {Json}", report.Status, json);
+        logger.LogError("Tenant is {Status}: {Json}", report.Status, json);
+    }
 
-        return report;
+    private static async Task AddToNotHealthyTenantsAsync(string tenantName, HealthReport report)
+    {
+        // TODO save to a site setting.
     }
 }
