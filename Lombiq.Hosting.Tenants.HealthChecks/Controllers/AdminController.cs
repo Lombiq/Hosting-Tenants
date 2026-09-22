@@ -1,5 +1,5 @@
 using Lombiq.Hosting.Tenants.HealthChecks.Models;
-using Lombiq.Hosting.Tenants.Management.Services;
+using Lombiq.Hosting.Tenants.HealthChecks.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;

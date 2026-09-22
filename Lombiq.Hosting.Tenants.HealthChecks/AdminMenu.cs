@@ -1,5 +1,4 @@
 using Lombiq.HelpfulLibraries.OrchardCore.Navigation;
-using Lombiq.Hosting.Tenants.HealthChecks;
 using Lombiq.Hosting.Tenants.HealthChecks.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
