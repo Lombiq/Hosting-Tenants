@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.HealthChecks.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
@@ -5,7 +6,8 @@ using OrchardCore.Environment.Shell;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using JsonSerializer=System.Text.Json.JsonSerializer;
+using YesSql;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Lombiq.Hosting.Tenants.Management.Services;
 
@@ -14,61 +16,43 @@ public class ReportingHealthCheckService : HealthCheckService
     private readonly HealthCheckService _healthCheckService;
     private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ISession _session;
     private readonly ShellSettings _shellSettings;
 
     public ReportingHealthCheckService(
         HealthCheckService healthCheckService,
         ILogger<ReportingHealthCheckService> logger,
         IServiceProvider serviceProvider,
+        ISession session,
         ShellSettings shellSettings)
     {
         _healthCheckService = healthCheckService;
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _session = session;
         _shellSettings = shellSettings;
     }
 
-    public override Task<HealthReport> CheckHealthAsync(
+    public async override Task<HealthReport> CheckHealthAsync(
         Func<HealthCheckRegistration, bool> predicate,
-        CancellationToken cancellationToken = default) =>
-        CheckHealthAsync(predicate, updateHealthy: false, cancellationToken);
-
-    public async Task<HealthReport> CheckHealthAsync(
-        Func<HealthCheckRegistration, bool> predicate,
-        bool updateHealthy,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         var report = await _healthCheckService.CheckHealthAsync(predicate, cancellationToken);
+        var tenantName = _shellSettings.Name;
 
-        if (IsHealthy(report))
+        if (_shellSettings.IsDefaultShell())
         {
-            if (_shellSettings.IsDefaultShell())
-            {
-                LogNotHealthy(_logger, report);
-                await AddToNotHealthyTenantsAsync(_shellSettings.Name, report);
-            }
-            else
-            {
-                await _serviceProvider.WithShellScopeAsync(scope =>
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<ReportingHealthCheckService>>();
-
-                    LogNotHealthy(logger, report);
-                    return AddToNotHealthyTenantsAsync(_shellSettings.Name, report);
-                });
-            }
+            await UpdateTenantHealthAsync(_logger, _session, tenantName, report, cancellationToken);
         }
-        else if (updateHealthy)
+        else
         {
-            if (_shellSettings.IsDefaultShell())
+            await _serviceProvider.WithShellScopeAsync(scope =>
             {
-                await RemoveFromNotHealthyTenantsAsync(_shellSettings.Name, report);
-            }
-            else
-            {
-                await _serviceProvider.WithShellScopeAsync(scope =>
-                    RemoveFromNotHealthyTenantsAsync(_shellSettings.Name, report));
-            }
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<ReportingHealthCheckService>>();
+                var session = scope.ServiceProvider.GetRequiredService<ISession>();
+
+                return UpdateTenantHealthAsync(logger, session, tenantName, report, cancellationToken);
+            });
         }
 
         return report;
@@ -93,16 +77,27 @@ public class ReportingHealthCheckService : HealthCheckService
         logger.LogError("Tenant is {Status}: {Json}", report.Status, json);
     }
 
-    private static async Task AddToNotHealthyTenantsAsync(string tenantName, HealthReport report)
+    private static async Task UpdateTenantHealthAsync(
+        ILogger logger,
+        ISession session,
+        string tenantName,
+        HealthReport report,
+        CancellationToken cancellationToken)
     {
-        // TODO save to a site setting.
+        var tenantHealth = await session
+            .Query<TenantHealth, TenantHealthIndex>(index => index.TenantName == tenantName)
+            .FirstOrDefaultAsync(cancellationToken) ?? new TenantHealth { TenantName = tenantName };
+
+        tenantHealth.IsHealthy = IsHealthy(report);
+
+        if (!tenantHealth.IsHealthy)
+        {
+            LogNotHealthy(logger, report);
+        }
+
+        await session.SaveAsync(tenantHealth);
+        await session.SaveChangesAsync(cancellationToken);
     }
 
-    private static async Task RemoveFromNotHealthyTenantsAsync(string tenantName, HealthReport report)
-    {
-        // TODO save to a site setting.
-    }
-
-    public static bool IsHealthy(HealthStatus status) => status != HealthStatus.Unhealthy;
     public static bool IsHealthy(HealthReport report) => report.Status != HealthStatus.Unhealthy;
 }
