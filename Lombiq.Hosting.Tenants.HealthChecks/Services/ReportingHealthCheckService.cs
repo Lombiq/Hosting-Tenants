@@ -28,13 +28,19 @@ public class ReportingHealthCheckService : HealthCheckService
         _shellSettings = shellSettings;
     }
 
-    public override async Task<HealthReport> CheckHealthAsync(
+    public override Task<HealthReport> CheckHealthAsync(
         Func<HealthCheckRegistration, bool> predicate,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        CheckHealthAsync(predicate, updateHealthy: false, cancellationToken);
+
+    public async Task<HealthReport> CheckHealthAsync(
+        Func<HealthCheckRegistration, bool> predicate,
+        bool updateHealthy,
+        CancellationToken cancellationToken)
     {
         var report = await _healthCheckService.CheckHealthAsync(predicate, cancellationToken);
 
-        if (report.Status == HealthStatus.Unhealthy)
+        if (IsHealthy(report))
         {
             if (_shellSettings.IsDefaultShell())
             {
@@ -50,6 +56,18 @@ public class ReportingHealthCheckService : HealthCheckService
                     LogNotHealthy(logger, report);
                     return AddToNotHealthyTenantsAsync(_shellSettings.Name, report);
                 });
+            }
+        }
+        else if (updateHealthy)
+        {
+            if (_shellSettings.IsDefaultShell())
+            {
+                await RemoveFromNotHealthyTenantsAsync(_shellSettings.Name, report);
+            }
+            else
+            {
+                await _serviceProvider.WithShellScopeAsync(scope =>
+                    RemoveFromNotHealthyTenantsAsync(_shellSettings.Name, report));
             }
         }
 
@@ -79,4 +97,12 @@ public class ReportingHealthCheckService : HealthCheckService
     {
         // TODO save to a site setting.
     }
+
+    private static async Task RemoveFromNotHealthyTenantsAsync(string tenantName, HealthReport report)
+    {
+        // TODO save to a site setting.
+    }
+
+    public static bool IsHealthy(HealthStatus status) => status != HealthStatus.Unhealthy;
+    public static bool IsHealthy(HealthReport report) => report.Status != HealthStatus.Unhealthy;
 }

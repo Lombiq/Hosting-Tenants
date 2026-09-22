@@ -1,0 +1,19 @@
+@model IList<TenantHealthIndex>
+
+@using Microsoft.Extensions.Options
+@using OrchardCore.Admin
+
+@inject IOptions<AdminOptions> AdminOptions
+
+<h1>@RenderTitleSegments(T["Unhealthy Tenants"])</h1>
+
+<ul>
+    @foreach (var index in Model.OrderBy(index => index.TenantName, StringComparer.OrdinalIgnoreCase))
+    {
+        <li>
+            <a href="@Url.Content($"~/{AdminOptions.Value.AdminUrlPrefix}/Tenants/Edit/{index.TenantName}")" target="_blank">
+                @index.TenantName
+            </a>
+        </li>
+    }
+</ul>
