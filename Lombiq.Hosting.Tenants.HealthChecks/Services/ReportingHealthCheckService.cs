@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using YesSql;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Lombiq.Hosting.Tenants.Management.Services;
+namespace Lombiq.Hosting.Tenants.HealthChecks.Services;
 
 public class ReportingHealthCheckService : HealthCheckService
 {

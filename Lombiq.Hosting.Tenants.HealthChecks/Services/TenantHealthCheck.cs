@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YesSql;
 
-namespace Lombiq.Hosting.Tenants.Management.Services;
+namespace Lombiq.Hosting.Tenants.HealthChecks.Services;
 
 public class TenantHealthCheck : IHealthCheck
 {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Navigation;
 
-namespace Lombiq.Hosting.Tenants.Management;
+namespace Lombiq.Hosting.Tenants.HealthChecks;
 
 public sealed class AdminMenu : AdminMenuNavigationProviderBase
 {

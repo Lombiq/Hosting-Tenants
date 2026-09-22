@@ -1,7 +1,7 @@
 using OrchardCore.Data.Migration;
 using System.Threading.Tasks;
 
-namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
+namespace Lombiq.Hosting.Tenants.HealthChecks.Migrations;
 
 public sealed class TenantHealthMigrations : DataMigration
 {

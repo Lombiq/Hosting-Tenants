@@ -1,7 +1,6 @@
-using Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
-using Lombiq.Hosting.Tenants.HealthChecks;
+using Lombiq.Hosting.Tenants.HealthChecks.Migrations;
 using Lombiq.Hosting.Tenants.HealthChecks.Models;
-using Lombiq.Hosting.Tenants.Management.Services;
+using Lombiq.Hosting.Tenants.HealthChecks.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OrchardCore.BackgroundTasks;
@@ -11,7 +10,7 @@ using OrchardCore.Modules;
 using OrchardCore.Navigation;
 using OrchardCore.Security.Permissions;
 
-namespace Lombiq.Hosting.Tenants.Management;
+namespace Lombiq.Hosting.Tenants.HealthChecks;
 
 public sealed class TenantHealthChecksStartup : StartupBase
 {

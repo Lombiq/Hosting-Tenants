@@ -1,4 +1,4 @@
-namespace Lombiq.Hosting.Tenants.FeaturesGuard.Constants;
+namespace Lombiq.Hosting.Tenants.HealthChecks.Constants;
 
 public static class FeatureNames
 {
