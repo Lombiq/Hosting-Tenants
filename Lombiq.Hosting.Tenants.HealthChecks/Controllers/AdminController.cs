@@ -49,7 +49,7 @@ public class AdminController : Controller
 
                     if (service == null) return;
 
-                    var report = await service.CheckHealthAsync(predicate: null, updateHealthy: true, HttpContext.RequestAborted);
+                    var report = await service.CheckHealthAsync(predicate: null, HttpContext.RequestAborted);
                     index.IsHealthy = ReportingHealthCheckService.IsHealthy(report);
                 },
                 index.TenantName);

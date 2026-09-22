@@ -23,5 +23,6 @@ public sealed class TenantHealthChecksStartup : StartupBase
         services.AddSingleton<IBackgroundTask, TenantCheckerBackgroundTask>();
         services.AddDataMigration<TenantHealthMigrations>();
         services.AddIndexProvider<TenantHealthIndexProvider>();
+        services.AddHealthChecks().AddCheck<TenantHealthCheck>(nameof(TenantHealthCheck));
     }
 }
