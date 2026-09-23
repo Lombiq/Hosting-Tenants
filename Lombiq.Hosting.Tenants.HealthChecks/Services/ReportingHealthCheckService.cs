@@ -92,7 +92,7 @@ public class ReportingHealthCheckService : HealthCheckService
         tenantHealth.IsHealthy = IsHealthy(report);
         tenantHealth.Report.SetItems(report
             .Entries
-            .Where(pair => IsHealthy(pair.Value.Status))
+            .Where(pair => !IsHealthy(pair.Value.Status))
             .ToDictionary(pair => pair.Key, pair => pair.Value.Description));
 
         if (!tenantHealth.IsHealthy)
