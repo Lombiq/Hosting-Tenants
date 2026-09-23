@@ -14,22 +14,16 @@ namespace Lombiq.Hosting.Tenants.HealthChecks.Services;
 public class ReportingHealthCheckService : HealthCheckService
 {
     private readonly HealthCheckService _healthCheckService;
-    private readonly ILogger _logger;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ISession _session;
     private readonly ShellSettings _shellSettings;
 
     public ReportingHealthCheckService(
         HealthCheckService healthCheckService,
-        ILogger<ReportingHealthCheckService> logger,
         IServiceProvider serviceProvider,
-        ISession session,
         ShellSettings shellSettings)
     {
         _healthCheckService = healthCheckService;
-        _logger = logger;
         _serviceProvider = serviceProvider;
-        _session = session;
         _shellSettings = shellSettings;
     }
 
@@ -42,7 +36,12 @@ public class ReportingHealthCheckService : HealthCheckService
 
         if (_shellSettings.IsDefaultShell())
         {
-            await UpdateTenantHealthAsync(_logger, _session, tenantName, report, cancellationToken);
+            await using var scope = _serviceProvider.CreateAsyncScope();
+
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<ReportingHealthCheckService>>();
+            var session = scope.ServiceProvider.GetRequiredService<ISession>();
+
+            await UpdateTenantHealthAsync(logger, session, tenantName, report, cancellationToken);
         }
         else
         {

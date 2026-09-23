@@ -11,7 +11,7 @@ public sealed class AdminMenu : AdminMenuNavigationProviderBase
 {
     private readonly ShellSettings _shellSettings;
 
-    public AdminMenu(IHttpContextAccessor hca, ShellSettings shellSettings, IStringLocalizer stringLocalizer)
+    public AdminMenu(IHttpContextAccessor hca, ShellSettings shellSettings, IStringLocalizer<AdminMenu> stringLocalizer)
         : base(hca, stringLocalizer) =>
         _shellSettings = shellSettings;
 
