@@ -33,7 +33,9 @@ public class TenantHealthCheck : IHealthCheck
 
         var session = scope.ServiceProvider.GetRequiredService<ISession>();
         var unhealthyTenants = (await session
-                .Query<TenantHealth, TenantHealthIndex>(index => !index.IsHealthy)
+                .Query<TenantHealth, TenantHealthIndex>(index =>
+                    !index.IsHealthy &&
+                    index.TenantName != ShellSettings.DefaultShellName)
                 .ListAsync(cancellationToken))
             .Select(item => item.TenantName)
             .ToList();
