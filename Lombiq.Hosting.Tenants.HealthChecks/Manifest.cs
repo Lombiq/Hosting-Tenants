@@ -14,5 +14,5 @@ using OrchardCore.Modules.Manifest;
     Id = FeatureNames.HealthChecks,
     Name = "Lombiq Hosting - Tenants Health Checks",
     Category = "Hosting",
-    Dependencies = ["OrchardCore.HealthChecks", "OrchardCore.Tenants"]
+    Dependencies = ["OrchardCore.HealthChecks"]
 )]
