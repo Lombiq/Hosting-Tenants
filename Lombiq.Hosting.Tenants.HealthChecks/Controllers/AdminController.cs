@@ -31,7 +31,7 @@ public class AdminController : Controller
         if (!_shellSettings.IsDefaultShell()) return NotFound();
 
         var tenantHealthData = (await _session
-                .QueryIndex<TenantHealthIndex>(index => !index.IsHealthy)
+                .Query<TenantHealth, TenantHealthIndex>(index => !index.IsHealthy)
                 .ListAsync(HttpContext.RequestAborted))
             .AsList();
 

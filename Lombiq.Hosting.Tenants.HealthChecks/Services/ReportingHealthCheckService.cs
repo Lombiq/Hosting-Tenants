@@ -4,6 +4,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OrchardCore.Environment.Shell;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using YesSql;
@@ -88,6 +90,10 @@ public class ReportingHealthCheckService : HealthCheckService
             .FirstOrDefaultAsync(cancellationToken) ?? new TenantHealth { TenantName = tenantName };
 
         tenantHealth.IsHealthy = IsHealthy(report);
+        tenantHealth.Report.SetItems(report
+            .Entries
+            .Where(pair => IsHealthy(pair.Value.Status))
+            .ToDictionary(pair => pair.Key, pair => pair.Value.Description));
 
         if (!tenantHealth.IsHealthy)
         {
@@ -98,5 +104,6 @@ public class ReportingHealthCheckService : HealthCheckService
         await session.SaveChangesAsync(cancellationToken);
     }
 
-    public static bool IsHealthy(HealthReport report) => report.Status != HealthStatus.Unhealthy;
+    public static bool IsHealthy(HealthStatus status) => status != HealthStatus.Unhealthy;
+    public static bool IsHealthy(HealthReport report) => IsHealthy(report.Status);
 }

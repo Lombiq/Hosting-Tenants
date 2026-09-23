@@ -1,4 +1,4 @@
-@model IList<TenantHealthIndex>
+@model IList<TenantHealth>
 
 @using Microsoft.Extensions.Options
 @using OrchardCore.Admin
@@ -8,12 +8,22 @@
 <h1>@RenderTitleSegments(T["Unhealthy Tenants"])</h1>
 
 <ul>
-    @foreach (var index in Model.OrderBy(index => index.TenantName, StringComparer.OrdinalIgnoreCase))
+    @foreach (var item in Model.OrderBy(item => item.TenantName, StringComparer.OrdinalIgnoreCase))
     {
         <li>
-            <a href="@Url.Content($"~/{AdminOptions.Value.AdminUrlPrefix}/Tenants/Edit/{index.TenantName}")" target="_blank">
-                @index.TenantName
+            <a href="@Url.Content($"~/{AdminOptions.Value.AdminUrlPrefix}/Tenants/Edit/{item.TenantName}")" target="_blank">
+                @item.TenantName
             </a>
+            
+            @if (item.Report.Count > 0)
+            {
+                <ul>
+                    @foreach (var (name, description) in item.Report)
+                    {
+                        <li><strong>@name</strong>: @description</li>
+                    }
+                </ul>
+            }
         </li>
     }
 </ul>
