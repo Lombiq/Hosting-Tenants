@@ -7,7 +7,7 @@ namespace Lombiq.Hosting.Tenants.HealthChecks;
 public class HealthChecksPermissions : AdminPermissionBase
 {
     public static readonly Permission ViewHealthChecks =
-        new(nameof(ViewHealthChecks), "View tenant Health Checks on the default tenant admin menu.");
+        new(nameof(ViewHealthChecks), "View tenant Health Checks from the Default tenant admin menu.");
 
     protected override IEnumerable<Permission> AdminPermissions =>
     [
