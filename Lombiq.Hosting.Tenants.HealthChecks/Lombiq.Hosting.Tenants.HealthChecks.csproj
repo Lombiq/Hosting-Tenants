@@ -10,7 +10,7 @@
     <Title>Lombiq Hosting - Tenants Health Checks for Orchard Core</Title>
     <CopyrightYear>2021</CopyrightYear>
     <DescriptionBody>Multi-tenancy related health check improvements.</DescriptionBody>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;HealthChecks</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.HealthChecks/Readme.md</PackageProjectUrl>
   </PropertyGroup>
