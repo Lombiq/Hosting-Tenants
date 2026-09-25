@@ -4,7 +4,18 @@
 
 ## About
 
-A module adds features specific to Orchard Core's [Health Checks module](https://docs.orchardcore.net/en/main/reference/modules/HealthChecks/).
+A module adds tenant-aware features specific to Orchard Core's [Health Checks module](https://docs.orchardcore.net/en/main/reference/modules/HealthChecks/).
+
+## Usage
+
+Some of this module's features depend on being always-enabled. You can easily achieve that using the `AddTenantFeatures` and `AddDefaultTenantFeatures` extension methods inside `AddOrchardCms` call of your _Program.cs_ file, like this:
+
+```csharp
+builder.Services.AddOrchardCms(orchardCoreBuilder => orchardCoreBuilder
+    .AddTenantFeatures(HealthChecksFeatureIds.AllTenants)
+    .AddDefaultTenantFeatures(HealthChecksFeatureIds.DefaultTenant)
+);
+```
 
 ## Documentation
 
