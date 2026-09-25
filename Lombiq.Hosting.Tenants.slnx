@@ -10,6 +10,8 @@
   <Project Path="Lombiq.Hosting.Tenants.EnvironmentRobots/Lombiq.Hosting.Tenants.EnvironmentRobots.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI/Lombiq.Hosting.Tenants.FeaturesGuard.Tests.UI.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.FeaturesGuard/Lombiq.Hosting.Tenants.FeaturesGuard.csproj" />
+  <Project Path="Lombiq.Hosting.Tenants.HealthChecks.Tests.UI/Lombiq.Hosting.Tenants.HealthChecks.Tests.UI.csproj" />
+  <Project Path="Lombiq.Hosting.Tenants.HealthChecks/Lombiq.Hosting.Tenants.HealthChecks.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI/Lombiq.Hosting.Tenants.IdleTenantManagement.Tests.UI.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.IdleTenantManagement/Lombiq.Hosting.Tenants.IdleTenantManagement.csproj" />
   <Project Path="Lombiq.Hosting.Tenants.Maintenance.Tests.UI/Lombiq.Hosting.Tenants.Maintenance.Tests.UI.csproj" />
