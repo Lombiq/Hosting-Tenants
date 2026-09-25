@@ -1,4 +1,5 @@
 using Lombiq.HelpfulLibraries.OrchardCore.Mvc;
+using Lombiq.Hosting.Tenants.HealthChecks.Constants;
 using Lombiq.Tests.UI.Extensions;
 using Lombiq.Tests.UI.Models;
 using Lombiq.Tests.UI.Services;
@@ -43,6 +44,7 @@ public static partial class TestCaseUITestContextExtensions
         // Visit the Admin > Multi-Tenancy > Health Checks page and validate that test1 and test3 are listed with
         // the correct health check provider's reasons.
         context.SwitchCurrentTenantToDefault();
+        await context.EnableFeatureDirectlyAsync(HealthChecksFeatureIds.Admin);
         await context.SignInDirectlyAndGoToDashboardAsync();
         context.Configuration.HtmlValidationConfiguration.HtmlValidationAndAssertionOnPageChangeRule = htmlValidation;
         await context.ClickThroughAdminMenuAsync(By.ClassName("menu-multitenancy"), By.Id("health-checks"));

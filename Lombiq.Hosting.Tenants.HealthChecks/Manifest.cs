@@ -11,9 +11,24 @@ using OrchardCore.Modules.Manifest;
 )]
 
 [assembly: Feature(
-    Id = FeatureNames.HealthChecks,
-    Name = "Lombiq Hosting - Tenants Health Checks",
+    Id = HealthChecksFeatureIds.AllTenants,
+    Name = "Lombiq Hosting - Tenants Health Checks - All Tenants",
+    Category = "Hosting",
+    Dependencies = ["OrchardCore.HealthChecks"]
+)]
+
+[assembly: Feature(
+    Id = HealthChecksFeatureIds.DefaultTenant,
+    Name = "Lombiq Hosting - Tenants Health Checks - Default Tenant",
     Category = "Hosting",
     Dependencies = ["OrchardCore.HealthChecks"],
-    IsAlwaysEnabled = true
+    DefaultTenantOnly = true
+)]
+
+[assembly: Feature(
+    Id = HealthChecksFeatureIds.Admin,
+    Name = "Lombiq Hosting - Tenants Health Checks - Admin Features",
+    Category = "Hosting",
+    Dependencies = [HealthChecksFeatureIds.DefaultTenant],
+    DefaultTenantOnly = true
 )]

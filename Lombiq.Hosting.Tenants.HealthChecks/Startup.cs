@@ -1,3 +1,4 @@
+using Lombiq.Hosting.Tenants.HealthChecks.Constants;
 using Lombiq.Hosting.Tenants.HealthChecks.Migrations;
 using Lombiq.Hosting.Tenants.HealthChecks.Models;
 using Lombiq.Hosting.Tenants.HealthChecks.Services;
@@ -12,16 +13,33 @@ using OrchardCore.Security.Permissions;
 
 namespace Lombiq.Hosting.Tenants.HealthChecks;
 
-public sealed class TenantHealthChecksStartup : StartupBase
+[Feature(HealthChecksFeatureIds.AllTenants)]
+public sealed class HealthChecksTenantStartup : StartupBase
 {
     public override void ConfigureServices(IServiceCollection services)
     {
         services.Decorate<HealthCheckService, ReportingHealthCheckService>();
-        services.AddPermissionProvider<HealthChecksPermissions>();
-        services.AddNavigationProvider<AdminMenu>();
         services.AddSingleton<IBackgroundTask, TenantCheckerBackgroundTask>();
+    }
+}
+
+[Feature(HealthChecksFeatureIds.DefaultTenant)]
+public sealed class HealthChecksDefaultStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services)
+    {
         services.AddDataMigration<TenantHealthMigrations>();
         services.AddIndexProvider<TenantHealthIndexProvider>();
         services.AddHealthChecks().AddCheck<TenantHealthCheck>(nameof(TenantHealthCheck));
+    }
+}
+
+[Feature(HealthChecksFeatureIds.Admin)]
+public sealed class HealthChecksAdminStartup : StartupBase
+{
+    public override void ConfigureServices(IServiceCollection services)
+    {
+        services.AddPermissionProvider<HealthChecksPermissions>();
+        services.AddNavigationProvider<AdminMenu>();
     }
 }

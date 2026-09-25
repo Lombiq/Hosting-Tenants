@@ -23,6 +23,10 @@
     <None Include="NuGetIcon.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lombiq.Hosting.Tenants.HealthChecks\Lombiq.Hosting.Tenants.HealthChecks.csproj" />
+  </ItemGroup>
+
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Tests.UI.Library.Sdk/Sdk/Import.targets" />
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.targets" Sdk="Lombiq.MSBuild.OrchardCore.Tests.UI.Library.Sdk" Version="2.1.1-alpha.3.osoe-1308" />
 </Project>

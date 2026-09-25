@@ -1,9 +1,11 @@
+using Lombiq.Hosting.Tenants.HealthChecks.Constants;
 using Lombiq.Hosting.Tenants.HealthChecks.Models;
 using Lombiq.Hosting.Tenants.HealthChecks.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OrchardCore.Environment.Shell;
+using OrchardCore.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ using YesSql;
 
 namespace Lombiq.Hosting.Tenants.HealthChecks.Controllers;
 
+[Feature(HealthChecksFeatureIds.Admin)]
 public class AdminController : Controller
 {
     private readonly ISession _session;
