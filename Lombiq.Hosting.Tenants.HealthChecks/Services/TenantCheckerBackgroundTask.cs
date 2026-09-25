@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lombiq.Hosting.Tenants.HealthChecks.Services;
 
-[BackgroundTask(Schedule = "0 * * * *", Description = "Check tenant health hourly.")]
+[BackgroundTask(Schedule = "* * * * *", Description = "Monitor tenant health.")]
 public class TenantCheckerBackgroundTask : IBackgroundTask
 {
     public Task DoWorkAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken)
