@@ -8,14 +8,35 @@ A module that adds tenant-aware features specific to Orchard Core's [Health Chec
 
 ## Usage
 
-Some of this module's features depend on being always-enabled. You can easily achieve that using the `AddTenantFeatures` and `AddDefaultTenantFeatures` extension methods inside the `AddOrchardCms` call of your _Program.cs_ file, like this:
+Some of this module's features depend on being always-enabled. You can easily achieve that using the `EnableTenantHealthChecks` extension method inside the `AddOrchardCms` call of your _Program.cs_ file, like this:
 
 ```csharp
 builder.Services.AddOrchardCms(orchardCoreBuilder => orchardCoreBuilder
-    .AddTenantFeatures(HealthChecksFeatureIds.AllTenants)
-    .AddDefaultTenantFeatures(HealthChecksFeatureIds.DefaultTenant)
+    .EnableTenantHealthChecks()
 );
 ```
+
+If you want to be able to toggle this feature via configuration, that's also possible. You have to pass the configuration object:
+
+```csharp
+builder.Services.AddOrchardCms(orchardCoreBuilder => orchardCoreBuilder
+    .EnableTenantHealthChecks(builder.Configuration)
+);
+```
+
+Then in the _appsettings.json_ file:
+
+```json
+{
+  "OrchardCore": {
+    "Lombiq_Hosting_Tenants_HealthChecks": {
+      "IsEnabled": true
+    }
+  }
+}
+```
+
+Note that the module only works reliably when enabled for the whole application, so it's recommended to use the first option.
 
 ## Documentation
 

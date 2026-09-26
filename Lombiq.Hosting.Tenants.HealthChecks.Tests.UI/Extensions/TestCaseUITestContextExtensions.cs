@@ -20,11 +20,12 @@ public static partial class TestCaseUITestContextExtensions
     [GeneratedRegex(@"\s+", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]
     private static partial Regex WhitespaceRegex { get; }
 
+    /// <summary>
+    /// Tests basic functionality of the "Lombiq Hosting - Tenants Health Checks" feature.
+    /// </summary>
+    /// <param name="tenantSetupRecipeId">The ID of the setup recipe used when setting up additional tenants.</param>
     public static async Task TestHealthChecksAsync(this UITestContext context, string tenantSetupRecipeId)
     {
-        context.Configuration.ResponseLogFilters["Ignore expected non-ok responses from ~/health/live"] = args =>
-            !args.Response.Url.Contains("/health/live");
-
         // Temporarily disable HTML validation. All we do until this is re-enabled is interact with the
         // ~/Lombiq.Tests.UI.Shortcuts/Error/HealthCheck and ~/health/live pages, which return plain text. So we'd
         // just validate the browser's text renderer which is pointless.
