@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
@@ -7,16 +7,18 @@
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Module.Sdk" Version="2.1.1-alpha.5.osoe-1317" />
 
   <PropertyGroup>
-    <Title>Lombiq Hosting - Tenants Media Storage Management for Orchard Core</Title>
-    <CopyrightYear>2023</CopyrightYear>
-    <DescriptionBody>With the help of this module, you can set restrictions regarding maximum media space per tenant.</DescriptionBody>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <Title>Lombiq Hosting - Tenants Health Checks for Orchard Core</Title>
+    <CopyrightYear>2021</CopyrightYear>
+    <DescriptionBody>Multi-tenancy related health check improvements.</DescriptionBody>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;HealthChecks</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.MediaStorageManagement/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.HealthChecks/Readme.md</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OrchardCore.Media" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.Tenants" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="OrchardCore.HealthChecks" Version="$(OrchardCoreVersion)" />
+    <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
 
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Module.Sdk/Sdk/Import.targets" />

@@ -7,16 +7,24 @@
   <Import Condition="'$(NuGetBuild)' == 'true'" Project="Sdk.props" Sdk="Lombiq.MSBuild.OrchardCore.Tests.UI.Library.Sdk" Version="2.1.1-alpha.5.osoe-1317" />
 
   <PropertyGroup>
-    <Title>Lombiq Hosting - Tenants Maintenance for Orchard Core - UI Test Extensions</Title>
-    <CopyrightYear>2021</CopyrightYear>
-    <DescriptionBody>Extension methods that test tenants maintenance for Orchard Core.</DescriptionBody>
-    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS</PackageTags>
+    <Title>Lombiq Hosting - Tenants Health Checks - UI Test Extensions</Title>
+    <CopyrightYear>2022</CopyrightYear>
+    <DescriptionBody>Extension methods that test various features in Lombiq Hosting - Tenants Health Checks, with the help of Lombiq UI Testing Toolbox for Orchard Core.</DescriptionBody>
+    <PackageTags>OrchardCore;Lombiq;AspNetCore;Multitenancy;SaaS;Shouldly;xUnit;UITesting;Testing</PackageTags>
     <RepositoryUrl>https://github.com/Lombiq/Hosting-Tenants</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.Maintenance.Tests.UI/Readme.md</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Lombiq/Hosting-Tenants/blob/dev/Lombiq.Hosting.Tenants.HealthChecks.Tests.UI/Readme.md</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lombiq.Hosting.Tenants.Maintenance\Lombiq.Hosting.Tenants.Maintenance.csproj" />
+    <Content Include="Readme.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="NuGetIcon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lombiq.Hosting.Tenants.HealthChecks\Lombiq.Hosting.Tenants.HealthChecks.csproj" />
   </ItemGroup>
 
   <Import Condition="'$(NuGetBuild)' != 'true'" Project="../../../Utilities/Lombiq.MSBuild.Targets/Lombiq.MSBuild.OrchardCore.Tests.UI.Library.Sdk/Sdk/Import.targets" />
