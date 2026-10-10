@@ -17,13 +17,13 @@ public class TenantLoginKeyValidator : ITenantLoginPasswordValidator
         const string validCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#";
         var stringBuilder = new StringBuilder();
         using var random = RandomNumberGenerator.Create();
-        byte[] uintBuffer = new byte[sizeof(uint)];
+        var uintBuffer = new byte[sizeof(uint)];
 
         while (length > 0)
         {
             length--;
             random.GetBytes(uintBuffer);
-            uint randomNumber = BitConverter.ToUInt32(uintBuffer, 0);
+            var randomNumber = BitConverter.ToUInt32(uintBuffer, 0);
             stringBuilder.Append(validCharacters[(int)(randomNumber % (uint)validCharacters.Length)]);
         }
 

@@ -5,15 +5,13 @@ namespace Lombiq.Hosting.Tenants.EmailQuotaManagement.Migrations;
 
 public sealed class EmailQuotaMigrations : DataMigration
 {
-    // This is actually needed like this, otherwise it won't work. CA1822 will only be violated during CI builds for
-    // some reason.
-#pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable S3400 // Methods should not return constants
-#pragma warning disable CA1822 // Mark members as static
-    public int Create() => 3;
-#pragma warning restore S3400 // Methods should not return constants
-#pragma warning restore CA1822 // Mark members as static
-#pragma warning restore IDE0079 // Remove unnecessary suppression
+    /// <summary>
+    /// Gets the latest version of the migration, used in the <see cref="Create"/> and in the latest
+    /// <c>UpdateFromNAsync</c> method.
+    /// </summary>
+    public int LatestVersion { get; } = 3;
+
+    public int Create() => LatestVersion;
 
     public async Task<int> UpdateFrom1Async()
     {
@@ -29,6 +27,6 @@ public sealed class EmailQuotaMigrations : DataMigration
         // Deleting index because it is not needed.
         await SchemaBuilder.DropTableAsync("EmailQuotaIndex");
 
-        return 3;
+        return LatestVersion;
     }
 }
