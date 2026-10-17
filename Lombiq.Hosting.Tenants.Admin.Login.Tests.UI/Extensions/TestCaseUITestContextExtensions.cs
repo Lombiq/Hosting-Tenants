@@ -24,8 +24,7 @@ public static class TestCaseUITestContextExtensions
             name: tenantName,
             urlPrefix: tenantName,
             new OrchardCoreSetupParameters(context) { SiteName = "Test Tenant Title", UserName = tenantUserName },
-            // It's already enabled.
-            enableTenantsFeature: false);
+            enableTenantsFeature: false); // It's already enabled.
         await context.EnableFeatureDirectlyAsync(FeatureNames.SubTenant);
 
         // Go to the new tenant's edit page and click on the "Login as admin user" button.
